@@ -1,0 +1,47 @@
+<!--- TEMPLATENAME: footer-subscribe.isml --->
+	<isset name="formURL" value="Klaviyo-Subscribe" scope="page" />
+<form action="${URLUtils.url(formURL)}" method="post" name="SubscribeForm" id="email-alert-signup">
+	 <label for="email-alert-address"><span class="visually-hidden">Enter Your Email</span></label>
+	 <input type="text" id="emailsignup" class="form-control required email" name = "${pdict.CurrentForms.subscribe.email.htmlName}" placeholder="email@yoursite.com">
+	 <input type="hidden" name="${dw.web.CSRFProtection.getTokenName()}" value="${dw.web.CSRFProtection.generateToken()}"/>
+	 <input type="hidden" name="${pdict.CurrentForms.subscribe.subscribe.htmlName}" value="subscribe"/>
+	 <input type="hidden" name="source" value="footer"/>
+	 <button type="submit" name="home-email" value="Submit" class="fa fa-envelope" /><span class="visually-hidden">Submit</span></button>
+</form>
+
+
+<div id="dialog-confirm" title="Subscription Confirmed"  style="display:none;" >
+	 <div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title text-center">${Resource.msg('global.thankyou','locale',null)}</h4>
+				</div>
+				<div class="modal-body">
+					<p class="text-center m-top">${Resource.msg('global.subsciptionmsg','locale',null)}<br>${Resource.msg('global.subscriptiondelight','locale',null)}</p>
+				</div>
+				<div class="modal-footer">
+					<div class="text-center">
+						<button type="button" class="btn btn-primary edit-subscribe" id="subscriber-ok-button">OK</button>
+					</div>
+				</div>
+			</div>
+	</div>
+</div>
+
+
+<div id="dialog-confirm2" title="Already Confirmed"  style="display:none;">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			 
+			<div class="modal-body">
+				<p class="text-center m-top">${Resource.msg('global.alreadysubscribedmsg','locale',null)}</p>
+			</div>
+			<div class="modal-footer">
+				<div class="text-center">
+					<button type="button" class="btn btn-primary edit-subscribe" id="already-subscriber-ok-button">OK</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+

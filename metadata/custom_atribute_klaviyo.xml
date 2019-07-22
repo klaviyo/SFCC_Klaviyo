@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata xmlns="http://www.demandware.com/xml/impex/metadata/2006-10-31">
+     <type-extension type-id="SitePreferences">
+        <custom-attribute-definitions>
+            <attribute-definition attribute-id="klaviyo_account">
+                <display-name xml:lang="x-default">Klaviyo Account</display-name>
+                <description xml:lang="x-default">Your Klaviyo account identifier</description>
+                <type>string</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <min-length>0</min-length>
+                <field-length>0</field-length>
+            </attribute-definition>
+            <attribute-definition attribute-id="klaviyo_api_key">
+                <display-name xml:lang="x-default">Klaviyo API Key</display-name>
+                <type>string</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <min-length>0</min-length>
+            </attribute-definition>
+            <attribute-definition attribute-id="klaviyo_enabled">
+                <display-name xml:lang="x-default">Klaviyo Enabled</display-name>
+                <type>boolean</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <default-value>false</default-value>
+            </attribute-definition>
+        </custom-attribute-definitions>
+        <group-definitions>
+            <attribute-group group-id="klaviyo">
+                <display-name xml:lang="x-default">Klaviyo </display-name>
+                <attribute attribute-id="klaviyo_enabled"/>
+                <attribute attribute-id="klaviyo_api_key"/>
+                <attribute attribute-id="klaviyo_account"/>
+            </attribute-group>
+        </group-definitions>
+    </type-extension>
+</metadata>
