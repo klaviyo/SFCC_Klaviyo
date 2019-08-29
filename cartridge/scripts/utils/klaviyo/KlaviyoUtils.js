@@ -4,6 +4,7 @@
 var Logger = require('dw/system/Logger');
 var ServiceRegistry = require('dw/svc/LocalServiceRegistry');
 
+var WHITELISTED_EVENTS = ['Started Checkout', 'Ordered Product', 'Placed Order'];
 
 /**
  * Uses the service framework to get the Klaviyo Service configuration
@@ -65,6 +66,9 @@ function preparePayload (email, data, event) {
 	var jsonData = {};
 	jsonData.token = Site.getCurrent().getCustomPreferenceValue('klaviyo_account');
 	jsonData.event = event;
+  if (WHITELISTED_EVENTS.includes(event)) {
+    jsonData.service = 'demandware';
+  }
 	var customerProperties = {};
 	customerProperties.$email = email;
 	jsonData.customer_properties = customerProperties;
