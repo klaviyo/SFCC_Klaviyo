@@ -4,6 +4,7 @@
 var Logger = require('dw/system/Logger');
 var ServiceRegistry = require('dw/svc/LocalServiceRegistry');
 
+var WHITELISTED_EVENTS = ['Started Checkout', 'Ordered Product', 'Placed Order'];
 
 /**
  * Uses the service framework to get the Klaviyo Service configuration
@@ -60,20 +61,23 @@ function sendEmail(email, data, event) {
  * @returns
  */
 function preparePayload (email, data, event) {
-	var Site = require('dw/system/Site');
-	var StringUtils = require('dw/util/StringUtils');
-	var jsonData = {};
-	jsonData.token = Site.getCurrent().getCustomPreferenceValue('klaviyo_account');
-	jsonData.event = event;
-	var customerProperties = {};
-	customerProperties.$email = email;
-	jsonData.customer_properties = customerProperties;
-	jsonData.properties = data;
-	jsonData.time = Math.floor(Date.now() / 1000);
+  var Site = require('dw/system/Site');
+  var StringUtils = require('dw/util/StringUtils');
+  var jsonData = {};
+  jsonData.token = Site.getCurrent().getCustomPreferenceValue('klaviyo_account');
+  jsonData.event = event;
+    if (WHITELISTED_EVENTS.indexOf(event) > -1) {
+      jsonData.service = 'demandware';
+    }
+  var customerProperties = {};
+  customerProperties.$email = email;
+  jsonData.customer_properties = customerProperties;
+  jsonData.properties = data;
+  jsonData.time = Math.floor(Date.now() / 1000);
 
-	var klaviyoData = JSON.stringify(jsonData);
+  var klaviyoData = JSON.stringify(jsonData);
 
-	return StringUtils.encodeBase64(klaviyoData);
+  return StringUtils.encodeBase64(klaviyoData);
 
 }
 
