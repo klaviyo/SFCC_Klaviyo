@@ -66,9 +66,9 @@ function preparePayload (email, data, event) {
 	var jsonData = {};
 	jsonData.token = Site.getCurrent().getCustomPreferenceValue('klaviyo_account');
 	jsonData.event = event;
-  if (WHITELISTED_EVENTS.includes(event)) {
-    jsonData.service = 'demandware';
-  }
+    if (WHITELISTED_EVENTS.includes(event)) {
+      jsonData.service = 'demandware';
+    }
 	var customerProperties = {};
 	customerProperties.$email = email;
 	jsonData.customer_properties = customerProperties;
