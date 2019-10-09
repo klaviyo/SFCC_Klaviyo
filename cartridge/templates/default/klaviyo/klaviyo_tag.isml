@@ -32,7 +32,7 @@ if (klData.event == "Viewed Product") {
   "]);");
 }
 
-if (klData.event == "Checkout Started") {
+if (klData.event == "Started Checkout") {
   checkoutObj=prepareCheckoutObj(klData);
   klCustomer["$email"] = klData["$email"];
   out.print("var _learnq = _learnq || [];");
@@ -41,7 +41,7 @@ if (klData.event == "Checkout Started") {
   "]);");
 }
 
-if (klData.event == "Add to Cart") {
+if (klData.event == "Added to Cart") {
   cartObj=prepareAddToCartObj(klData);
   out.print("var _learnq = _learnq || [];");
   out.print("_learnq.push(['track', 'Add to Cart', " + JSON.stringify(cartObj) +
@@ -55,7 +55,7 @@ if (klData.event == "Viewed Category") {
   "]);");
 }
 
-if (klData.event == "Site Search") {
+if (klData.event == "Searched Site") {
   searchObj["Search Term"] = klData.searchTerm;
   searchObj["Search Results Count"] = klData.searchResultsCount;
   out.print("var _learnq = _learnq || [];");

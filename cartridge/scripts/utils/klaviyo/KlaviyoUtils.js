@@ -209,7 +209,7 @@ function removeDuplicates(items) {
 		klData={};
 		basketItems = currentBasket.getProductLineItems().toArray();
 		//Create some top-level event data
-		klData.event = "Checkout Started";
+		klData.event = "Started Checkout";
 		klData["Basket Gross Price"] = currentBasket.getTotalGrossPrice().value;
 		klData["Item Count"] = basketItems.length;
 
@@ -285,7 +285,7 @@ function prepareAddToCartEventForKlaviyo(klData){
 	var productMgr= require('dw/catalog/ProductMgr');
 	var basketMgr= require('dw/order/BasketMgr');
     basketItems = basketMgr.getCurrentBasket().getProductLineItems().toArray();
-    klData.event = "Add to Cart";
+    klData.event = "Added to Cart";
     klData.basketGross = basketMgr.getCurrentBasket().getTotalGrossPrice().getValue();
     if(klData.basketGross==0){
     klData.basketGross=basketMgr.getCurrentBasket().getMerchandizeTotalPrice().getValue();
@@ -423,7 +423,7 @@ function buildDataLayer() {
 
         // Site Search event
         if (pageContext == "search" && searchTerm) {
-          klData.event = "Site Search";
+          klData.event = "Searched Site";
           klData.searchTerm = searchTerm;
           klData.searchResultsCount = (!empty(searchResultsCount))?searchResultsCount.value:0;
         }
