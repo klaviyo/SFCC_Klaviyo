@@ -4,7 +4,7 @@
 var Logger = require('dw/system/Logger');
 var ServiceRegistry = require('dw/svc/LocalServiceRegistry');
 
-var WHITELISTED_EVENTS = ['Started Checkout', 'Ordered Product', 'Placed Order'];
+var WHITELISTED_EVENTS = ['Started Checkout', 'Ordered Product', 'Order Confirmation'];
 
 /**
  * Uses the service framework to get the Klaviyo Service configuration
@@ -248,7 +248,7 @@ function prepareOrderConfirmationEventForKlaviyo(currentOrder){
 	var Site = require('dw/system/Site');
     var EmailUtils = require('~/cartridge/scripts/utils/klaviyo/EmailUtils');
     var sitegenesisOrder =EmailUtils.prepareOrderPayload(currentOrder, false, 'orderConfirmation');
-    sendEmail(currentOrder.getCustomerEmail(), sitegenesisOrder, "Placed Order");
+    sendEmail(currentOrder.getCustomerEmail(), sitegenesisOrder, "Order Confirmation");
 
     // giftcards
     var giftCertCollection = currentOrder.getGiftCertificateLineItems().toArray();
