@@ -4,7 +4,7 @@
 var Logger = require('dw/system/Logger');
 var ServiceRegistry = require('dw/svc/LocalServiceRegistry');
 
-var WHITELISTED_EVENTS = ['Searched Site','Viewed Product','Viewed Category','Added to Cart','Started Checkout','Placed Order','Ordered Product'];
+var WHITELISTED_EVENTS = ['Searched Site', 'Viewed Product', 'Viewed Category', 'Added to Cart', 'Started Checkout', 'Order Confirmation'];
 
 /**
  * Uses the service framework to get the Klaviyo Service configuration
@@ -18,14 +18,14 @@ var WHITELISTED_EVENTS = ['Searched Site','Viewed Product','Viewed Category','Ad
  * @param event
  * @returns
  */
-function sendEmail(email, data, event) {
+function klaviyoTrackEvent(email, data, event) {
 	var requestBody = {};
 	var resultObj = {};
 
-	var logger = Logger.getLogger('Klaviyo', 'KlaviyoUtils - sendEmail()');
+	var logger = Logger.getLogger('Klaviyo', 'KlaviyoUtils - klaviyoTrackEvent()');
 
 	if (KlaviyoTrackService == null ) {
-		logger.error('sendEmail() failed for email: ' + email + '. Service Connection for send email via Klaviyo returned null.');
+		logger.error('klaviyoTrackEvent() failed for email: ' + email + '. Service Connection for send email via Klaviyo returned null.');
 		return;
 	}
 
@@ -248,7 +248,7 @@ function prepareOrderConfirmationEventForKlaviyo(currentOrder){
 	var Site = require('dw/system/Site');
     var EmailUtils = require('~/cartridge/scripts/utils/klaviyo/EmailUtils');
     var sitegenesisOrder =EmailUtils.prepareOrderPayload(currentOrder, false, 'orderConfirmation');
-    sendEmail(currentOrder.getCustomerEmail(), sitegenesisOrder, "Order Confirmation");
+    klaviyoTrackEvent(currentOrder.getCustomerEmail(), sitegenesisOrder, "Order Confirmation");
 
     // giftcards
     var giftCertCollection = currentOrder.getGiftCertificateLineItems().toArray();
@@ -271,7 +271,7 @@ function prepareOrderConfirmationEventForKlaviyo(currentOrder){
        // send an event for transactional gift certificate emails
       for (var totalOrderGiftCards = 0; totalOrderGiftCards < orderGiftCards.length; totalOrderGiftCards++) {
         var theGiftCard = orderGiftCards[totalOrderGiftCards]
-        sendEmail(theGiftCard["Recipient Email"], theGiftCard, "e-Giftcard Notification");
+        klaviyoTrackEvent(theGiftCard["Recipient Email"], theGiftCard, "e-Giftcard Notification");
       }
 
 	}catch(e) {
@@ -458,7 +458,7 @@ function buildCartDataLayer() {
 
 
 module.exports = {
-	sendEmail: sendEmail,
+	klaviyoTrackEvent: klaviyoTrackEvent,
 	prepareViewedProductEventData:prepareViewedProductEventData,
 	prepareProductObj:prepareProductObj,
 	preparegiftCardObject:preparegiftCardObject,
@@ -486,7 +486,7 @@ var KlaviyoTrackService = ServiceRegistry.createService('KlaviyoTrackService', {
      * @param {dw.svc.HTTPService} svc - HTTP Service instance
      * @param {Object} params - Additional paramaters
      * @returns {void}
-     */
+   */
 	createRequest: function(svc, args) {
 		svc.setRequestMethod('GET');
 	},
@@ -496,7 +496,7 @@ var KlaviyoTrackService = ServiceRegistry.createService('KlaviyoTrackService', {
      * @param {dw.svc.HTTPService} svc - HTTP Service instance
      * @param {dw.net.HTTPClient} client - HTTPClient class instance of the current service
      * @returns {Object} retData - Service response object
-     */
+   */
 	parseResponse: function(svc, client) {
 		return client.text;
 	}
