@@ -25,16 +25,16 @@ var createDate = new Date();
  * such as checkout,order confirmation,searching etc and renders the renders the klaviyo_tag isml file
  *
  * @module controllers/Klaviyo
- */
+*/
 
 
 var RenderKlaviyo = function() {
-	
-	if(!dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_enabled')){
-		return;
-	}
-	var klaviyoUtils = require('~/cartridge/scripts/utils/klaviyo/KlaviyoUtils');
-	
+
+  if(!dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_enabled')){
+    return;
+  }
+  var klaviyoUtils = require('~/cartridge/scripts/utils/klaviyo/KlaviyoUtils');
+
     var klaviyoDataLayer = klaviyoUtils.buildDataLayer();
 
     ISML.renderTemplate('klaviyo/klaviyo_tag', {
@@ -45,15 +45,15 @@ var RenderKlaviyo = function() {
 /**
  * Controller that will send the necessary data  to klaviyo when an add to cart event happens
  * @module controllers/Klaviyo
- */
+*/
 
 
 var RenderKlaviyoAddToCart = function() {
-	
-	if(!dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_enabled')){
-		return;
-	}
-	var klaviyoUtils = require('~/cartridge/scripts/utils/klaviyo/KlaviyoUtils');
+
+  if(!dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_enabled')){
+    return;
+  }
+  var klaviyoUtils = require('~/cartridge/scripts/utils/klaviyo/KlaviyoUtils');
 
     var klaviyoDataLayer = klaviyoUtils.buildCartDataLayer();
 
@@ -67,57 +67,53 @@ var RenderKlaviyoAddToCart = function() {
 /**
  *end point for testing shipping confirmation event 
  * 
- */
+*/
 
 function sendKlaviyoShipmentEmail() {
 	
-	var logger = Logger.getLogger('KlaviyoJobs', 'Klaviyo - sendMailsJob()');
-	var OrderMgr = require('dw/order/OrderMgr');
-	var parameterMap = request.httpParameterMap;
-	var orderID=null;
-	    if (!empty(parameterMap)) {
-		orderID=parameterMap.orderID.stringValue
-	    }
-	    if(orderID){
-	    	var KlaviyoUtils = require('~/cartridge/scripts/utils/klaviyo/KlaviyoUtils');
-	    	if(KlaviyoUtils.sendMailForShipmentConfirmation(orderID)){
-	    	    r.renderJSON({status: 'success'});
-	    	} else {
-	    		r.renderJSON({status: 'failed sending email'});
-	    	}
-	    }
-
+  var logger = Logger.getLogger('KlaviyoJobs', 'Klaviyo - sendMailsJob()');
+  var OrderMgr = require('dw/order/OrderMgr');
+  var parameterMap = request.httpParameterMap;
+  var orderID=null;
+  if (!empty(parameterMap)) {
+    orderID=parameterMap.orderID.stringValue
+  }
+  if (orderID) {
+    var KlaviyoUtils = require('~/cartridge/scripts/utils/klaviyo/KlaviyoUtils');
+    if(KlaviyoUtils.sendMailForShipmentConfirmation(orderID)){
+      r.renderJSON({status: 'success'});
+    } else {
+      r.renderJSON({status: 'failed sending email'});
+    }
+  }
 }
-
-
 
 /**
  * 
  *Subscribe End Point for handling news letter's subsciption
  * 
- */
+*/
+
 function subscribe() {
 	
-	var email = app.getForm('subscribe.email').value();
-	var source = !empty(request.httpParameterMap.source) ? request.httpParameterMap.source.stringValue : '';
-	var KlaviyoSubscriptionUtils = require('~/cartridge/scripts/utils/klaviyo/KlaviyoSubscriptionUtils');
-	if(KlaviyoSubscriptionUtils.subscribeToList(email,source)) {
-	    r.renderJSON({status: 'success'});
-	} else {
-		r.renderJSON({status: 'alreadyconfirmed'});
-	}
-	
+  var email = app.getForm('subscribe.email').value();
+  var source = !empty(request.httpParameterMap.source) ? request.httpParameterMap.source.stringValue : '';
+  var KlaviyoSubscriptionUtils = require('~/cartridge/scripts/utils/klaviyo/KlaviyoSubscriptionUtils');
+  if(KlaviyoSubscriptionUtils.subscribeToList(email,source)) {
+    r.renderJSON({status: 'success'});
+  } else {
+    r.renderJSON({status: 'alreadyconfirmed'});
+  }
 }
 
 /**
  *Renders the footer_subscriibe template  
  * 
- */
+*/
+
 function footerSubscribe() {
 	app.getView().render('klaviyo/footer_subscribe');
 }
-
-
 
 
 /** Handles the form submission for subscription.
