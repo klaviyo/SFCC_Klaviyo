@@ -4,7 +4,7 @@
 var Logger = require('dw/system/Logger');
 var ServiceRegistry = require('dw/svc/LocalServiceRegistry');
 
-var WHITELISTED_EVENTS = ['Started Checkout', 'Ordered Product', 'Order Confirmation'];
+var WHITELISTED_EVENTS = ['Searched Site','Viewed Product','Viewed Category','Added to Cart','Started Checkout','Placed Order','Ordered Product'];
 
 /**
  * Uses the service framework to get the Klaviyo Service configuration
