@@ -168,9 +168,9 @@ function prepareOrderPayload(order, isFutureOrder, mailType) {
     var giftCertificateLineItems = order.giftCertificateLineItems;
     var giftLineItem = {};
     var giftLineItemsArray = [];
-    if (giftCertificateLineItems && giftCertificateLineItems.length > 0){
+    if (giftCertificateLineItems && giftCertificateLineItems.length > 0) {
       orderDetails['Gift Item Present'] =  true;
-      var giftCardId = Site.getCurrent().getCustomPreferenceValue('EgiftProduct-ID')
+      var giftCardId = Site.getCurrent().getCustomPreferenceValue('EgiftProduct-ID');
       var giftCardProductDetail = app.getModel('Product').get(giftCardId).object;
       var giftCardImage = '';
       if (!empty(giftCardProductDetail)) {
@@ -211,17 +211,16 @@ function prepareOrderPayload(order, isFutureOrder, mailType) {
     var shippingLineItems = order.shipments[0].shippingLineItems;
     var shippingLineItem = {};
     var shippingItemsArray = [];
-    if (shippingLineItems && shippingLineItems.length > 0){
-      if (shippingLineItems[0].lineItemCtnr){
+    if (shippingLineItems && shippingLineItems.length > 0) {
+      if (shippingLineItems[0].lineItemCtnr) {
         var couponLineItems = shippingLineItems[0].lineItemCtnr.couponLineItems;
-        if (couponLineItems && couponLineItems.length > 0){
+        if (couponLineItems && couponLineItems.length > 0) {
           var couponLineItem = {};
           for (var j in couponLineItems) {
-            if (couponLineItems[j].statusCode === 'APPLIED'){
+            if (couponLineItems[j].statusCode === 'APPLIED') {
               discountCoupon = couponLineItems[j].couponCode;
               break;
             }
-
           }
         }
       }
@@ -242,7 +241,7 @@ function prepareOrderPayload(order, isFutureOrder, mailType) {
       paymentInstrumentItem = paymentInstruments[j];
       if (paymentInstrumentItem.creditCardNumberLastDigits) {
         ccLastFourDigits = paymentInstrumentItem.maskedCreditCardNumber;
-        creditCardType = (paymentInstrumentItem.creditCardType)?paymentInstrumentItem.creditCardType:'';
+        creditCardType = (paymentInstrumentItem.creditCardType) ? paymentInstrumentItem.creditCardType : '';
       }
       if (paymentInstrumentItem.maskedGiftCertificateCode) {
         maskedGiftCertificateCode = paymentInstrumentItem.maskedGiftCertificateCode;
@@ -289,7 +288,7 @@ function prepareOrderPayload(order, isFutureOrder, mailType) {
     if (order.totalNetPrice.available) {
       orderTotal = order.totalNetPrice.value + totalTax;
     } else {
-      orderTotal = order.getAdjustedMerchandizeTotalPrice(true)+(order.giftCertificateTotalPrice)+(shippingTotalPrice)+(totalTax);
+      orderTotal = order.getAdjustedMerchandizeTotalPrice(true) + (order.giftCertificateTotalPrice) + (shippingTotalPrice) + (totalTax);
     }
     var orderTotalString = dw.util.StringUtils.formatMoney(dw.value.Money(orderTotal, session.getCurrency().getCurrencyCode()));
 
