@@ -20,13 +20,13 @@ function subscribeToList (email, source) {
   try {
     var subscriptionStatus = false;
 
-    if(checkSubscription(email, source)) {
+    if (checkSubscription(email, source)) {
       return false;
     }
-    var jsonData = prepareSubscribePayload(email, source); 
+    var jsonData = prepareSubscribePayload(email, source);
     var result = KlaviyoSubscriptionService.call(jsonData);
     var resultObj = JSON.parse(result.object);
-    if(!empty(resultObj)) {
+    if (!empty(resultObj)) {
       var response = resultObj[0];
       if (!empty(response) && response.email === email) {
         subscriptionStatus = true;
@@ -84,7 +84,7 @@ function checkSubscription (email) {
     var profileId = null;
     var resultObj = JSON.parse(result.object);
 
-    if(!empty(resultObj)) {
+    if (!empty(resultObj)) {
       var response = resultObj[0];
       if (!empty(response) && response.email === email) {
         profileId = response.id;
