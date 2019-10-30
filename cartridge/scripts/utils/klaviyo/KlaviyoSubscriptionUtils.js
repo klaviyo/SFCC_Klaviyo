@@ -10,7 +10,7 @@ var apiKey = Site.getCurrent().getCustomPreferenceValue('klaviyo_api_key');
  * Uses the post subscribe list API call per
  * https://www.klaviyo.com/docs/api/v2/lists#post-subscribe
  * to subscribe an email to a subscription list.
- * 
+ *
  * @param email
  * @returns
  */
