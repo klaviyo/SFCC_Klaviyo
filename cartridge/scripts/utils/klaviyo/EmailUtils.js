@@ -24,8 +24,6 @@ function sendOrderEmail(order, mailType) {
 	}
 }
 
-
-
 /**
  * Prepares the order in JSON format for email send.
  * @param order
@@ -34,12 +32,10 @@ function sendOrderEmail(order, mailType) {
  * @returns
  */
 function prepareOrderPayload(order, isFutureOrder, mailType) {
-
   var orderDetails = {};
-  var isReplenishmentOrder = (mailType !== null && mailType === 'Auto Delivery Order Confirmation') ? true : false;
 
   // Billing Address
-  var orderBillingAddressfirstName = (order.billingAddress.firstName) ? order.billingAddress.firstName : '';
+  var orderBillingAddressFirstName = (order.billingAddress.firstName) ? order.billingAddress.firstName : '';
   var orderBillingAddressLastName = (order.billingAddress.lastName) ? order.billingAddress.lastName : '';
   var orderBillingAddressAddress1 = (order.billingAddress.address1) ? order.billingAddress.address1 : '';
   var orderBillingAddressAddress2 = (order.billingAddress.address2) ? order.billingAddress.address2 : '';
@@ -97,6 +93,7 @@ function prepareOrderPayload(order, isFutureOrder, mailType) {
 
       prdUrl = URLUtils.http('Product-Show', 'pid', productLineItem.productID).toString();
       var secondaryName = '';
+
       // Get the product secondary name
       var productDetail = app.getModel('Product').get(productLineItem.productID).object;
 
@@ -106,16 +103,16 @@ function prepareOrderPayload(order, isFutureOrder, mailType) {
         priceString = dw.util.StringUtils.formatMoney(dw.value.Money(0, session.getCurrency().getCurrencyCode()));
       }
 
-      //Variation values
+      // Variation values
       var variationValues = '';
       if (productDetail.isVariant()) {
         var variationAttrs = productDetail.variationModel.getProductVariationAttributes();
         for(var i = 0; i < variationAttrs.length; i++) {
           var VA = variationAttrs[i];
           var selectedValue = productDetail.variationModel.getSelectedValue(VA);
-          if(selectedValue) {
+          if (selectedValue) {
             variationValues = variationValues + selectedValue.displayValue;
-            if(i < (variationAttrs.length - 1)) {
+            if (i < (variationAttrs.length - 1)) {
               variationValues = variationValues + ' | ';
             }
           }
@@ -158,13 +155,13 @@ function prepareOrderPayload(order, isFutureOrder, mailType) {
         'Replenishment': replenishment,
         'Product Variant': variationValues,
         'Price Value': productLineItem.price.value,
-        'Product Image URL': productDetail.getImage("hi-res") ? productDetail.getImage("hi-res").getAbsURL().toString() : null,
+        'Product Image URL': productDetail.getImage('hi-res') ? productDetail.getImage('hi-res').getAbsURL().toString() : null,
         'Is Sample': isSample
       });
 
     }
 
-		//Append gift card
+		// Append gift card
     var giftCertificateLineItems = order.giftCertificateLineItems;
     var giftLineItem = {};
     var giftLineItemsArray = [];
@@ -174,7 +171,7 @@ function prepareOrderPayload(order, isFutureOrder, mailType) {
       var giftCardProductDetail = app.getModel('Product').get(giftCardId).object;
       var giftCardImage = '';
       if (!empty(giftCardProductDetail)) {
-        giftCardImage = giftCardProductDetail.getImage("large").getAbsURL().toString();
+        giftCardImage = giftCardProductDetail.getImage('large').getAbsURL().toString();
       }
       for(var j in giftCertificateLineItems) {
         giftLineItem = giftCertificateLineItems[j];
@@ -205,7 +202,6 @@ function prepareOrderPayload(order, isFutureOrder, mailType) {
       });
     }
 
-
     // Get the coupon attached to the order
     var discountCoupon = '';
     var shippingLineItems = order.shipments[0].shippingLineItems;
@@ -224,11 +220,9 @@ function prepareOrderPayload(order, isFutureOrder, mailType) {
           }
         }
       }
-
     } else {
       discountCoupon = '';
     }
-
 
     // Payment Details
     paymentInstruments = order.paymentInstruments;
@@ -258,7 +252,7 @@ function prepareOrderPayload(order, isFutureOrder, mailType) {
     var merchandiseTotal = merchTotalExclOrderDiscounts.add(order.giftCertificateTotalPrice);
     var merchandiseTotalString = dw.util.StringUtils.formatMoney(dw.value.Money(merchandiseTotal.value, session.getCurrency().getCurrencyCode()));
 
-    //discounts
+    // discounts
     var orderDiscount = merchTotalExclOrderDiscounts.subtract( merchTotalInclOrderDiscounts );
     var orderDiscountString = dw.util.StringUtils.formatMoney(dw.value.Money(orderDiscount.value, session.getCurrency().getCurrencyCode()));
 
@@ -301,12 +295,10 @@ function prepareOrderPayload(order, isFutureOrder, mailType) {
     } else {
       orderDetails['Discount'] = '';
     }
-
   }
 
   // Order Details
-  var orderDate = new Date(order.creationDate);
-  var orderCreationDate = dw.util.StringUtils.formatCalendar(new dw.util.Calendar(orderDate), 'yyyy-MM-dd' );
+  var orderCreationDate = dw.util.StringUtils.formatCalendar(new dw.util.Calendar(new Date(order.creationDate)), 'yyyy-MM-dd' );
   orderDetails['Order Number'] = order.orderNo;
   orderDetails['Order Date'] = orderCreationDate;
   orderDetails['Customer Number'] = (order.customerNo) ? order.customerNo : '';
@@ -316,6 +308,7 @@ function prepareOrderPayload(order, isFutureOrder, mailType) {
   orderDetails['Card Type'] = creditCardType;
   orderDetails['Gift Card Last Four'] = maskedGiftCertificateCode;
   orderDetails['Promo Code'] = discountCoupon;
+
   // orderDetails['Promo ID'] = promotionID;
   var promoType = '';
   var position = discountCoupon.search('GIFT');
@@ -326,12 +319,12 @@ function prepareOrderPayload(order, isFutureOrder, mailType) {
   if (position === 0) {
     promoType = 'Code';
   }
-	orderDetails['Replenishment Order'] = isReplenishmentOrder;
+	orderDetails['Replenishment Order'] = (mailType !== null && mailType === 'Auto Delivery Order Confirmation') ? true : false;
 
   // Billing Address
   var billingaddress = [];
   billingaddress.push({
-    'First Name': orderBillingAddressfirstName,
+    'First Name': orderBillingAddressFirstName,
     'Last Name':orderBillingAddressLastName,
     'Address1': orderBillingAddressAddress1,
     'Address2': orderBillingAddressAddress2,
@@ -357,25 +350,20 @@ function prepareOrderPayload(order, isFutureOrder, mailType) {
     });
 
 	// Add product / billing / shipping
-
-  var accountDetails = URLUtils.https('Account-Show').toString();
   orderDetails['product_line_items'] = productLineItemsArray;
   orderDetails['Gift Items'] = giftLineItemsArray;
   orderDetails['Billing Address'] = billingaddress;
   orderDetails['Shipping Address'] = shippingaddress;
-  orderDetails['Manage Order URL'] = accountDetails;
+  orderDetails['Manage Order URL'] = URLUtils.https('Account-Show').toString();;
   orderDetails['Items'] = items;
   orderDetails['Item Count'] = itemCount;
   orderDetails['Item Primary Categories'] = itemPrimaryCategories;
   orderDetails['Item Categories'] = require('*/cartridge/scripts/utils/klaviyo/KlaviyoUtils').removeDuplicates(itemCategories);
-  orderDetails["$value"] = orderTotal;
-  orderDetails["$event_id"] = mailType + '-' + order.orderNo;
-
+  orderDetails['$value'] = orderTotal;
+  orderDetails['$event_id'] = mailType + '-' + order.orderNo;
   orderDetails['Tracking Number'] = (order.shipments[0].trackingNumber) ? order.shipments[0].trackingNumber : '';
-  var shipment = order.shipments[0];
 
   return orderDetails;
-
 }
 
 /** Testable functions **/
