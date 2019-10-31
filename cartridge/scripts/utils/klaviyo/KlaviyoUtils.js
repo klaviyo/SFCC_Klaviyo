@@ -84,7 +84,7 @@ function preparePayload(email, data, event) {
  * @param giftCard
  * @returns {Object}
  */
-function preparegiftCardObject(giftCard) {
+function prepareGiftCardObject(giftCard) {
   return {
     'Product Name': 'e-Giftcard',
     'Recipient Email': giftCard.recipientEmail,
@@ -135,7 +135,7 @@ function prepareViewedProductEventData(pageProductID, viewedProduct) {
     viewedProductUPC: viewedProduct.UPC,
     viewedProductCategories: createCategories(viewedProduct),
     viewedProductPrimaryCategory: !empty(viewedProduct.getPrimaryCategory()) ? viewedProduct.getPrimaryCategory().displayName : '',
-    viewedProductImage: viewedProduct.getImage('large') ? viewedProduct.getImage("large").getAbsURL() : null,
+    viewedProductImage: viewedProduct.getImage('large') ? viewedProduct.getImage('large').getAbsURL() : null,
     viewedProductPrice: viewedProduct.getPriceModel().getPrice().getValue() !== 0 ? viewedProduct.getPriceModel().getPrice().getValue() : viewedProduct.getPriceModel().getMinPrice().getValue()
   };
 }
@@ -229,7 +229,7 @@ function prepareOrderConfirmationEventForKlaviyo(currentOrder) {
 
       /* klData["Item Count"]++ */
       var giftCard = giftCertCollection[giftCertIndex];
-      orderGiftCards.push(preparegiftCardObject(giftCard));
+      orderGiftCards.push(prepareGiftCardObject(giftCard));
     }
   }
   // send an event for transactional gift certificate emails
@@ -404,16 +404,11 @@ function buildCartDataLayer() {
 }
 
 module.exports = {
-	klaviyoTrackEvent: klaviyoTrackEvent,
+  klaviyoTrackEvent: klaviyoTrackEvent,
+  preparePayload: preparePayload,
 	prepareViewedProductEventData: prepareViewedProductEventData,
-	prepareProductObj: prepareProductObj,
-	preparegiftCardObject: preparegiftCardObject,
 	removeDuplicates: removeDuplicates,
-	prepareCheckoutEventForKlaviyo: prepareCheckoutEventForKlaviyo,
-	prepareOrderConfirmationEventForKlaviyo: prepareOrderConfirmationEventForKlaviyo,
-	prepareAddToCartEventForKlaviyo: prepareAddToCartEventForKlaviyo,
 	sendMailForShipmentConfirmation: sendMailForShipmentConfirmation,
-	createCategories: createCategories,
 	buildDataLayer: buildDataLayer,
 	buildCartDataLayer: buildCartDataLayer
 };
