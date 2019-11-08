@@ -2,9 +2,9 @@
 
 /* Script Modules */
 var Site = require('dw/system/Site');
-var app = require('app_controllers/cartridge/scripts/app');
-var guard = require('app_controllers/cartridge/scripts/guard');
-let r = require('app_controllers/cartridge/scripts/util/Response');
+var app = require('*/cartridge/scripts/app');
+var guard = require('*/cartridge/scripts/guard');
+let r = require('*/cartridge/scripts/util/Response');
 var Logger = require('dw/system/Logger');
 /* API Includes */
 var Transaction = require('dw/system/Transaction');
