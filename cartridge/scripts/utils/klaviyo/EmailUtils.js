@@ -15,7 +15,7 @@ var app = require('app_controllers/cartridge/scripts/app');
 function sendOrderEmail(order, mailType) {
   var logger = Logger.getLogger('Klaviyo', 'EmailUtils - sendOrderEmail()');
   try {
-    var isFutureOrder = (mailType === 'Auto Delivery Order Confirmation') ? true : false;
+    var isFutureOrder = (mailType.toString() === 'Auto Delivery Order Confirmation') ? true : false;
     var orderPayload = prepareOrderPayload(order, isFutureOrder, mailType);
     require('int_klaviyo/cartridge/scripts/utils/klaviyo/KlaviyoUtils').klaviyoTrackEvent(order.getCustomerEmail(), orderPayload, mailType);
   } catch (e) {
@@ -138,7 +138,7 @@ function prepareOrderPayload(order, isFutureOrder, mailType) {
         for(var categoryCount = 0; categoryCount < allCategories.length; categoryCount++) {
           category = allCategories[categoryCount];
           itemCategories.push(category.displayName);
-          if (category.ID === 'samples') {
+          if (category.ID.toString() === 'samples') {
             isSample = true;
           }
         }
@@ -213,7 +213,7 @@ function prepareOrderPayload(order, isFutureOrder, mailType) {
         if (couponLineItems && couponLineItems.length > 0) {
           var couponLineItem = {};
           for (var j in couponLineItems) {
-            if (couponLineItems[j].statusCode === 'APPLIED') {
+            if (couponLineItems[j].statusCode.toString() === 'APPLIED') {
               discountCoupon = couponLineItems[j].couponCode;
               break;
             }

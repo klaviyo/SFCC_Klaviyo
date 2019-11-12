@@ -2,10 +2,10 @@
 
 /* Script Modules */
 var Site = require('dw/system/Site');
-var app = require('app_controllers/cartridge/scripts/app');
-var guard = require('app_controllers/cartridge/scripts/guard');
-let r = require('app_controllers/cartridge/scripts/util/Response');
-var Logger = require('dw/system/Logger');
+var app = require('*/cartridge/scripts/app');
+var guard = require('*/cartridge/scripts/guard');
+var r = require('*/cartridge/scripts/util/Response');
+var Logger = require('d/w/system/Logger');
 /* API Includes */
 var Transaction = require('dw/system/Transaction');
 var ISML = require('dw/template/ISML');
