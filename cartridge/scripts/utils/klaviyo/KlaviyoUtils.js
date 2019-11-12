@@ -11,9 +11,9 @@ var WHITELISTED_EVENTS = ['Searched Site', 'Viewed Product',
  * Uses the service framework to get the Klaviyo Service configuration (please
  * see metadata/klaviyo-services.xml) and executes a get call with the payload
  * generated from the preparePayload() method.
- * 
+ *
  * This is a track API call. Please refer https://www.klaviyo.com/docs/http-api
- * 
+ *
  * @param email
  * @param data
  * @param event
@@ -53,7 +53,7 @@ function klaviyoTrackEvent(email, data, event) {
 /**
  * Prepares Track API Payload Data in format per
  * https://www.klaviyo.com/docs/http-api
- * 
+ *
  * @param email
  * @param data
  * @param event
@@ -81,21 +81,10 @@ function preparePayload(email, data, event) {
 
 /**
  * Prepares GiftCard Object and set necessary details
- * 
+ *
  * @param giftCard
  * @returns {Object}
  */
-<<<<<<< HEAD
-function prepareGiftCardObject(giftCard) {
-  return {
-    'Product Name': 'e-Giftcard',
-    'Recipient Email': giftCard.recipientEmail,
-    'Recipient Name': giftCard.recipientName,
-    'Sender Name': giftCard.senderName,
-    'Message': giftCard.message,
-    'Value': giftCard.price.value
-  };
-=======
 function preparegiftCardObject(giftCard) {
 	return {
 		'Product Name' : 'e-Giftcard',
@@ -105,13 +94,12 @@ function preparegiftCardObject(giftCard) {
 		'Message' : giftCard.message,
 		'Value' : giftCard.price.value
 	};
->>>>>>> dfd9b5ac2a0f177402f6ff407fe6615acdf4a721
 }
 
 /**
  * Prepares Product Object and set necessary product details
  * https://www.klaviyo.com/docs/http-api
- * 
+ *
  * @param lineItem
  * @param basketProduct
  * @param currentProductID
@@ -139,26 +127,12 @@ function prepareProductObj(lineItem, basketProduct, currentProductID) {
 
 /**
  * Prepares Viewed Product Object and set necessary details
- * 
+ *
  * @param pageProductID
  * @param viewedProduct
  * @returns {Object}
  */
 function prepareViewedProductEventData(pageProductID, viewedProduct) {
-<<<<<<< HEAD
-  return {
-    event: 'Viewed Product',
-    viewedProductID: pageProductID,
-    viewedProductName: viewedProduct.name,
-    viewedProductPage: viewedProduct.getPageURL(),
-    viewedProductPageURL: require('dw/web/URLUtils').https('Product-Show', 'pid', pageProductID).toString(),
-    viewedProductUPC: viewedProduct.UPC,
-    viewedProductCategories: createCategories(viewedProduct),
-    viewedProductPrimaryCategory: !empty(viewedProduct.getPrimaryCategory()) ? viewedProduct.getPrimaryCategory().displayName : '',
-    viewedProductImage: viewedProduct.getImage('large') ? viewedProduct.getImage('large').getAbsURL() : null,
-    viewedProductPrice: viewedProduct.getPriceModel().getPrice().getValue() !== 0 ? viewedProduct.getPriceModel().getPrice().getValue() : viewedProduct.getPriceModel().getMinPrice().getValue()
-  };
-=======
 	return {
 		event : 'Viewed Product',
 		viewedProductID : pageProductID,
@@ -178,7 +152,6 @@ function prepareViewedProductEventData(pageProductID, viewedProduct) {
 				.getValue() : viewedProduct.getPriceModel().getMinPrice()
 				.getValue()
 	};
->>>>>>> dfd9b5ac2a0f177402f6ff407fe6615acdf4a721
 }
 
 // for creating catagories of product
@@ -205,7 +178,7 @@ function createCategories(product) {
 
 /**
  * Removing duplicate items from an array
- * 
+ *
  * @param array
  * @returns array
  */
@@ -261,33 +234,6 @@ function prepareCheckoutEventForKlaviyo(currentBasket) {
 // prepare order confirmation and orderplaced related event data for klaviyo
 function prepareOrderConfirmationEventForKlaviyo(currentOrder) {
 	try {
-<<<<<<< HEAD
-	var Site = require('dw/system/Site');
-  var EmailUtils = require('~/cartridge/scripts/utils/klaviyo/EmailUtils');
-  var sitegenesisOrder = EmailUtils.prepareOrderPayload(currentOrder, false, 'orderConfirmation');
-  klaviyoTrackEvent(currentOrder.getCustomerEmail(), sitegenesisOrder, 'Order Confirmation');
-
-  // giftcards
-  var giftCertCollection = currentOrder.getGiftCertificateLineItems().toArray();
-  var orderGiftCards = [];
-
-  for (var giftCertIndex = 0; giftCertIndex < giftCertCollection.length; giftCertIndex++) {
-    // gift certificates don't count as orderItems so we need to reconcile that ourselves
-    if (Site.getCurrent().getCustomPreferenceValue('EgiftProduct-ID')) {
-
-      /* klData["Item Count"]++ */
-      var giftCard = giftCertCollection[giftCertIndex];
-      orderGiftCards.push(prepareGiftCardObject(giftCard));
-    }
-  }
-  // send an event for transactional gift certificate emails
-  for (var totalOrderGiftCards = 0; totalOrderGiftCards < orderGiftCards.length; totalOrderGiftCards++) {
-    klaviyoTrackEvent(theGiftCard['Recipient Email'], orderGiftCards[totalOrderGiftCards], 'e-Giftcard Notification');
-  }
-
-	} catch(e) {
-    klData.data.debug_error = [e.message,e.lineNumber];
-=======
 		var Site = require('dw/system/Site');
 		var EmailUtils = require('~/cartridge/scripts/utils/klaviyo/EmailUtils');
 		var sitegenesisOrder = EmailUtils.prepareOrderPayload(currentOrder,
@@ -319,7 +265,6 @@ function prepareOrderConfirmationEventForKlaviyo(currentOrder) {
 
 	} catch (e) {
 		klData.data.debug_error = [ e.message, e.lineNumber ];
->>>>>>> dfd9b5ac2a0f177402f6ff407fe6615acdf4a721
 	}
 }
 
@@ -496,7 +441,6 @@ function buildCartDataLayer() {
 }
 
 module.exports = {
-<<<<<<< HEAD
   klaviyoTrackEvent: klaviyoTrackEvent,
   preparePayload: preparePayload,
 	prepareViewedProductEventData: prepareViewedProductEventData,
@@ -504,20 +448,6 @@ module.exports = {
 	sendMailForShipmentConfirmation: sendMailForShipmentConfirmation,
 	buildDataLayer: buildDataLayer,
 	buildCartDataLayer: buildCartDataLayer
-=======
-	klaviyoTrackEvent : klaviyoTrackEvent,
-	prepareViewedProductEventData : prepareViewedProductEventData,
-	prepareProductObj : prepareProductObj,
-	preparegiftCardObject : preparegiftCardObject,
-	removeDuplicates : removeDuplicates,
-	prepareCheckoutEventForKlaviyo : prepareCheckoutEventForKlaviyo,
-	prepareOrderConfirmationEventForKlaviyo : prepareOrderConfirmationEventForKlaviyo,
-	prepareAddToCartEventForKlaviyo : prepareAddToCartEventForKlaviyo,
-	sendMailForShipmentConfirmation : sendMailForShipmentConfirmation,
-	createCategories : createCategories,
-	buildDataLayer : buildDataLayer,
-	buildCartDataLayer : buildCartDataLayer
->>>>>>> dfd9b5ac2a0f177402f6ff407fe6615acdf4a721
 };
 
 // HTTP Services
@@ -527,7 +457,7 @@ var KlaviyoTrackService = ServiceRegistry.createService('KlaviyoTrackService',
 			 * Create the service request - Set request method to be the HTTP
 			 * GET method - Construct request URL - Append the request HTTP
 			 * query string as a URL parameter
-			 * 
+			 *
 			 * @param {dw.svc.HTTPService}
 			 *            svc - HTTP Service instance
 			 * @param {Object}
@@ -540,7 +470,7 @@ var KlaviyoTrackService = ServiceRegistry.createService('KlaviyoTrackService',
 			/**
 			 * JSON parse the response text and return it in configured retData
 			 * object
-			 * 
+			 *
 			 * @param {dw.svc.HTTPService}
 			 *            svc - HTTP Service instance
 			 * @param {dw.net.HTTPClient}
