@@ -1,0 +1,19 @@
+<!--- TEMPLATENAME: footer-subscribe.isml --->
+<isif condition="${dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_enabled')}">
+	<isset name="formURL" value="Klaviyo-Subscribe" scope="page" />
+	<form action="${URLUtils.url(formURL)}" method="post" name="subscribe-form" id="subscribe-form">
+	    <div class="row">
+	        <div class="col-sm-5">
+	            <div class="input-group">
+	                <input type="text" id="emailsignup" class="form-control required email" name ="emailsignup" placeholder="Email">
+	                <input type="hidden" name="${pdict.csrf.tokenName}" value="${pdict.csrf.token}"/>
+	                <input type="hidden" name="source" value="home"/>
+	                <span class="input-group-btn">
+	                    <button type="submit" class="btn btn-primary">Subscribe</button>
+	                </span>
+	            </div>
+	        </div>
+	        <div class="col-sm-7 email-description">Sign up for email to receive 15% off your first order.</div>
+	    </div>
+	</form>
+</isif>
