@@ -7,6 +7,9 @@ var WHITELISTED_EVENTS = ['Searched Site', 'Viewed Product',
 		'Viewed Category', 'Added to Cart', 'Started Checkout',
 		'Order Confirmation'];
 
+var API_BODY_SUCCESS = 1;
+var API_BODY_FAIL = 0;
+
 /**
  * Uses the service framework to get the Klaviyo Service configuration (please
  * see metadata/klaviyo-services.xml) and executes a get call with the payload
@@ -25,7 +28,7 @@ function klaviyoTrackEvent(email, data, event) {
 
 	if (KlaviyoTrackService === null) {
 		logger.error('klaviyoTrackEvent() failed for email: ' + email + '. Service Connection for send email via Klaviyo returned null.');
-		return 0;
+		return API_BODY_FAIL;
 	}
 
 	var klaviyoData = preparePayload(email, data, event);
@@ -36,17 +39,17 @@ function klaviyoTrackEvent(email, data, event) {
 
 	if (result === null) {
 		logger.error('Result for send email via Klaviyo returned null. Payload info: ' + klaviyoData);
-		return 0;
+		return API_BODY_FAIL;
 	}
 
 	var resultObj = JSON.parse(result.object);
 
 	if (resultObj === 1) {
 		logger.info('Send email via Klaviyo is successful. Payload info ' + klaviyoData);
-		return 1;
+		return API_BODY_SUCCESS;
 	} else {
 		logger.error('Send email via Klaviyo failed. Payload info ' + klaviyoData);
-		return 0;
+		return API_BODY_FAIL;
 	}
 }
 
