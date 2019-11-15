@@ -198,6 +198,7 @@ function removeDuplicates(items) {
 // prepare data for checkout cart event to klaviyo
 function prepareCheckoutEventForKlaviyo(currentBasket) {
 	var productMgr = require('dw/catalog/ProductMgr');
+	var klData = {};
 	try {
 		klData = {
 			'event' : 'Started Checkout',
