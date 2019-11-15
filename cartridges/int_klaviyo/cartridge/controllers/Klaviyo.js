@@ -5,7 +5,7 @@ var Site = require('dw/system/Site');
 var app = require('*/cartridge/scripts/app');
 var guard = require('*/cartridge/scripts/guard');
 var r = require('*/cartridge/scripts/util/Response');
-var Logger = require('d/w/system/Logger');
+var Logger = require('dw/system/Logger');
 /* API Includes */
 var Transaction = require('dw/system/Transaction');
 var ISML = require('dw/template/ISML');
@@ -21,7 +21,7 @@ var createDate = new Date();
 
 
 /**
- * Controller that will send the necessary data required for klaviyo to track the user event's 
+ * Controller that will send the necessary data required for klaviyo to track the user event's
  * such as checkout,order confirmation,searching etc and renders the renders the klaviyo_tag isml file
  *
  * @module controllers/Klaviyo
@@ -65,12 +65,12 @@ var RenderKlaviyoAddToCart = function() {
 
 
 /**
- *end point for testing shipping confirmation event 
- * 
+ *end point for testing shipping confirmation event
+ *
 */
 
 function sendKlaviyoShipmentEmail() {
-	
+
   var logger = Logger.getLogger('KlaviyoJobs', 'Klaviyo - sendMailsJob()');
   var OrderMgr = require('dw/order/OrderMgr');
   var parameterMap = request.httpParameterMap;
@@ -89,13 +89,13 @@ function sendKlaviyoShipmentEmail() {
 }
 
 /**
- * 
+ *
  *Subscribe End Point for handling news letter's subsciption
- * 
+ *
 */
 
 function subscribe() {
-	
+
   var email = app.getForm('subscribe.email').value();
   var source = !empty(request.httpParameterMap.source) ? request.httpParameterMap.source.stringValue : '';
   var KlaviyoSubscriptionUtils = require('~/cartridge/scripts/utils/klaviyo/KlaviyoSubscriptionUtils');
@@ -107,8 +107,8 @@ function subscribe() {
 }
 
 /**
- *Renders the footer_subscriibe template  
- * 
+ *Renders the footer_subscriibe template
+ *
 */
 
 function footerSubscribe() {
@@ -123,5 +123,3 @@ exports.sendKlaviyoShipmentEmail = guard.ensure(['get'], sendKlaviyoShipmentEmai
 exports.FooterSubscribe = guard.ensure(['get'], footerSubscribe);
 exports.RenderKlaviyo = guard.ensure(['get'], RenderKlaviyo);
 exports.RenderKlaviyoAddToCart = guard.ensure(['get'], RenderKlaviyoAddToCart);
-
-
