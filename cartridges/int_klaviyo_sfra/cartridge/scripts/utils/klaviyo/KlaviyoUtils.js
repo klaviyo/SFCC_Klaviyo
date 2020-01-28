@@ -11,6 +11,7 @@ var orderMgr= require('dw/order/OrderMgr');
 var basketMgr= require('dw/order/BasketMgr');
 var catalogMgr= require('dw/catalog/CatalogMgr');
 var klaviyoToken = Site.getCurrent().getCustomPreferenceValue('klaviyo_account');
+var imageSize = Site.getCurrent().getCustomPreferenceValue('klaviyo_image_size') || null
 var createDate = new Date();
 
 var WHITELISTED_EVENTS = ['Searched Site','Viewed Product','Viewed Category','Added to Cart','Started Checkout','Placed Order','Ordered Product'];
@@ -126,7 +127,7 @@ function prepareProductObj(lineItem,basketProduct,currentProductID){
 	 productObj = {};
      productObj["Product ID"] = currentProductID;
      productObj["Product Name"] = basketProduct.name;
-     productObj["Product Image URL"] = basketProduct.getImage("large").getAbsURL().toString();
+     productObj["Product Image URL"] = imageSize ? basketProduct.getImage(imageSize).getAbsURL().toString() : null;
      productObj["Price"] = dw.util.StringUtils.formatMoney(dw.value.Money(basketProduct.getPriceModel().getPrice().value, session.getCurrency().getCurrencyCode()));
      productObj["Product Description"] = basketProduct.pageDescription ? basketProduct.pageDescription.toString() : null;
      productObj["Product Page URL"] = require('dw/web/URLUtils').https('Product-Show', 'pid', currentProductID).toString();
@@ -150,7 +151,6 @@ function prepareViewedProductEventData(pageProductID,viewedProduct){
 	 klData.event = "Viewed Product";
      klData.viewedProductID = pageProductID;
      klData.viewedProductName = viewedProduct.name;
-     viewedProduct.getImage("large") ? klData.viewedProductImage = viewedProduct.getImage("large").getAbsURL() : null;
      klData.viewedProductPage = viewedProduct.getPageURL();
      var price = viewedProduct.getPriceModel().getPrice().getValue();
      if(empty(price) || price <=0){
@@ -324,7 +324,7 @@ function prepareAddToCartEventForKlaviyo(klData){
         klData.lineItems.push({
           productID: currentProductID,
           productName: basketProduct.name,
-          productImageURL: basketProduct.getImage("large").getAbsURL().toString(),
+          productImageURL: imageSize ? basketProduct.getImage(imageSize).getAbsURL().toString() : null,
           productPageURL:   require('dw/web/URLUtils').https('Product-Show', 'pid', currentProductID).toString(),
           price: dw.util.StringUtils.formatMoney(dw.value.Money(basketProduct.getPriceModel().getPrice().value, session.getCurrency().getCurrencyCode())),
           productUPC: basketProduct.UPC,

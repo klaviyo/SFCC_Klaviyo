@@ -1,7 +1,9 @@
 'use strict';
 
+var Site = require('dw/system/Site');
 var Logger = require('dw/system/Logger');
 var ServiceRegistry = require('dw/svc/LocalServiceRegistry');
+var imageSize = Site.getCurrent().getCustomPreferenceValue('klaviyo_image_size') || null
 
 var WHITELISTED_EVENTS = ['Searched Site', 'Viewed Product',
 		'Viewed Category', 'Added to Cart', 'Started Checkout',
@@ -112,8 +114,8 @@ function prepareProductObj(lineItem, basketProduct, currentProductID) {
 	return {
 		'Product ID' : currentProductID,
 		'Product Name' : basketProduct.name,
-		'Product Image URL' : basketProduct.getImage("large").getAbsURL()
-				.toString(),
+		'Product Image URL' : imageSize ? basketProduct.getImage(imageSize).getAbsURL()
+				.toString() : null,
 		'Price' : dw.util.StringUtils.formatMoney(dw.value.Money(basketProduct
 				.getPriceModel().getPrice().value, session.getCurrency()
 				.getCurrencyCode())),
@@ -148,8 +150,7 @@ function prepareViewedProductEventData(pageProductID, viewedProduct) {
 		viewedProductPrimaryCategory : !empty(viewedProduct
 				.getPrimaryCategory()) ? viewedProduct.getPrimaryCategory().displayName
 				: '',
-		viewedProductImage : viewedProduct.getImage('large') ? viewedProduct
-				.getImage("large").getAbsURL() : null,
+		viewedProductImage : imageSize ? viewedProduct.getImage(imageSize).getAbsURL() : null,
 		viewedProductPrice : viewedProduct.getPriceModel().getPrice()
 				.getValue() !== 0 ? viewedProduct.getPriceModel().getPrice()
 				.getValue() : viewedProduct.getPriceModel().getMinPrice()
@@ -199,6 +200,7 @@ function removeDuplicates(items) {
 function prepareCheckoutEventForKlaviyo(currentBasket) {
 	var productMgr = require('dw/catalog/ProductMgr');
 	var klData = {};
+	var basketItems = currentBasket.getProductLineItems().toArray();
 	try {
 		klData = {
 			'event' : 'Started Checkout',
@@ -209,7 +211,6 @@ function prepareCheckoutEventForKlaviyo(currentBasket) {
 			'Items' : [],
 			'$email' : currentBasket.customerEmail
 		};
-		basketItems = currentBasket.getProductLineItems().toArray();
 
 		for (itemIndex = 0; itemIndex < basketItems.length; itemIndex++) {
 			lineItem = basketItems[itemIndex];

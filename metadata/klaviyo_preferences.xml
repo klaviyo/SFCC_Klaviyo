@@ -6,13 +6,13 @@
                 <display-name xml:lang="x-default">Klaviyo Account</display-name>
                 <description xml:lang="x-default">Your Klaviyo account identifier</description>
                 <type>string</type>
-                <mandatory-flag>false</mandatory-flag>
+                <mandatory-flag>true</mandatory-flag>
                 <externally-managed-flag>false</externally-managed-flag>
                 <min-length>0</min-length>
                 <field-length>0</field-length>
             </attribute-definition>
             <attribute-definition attribute-id="klaviyo_api_key">
-                <display-name xml:lang="x-default">Klaviyo API Key</display-name>
+                <display-name xml:lang="x-default">Klaviyo Private API Key</display-name>
                 <type>string</type>
                 <mandatory-flag>false</mandatory-flag>
                 <externally-managed-flag>false</externally-managed-flag>
@@ -21,7 +21,14 @@
             <attribute-definition attribute-id="klaviyo_enabled">
                 <display-name xml:lang="x-default">Klaviyo Enabled</display-name>
                 <type>boolean</type>
-                <mandatory-flag>false</mandatory-flag>
+                <mandatory-flag>true</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <default-value>false</default-value>
+            </attribute-definition>
+            <attribute-definition attribute-id="klaviyo_image_size">
+                <display-name xml:lang="x-default">Image type for Klaviyo</display-name>
+                <type>boolean</type>
+                <mandatory-flag>true</mandatory-flag>
                 <externally-managed-flag>false</externally-managed-flag>
                 <default-value>false</default-value>
             </attribute-definition>

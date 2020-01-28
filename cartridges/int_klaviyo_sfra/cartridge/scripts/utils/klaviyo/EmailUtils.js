@@ -6,9 +6,11 @@ var Resource = require('dw/web/Resource');
 var URLUtils = require('dw/web/URLUtils');
 var productMgr = require('dw/catalog/ProductMgr');
 
+var imageSize = Site.getCurrent().getCustomPreferenceValue('klaviyo_image_size') || null
+
 /**
  * Sends an order to Klaviyo with the order email type.
- *  
+ *
  * @param order
  * @param mailType
  * @returns
@@ -35,10 +37,10 @@ function sendOrderEmail(order, mailType) {
  * @returns
  */
 function prepareOrderPayload(order, isFutureOrder, mailType) {
-	
+
 	var orderDetails = {};
 	var isReplenishmentOrder = (mailType != null && mailType == 'Auto Delivery Order Confirmation') ? true : false;
-	
+
 	// Billing Address
 	var orderBillingAddressfirstName = (order.billingAddress.firstName)?order.billingAddress.firstName:'';
 	var orderBillingAddressLastName = (order.billingAddress.lastName)?order.billingAddress.lastName:'';
@@ -49,7 +51,7 @@ function prepareOrderPayload(order, isFutureOrder, mailType) {
 	var orderBillingAddressStateCode = (order.billingAddress.stateCode)?order.billingAddress.stateCode:'';
 	var orderBillingAddressCountryCode = (order.billingAddress.countryCode.value)?order.billingAddress.countryCode.value:'';
 	var orderBillingAddressPhone = (order.billingAddress.phone)?order.billingAddress.phone:'';
-	
+
 	// Shipping address
 	var orderShippingAddressFirstName = '';
 	var orderShippingAddressLastName = '';
@@ -59,12 +61,12 @@ function prepareOrderPayload(order, isFutureOrder, mailType) {
 	var orderShippingAddressPostalCode = '';
 	var orderShippingAddressStateCode = '';
 	var orderShippingAddressCountryCode = '';
-	var orderShippingAddressPhone = '';	
+	var orderShippingAddressPhone = '';
 	var productLineItems = '';
 	var paymentInstruments = '';
-	
+
 	if(order.shipments.length > 0){
-		
+
 		// Shipping Address
 		orderShippingAddressFirstName = (order.shipments[0].shippingAddress.firstName)?order.shipments[0].shippingAddress.firstName:'';
 		orderShippingAddressLastName = (order.shipments[0].shippingAddress.lastName)?order.shipments[0].shippingAddress.lastName:'';
@@ -75,10 +77,10 @@ function prepareOrderPayload(order, isFutureOrder, mailType) {
 		orderShippingAddressStateCode = (order.shipments[0].shippingAddress.stateCode)?order.shipments[0].shippingAddress.stateCode:'';
 		orderShippingAddressCountryCode = (order.shipments[0].shippingAddress.countryCode.value)?order.shipments[0].shippingAddress.countryCode.value:'';
 		orderShippingAddressPhone = (order.shipments[0].shippingAddress.phone)?order.shipments[0].shippingAddress.phone:'';
-		
+
 		var lineItems = order.getAllProductLineItems();
 		var iterator_lines = lineItems.iterator();
-		    
+
 		// Product Details
 		productLineItems = order.shipments[0].productLineItems;
 		var productLineItem = {};
@@ -87,7 +89,7 @@ function prepareOrderPayload(order, isFutureOrder, mailType) {
 		var itemCount = 0;
 		var itemPrimaryCategories = [];
 		var itemCategories = [];
-		
+
 		for(var j in productLineItems) {
 			productLineItem = productLineItems[j];
 		    var prdUrl = '';
@@ -95,20 +97,20 @@ function prepareOrderPayload(order, isFutureOrder, mailType) {
 		    var priceString = '';
 		    var priceValue = 0.0;
 		    var hasOsfSmartOrderRefill = false;
-		 
+
 
 		    prdUrl = require('dw/web/URLUtils').https('Product-Show', 'pid', productLineItem.productID).toString();
 		    var secondaryName = '';
-		    // Get the product secondary name 
+		    // Get the product secondary name
 		    var lineItemProduct = productLineItem.product;
 		    var productDetail = productMgr.getProduct(lineItemProduct.ID);
-		 
+
 		    if(!productLineItem.bonusProductLineItem) {
 		    	priceString = dw.util.StringUtils.formatMoney(dw.value.Money(productLineItem.price.value, session.getCurrency().getCurrencyCode()));
 		    } else {
 		    	priceString = dw.util.StringUtils.formatMoney(dw.value.Money(0, session.getCurrency().getCurrencyCode()));
 		    }
-		    
+
 		    //Variation values
 		    var variationValues = '';
 		    if(productDetail.isVariant()) {
@@ -121,12 +123,12 @@ function prepareOrderPayload(order, isFutureOrder, mailType) {
 			    		if(i < (variationAttrs.length - 1)) {
 			    			variationValues = variationValues + ' | ';
 			    		}
-		    		}			    		
+		    		}
 		    	}
 		    }
-		    
+
 			items.push(productLineItem.productID);
-			
+
 			itemCount = itemCount + productLineItem.quantity.value;
 			if(productDetail.variant) {
 				itemPrimaryCategories.push(productDetail.masterProduct.getPrimaryCategory().displayName);
@@ -147,7 +149,7 @@ function prepareOrderPayload(order, isFutureOrder, mailType) {
 					}
 				}
 			}
-			
+
 			productLineItemsArray.push({
 		        'ID': productLineItem.productID,
 		        'PRODUCT_NAME':productLineItem.productName,
@@ -159,24 +161,24 @@ function prepareOrderPayload(order, isFutureOrder, mailType) {
 		        'REPLENISHMENT': replenishment,
 		        'PRODUCT_VARIANT': variationValues,
 		        'PRICE_VALUE': productLineItem.price.value,
-		        'PRODUCT_IMG_URL': productDetail.getImage("large").getAbsURL().toString(),
+		        'PRODUCT_IMG_URL': imageSize ? productDetail.getImage(imageSize).getAbsURL().toString() : null,
 		        'IS_SAMPLE': isSample
 		    });
-			
+
 		}
-		
-		
-		//Append gift card			
+
+
+		//Append gift card
 		var giftCertificateLineItems = order.giftCertificateLineItems;
 		var giftLineItem = {};
 		var giftLineItemsArray = [];
 		if(giftCertificateLineItems && giftCertificateLineItems.length > 0){
-			orderDetails['GIFT_ITEM_PRESENT'] =  true; 
+			orderDetails['GIFT_ITEM_PRESENT'] =  true;
 			var giftCardId = dw.system.Site.getCurrent().getCustomPreferenceValue('EgiftProduct-ID')
 			var giftCardProductDetail = ProductMgr.getProduct(giftCardId);
 			var giftCardImage = '';
 			if(!empty(giftCardProductDetail)) {
-				giftCardImage = giftCardProductDetail.getImage("large").getAbsURL().toString();
+				giftCardImage = imageSize ? giftCardProductDetail.getImage(imageSize).getAbsURL().toString() : null;
 			}
 			for(var j in giftCertificateLineItems) {
 				giftLineItem = giftCertificateLineItems[j];
@@ -190,12 +192,12 @@ function prepareOrderPayload(order, isFutureOrder, mailType) {
 			        'MESSAGE': giftLineItem.message,
 			        'IMAGE': giftCardImage
 			    });
-				
+
 				items.push(Site.getCurrent().getCustomPreferenceValue('EgiftProduct-ID'));
 				itemCount = itemCount + 1;
 				itemPrimaryCategories.push('Gift cards');
 				itemCategories.push('Gift cards');
-			}				
+			}
 		} else {
 			orderDetails['GIFT_ITEM_PRESENT'] =  false;
 			giftLineItemsArray.push({
@@ -204,10 +206,10 @@ function prepareOrderPayload(order, isFutureOrder, mailType) {
 		        'SENDER_NAME': '',
 		        'SENDER_EMAIL': '',
 		        'PRICE': ''
-		    });				
+		    });
 		}
-		
-		// Get the coupon attached to the order 
+
+		// Get the coupon attached to the order
 		var discountCoupon = '';
 		var promotionID = '';
 		var shippingLineItems = order.shipments[0].shippingLineItems;
@@ -227,17 +229,17 @@ function prepareOrderPayload(order, isFutureOrder, mailType) {
 							}
 							break;
 						}
-						
+
 					}
-				}	
+				}
 			}
-			
+
 		} else {
 			discountCoupon = '';
-		}			
-		
+		}
 
-		// Payment Details 
+
+		// Payment Details
 		paymentInstruments = order.paymentInstruments;
 		var ccLastFourDigits = '';
 		var creditCardType = '';
@@ -248,23 +250,23 @@ function prepareOrderPayload(order, isFutureOrder, mailType) {
 			paymentInstrumentItem = paymentInstruments[j];
 			if(paymentInstrumentItem.creditCardNumberLastDigits) {
 				ccLastFourDigits = paymentInstrumentItem.maskedCreditCardNumber;
-				creditCardType = (paymentInstrumentItem.creditCardType)?paymentInstrumentItem.creditCardType:''; 
+				creditCardType = (paymentInstrumentItem.creditCardType)?paymentInstrumentItem.creditCardType:'';
 			}
 			if(paymentInstrumentItem.maskedGiftCertificateCode){
 				maskedGiftCertificateCode = paymentInstrumentItem.maskedGiftCertificateCode;
 			}
 		}
-		
-		
-		// Order Total 
+
+
+		// Order Total
 		var merchTotalExclOrderDiscounts = order.getAdjustedMerchandizeTotalPrice(false);
 		var merchTotalInclOrderDiscounts = order.getAdjustedMerchandizeTotalPrice(true);
-		
+
 
 		// Merchandise total
 		var merchandiseTotal = merchTotalExclOrderDiscounts.add(order.giftCertificateTotalPrice);
 		var merchandiseTotalString = dw.util.StringUtils.formatMoney(dw.value.Money(merchandiseTotal.value, session.getCurrency().getCurrencyCode()));
-		
+
 		//discounts
 		var orderDiscount = merchTotalExclOrderDiscounts.subtract( merchTotalInclOrderDiscounts );
 		var orderDiscountString = dw.util.StringUtils.formatMoney(dw.value.Money(orderDiscount.value, session.getCurrency().getCurrencyCode()));
@@ -277,19 +279,19 @@ function prepareOrderPayload(order, isFutureOrder, mailType) {
 		var shippingExclDiscounts = order.shippingTotalPrice;
 		var shippingInclDiscounts = order.getAdjustedShippingTotalPrice();
 		var shippingDiscount = shippingExclDiscounts.subtract( shippingInclDiscounts );
-		var shippingTotalCost = shippingExclDiscounts.subtract( shippingDiscount );			
-		var shippingTotalCostString = dw.util.StringUtils.formatMoney(dw.value.Money(shippingTotalCost.value, session.getCurrency().getCurrencyCode())); 
-	
+		var shippingTotalCost = shippingExclDiscounts.subtract( shippingDiscount );
+		var shippingTotalCostString = dw.util.StringUtils.formatMoney(dw.value.Money(shippingTotalCost.value, session.getCurrency().getCurrencyCode()));
+
 		// Tax
 		var totalTax = 0.00;
 		if(order.totalTax.available){
 			totalTax = order.totalTax.value;
 		} else if(order.giftCertificateTotalPrice.available){
 			totalTax = order.merchandizeTotalTax.value;
-		}  						
+		}
 		var totalTaxString = dw.util.StringUtils.formatMoney(dw.value.Money(totalTax, session.getCurrency().getCurrencyCode()));
-		
-		
+
+
 		// Order Total
 		var orderTotal = '';
 		if(order.totalNetPrice.available){
@@ -308,17 +310,17 @@ function prepareOrderPayload(order, isFutureOrder, mailType) {
 		} else {
 			orderDetails['DISCOUNT'] = '';
 		}
-		
+
 		// Add gift message if exists
 		var giftMsg = (order.shipments[0].giftMessage)?order.shipments[0].giftMessage:'';
 		orderDetails['GIFT_MESSAGE'] = giftMsg;
-		
-		
+
+
 	}
-	
+
 	// Order Details
 	var orderDate = new Date(order.creationDate);
-	var orderCreationDate = dw.util.StringUtils.formatCalendar(new dw.util.Calendar(orderDate), 'yyyy-MM-dd' );		
+	var orderCreationDate = dw.util.StringUtils.formatCalendar(new dw.util.Calendar(orderDate), 'yyyy-MM-dd' );
 	orderDetails['ORDER_NUMBER'] = order.orderNo;
 	orderDetails['ORDER_DATE'] = orderCreationDate;
 	orderDetails['CUSTOMER_NUMBER'] = (order.customerNo)?order.customerNo:'';
@@ -327,13 +329,13 @@ function prepareOrderPayload(order, isFutureOrder, mailType) {
 	orderDetails['CARD_LAST_FOUR_DIGITS'] = ccLastFourDigits;
 	orderDetails['CARD_TYPE'] = creditCardType;
 	orderDetails['EXP_DATE'] = '2015-07-29'; // NOT NEEDED
-	orderDetails['GIFT_CARD_LAST_FOUR'] = maskedGiftCertificateCode;		
+	orderDetails['GIFT_CARD_LAST_FOUR'] = maskedGiftCertificateCode;
 	orderDetails['PROMO_CODE'] = discountCoupon;
 	orderDetails['PROMO_ID'] = promotionID;
-	
-	
+
+
 	orderDetails['REPLENISHMENT_ORDER'] = isReplenishmentOrder;
-	
+
 	// Billing Address
 	var billingaddress = [];
 	billingaddress.push({
@@ -346,8 +348,8 @@ function prepareOrderPayload(order, isFutureOrder, mailType) {
         'STATE_CODE': orderBillingAddressStateCode,
         'COUNTRY_CODE': orderBillingAddressCountryCode,
         'PHONE': orderBillingAddressPhone
-    });		
-	
+    });
+
 	// Shipping Address
 	var shippingaddress = [];
 	shippingaddress.push({
@@ -361,8 +363,8 @@ function prepareOrderPayload(order, isFutureOrder, mailType) {
         'COUNTRY_CODE': orderShippingAddressCountryCode,
         'PHONE': orderShippingAddressPhone
     });
-	
-	// Add product / billing / shipping 
+
+	// Add product / billing / shipping
 
     var accountDetails = require('dw/web/URLUtils').https('Account-Show').toString();
 	orderDetails['PRODUCT'] = productLineItemsArray;
@@ -376,12 +378,12 @@ function prepareOrderPayload(order, isFutureOrder, mailType) {
 	orderDetails['ITEM_CATEGORIES'] = require('*/cartridge/scripts/utils/klaviyo/KlaviyoUtils').removeDuplicates(itemCategories);
 	orderDetails["$value"] = orderTotal;
 	orderDetails["$event_id"] = mailType + '-' + order.orderNo;
-	
+
 	orderDetails['TRACKING_NUMBER'] = (order.shipments[0].trackingNumber)?order.shipments[0].trackingNumber:'';
 	var shipment = order.shipments[0];
 
 	return orderDetails;
-	
+
 }
 
 module.exports = {

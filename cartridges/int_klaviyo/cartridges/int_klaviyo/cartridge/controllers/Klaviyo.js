@@ -88,38 +88,8 @@ function sendKlaviyoShipmentEmail() {
   }
 }
 
-/**
- *
- *Subscribe End Point for handling news letter's subsciption
- *
-*/
-
-function subscribe() {
-
-  var email = app.getForm('subscribe.email').value();
-  var source = !empty(request.httpParameterMap.source) ? request.httpParameterMap.source.stringValue : '';
-  var KlaviyoSubscriptionUtils = require('~/cartridge/scripts/utils/klaviyo/KlaviyoSubscriptionUtils');
-  if(KlaviyoSubscriptionUtils.subscribeToList(email,source)) {
-    r.renderJSON({status: 'success'});
-  } else {
-    r.renderJSON({status: 'alreadyconfirmed'});
-  }
-}
-
-/**
- *Renders the footer_subscriibe template
- *
-*/
-
-function footerSubscribe() {
-	app.getView().render('klaviyo/footer_subscribe');
-}
-
-
 /** Handles the form submission for subscription.
  * @see {@link module:controllers/Klaviyo~Subscribe} */
-exports.Subscribe = guard.ensure(['post', 'https', 'csrf'], subscribe);
 exports.sendKlaviyoShipmentEmail = guard.ensure(['get'], sendKlaviyoShipmentEmail);
-exports.FooterSubscribe = guard.ensure(['get'], footerSubscribe);
 exports.RenderKlaviyo = guard.ensure(['get'], RenderKlaviyo);
 exports.RenderKlaviyoAddToCart = guard.ensure(['get'], RenderKlaviyoAddToCart);

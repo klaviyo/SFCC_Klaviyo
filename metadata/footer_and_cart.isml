@@ -1,0 +1,17 @@
+
+
+<!-- Include this in the footer_UI.isml -->
+
+<isinclude url="${URLUtils.url('Klaviyo-RenderKlaviyo',
+'title', request.pageMetaData.title,
+'pagecontexttype', ('pageContext' in this && !empty(pageContext)) ? ''+pageContext.type : null, 'pagecontexttitle', ('pageContext' in this && !empty(pageContext)) ? ''+pageContext.title : null, 'searchterm', request.httpParameterMap.q.stringValue,
+'searchresultscount', (!empty(pdict.ProductSearchResult) ? ''+pdict.ProductSearchResult.count : null), 'productid', (!empty(pdict.Product) ? pdict.Product.ID : null),
+'pagecgid', request.httpParameterMap.cgid.stringValue,
+'orderno', (!empty(pdict.Order) ? pdict.Order.orderNo : null)
+)}" />
+
+
+<!-- Include this in the minicart.isml or cart.js or whatever the cart file is named -->
+
+<isif condition="${pdict.CurrentHttpParameterMap.cartAction == 'add' || pdict.CurrentHttpParameterMap.cartAction == 'update'}">
+<isinclude url="${URLUtils.url('Klaviyo-RenderKlaviyoAddToCart')}"/> </isif>

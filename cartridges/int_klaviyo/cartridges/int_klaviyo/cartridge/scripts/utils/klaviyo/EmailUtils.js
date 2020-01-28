@@ -4,6 +4,7 @@ var Site = require('dw/system/Site');
 var Logger = require('dw/system/Logger');
 var URLUtils = require('dw/web/URLUtils');
 var app = require('app_controllers/cartridge/scripts/app');
+var imageSize = Site.getCurrent().getCustomPreferenceValue('klaviyo_image_size') || null
 
 /**
  * Sends an order to Klaviyo with the order email type.
@@ -155,7 +156,7 @@ function prepareOrderPayload(order, isFutureOrder, mailType) {
         'Replenishment': replenishment,
         'Product Variant': variationValues,
         'Price Value': productLineItem.price.value,
-        'Product Image URL': productDetail.getImage('hi-res') ? productDetail.getImage('hi-res').getAbsURL().toString() : null,
+        'Product Image URL': imageSize ? productDetail.getImage(imageSize).getAbsURL().toString() : null,
         'Is Sample': isSample
       });
 
@@ -171,7 +172,7 @@ function prepareOrderPayload(order, isFutureOrder, mailType) {
       var giftCardProductDetail = app.getModel('Product').get(giftCardId).object;
       var giftCardImage = '';
       if (!empty(giftCardProductDetail)) {
-        giftCardImage = giftCardProductDetail.getImage('large').getAbsURL().toString();
+        giftCardImage = imageSize ? giftCardProductDetail.getImage(imageSize).getAbsURL().toString() : null;
       }
       for(var j in giftCertificateLineItems) {
         giftLineItem = giftCertificateLineItems[j];
