@@ -27,10 +27,10 @@
             </attribute-definition>
             <attribute-definition attribute-id="klaviyo_image_size">
                 <display-name xml:lang="x-default">Image type for Klaviyo</display-name>
-                <type>boolean</type>
+                <type>string</type>
                 <mandatory-flag>true</mandatory-flag>
                 <externally-managed-flag>false</externally-managed-flag>
-                <default-value>false</default-value>
+                <default-value>large</default-value>
             </attribute-definition>
         </custom-attribute-definitions>
         <group-definitions>
@@ -39,6 +39,7 @@
                 <attribute attribute-id="klaviyo_enabled"/>
                 <attribute attribute-id="klaviyo_api_key"/>
                 <attribute attribute-id="klaviyo_account"/>
+                <attribute attribute-id="klaviyo_image_size"/>
             </attribute-group>
         </group-definitions>
     </type-extension>
