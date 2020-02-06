@@ -2,7 +2,7 @@
 <iscomment>Add Klaviyo.js to page</iscomment>
 <script type="text/javascript">
 <isscript>
-importScript("utils/klaviyo/Klaviyo_TagUtils.ds");
+importScript("utils/klaviyo/klaviyoTagUtils.js");
 
 var currentUser = pdict.CurrentUser.profile;
 var currentParams = pdict.HttpParameterMap;

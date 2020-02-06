@@ -6,10 +6,10 @@ var csrfProtection = require('*/cartridge/scripts/middleware/csrf');
 
 /* API Includes */
 var klaviyoToken = require('dw/system/Site').getCurrent().getCustomPreferenceValue('klaviyo_account');
-var KlaviyoUtils = require('*/cartridge/scripts/utils/klaviyo/KlaviyoUtils');
+var klaviyoUtils = require('*/cartridge/scripts/utils/klaviyo/klaviyoUtils');
 
 /**
- * You have to add the values for Klaviyo Account, Klaviyo API Key in 
+ * You have to add the values for Klaviyo Account, Klaviyo API Key in
  * Merchant Tools -> Site Preferences -> Custom Site Preference -> Klaviyo
  * Change the value of Klaviyo Enabled as Yes
  */
@@ -21,7 +21,7 @@ server.get(
     	if(!dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_enabled')){
     		return;
     	}
-    	var klaviyoDataLayer = KlaviyoUtils.buildDataLayer();
+    	var klaviyoDataLayer = klaviyoUtils.buildDataLayer();
         res.render('/klaviyo/klaviyo_tag', {
         	klaviyoData : klaviyoDataLayer
         });
@@ -30,13 +30,27 @@ server.get(
 );
 
 server.get(
+  'RenderKlaviyoAddToCart',
+  server.middleware.https,
+  function(req, res, next) {
+    if(!dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_enabled')){
+      return
+    }
+    var klaviyoDataLayer = KlaviyoUtils,buildDataLayer();
+    res.render('/klaviyo/klaviyo_tag', {
+      klaviyoData : klaviyoDataLayer
+    });
+    next();
+)
+
+server.get(
     'FooterSubscribe',
     server.middleware.https,
     csrfProtection.generateToken,
     function (req, res, next) {
-    	
+
     	res.render('klaviyo/footer_subscribe');
-    	
+
         next();
     }
 );
@@ -49,8 +63,8 @@ server.post(
     	var email = req.form.emailsignup;
     	var source = req.form.source;
     	var statusMessage = null;
-    	var KlaviyoSubscriptionUtils = require('*/cartridge/scripts/utils/klaviyo/KlaviyoSubscriptionUtils');
-    	if(KlaviyoSubscriptionUtils.subscribeToList(email,source)) {
+    	var klaviyoSubscriptionUtils = require('*/cartridge/scripts/utils/klaviyo/klaviyoSubscriptionUtils');
+    	if(klaviyoSubscriptionUtils.subscribeToList(email,source)) {
     		statusMessage = 'Successfully subscribed.';
     	} else {
     		statusMessage = 'Already Subscribed';
@@ -69,11 +83,11 @@ server.get(
     	if(!dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_enabled')){
     		return;
     	}
-    	
+
     	var orderID = req.querystring.orderID;
     	if(!empty(orderID)){
-	    	var KlaviyoUtils = require('*/cartridge/scripts/utils/klaviyo/KlaviyoUtils');
-	    	if(KlaviyoUtils.sendShipmentConfirmation(orderID)){
+	    	var klaviyoUtils = require('*/cartridge/scripts/utils/klaviyo/klaviyoUtils');
+	    	if(klaviyoUtils.sendShipmentConfirmation(orderID)){
 	    		res.json({
 	    			status: 'success'
 		    	});
@@ -83,7 +97,7 @@ server.get(
 		    	});
 	    	}
 	    }
-    	
+
         next();
     }
 );

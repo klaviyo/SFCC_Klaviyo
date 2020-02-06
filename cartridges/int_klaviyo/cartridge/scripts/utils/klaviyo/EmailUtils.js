@@ -3,8 +3,8 @@
 var Site = require('dw/system/Site');
 var Logger = require('dw/system/Logger');
 var URLUtils = require('dw/web/URLUtils');
-var app = require('app_controllers/cartridge/scripts/app');
-var imageSize = Site.getCurrent().getCustomPreferenceValue('klaviyo_image_size') || null
+var productMgr = require('dw/catalog/ProductMgr');
+var imageSize = Site.getCurrent().getCustomPreferenceValue('klaviyo_image_size') || null;
 
 /**
  * Sends an order to Klaviyo with the order email type.
@@ -14,17 +14,16 @@ var imageSize = Site.getCurrent().getCustomPreferenceValue('klaviyo_image_size')
  * @returns
  */
 function sendOrderEmail(order, mailType) {
-  var logger = Logger.getLogger('Klaviyo', 'EmailUtils - sendOrderEmail()');
+  var logger = Logger.getLogger('Klaviyo', 'emailUtils - sendOrderEmail()');
   try {
     var isFutureOrder = (mailType.toString() === 'Auto Delivery Order Confirmation') ? true : false;
     var orderPayload = prepareOrderPayload(order, isFutureOrder, mailType);
-    require('int_klaviyo/cartridge/scripts/utils/klaviyo/KlaviyoUtils').klaviyoTrackEvent(order.getCustomerEmail(), orderPayload, mailType);
+    require('int_klaviyo/cartridge/scripts/utils/klaviyo/klaviyoUtils').klaviyoTrackEvent(order.getCustomerEmail(), orderPayload, mailType);
   } catch (e) {
     logger.error('sendOrderEmail() failed for order: ' + order.getOrderNo() + ', mailType: ' +  mailType + '. Error: ' +  e.message);
     return;
 	}
 }
-
 /**
  * Prepares the order in JSON format for email send.
  * @param order
@@ -96,7 +95,7 @@ function prepareOrderPayload(order, isFutureOrder, mailType) {
       var secondaryName = '';
 
       // Get the product secondary name
-      var productDetail = app.getModel('Product').get(productLineItem.productID).object;
+      var productDetail = productMgr.getProduct(productLineItem.productID).object;
 
       if (!productLineItem.bonusProductLineItem) {
         priceString = dw.util.StringUtils.formatMoney(dw.value.Money(productLineItem.price.value, session.getCurrency().getCurrencyCode()));
@@ -169,7 +168,7 @@ function prepareOrderPayload(order, isFutureOrder, mailType) {
     if (giftCertificateLineItems && giftCertificateLineItems.length > 0) {
       orderDetails['Gift Item Present'] =  true;
       var giftCardId = Site.getCurrent().getCustomPreferenceValue('EgiftProduct-ID');
-      var giftCardProductDetail = app.getModel('Product').get(giftCardId).object;
+      var giftCardProductDetail = productMgr.getProduct('Product').get(giftCardId).object;
       var giftCardImage = '';
       if (!empty(giftCardProductDetail)) {
         giftCardImage = imageSize ? giftCardProductDetail.getImage(imageSize).getAbsURL().toString() : null;
@@ -359,7 +358,7 @@ function prepareOrderPayload(order, isFutureOrder, mailType) {
   orderDetails['Items'] = items;
   orderDetails['Item Count'] = itemCount;
   orderDetails['Item Primary Categories'] = itemPrimaryCategories;
-  orderDetails['Item Categories'] = require('*/cartridge/scripts/utils/klaviyo/KlaviyoUtils').removeDuplicates(itemCategories);
+  orderDetails['Item Categories'] = require('*/cartridge/scripts/utils/klaviyo/klaviyoUtils').removeDuplicates(itemCategories);
   orderDetails['$value'] = orderTotal;
   orderDetails['$event_id'] = mailType + '-' + order.orderNo;
   orderDetails['Tracking Number'] = (order.shipments[0].trackingNumber) ? order.shipments[0].trackingNumber : '';

@@ -1,4 +1,4 @@
-'use strict';
+klaviyoUtils'use strict';
 
 var Site = require('dw/system/Site');
 var Logger = require('dw/system/Logger');
@@ -26,7 +26,7 @@ var API_BODY_FAIL = 0;
  */
 function klaviyoTrackEvent(email, data, event) {
 	var logger = Logger.getLogger('Klaviyo',
-			'KlaviyoUtils - klaviyoTrackEvent()');
+			'klaviyoUtils - klaviyoTrackEvent()');
 
 	if (KlaviyoTrackService === null) {
 		logger.error('klaviyoTrackEvent() failed for email: ' + email + '. Service Connection for send email via Klaviyo returned null.');
@@ -240,8 +240,8 @@ function prepareCheckoutEventForKlaviyo(currentBasket) {
 function prepareOrderConfirmationEventForKlaviyo(currentOrder) {
 	try {
 		var Site = require('dw/system/Site');
-		var EmailUtils = require('~/cartridge/scripts/utils/klaviyo/EmailUtils');
-		var sitegenesisOrder = EmailUtils.prepareOrderPayload(currentOrder,
+		var emailUtils = require('~/cartridge/scripts/utils/klaviyo/emailUtils');
+		var sitegenesisOrder = emailUtils.prepareOrderPayload(currentOrder,
 				false, 'orderConfirmation');
 		klaviyoTrackEvent(currentOrder.getCustomerEmail(), sitegenesisOrder,
 				'Order Confirmation');
@@ -347,8 +347,8 @@ function sendMailForShipmentConfirmation(orderID) {
 		for ( var i in orderList) {
 			var order = orderList[i];
 			try {
-				var EmailUtils = require('~/cartridge/scripts/utils/klaviyo/EmailUtils');
-				EmailUtils.sendOrderEmail(order, 'Shipping Confirmation');
+				var emailUtils = require('~/cartridge/scripts/utils/klaviyo/emailUtils');
+				emailUtils.sendOrderEmail(order, 'Shipping Confirmation');
 				sendStatus = true;
 			} catch (e) {
 				logger.error('resendKlaviyoShipmentEmailsJob failed for order: ' + order.getOrderNo() + '. Error: ' + e.message);

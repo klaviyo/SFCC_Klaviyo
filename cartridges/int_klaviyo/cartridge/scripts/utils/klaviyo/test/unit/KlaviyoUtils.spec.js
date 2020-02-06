@@ -2,11 +2,11 @@
 
 var expect = require('chai').expect;
 
-var klaviyoUtilsFile = require('../../KlaviyoUtils.js');
+var klaviyoUtilsFile = require('../../klaviyoUtils.js');
 
-describe('KlaviyoUtils.js script', function() {
-  var payloadObj = {
-    event: 'Test Event',
+describe('klaviyoUtils.js script', function () {
+    var payloadObj = {
+        event: 'Test Event',
     properties: {
       kltest: true
     },

@@ -9,7 +9,7 @@ var Logger = require('dw/system/Logger');
 /* API Includes */
 var Transaction = require('dw/system/Transaction');
 var ISML = require('dw/template/ISML');
-var catalogMgr= require('dw/catalog/CatalogMgr');
+var catalogMgr = require('dw/catalog/CatalogMgr');
 var productMgr= require('dw/catalog/ProductMgr');
 var orderMgr= require('dw/order/OrderMgr');
 var basketMgr= require('dw/order/BasketMgr');
@@ -33,7 +33,7 @@ var RenderKlaviyo = function() {
   if(!dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_enabled')){
     return;
   }
-  var klaviyoUtils = require('~/cartridge/scripts/utils/klaviyo/KlaviyoUtils');
+  var klaviyoUtils = require('~/cartridge/scripts/utils/klaviyo/klaviyoUtils');
 
     var klaviyoDataLayer = klaviyoUtils.buildDataLayer();
 
@@ -53,7 +53,7 @@ var RenderKlaviyoAddToCart = function() {
   if(!dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_enabled')){
     return;
   }
-  var klaviyoUtils = require('~/cartridge/scripts/utils/klaviyo/KlaviyoUtils');
+  var klaviyoUtils = require('~/cartridge/scripts/utils/klaviyo/klaviyoUtils');
 
     var klaviyoDataLayer = klaviyoUtils.buildCartDataLayer();
 
@@ -79,8 +79,8 @@ function sendKlaviyoShipmentEmail() {
     orderID=parameterMap.orderID.stringValue
   }
   if (orderID) {
-    var KlaviyoUtils = require('~/cartridge/scripts/utils/klaviyo/KlaviyoUtils');
-    if(KlaviyoUtils.sendMailForShipmentConfirmation(orderID)){
+    var klaviyoUtils = require('~/cartridge/scripts/utils/klaviyo/klaviyoUtils');
+    if(klaviyoUtils.sendMailForShipmentConfirmation(orderID)){
       r.renderJSON({status: 'success'});
     } else {
       r.renderJSON({status: 'failed sending email'});

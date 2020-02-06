@@ -1,6 +1,6 @@
 {
   "name": "int_klaviyo",
-  "version": "1.0.0",
+  "version": "20.1.0",
   "description": "Klaviyo integration for Commerce Cloud",
   "main": "index.js",
   "scripts": {
@@ -19,6 +19,10 @@
   "devDependencies": {
     "chai": "^4.2.0",
     "eslint": "^1.10.3",
-    "mocha": "^6.2.2"
+    "mocha": "^6.2.2",
+    "eslint": "^3.19.0",
+    "eslint-config-airbnb-base": "^5.0.3",
+    "eslint-plugin-import": "^1.16.0",
+    "eslint-plugin-sitegenesis": "~1.0.0",
   }
 }

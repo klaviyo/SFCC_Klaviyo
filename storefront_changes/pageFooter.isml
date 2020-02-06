@@ -31,7 +31,7 @@
         </div>
     </div>
     <isscript>
-var KlaviyoUtils = require('*/cartridge/scripts/utils/klaviyo/KlaviyoUtils'); var context = KlaviyoUtils.getContext();
+var klaviyoUtils = require('*/cartridge/scripts/utils/klaviyo/klaviyoUtils'); var context = klaviyoUtils.getContext();
 </isscript>
 <isinclude url="${URLUtils.url('Klaviyo-RenderKlaviyo',
        'title', request.pageMetaData.title,

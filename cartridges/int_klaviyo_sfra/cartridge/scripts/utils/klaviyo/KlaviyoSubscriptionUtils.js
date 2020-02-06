@@ -4,28 +4,27 @@
 var Site = require('dw/system/Site');
 var Logger = require('dw/system/Logger');
 var ServiceRegistry = require('dw/svc/LocalServiceRegistry');
-var Transaction = require('dw/system/Transaction');
 var apiKey = Site.getCurrent().getCustomPreferenceValue('klaviyo_api_key');
 
 /**
  * Uses the post subscribe list API call per
  * https://www.klaviyo.com/docs/api/v2/lists#post-subscribe
  * to subscribe an email to a subscription list.
- * 
+ *
  * @param email
  * @returns
  */
 function subscribeToList (email, source) {
-	
-	var logger = Logger.getLogger('Klaviyo', 'KlaviyoSubscriptionUtils - subscribeToList()');
-	
+
+	var logger = Logger.getLogger('Klaviyo', 'klaviyoSubscriptionUtils - subscribeToList()');
+
 	try {
 		var subscriptionStatus = false;
-		
+
 		if(checkSubscription(email, source)) {
 			return false;
 		}
-		var jsonData = prepareSubscribePayload(email, source); 
+		var jsonData = prepareSubscribePayload(email, source);
 		var result = KlaviyoSubscriptionService.call(jsonData);
 		var resultObj = JSON.parse(result.object);
 		if(!empty(resultObj)) {
@@ -37,13 +36,14 @@ function subscribeToList (email, source) {
 				return;
 			}
 		}
-		
+
 		return subscriptionStatus;
+		
 	} catch(e) {
 		logger.error('subscribeToList() failed for ' + email + 'at source ' + source + ' .Error: ' +  e.message);
 		return;
 	}
-	
+
 }
 
 /**
@@ -52,10 +52,10 @@ function subscribeToList (email, source) {
  * @returns
  */
 function prepareSubscribePayload (email, source) {
-	
+
 	var jsonData = {};
 	var profiles = [];
-	
+
 	jsonData.api_key = apiKey;
 	jsonData.profiles = profiles;
 	var profileData = {};
@@ -64,21 +64,21 @@ function prepareSubscribePayload (email, source) {
 		profileData.source = source;
 	}
 	jsonData.profiles.push(profileData);
-	
+
 	return JSON.stringify(jsonData);
-	
+
 }
 
 
 /**
- * 
+ *
  * @param email
  * @returns
  */
 function checkSubscription (email) {
-	
-	var logger = Logger.getLogger('Klaviyo', 'KlaviyoSubscriptionUtils - checkSubscription()');
-	
+
+	var logger = Logger.getLogger('Klaviyo', 'klaviyoSubscriptionUtils - checkSubscription()');
+
 	try {
 		KlaviyoCheckSubscriptionService.addParam('emails', email);
 		var klaviyo_key = Site.getCurrent().getCustomPreferenceValue('klaviyo_api_key');
@@ -86,7 +86,7 @@ function checkSubscription (email) {
 		var result = KlaviyoCheckSubscriptionService.call(requestObj);
  		var profileId = null;
 		var resultObj = JSON.parse(result.object);
-		
+
 		if(!empty(resultObj)) {
 			var response = resultObj[0];
 			if (!empty(response) && response.email == email) {
@@ -108,12 +108,12 @@ function checkSubscription (email) {
 
 
 /**
- * 
+ *
  * @param customerId
  * @returns
  */
 
- 
+
 /**
  * Checks for an empty js object
  * @param obj
@@ -150,7 +150,7 @@ var KlaviyoSubscriptionService = ServiceRegistry.createService('KlaviyoSubscript
 		svc = svc.setRequestMethod("POST");
 		svc = svc.addHeader('Content-Type','application/json');
 		return params;
-			
+
 	},
 	/**
      * JSON parse the response tex`t and return it in configured retData object
@@ -162,8 +162,8 @@ var KlaviyoSubscriptionService = ServiceRegistry.createService('KlaviyoSubscript
 	parseResponse: function(svc, client) {
 		return client.text;
 	}
-	
-});	
+
+});
 
 
 var KlaviyoCheckSubscriptionService = ServiceRegistry.createService('KlaviyoCheckSubscriptionService', {
@@ -179,9 +179,9 @@ var KlaviyoCheckSubscriptionService = ServiceRegistry.createService('KlaviyoChec
     */
 	createRequest: function(svc, params) {
 		//Set HTTP Method
-		svc = svc.setRequestMethod("GET");	
+		svc = svc.setRequestMethod("GET");
 		svc = svc.addHeader('api-key', apiKey)
-		
+
 	},
 	/**
      * JSON parse the response text and return it in configured retData object
@@ -193,7 +193,5 @@ var KlaviyoCheckSubscriptionService = ServiceRegistry.createService('KlaviyoChec
 	parseResponse: function(svc, client) {
 		return client.text;
 	}
-	
-});	
 
-
+});
