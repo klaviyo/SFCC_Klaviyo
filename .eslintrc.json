@@ -670,11 +670,13 @@
 				"response": true,
 				"customer": true,
 				"dw": true,
+				"pdict": true,
 				"empty": true,
 				"webreferences": true,
 				"webreferences2": true,
 				"PIPELET_NEXT": true,
-				"PIPELET_ERROR": true
+				"PIPELET_ERROR": true,
+				"out": true
 			}
 		},
 		{

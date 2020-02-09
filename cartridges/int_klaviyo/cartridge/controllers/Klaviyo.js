@@ -33,7 +33,7 @@ var RenderKlaviyo = function() {
   if(!dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_enabled')){
     return;
   }
-  var klaviyoUtils = require('~/cartridge/scripts/utils/klaviyo/klaviyoUtils');
+  var klaviyoUtils = require('*/cartridge/scripts/utils/klaviyo/klaviyoUtils');
 
     var klaviyoDataLayer = klaviyoUtils.buildDataLayer();
 
@@ -53,7 +53,7 @@ var RenderKlaviyoAddToCart = function() {
   if(!dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_enabled')){
     return;
   }
-  var klaviyoUtils = require('~/cartridge/scripts/utils/klaviyo/klaviyoUtils');
+  var klaviyoUtils = require('*/cartridge/scripts/utils/klaviyo/klaviyoUtils');
 
     var klaviyoDataLayer = klaviyoUtils.buildCartDataLayer();
 
@@ -79,7 +79,7 @@ function sendKlaviyoShipmentEmail() {
     orderID=parameterMap.orderID.stringValue
   }
   if (orderID) {
-    var klaviyoUtils = require('~/cartridge/scripts/utils/klaviyo/klaviyoUtils');
+    var klaviyoUtils = require('*/cartridge/scripts/utils/klaviyo/klaviyoUtils');
     if(klaviyoUtils.sendMailForShipmentConfirmation(orderID)){
       r.renderJSON({status: 'success'});
     } else {

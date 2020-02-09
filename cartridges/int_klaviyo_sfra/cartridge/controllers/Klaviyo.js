@@ -36,11 +36,12 @@ server.get(
     if(!dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_enabled')){
       return
     }
-    var klaviyoDataLayer = KlaviyoUtils,buildDataLayer();
+    var klaviyoDataLayer = KlaviyoUtils.buildDataLayer();
     res.render('/klaviyo/klaviyo_tag', {
       klaviyoData : klaviyoDataLayer
     });
     next();
+  }
 )
 
 server.get(

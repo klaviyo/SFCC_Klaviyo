@@ -146,18 +146,18 @@ function prepareOrderPayload(order, isFutureOrder, mailType) {
             }
 
             productLineItemsArray.push({
-              'Product ID': productLineItem.productID,
-              'Product Name':productLineItem.productName,
-              'Product Secondary Name': secondaryName,
-              'Quantity': productLineItem.quantity.value,
-              'Price': priceString,
-              'Discount': productLineItem.adjustedPrice.value,
-              'Product Page URL': prdUrl,
-              'Replenishment': replenishment,
-              'Product Variant': variationValues,
-              'Price Value': productLineItem.price.value,
-              'Product Image URL': imageSize ? productDetail.getImage(imageSize).getAbsURL().toString() : null,
-              'Is Sample': isSample
+                'Product ID'             : productLineItem.productID,
+                'Product Name'           : productLineItem.productName,
+                'Product Secondary Name' : secondaryName,
+                Quantity                 : productLineItem.quantity.value,
+                Price                    : priceString,
+                Discount                 : productLineItem.adjustedPrice.value,
+                'Product Page URL'       : prdUrl,
+                Replenishment            : replenishment,
+                'Product Variant'        : variationValues,
+                'Price Value'            : productLineItem.price.value,
+                'Product Image URL'      : imageSize ? productDetail.getImage(imageSize).getAbsURL().toString() : null,
+                'Is Sample'              : isSample
             });
         }
 
@@ -178,13 +178,13 @@ function prepareOrderPayload(order, isFutureOrder, mailType) {
                 giftLineItem = giftCertificateLineItems[j];
 
                 giftLineItemsArray.push({
-                  'Recipient Name': giftLineItem.recipientName,
-                  'Recipient Email':giftLineItem.recipientEmail,
-                  'Sender Name': giftLineItem.senderName,
-                  'Sender Email': order.getCustomerEmail(),
-                  'Price': dw.util.StringUtils.formatMoney(dw.value.Money(giftLineItem.price.value, session.getCurrency().getCurrencyCode())),
-                  'Message': giftLineItem.message,
-                  'Image': !empty(giftLineItem.custom.giftCertificateImage) ? giftLineItem.custom.giftCertificateImage : giftCardImage
+                    'Recipient Name'  : giftLineItem.recipientName,
+                    'Recipient Email' : giftLineItem.recipientEmail,
+                    'Sender Name'     : giftLineItem.senderName,
+                    'Sender Email'    : order.getCustomerEmail(),
+                    Price             : dw.util.StringUtils.formatMoney(dw.value.Money(giftLineItem.price.value, session.getCurrency().getCurrencyCode())),
+                    Message           : giftLineItem.message,
+                    Image             : !empty(giftLineItem.custom.giftCertificateImage) ? giftLineItem.custom.giftCertificateImage : giftCardImage
                 });
 
                 items.push(Site.getCurrent().getCustomPreferenceValue('EgiftProduct-ID'));
@@ -193,14 +193,14 @@ function prepareOrderPayload(order, isFutureOrder, mailType) {
                 itemCategories.push('Gift cards');
             }
         } else {
-          orderDetails['Gift Item Present'] =  false;
-          giftLineItemsArray.push({
-            'Recipient Name': '',
-            'Recipient Email':'',
-            'Sender Name': '',
-            'Sender Email': '',
-            'Price': ''
-          });
+            orderDetails['Gift Item Present'] = false;
+            giftLineItemsArray.push({
+                'Recipient Name'  : '',
+                'Recipient Email' : '',
+                'Sender Name'     : '',
+                'Sender Email'    : '',
+                Price             : ''
+            });
         }
 
         // Get the coupon attached to the order
@@ -293,24 +293,24 @@ function prepareOrderPayload(order, isFutureOrder, mailType) {
         }
         var orderTotalString = dw.util.StringUtils.formatMoney(dw.value.Money(orderTotal, session.getCurrency().getCurrencyCode()));
 
-        orderDetails['Order Total'] =  orderTotalString;
-        orderDetails['Tax'] = totalTaxString;
-        orderDetails['Subtotal'] = subTotalString;
+        orderDetails['Order Total'] = orderTotalString;
+        orderDetails.Tax = totalTaxString;
+        orderDetails.Subtotal = subTotalString;
         orderDetails['Shipping Cost'] = shippingTotalCostString;
         if (orderDiscountString) {
-          orderDetails['Discount'] = orderDiscountString;
+            orderDetails.Discount = orderDiscountString;
         } else {
-          orderDetails['Discount'] = '';
+            orderDetails.Discount = '';
         }
-      }
+    }
 
-        // Add gift message if exists
-        var giftMsg = (order.shipments[0].giftMessage) ? order.shipments[0].giftMessage : '';
-        orderDetails.GIFT_MESSAGE = giftMsg;
+    // Add gift message if exists
+    var giftMsg = (order.shipments[0].giftMessage) ? order.shipments[0].giftMessage : '';
+    orderDetails.GIFT_MESSAGE = giftMsg;
 
     // Order Details
     var orderDate = new Date(order.creationDate);
-    var orderCreationDate = dw.util.StringUtils.formatCalendar(new dw.util.Calendar(new Date(order.creationDate)), 'yyyy-MM-dd' );
+    var orderCreationDate = dw.util.StringUtils.formatCalendar(new dw.util.Calendar(new Date(order.creationDate)), 'yyyy-MM-dd');
     orderDetails['Order Number'] = order.orderNo;
     orderDetails['Order Date'] = orderCreationDate;
     orderDetails['Customer Number'] = (order.customerNo) ? order.customerNo : '';
@@ -328,44 +328,44 @@ function prepareOrderPayload(order, isFutureOrder, mailType) {
     // Billing Address
     var billingaddress = [];
     billingaddress.push({
-      'First Name': orderBillingAddressFirstName,
-      'Last Name':orderBillingAddressLastName,
-      'Address1': orderBillingAddressAddress1,
-      'Address2': orderBillingAddressAddress2,
-      'City': orderBillingAddressCity,
-      'Postal Code': orderShippingAddressPostalCode,
-      'State Code': orderBillingAddressStateCode,
-      'Country Code': orderBillingAddressCountryCode,
-      'Phone': orderBillingAddressPhone
+        'First Name'   : orderBillingAddressFirstName,
+        'Last Name'    : orderBillingAddressLastName,
+        Address1       : orderBillingAddressAddress1,
+        Address2       : orderBillingAddressAddress2,
+        City           : orderBillingAddressCity,
+        'Postal Code'  : orderShippingAddressPostalCode,
+        'State Code'   : orderBillingAddressStateCode,
+        'Country Code' : orderBillingAddressCountryCode,
+        Phone          : orderBillingAddressPhone
     });
 
     // Shipping Address
     var shippingaddress = [];
     shippingaddress.push({
-      'First Name': orderShippingAddressFirstName,
-      'Last Name':orderShippingAddressLastName,
-      'Address1': orderShippingAddressAddress1,
-      'Address2': orderShippingAddressAddress2,
-      'City': orderShippingAddressCity,
-      'Postal Code': orderShippingAddressPostalCode,
-      'State Code': orderShippingAddressStateCode,
-      'Country Code': orderShippingAddressCountryCode,
-      'Phone': orderShippingAddressPhone
-      });
+        'First Name'   : orderShippingAddressFirstName,
+        'Last Name'    : orderShippingAddressLastName,
+        Address1       : orderShippingAddressAddress1,
+        Address2       : orderShippingAddressAddress2,
+        City           : orderShippingAddressCity,
+        'Postal Code'  : orderShippingAddressPostalCode,
+        'State Code'   : orderShippingAddressStateCode,
+        'Country Code' : orderShippingAddressCountryCode,
+        Phone          : orderShippingAddressPhone
+    });
 
     // Add product / billing / shipping
 
-    orderDetails['product_line_items'] = productLineItemsArray;
+    orderDetails.product_line_items = productLineItemsArray;
     orderDetails['Gift Items'] = giftLineItemsArray;
     orderDetails['Billing Address'] = billingaddress;
     orderDetails['Shipping Address'] = shippingaddress;
-    orderDetails['Manage Order URL'] = URLUtils.https('Account-Show').toString();;
-    orderDetails['Items'] = items;
+    orderDetails['Manage Order URL'] = URLUtils.https('Account-Show').toString();
+    orderDetails.Items = items;
     orderDetails['Item Count'] = itemCount;
     orderDetails['Item Primary Categories'] = itemPrimaryCategories;
     orderDetails['Item Categories'] = require('*/cartridge/scripts/utils/klaviyo/klaviyoUtils').removeDuplicates(itemCategories);
-    orderDetails['$value'] = orderTotal;
-    orderDetails['$event_id'] = mailType + '-' + order.orderNo;
+    orderDetails.$value = orderTotal;
+    orderDetails.$event_id = mailType + '-' + order.orderNo;
     orderDetails['Tracking Number'] = (order.shipments[0].trackingNumber) ? order.shipments[0].trackingNumber : '';
 
 

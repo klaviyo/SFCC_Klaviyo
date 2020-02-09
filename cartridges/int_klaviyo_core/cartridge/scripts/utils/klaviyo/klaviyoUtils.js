@@ -36,7 +36,7 @@ function sendEmail(email, data, event) {
 	var logger = Logger.getLogger('Klaviyo', 'klaviyoUtils - sendEmail()');
 
 	if (KlaviyoTrackService == null || empty(email)) {
-		logger.error('sendEmail() failed for email: ' + email + '. Service Connection for send email via Klaviyo returned null.');
+		logger.error('sendEmail() failed for email: ' + obfuscateKlEmail(email) + '. Service Connection for send email via Klaviyo returned null.');
 		return;
 	}
 
@@ -264,7 +264,7 @@ function prepareOrderConfirmationEventForKlaviyo(currentOrder){
 	// putting this here for performance
 
     // site specific order object */
-    var emailUtils = require('~/cartridge/scripts/utils/klaviyo/emailUtils');
+    var emailUtils = require('*/cartridge/scripts/utils/klaviyo/emailUtils');
     var dwareOrder = emailUtils.prepareOrderPayload(currentOrder, false, 'orderConfirmation');
     sendEmail(currentOrder.getCustomerEmail(), dwareOrder, "Order Confirmation");
 
@@ -492,6 +492,21 @@ var trackAddToCart = function() {
 	var event = 'Add To Cart';
 	sendEmail(email, klaviyoDataLayer, event)
 }
+
+/**
+ * Obfuscating an email address for log file
+ * @returns obfuscated email like d**********@k******.com
+ */
+ var obfuscateKlEmail = (email) => {
+   var astericks = '**********'
+   var splitEmail = email.split('@')
+   var firstLetter = splitEmail[0][0]
+   var domainLetter = splitEmail[1][0]
+   var newDomain = domainLetter.concat(astericks)
+   var newStartEmail = firstLetter.concat(astericks + '@')
+   var obfuscatedEmail = newStartEmail.concat(newDomain)
+   return obfuscatedEmail
+ }
 
 module.exports = {
 	sendEmail: sendEmail,
