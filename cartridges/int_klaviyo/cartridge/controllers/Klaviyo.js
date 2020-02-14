@@ -10,14 +10,12 @@ var Logger = require('dw/system/Logger');
 var Transaction = require('dw/system/Transaction');
 var ISML = require('dw/template/ISML');
 var catalogMgr = require('dw/catalog/CatalogMgr');
-var productMgr= require('dw/catalog/ProductMgr');
-var orderMgr= require('dw/order/OrderMgr');
-var basketMgr= require('dw/order/BasketMgr');
+var productMgr = require('dw/catalog/ProductMgr');
+var orderMgr = require('dw/order/OrderMgr');
+var basketMgr = require('dw/order/BasketMgr');
 var klaviyoToken = require('dw/system/Site').getCurrent().getCustomPreferenceValue('klaviyo_account');
 var paramMap = request.httpParameterMap;
-var customer = app.getModel('Customer');
 var createDate = new Date();
-
 
 
 /**
@@ -28,19 +26,16 @@ var createDate = new Date();
 */
 
 
-var RenderKlaviyo = function() {
-
-  if(!dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_enabled')){
-    return;
-  }
-  var klaviyoUtils = require('*/cartridge/scripts/utils/klaviyo/klaviyoUtils');
-
+var RenderKlaviyo = function () {
+    if (!dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_enabled')) {
+        return;
+    }
+    var klaviyoUtils = require('*/cartridge/scripts/utils/klaviyo/klaviyoUtils');
     var klaviyoDataLayer = klaviyoUtils.buildDataLayer();
-
     ISML.renderTemplate('klaviyo/klaviyo_tag', {
-      klaviyoData : klaviyoDataLayer
+        klaviyoData: klaviyoDataLayer
     });
-}
+};
 
 /**
  * Controller that will send the necessary data  to klaviyo when an add to cart event happens
@@ -48,20 +43,18 @@ var RenderKlaviyo = function() {
 */
 
 
-var RenderKlaviyoAddToCart = function() {
-
-  if(!dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_enabled')){
-    return;
-  }
-  var klaviyoUtils = require('*/cartridge/scripts/utils/klaviyo/klaviyoUtils');
+var RenderKlaviyoAddToCart = function () {
+    if (!dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_enabled')) {
+        return;
+    }
+    var klaviyoUtils = require('*/cartridge/scripts/utils/klaviyo/klaviyoUtils');
 
     var klaviyoDataLayer = klaviyoUtils.buildCartDataLayer();
 
     ISML.renderTemplate('klaviyo/klaviyo_tag', {
-      klaviyoData : klaviyoDataLayer
+        klaviyoData: klaviyoDataLayer
     });
-}
-
+};
 
 
 /**
@@ -70,22 +63,21 @@ var RenderKlaviyoAddToCart = function() {
 */
 
 function sendKlaviyoShipmentEmail() {
-
-  var logger = Logger.getLogger('KlaviyoJobs', 'Klaviyo - sendMailsJob()');
-  var OrderMgr = require('dw/order/OrderMgr');
-  var parameterMap = request.httpParameterMap;
-  var orderID=null;
-  if (!empty(parameterMap)) {
-    orderID=parameterMap.orderID.stringValue
-  }
-  if (orderID) {
-    var klaviyoUtils = require('*/cartridge/scripts/utils/klaviyo/klaviyoUtils');
-    if(klaviyoUtils.sendMailForShipmentConfirmation(orderID)){
-      r.renderJSON({status: 'success'});
-    } else {
-      r.renderJSON({status: 'failed sending email'});
+    var logger = Logger.getLogger('KlaviyoJobs', 'Klaviyo - sendMailsJob()');
+    var OrderMgr = require('dw/order/OrderMgr');
+    var parameterMap = request.httpParameterMap;
+    var orderID = null;
+    if (!empty(parameterMap)) {
+        orderID = parameterMap.orderID.stringValue;
     }
-  }
+    if (orderID) {
+        var klaviyoUtils = require('*/cartridge/scripts/utils/klaviyo/klaviyoUtils');
+        if (klaviyoUtils.sendMailForShipmentConfirmation(orderID)) {
+            r.renderJSON({ status: 'success' });
+        } else {
+            r.renderJSON({ status: 'failed sending email' });
+        }
+    }
 }
 
 /** Handles the form submission for subscription.

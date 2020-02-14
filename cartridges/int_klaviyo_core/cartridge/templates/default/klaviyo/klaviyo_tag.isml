@@ -2,7 +2,10 @@
 <iscomment>Add Klaviyo.js to page</iscomment>
 <script type="text/javascript">
 <isscript>
-importScript("*/cartridge/scripts/utils/klaviyo/klaviyoOnSiteTag.js");
+var klaviyoTags = require("*/cartridge/scripts/utils/klaviyo/klaviyoOnSiteTags.js").klaviyoOnSiteTags;
+var klData = pdict.klaviyoData;
+var currentUser = pdict.CurrentUser.profile;
+klaviyoTags(klData, currentUser)
 </isscript>
 </script>
 
