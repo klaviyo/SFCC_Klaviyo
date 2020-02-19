@@ -9,17 +9,17 @@
 
 function prepareViewedProductObject(klData){
    var viewedProductObj : Object = new Object();
-   viewedProductObj["Product Name"] = klData.viewedProductName;
-   viewedProductObj["Product Image URL"] = !empty(klData.viewedProductImage) ? klData.viewedProductImage.toString() : '';
-   viewedProductObj["Product ID"] = klData.viewedProductID.toString();
-   viewedProductObj["Product Description"] = klData.viewedProductDesc;
-   viewedProductObj["Price"] = klData.viewedProductPrice.toString();
-   viewedProductObj["Product Page URL"] = klData.viewedProductPageURL;
-   viewedProductObj["Product UPC"] = klData.viewedProductUPC;
-   //viewedProductObj["Product Availability Model"] = klData.viewedProductAvailability;
-   viewedProductObj["Categories"] = klData.viewedProductCategories;
-   viewedProductObj["Primary Category"] = klData.viewedProductPrimaryCategory;
-   return viewedProductObj;
+   // viewedProductObj["Product Name"] = klData.viewedProductName;
+   // viewedProductObj["Product Image URL"] = !empty(klData.viewedProductImage) ? klData.viewedProductImage.toString() : '';
+   // viewedProductObj["Product ID"] = klData.viewedProductID.toString();
+   // viewedProductObj["Product Description"] = klData.viewedProductDesc;
+   // viewedProductObj["Price"] = klData.viewedProductPrice.toString();
+   // viewedProductObj["Product Page URL"] = klData.viewedProductPageURL;
+   // viewedProductObj["Product UPC"] = klData.viewedProductUPC;
+   // //viewedProductObj["Product Availability Model"] = klData.viewedProductAvailability;
+   // viewedProductObj["Categories"] = klData.viewedProductCategories;
+   // viewedProductObj["Primary Category"] = klData.viewedProductPrimaryCategory;
+   return klData;
 
 
 }

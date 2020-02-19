@@ -3,6 +3,7 @@
 var server = require('server');
 //Use the following for CSRF protection: add middleware in routes and hidden field on form
 var csrfProtection = require('*/cartridge/scripts/middleware/csrf');
+var Logger = require('dw/system/Logger');
 
 /* API Includes */
 var klaviyoToken = require('dw/system/Site').getCurrent().getCustomPreferenceValue('klaviyo_account');
@@ -21,11 +22,16 @@ server.get(
     	if(!dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_enabled')){
     		return;
     	}
-    	var klaviyoDataLayer = klaviyoUtils.buildDataLayer();
-        res.render('/klaviyo/klaviyo_tag', {
-        	klaviyoData : klaviyoDataLayer
-        });
-        next();
+      var logger = Logger.getLogger('renderKlaviyo', 'Klaviyo - Render Klaviyo Controller');
+      try {
+        var klaviyoDataLayer = klaviyoUtils.buildDataLayer();
+           res.render('/klaviyo/klaviyo_tag', {
+            klaviyoData : klaviyoDataLayer
+           });
+           next();
+      } catch (e) {
+            logger.debug('error rendering klaviyo ' + e.message + ' at ' + e.lineNumber)
+        }
     }
 );
 

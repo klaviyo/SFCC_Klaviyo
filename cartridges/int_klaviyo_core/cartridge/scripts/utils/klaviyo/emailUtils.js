@@ -37,7 +37,7 @@ function prepareOrderPayload(order, isFutureOrder, mailType) {
     var isReplenishmentOrder = !!((mailType != null && mailType == 'Auto Delivery Order Confirmation'));
 
     // Billing Address
-    var orderBillingAddressfirstName = (order.billingAddress.firstName) ? order.billingAddress.firstName : '';
+    var orderBillingAddressFirstName = (order.billingAddress.firstName) ? order.billingAddress.firstName : '';
     var orderBillingAddressLastName = (order.billingAddress.lastName) ? order.billingAddress.lastName : '';
     var orderBillingAddressAddress1 = (order.billingAddress.address1) ? order.billingAddress.address1 : '';
     var orderBillingAddressAddress2 = (order.billingAddress.address2) ? order.billingAddress.address2 : '';

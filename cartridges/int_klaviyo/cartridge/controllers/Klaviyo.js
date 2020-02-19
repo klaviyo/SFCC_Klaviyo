@@ -30,11 +30,17 @@ var RenderKlaviyo = function () {
     if (!dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_enabled')) {
         return;
     }
-    var klaviyoUtils = require('*/cartridge/scripts/utils/klaviyo/klaviyoUtils');
-    var klaviyoDataLayer = klaviyoUtils.buildDataLayer();
-    ISML.renderTemplate('klaviyo/klaviyo_tag', {
-        klaviyoData: klaviyoDataLayer
-    });
+    var logger = Logger.getLogger('renderKlaviyo', 'Klaviyo - Render Klaviyo Controller');
+    try {
+      var klaviyoUtils = require('*/cartridge/scripts/utils/klaviyo/klaviyoUtils');
+      var klaviyoDataLayer = klaviyoUtils.buildDataLayer();
+      ISML.renderTemplate('klaviyo/klaviyo_tag', {
+          klaviyoData: klaviyoDataLayer
+      });
+
+    } catch(e) {
+      logger.debug('error rendering klaviyo ' + e.message + ' at ' + e.lineNumber)
+    }
 };
 
 /**

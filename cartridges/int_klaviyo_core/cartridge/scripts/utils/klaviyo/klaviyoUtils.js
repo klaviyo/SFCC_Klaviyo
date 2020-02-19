@@ -96,7 +96,7 @@ function preparePayload(email, data, event) {
  */
 
 function preparegiftCardObject(giftCard) {
-	  var giftCardObj = {};
+    var giftCardObj = {};
     giftCardObj['Product Name'] = 'e-Giftcard';
     giftCardObj['Product ID'] = giftCardId;
     giftCardObj['Recipient Email'] = giftCard.recipientEmail;
@@ -119,7 +119,7 @@ function preparegiftCardObject(giftCard) {
  */
 
 function prepareProductObj(lineItem, basketProduct, currentProductID) {
-	 productObj = {};
+    productObj = {};
     productObj['Product ID'] = currentProductID;
     productObj['Product Name'] = basketProduct.name;
     productObj['Product Image URL'] = imageSize ? basketProduct.getImage(imageSize).getAbsURL().toString() : null;
@@ -141,8 +141,8 @@ function prepareProductObj(lineItem, basketProduct, currentProductID) {
  */
 
 function prepareViewedProductEventData(pageProductID, viewedProduct) {
-	 klData = {};
-	 klData.event = 'Viewed Product';
+    klData = {};
+    klData.event = 'Viewed Product';
     klData.viewedProductID = pageProductID;
     klData.viewedProductName = viewedProduct.name;
     klData.viewedProductPage = viewedProduct.getPageURL();
@@ -166,26 +166,25 @@ function prepareViewedProductEventData(pageProductID, viewedProduct) {
  * @returns categories
  */
 function createCategories(product) {
-	  var productCategoryIndex,
+    var productCategoryIndex,
         currentCategory;
-	  var arrayOfCategories = [];
+    var arrayOfCategories = [];
 
-	  if (product.variant) {
-		  	var productCategoryArray = product.masterProduct.allCategories.toArray();
-		    for (productCategoryIndex = 0; productCategoryIndex < productCategoryArray.length; productCategoryIndex++) {
-		      var currentCategory = productCategoryArray[productCategoryIndex].displayName;
-		      arrayOfCategories.push(currentCategory);
-		    }
-	  } else {
-		  	var productCategoryArray = product.allCategories.toArray();
-		    for (productCategoryIndex = 0; productCategoryIndex < productCategoryArray.length; productCategoryIndex++) {
-		      currentCategory = productCategoryArray[productCategoryIndex].displayName;
-		      arrayOfCategories.push(currentCategory);
-		    }
-	  }
-
-	  var categories = removeDuplicates(arrayOfCategories);
-	  return categories;
+    if (product.variant) {
+        var productCategoryArray = product.masterProduct.allCategories.toArray();
+        for (productCategoryIndex = 0; productCategoryIndex < productCategoryArray.length; productCategoryIndex++) {
+            var currentCategory = productCategoryArray[productCategoryIndex].displayName;
+            arrayOfCategories.push(currentCategory);
+        }
+    } else {
+        var productCategoryArray = product.allCategories.toArray();
+        for (productCategoryIndex = 0; productCategoryIndex < productCategoryArray.length; productCategoryIndex++) {
+            currentCategory = productCategoryArray[productCategoryIndex].displayName;
+            arrayOfCategories.push(currentCategory);
+        }
+    }
+    var categories = removeDuplicates(arrayOfCategories);
+    return categories;
 }
 
 /**
@@ -250,6 +249,7 @@ function prepareCheckoutEventForKlaviyo(currentBasket) {
  * @returns
  */
 function prepareOrderConfirmationEventForKlaviyo(currentOrder) {
+    var logger = Logger.getLogger('Klaviyo', 'klaviyoUtils - orderConfirmation()');
     try {
         // putting this here for performance
 
@@ -279,7 +279,7 @@ function prepareOrderConfirmationEventForKlaviyo(currentOrder) {
             sendEmail(theGiftCard['Recipient Email'], theGiftCard, 'e-Giftcard Notification');
         }
     } catch (e) {
-    	klData.data.debug_error = [e.message, e.lineNumber];
+        logger.debug('prepareOrderConfirmationEventForKlaviyo -- error ' + e.message + ' at ' + e.lineNumber);
     }
 }
 
@@ -304,11 +304,11 @@ function prepareAddToCartEventForKlaviyo(klData) {
         var basketProduct = productMgr.getProduct(currentProductID);
 
         if (currentProductID != null && !empty(basketProduct) && basketProduct.getPriceModel().getPrice().value > 0) {
-    	if (basketProduct.variant) {
-    		var primaryCategory = basketProduct.masterProduct.getPrimaryCategory().displayName;
-    	} else {
-    		var primaryCategory = basketProduct.getPrimaryCategory().displayName;
-    	}
+            if (basketProduct.variant) {
+                var primaryCategory = basketProduct.masterProduct.getPrimaryCategory().displayName;
+            } else {
+                var primaryCategory = basketProduct.getPrimaryCategory().displayName;
+            }
 
             klData.lineItems.push({
                 productID                 : currentProductID,
@@ -339,15 +339,15 @@ function sendShipmentConfirmation(orderID) {
     var logger = Logger.getLogger('Klaviyo', 'klaviyoUtils - sendShipmentConfirmation()');
 
     var orderObj = orderMgr.searchOrders('orderNo={0} AND shippingStatus={1}', 'creationDate desc', orderID,
-	            dw.order.Order.SHIPPING_STATUS_SHIPPED);
-   	var orderList = orderObj.asList();
+        dw.order.Order.SHIPPING_STATUS_SHIPPED);
+    var orderList = orderObj.asList();
 
-   		var sendStatus = false;
+    var sendStatus = false;
     if (!empty(orderList)) {
         for (var i in orderList) {
             var order = orderList[i];
             try {
-				 var emailUtils = require('*/cartridge/scripts/utils/klaviyo/emailUtils');
+                var emailUtils = require('*/cartridge/scripts/utils/klaviyo/emailUtils');
                 emailUtils.sendOrderEmail(order, 'Shipping Confirmation');
                 sendStatus = true;
             } catch (e) {
@@ -412,41 +412,41 @@ var buildDataLayer = function () {
         // Checkout Started event
 
         if (pageContext == 'checkout') {
-	          currentBasket = basketMgr.getCurrentBasket();
-	          basketHasLength = currentBasket.getProductLineItems().toArray().length >= 1;
+            currentBasket = basketMgr.getCurrentBasket();
+            basketHasLength = currentBasket.getProductLineItems().toArray().length >= 1;
 
-	          if (basketHasLength) {
-	        	  klData = prepareCheckoutEventForKlaviyo(currentBasket);
-	          }
+            if (basketHasLength) {
+                klData = prepareCheckoutEventForKlaviyo(currentBasket);
+            }
         }
 
         // Order Placed Event
-        if (!empty(orderID.rawValue)) {
-		        currentOrder = orderMgr.getOrder(orderID);
-		        prepareOrderConfirmationEventForKlaviyo(currentOrder);
+        if (pageContext == 'orderconfirmation' && orderID || !empty(orderID.rawValue)) {
+            currentOrder = orderMgr.getOrder(orderID);
+            prepareOrderConfirmationEventForKlaviyo(currentOrder);
         }
 
 
         // Viewed Product event
-        if (!empty(pageProductID.rawValue)) {
-	          viewedProduct = productMgr.getProduct(pageProductID);
-	          klData = prepareViewedProductEventData(pageProductID, viewedProduct);
+        if (pageContext == 'product') {
+            viewedProduct = productMgr.getProduct(pageProductID);
+            klData = prepareViewedProductEventData(pageProductID, viewedProduct);
         }
 
         // Category Viewed event
-        if (!empty(pageCategoryId)) {
-		      klData.event = 'Viewed Category';
-		      klData.pageCategoryId = pageCategoryId;
+        if (pageContext == 'search' && !empty(pageCategoryId)) {
+            klData.event = 'Viewed Category';
+            klData.pageCategoryId = pageCategoryId;
         }
 
         // Site Search event
         if (!empty(searchTerm)) {
-	          klData.event = 'Searched Site';
-	          klData.searchTerm = searchTerm;
-	          klData.searchResultsCount = (!empty(searchResultsCount)) ? searchResultsCount.value : 0;
+            klData.event = 'Searched Site';
+            klData.searchTerm = searchTerm;
+            klData.searchResultsCount = (!empty(searchResultsCount)) ? searchResultsCount.value : 0;
         }
     } catch (e) {
-    		klData.data.debug_error = [e.message, e.lineNumber];
+        klData.data.debug_error = [e.message, e.lineNumber];
     }
 
     return klData;
@@ -467,11 +467,11 @@ var buildCartDataLayer = function () {
 
     isValidBasket = (basketMgr.getCurrentBasket());
     if (isValidBasket) {
-	  basketHasLength = (basketMgr.getCurrentBasket().getProductLineItems().toArray().length >= 1);
+        basketHasLength = (basketMgr.getCurrentBasket().getProductLineItems().toArray().length >= 1);
     }
 
     if (basketHasLength) {
-	  klData = prepareAddToCartEventForKlaviyo(klData);
+        klData = prepareAddToCartEventForKlaviyo(klData);
     }
 
     return klData;

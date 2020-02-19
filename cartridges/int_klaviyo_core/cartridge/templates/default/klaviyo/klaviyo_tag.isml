@@ -5,7 +5,8 @@
 var klaviyoTags = require("*/cartridge/scripts/utils/klaviyo/klaviyoOnSiteTags.js").klaviyoOnSiteTags;
 var klData = pdict.klaviyoData;
 var currentUser = pdict.CurrentUser.profile;
-klaviyoTags(klData, currentUser)
+var printToDom = klaviyoTags(klData, currentUser)
+out.print(printToDom)
 </isscript>
 </script>
 
