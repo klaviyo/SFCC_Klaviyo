@@ -4,23 +4,7 @@
 
 <isinclude template="klaviyo/klaviyo_footer"/>
 
-<isscript>
-var KlaviyoUtils = require('*/cartridge/scripts/utils/klaviyo/KlaviyoUtils');
-var context = KlaviyoUtils.getContext();
-</isscript>
-<isinclude url="${URLUtils.url('Klaviyo-RenderKlaviyo',
-	'title', request.pageMetaData.title,
-  	'pagecontexttype', (!empty(context)) ? ''+context : null,
-  	'pagecontexttitle', ('pageContext' in this && !empty(pageContext)) ? ''+pageContext.title : null,
-  	'searchterm', request.httpParameterMap.q.stringValue,
-'searchresultscount', (!empty(pdict.productSearch) ? ''+pdict.productSearch.count : null),
-'productid', (!empty(pdict.product) ? pdict.product.id : null),
-'pagecgid',  request.httpParameterMap.cgid.stringValue,
-'orderno', (!empty(pdict.order) ? pdict.order.orderNumber : null)
-)}"/>
-
-
-<!-- Include this in the minicart.isml or cart.js or whatever the cart file is named -->
+<!-- Include this in the minicart.isml and cart.isml or wherever you have the cart isml files -->
 
 <isif condition="${pdict.CurrentHttpParameterMap.cartAction == 'add' || pdict.CurrentHttpParameterMap.cartAction == 'update'}">
 <isinclude url="${URLUtils.url('Klaviyo-RenderKlaviyoAddToCart')}"/> </isif>
