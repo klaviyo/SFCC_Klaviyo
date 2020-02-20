@@ -1,7 +1,14 @@
+<isscript>
+var KlaviyoUtils = require('*/cartridge/scripts/utils/klaviyo/klaviyoUtils');
+var context = KlaviyoUtils.getContext();
+</isscript>
 <isinclude url="${URLUtils.url('Klaviyo-RenderKlaviyo',
-'title', request.pageMetaData.title,
-'pagecontexttype', ('pageContext' in this && !empty(pageContext)) ? ''+pageContext.type : null, 'pagecontexttitle', ('pageContext' in this && !empty(pageContext)) ? ''+pageContext.title : null, 'searchterm', request.httpParameterMap.q.stringValue,
-'searchresultscount', (!empty(pdict.ProductSearchResult) ? ''+pdict.ProductSearchResult.count : null), 'productid', (!empty(pdict.Product) ? pdict.Product.ID : null),
-'pagecgid', request.httpParameterMap.cgid.stringValue,
-'orderno', (!empty(pdict.Order) ? pdict.Order.orderNo : null)
-)}" />
+	'title', request.pageMetaData.title,
+  	'pagecontexttype', (!empty(context)) ? ''+context : null,
+  	'pagecontexttitle', ('pageContext' in this && !empty(pageContext)) ? ''+pageContext.title : null,
+  	'searchterm', request.httpParameterMap.q.stringValue,
+'searchresultscount', (!empty(pdict.productSearch) ? ''+pdict.productSearch.count : null),
+'productid', (!empty(pdict.product) ? pdict.product.id : null),
+'pagecgid',  request.httpParameterMap.cgid.stringValue,
+'orderno', (!empty(pdict.order) ? pdict.order.orderNumber : null)
+)}"/>
