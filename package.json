@@ -23,6 +23,6 @@
     "eslint": "^3.19.0",
     "eslint-config-airbnb-base": "^5.0.3",
     "eslint-plugin-import": "^1.16.0",
-    "eslint-plugin-sitegenesis": "~1.0.0",
+    "eslint-plugin-sitegenesis": "~1.0.0"
   }
 }

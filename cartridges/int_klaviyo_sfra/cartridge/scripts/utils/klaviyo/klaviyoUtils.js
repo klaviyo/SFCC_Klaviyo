@@ -1,61 +1,35 @@
 'use strict';
 
 /* API Includes */
-var Transaction = require('dw/system/Transaction');
-var ISML = require('dw/template/ISML');
-var catalogMgr = require('dw/catalog/CatalogMgr');
 var productMgr = require('dw/catalog/ProductMgr');
 var orderMgr = require('dw/order/OrderMgr');
 var basketMgr = require('dw/order/BasketMgr');
-var klaviyoToken = require('dw/system/Site').getCurrent().getCustomPreferenceValue('klaviyo_account');
-var createDate = new Date();
 
 var buildDataLayer = function () {
     var klData = {};
-    var order;
     var pageContext,
-        isValidBasket;
-    var basketItems,
-        itemIndex,
-        basketProduct,
         currentBasket,
-        basketHasLength;
-    var currentOrder,
-        orderItems,
-        orderAddress,
-        addressObj,
-        itemOrderIndex;
-    var product,
+        basketHasLength,
+        currentOrder,
         viewedProduct,
-        currentProduct,
-        productId,
-        productCategory,
-        productPrimeCategory,
-        productSet;
-    var lineItem,
-        productObj,
-        priceValue,
-        promotionID;
-    var couponLineItems = null,
-        productLineItems = null,
-        priceAdjustments = null;
-    var viewedProductCategories,
-        orderedProductCategories;
-    var searchResultsCount;
-    var customer,
-        profile;
-    var klEvent;
+        httpParameterMap,
+        pageProductID,
+        orderID,
+        searchResultsCount,
+        searchTerm,
+        pageCategoryId,
+        KlaviyoUtils;
+
     klData.data = '';
     klData.data.debug_error = '';
 
-    var httpParameterMap = request.httpParameterMap;
-    var pageContext = httpParameterMap.pagecontexttype;
-    var pageProductID = httpParameterMap.productid;
-    var orderID = httpParameterMap.orderno;
-    var searchResultsCount = httpParameterMap.searchresultscount;
-    var searchTerm = httpParameterMap.searchterm.value;
-    var pagecontexttitle = httpParameterMap.pagecontexttitle;
-    var pageCategoryId = httpParameterMap.pagecgid.value;
+    httpParameterMap = request.httpParameterMap;
+    pageContext = httpParameterMap.pagecontexttype;
+    pageProductID = httpParameterMap.productid;
+    orderID = httpParameterMap.orderno;
+    searchResultsCount = httpParameterMap.searchresultscount;
+    searchTerm = httpParameterMap.searchterm.value;
+    pageCategoryId = httpParameterMap.pagecgid.value;
 
     try {
         // Checkout Started event
@@ -65,14 +39,14 @@ var buildDataLayer = function () {
             basketHasLength = currentBasket.getProductLineItems().toArray().length >= 1;
 
             if (basketHasLength) {
-                var KlaviyoUtils = require('*/cartridge/scripts/utils/klaviyo/KlaviyoUtils');
+                KlaviyoUtils = require('*/cartridge/scripts/utils/klaviyo/KlaviyoUtils');
                 klData = KlaviyoUtils.prepareCheckoutEventForKlaviyo(currentBasket);
             }
         }
 
         // Order Placed Event
         if (pageContext == 'orderconfirmation' && orderID) {
-            var KlaviyoUtils = require('*/cartridge/scripts/utils/klaviyo/KlaviyoUtils');
+            KlaviyoUtils = require('*/cartridge/scripts/utils/klaviyo/KlaviyoUtils');
 
             if (!dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_order_transactional_enabled')) {
                 return;
@@ -85,7 +59,7 @@ var buildDataLayer = function () {
         // Viewed Product event
         if (!empty(pageProductID.rawValue)) {
             viewedProduct = productMgr.getProduct(pageProductID);
-            var KlaviyoUtils = require('*/cartridge/scripts/utils/klaviyo/KlaviyoUtils');
+            KlaviyoUtils = require('*/cartridge/scripts/utils/klaviyo/KlaviyoUtils');
             klData = KlaviyoUtils.prepareViewedProductEventData(pageProductID, viewedProduct);
         }
 
@@ -111,13 +85,8 @@ var buildDataLayer = function () {
 var buildCartDataLayer = function () {
     var klData = {};
     var isValidBasket,
-        basketItems,
-        itemIndex,
-        basketProduct;
-    var basketHasLength,
-        basketProductCategories,
-        currentViewedProductCategory,
-        currentCategories;
+        basketHasLength,
+        KlaviyoUtils;
 
     isValidBasket = (basketMgr.getCurrentBasket());
     if (isValidBasket) {
@@ -125,7 +94,7 @@ var buildCartDataLayer = function () {
     }
 
     if (basketHasLength) {
-        var KlaviyoUtils = require('*/cartridge/scripts/utils/klaviyo/KlaviyoUtils');
+        KlaviyoUtils = require('*/cartridge/scripts/utils/klaviyo/KlaviyoUtils');
         klData = KlaviyoUtils.prepareAddToCartEventForKlaviyo(klData);
     }
 

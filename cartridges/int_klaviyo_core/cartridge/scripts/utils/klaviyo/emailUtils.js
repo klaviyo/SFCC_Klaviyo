@@ -42,7 +42,7 @@ function prepareOrderPayload(order, isFutureOrder, mailType) {
     var orderBillingAddressAddress1 = (order.billingAddress.address1) ? order.billingAddress.address1 : '';
     var orderBillingAddressAddress2 = (order.billingAddress.address2) ? order.billingAddress.address2 : '';
     var orderBillingAddressCity = (order.billingAddress.city) ? order.billingAddress.city : '';
-    var orderBillingAddressPostalCode = (order.billingAddress.postalCode) ? order.billingAddress.postalCode : '';
+    // var orderBillingAddressPostalCode = (order.billingAddress.postalCode) ? order.billingAddress.postalCode : '';
     var orderBillingAddressStateCode = (order.billingAddress.stateCode) ? order.billingAddress.stateCode : '';
     var orderBillingAddressCountryCode = (order.billingAddress.countryCode.value) ? order.billingAddress.countryCode.value : '';
     var orderBillingAddressPhone = (order.billingAddress.phone) ? order.billingAddress.phone : '';
@@ -72,8 +72,8 @@ function prepareOrderPayload(order, isFutureOrder, mailType) {
         orderShippingAddressCountryCode = (order.shipments[0].shippingAddress.countryCode.value) ? order.shipments[0].shippingAddress.countryCode.value : '';
         orderShippingAddressPhone = (order.shipments[0].shippingAddress.phone) ? order.shipments[0].shippingAddress.phone : '';
 
-        var lineItems = order.getAllProductLineItems();
-        var iterator_lines = lineItems.iterator();
+        // var lineItems = order.getAllProductLineItems();
+        // var iterator_lines = lineItems.iterator();
 
         // Product Details
         productLineItems = order.shipments[0].productLineItems;
@@ -87,51 +87,50 @@ function prepareOrderPayload(order, isFutureOrder, mailType) {
         for (var j in productLineItems) {
             productLineItem = productLineItems[j];
             var prdUrl = '';
-		    var replenishment = false;
-		    var priceString = '';
-		    var priceValue = 0.0;
-		    var hasOsfSmartOrderRefill = false;
+            var replenishment = false;
+            var priceString = '';
+            // var priceValue = 0.0;
+            // var hasOsfSmartOrderRefill = false;
+            prdUrl = URLUtils.https('Product-Show', 'pid', productLineItem.productID).toString();
+            var secondaryName = '';
 
+            // Get the product secondary nam
+            var lineItemProduct = productLineItem.product;
+            var productDetail = productMgr.getProduct(lineItemProduct.ID);
 
-		    prdUrl = URLUtils.https('Product-Show', 'pid', productLineItem.productID).toString();
-		    var secondaryName = '';
+            if (!productLineItem.bonusProductLineItem) {
+                priceString = dw.util.StringUtils.formatMoney(dw.value.Money(productLineItem.price.value, session.getCurrency().getCurrencyCode()));
+            } else {
+                priceString = dw.util.StringUtils.formatMoney(dw.value.Money(0, session.getCurrency().getCurrencyCode()));
+            }
 
-		    // Get the product secondary name
-		    var lineItemProduct = productLineItem.product;
-		    var productDetail = productMgr.getProduct(lineItemProduct.ID);
-
-		    if (!productLineItem.bonusProductLineItem) {
-		    	priceString = dw.util.StringUtils.formatMoney(dw.value.Money(productLineItem.price.value, session.getCurrency().getCurrencyCode()));
-		    } else {
-		    	priceString = dw.util.StringUtils.formatMoney(dw.value.Money(0, session.getCurrency().getCurrencyCode()));
-		    }
-
-		    // Variation values
-		    var variationValues = '';
-		    if (productDetail.isVariant()) {
-		    	var variationAttrs = productDetail.variationModel.getProductVariationAttributes();
-		    	for (var i = 0; i < variationAttrs.length; i++) {
-		    		var VA = variationAttrs[i];
-		    		var selectedValue = productDetail.variationModel.getSelectedValue(VA);
-		    		if (selectedValue) {
-		    			variationValues += selectedValue.displayValue;
-			    		if (i < (variationAttrs.length - 1)) {
-			    			variationValues += ' | ';
-			    		}
-		    		}
-		    	}
-		    }
+            // Variation values
+            var variationValues = '';
+            if (productDetail.isVariant()) {
+                var variationAttrs = productDetail.variationModel.getProductVariationAttributes();
+                for (var i = 0; i < variationAttrs.length; i++) {
+                    var VA = variationAttrs[i];
+                    var selectedValue = productDetail.variationModel.getSelectedValue(VA);
+                    if (selectedValue) {
+                        variationValues += selectedValue.displayValue;
+                        if (i < (variationAttrs.length - 1)) {
+                            variationValues += ' | ';
+                        }
+                    }
+                }
+            }
 
             items.push(productLineItem.productID);
 
             itemCount += productLineItem.quantity.value;
+            var allCategories;
             if (productDetail.variant) {
                 itemPrimaryCategories.push(productDetail.masterProduct.getPrimaryCategory().displayName);
-                var allCategories = productDetail.masterProduct.getAllCategories();
-	    	} else {
-	    		itemPrimaryCategories.push(productDetail.getPrimaryCategory().displayName);
-	    		var allCategories = productDetail.getAllCategories();
-	    	}
+                allCategories = productDetail.masterProduct.getAllCategories();
+            } else {
+                itemPrimaryCategories.push(productDetail.getPrimaryCategory().displayName);
+                allCategories = productDetail.getAllCategories();
+            }
 
             var isSample = false;
             if (!empty(allCategories) && allCategories.length > 0) {
@@ -169,13 +168,13 @@ function prepareOrderPayload(order, isFutureOrder, mailType) {
         if (giftCertificateLineItems && giftCertificateLineItems.length > 0) {
             orderDetails.GIFT_ITEM_PRESENT = true;
             var giftCardId = dw.system.Site.getCurrent().getCustomPreferenceValue('EgiftProduct-ID');
-            var giftCardProductDetail = ProductMgr.getProduct(giftCardId);
+            var giftCardProductDetail = productMgr.getProduct(giftCardId);
             var giftCardImage = '';
             if (!empty(giftCardProductDetail)) {
                 giftCardImage = imageSize ? giftCardProductDetail.getImage(imageSize).getAbsURL().toString() : null;
             }
-            for (var j in giftCertificateLineItems) {
-                giftLineItem = giftCertificateLineItems[j];
+            for (var l in giftCertificateLineItems) {
+                giftLineItem = giftCertificateLineItems[l];
 
                 giftLineItemsArray.push({
                     'Recipient Name'  : giftLineItem.recipientName,
@@ -207,18 +206,18 @@ function prepareOrderPayload(order, isFutureOrder, mailType) {
         var discountCoupon = '';
         var promotionID = '';
         var shippingLineItems = order.shipments[0].shippingLineItems;
-        var shippingLineItem = {};
-        var shippingItemsArray = [];
+        // var shippingLineItem = {};
+        // var shippingItemsArray = [];
         if (shippingLineItems && shippingLineItems.length > 0) {
             if (shippingLineItems[0].lineItemCtnr) {
                 var couponLineItems = shippingLineItems[0].lineItemCtnr.couponLineItems;
                 if (couponLineItems && couponLineItems.length > 0) {
                     var couponLineItem = {};
-                    for (var j in couponLineItems) {
-                        if (couponLineItems[j].statusCode == 'APPLIED') {
-                            discountCoupon = couponLineItems[j].couponCode;
-                            if (!empty(couponLineItems[j].promotion)) {
-                                var promotion = couponLineItems[j].promotion;
+                    for (var q in couponLineItems) {
+                        if (couponLineItem[q].statusCode == 'APPLIED') {
+                            discountCoupon = couponLineItem[q].couponCode;
+                            if (!empty(couponLineItem[q].promotion)) {
+                                var promotion = couponLineItem[q].promotion;
                                 promotionID = promotion.ID;
                             }
                             break;
@@ -236,10 +235,10 @@ function prepareOrderPayload(order, isFutureOrder, mailType) {
         var ccLastFourDigits = '';
         var creditCardType = '';
         var paymentInstrumentItem = {};
-        var paymentInstrumentsArray = [];
+        // var paymentInstrumentsArray = [];
         var maskedGiftCertificateCode = '';
-        for (var j in paymentInstruments) {
-            paymentInstrumentItem = paymentInstruments[j];
+        for (var k in paymentInstruments) {
+            paymentInstrumentItem = paymentInstruments[k];
             if (paymentInstrumentItem.creditCardNumberLastDigits) {
                 ccLastFourDigits = paymentInstrumentItem.maskedCreditCardNumber;
                 creditCardType = (paymentInstrumentItem.creditCardType) ? paymentInstrumentItem.creditCardType : '';
@@ -256,8 +255,8 @@ function prepareOrderPayload(order, isFutureOrder, mailType) {
 
 
         // Merchandise total
-        var merchandiseTotal = merchTotalExclOrderDiscounts.add(order.giftCertificateTotalPrice);
-        var merchandiseTotalString = dw.util.StringUtils.formatMoney(dw.value.Money(merchandiseTotal.value, session.getCurrency().getCurrencyCode()));
+        // var merchandiseTotal = merchTotalExclOrderDiscounts.add(order.giftCertificateTotalPrice);
+        // var merchandiseTotalString = dw.util.StringUtils.formatMoney(dw.value.Money(merchandiseTotal.value, session.getCurrency().getCurrencyCode()));
 
         // discounts
         var orderDiscount = merchTotalExclOrderDiscounts.subtract(merchTotalInclOrderDiscounts);
@@ -289,7 +288,7 @@ function prepareOrderPayload(order, isFutureOrder, mailType) {
         if (order.totalNetPrice.available) {
             orderTotal = order.totalNetPrice.value + totalTax;
         } else {
-            orderTotal = order.getAdjustedMerchandizeTotalPrice(true) + (order.giftCertificateTotalPrice) + (shippingTotalPrice) + (totalTax);
+            orderTotal = order.getAdjustedMerchandizeTotalPrice(true) + (order.giftCertificateTotalPrice) + (order.shippingTotalPrice) + (totalTax);
         }
         var orderTotalString = dw.util.StringUtils.formatMoney(dw.value.Money(orderTotal, session.getCurrency().getCurrencyCode()));
 
@@ -309,7 +308,7 @@ function prepareOrderPayload(order, isFutureOrder, mailType) {
     orderDetails.GIFT_MESSAGE = giftMsg;
 
     // Order Details
-    var orderDate = new Date(order.creationDate);
+    // var orderDate = new Date(order.creationDate);
     var orderCreationDate = dw.util.StringUtils.formatCalendar(new dw.util.Calendar(new Date(order.creationDate)), 'yyyy-MM-dd');
     orderDetails['Order Number'] = order.orderNo;
     orderDetails['Order Date'] = orderCreationDate;

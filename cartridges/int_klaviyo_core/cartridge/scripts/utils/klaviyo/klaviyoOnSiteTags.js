@@ -5,7 +5,7 @@ var cartObj = new Object();
 var categoryObj = new Object();
 var searchObj = new Object();
 var klaviyoTagUtils = require('*/cartridge/scripts/utils/klaviyo/klaviyoTagUtils.js');
-var learnq = 'var _learnq = _learnq || [];'
+var learnq = 'var _learnq = _learnq || [];';
 
 function klaviyoOnSiteTags(klData, currentUser) {
     // identify call for passing over user info for logged in users

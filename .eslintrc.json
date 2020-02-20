@@ -2,7 +2,6 @@
 	"rules": {
 		"accessor-pairs": "off",
 		"array-callback-return": "error",
-		"block-scoped-var": "error",
 		"complexity": [
 			"off",
 			11
@@ -483,7 +482,6 @@
 		],
 		"no-negated-condition": "off",
 		"no-nested-ternary": "error",
-		"no-new-object": "error",
 		"no-plusplus": 0,
 		"no-restricted-syntax": [
 			0,

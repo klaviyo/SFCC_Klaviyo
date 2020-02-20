@@ -4,15 +4,10 @@ var StringUtils = require('dw/util/StringUtils');
 var Site = require('dw/system/Site');
 var Logger = require('dw/system/Logger');
 var ServiceRegistry = require('dw/svc/LocalServiceRegistry');
-var apiKey = Site.getCurrent().getCustomPreferenceValue('klaviyo_api_key');
-var Transaction = require('dw/system/Transaction');
 var productMgr = require('dw/catalog/ProductMgr');
 var orderMgr = require('dw/order/OrderMgr');
 var basketMgr = require('dw/order/BasketMgr');
-var catalogMgr = require('dw/catalog/CatalogMgr');
-var klaviyoToken = Site.getCurrent().getCustomPreferenceValue('klaviyo_account');
 var imageSize = Site.getCurrent().getCustomPreferenceValue('klaviyo_image_size') || null;
-var createDate = new Date();
 
 var WHITELISTED_EVENTS = ['Searched Site', 'Viewed Product', 'Viewed Category', 'Added to Cart', 'Started Checkout', 'Placed Order', 'Ordered Product'];
 
@@ -98,7 +93,7 @@ function preparePayload(email, data, event) {
 function preparegiftCardObject(giftCard) {
     var giftCardObj = {};
     giftCardObj['Product Name'] = 'e-Giftcard';
-    giftCardObj['Product ID'] = giftCardId;
+    // giftCardObj['Product ID'] = dw.system.Site.getCurrent().getCustomPreferenceValue('EgiftProduct-ID');
     giftCardObj['Recipient Email'] = giftCard.recipientEmail;
     giftCardObj['Recipient Name'] = giftCard.recipientName;
     giftCardObj['Sender Name'] = giftCard.senderName;
@@ -119,7 +114,7 @@ function preparegiftCardObject(giftCard) {
  */
 
 function prepareProductObj(lineItem, basketProduct, currentProductID) {
-    productObj = {};
+    var productObj = {};
     productObj['Product ID'] = currentProductID;
     productObj['Product Name'] = basketProduct.name;
     productObj['Product Image URL'] = imageSize ? basketProduct.getImage(imageSize).getAbsURL().toString() : null;
@@ -141,14 +136,14 @@ function prepareProductObj(lineItem, basketProduct, currentProductID) {
  */
 
 function prepareViewedProductEventData(pageProductID, viewedProduct) {
-    klData = {};
+    var klData = {};
     klData.event = 'Viewed Product';
     klData.viewedProductID = pageProductID;
     klData.viewedProductName = viewedProduct.name;
     klData.viewedProductPage = viewedProduct.getPageURL();
     var price = viewedProduct.getPriceModel().getPrice().getValue();
     if (empty(price) || price <= 0) {
-    	 price = viewedProduct.getPriceModel().getMinPrice().getValue();
+        price = viewedProduct.getPriceModel().getMinPrice().getValue();
     }
     klData.viewedProductPrice = price;
     klData.viewedProductPageURL = require('dw/web/URLUtils').https('Product-Show', 'pid', pageProductID).toString();
@@ -156,7 +151,7 @@ function prepareViewedProductEventData(pageProductID, viewedProduct) {
     klData.viewedProductAvailability = viewedProduct.availabilityModel.availability;
     klData.viewedProductCategories = createCategories(viewedProduct);
     klData.viewedProductPrimaryCategory = !empty(viewedProduct.getPrimaryCategory()) ? viewedProduct.getPrimaryCategory().displayName : '';
-	 return klData;
+    return klData;
 }
 
 /**
@@ -173,11 +168,11 @@ function createCategories(product) {
     if (product.variant) {
         var productCategoryArray = product.masterProduct.allCategories.toArray();
         for (productCategoryIndex = 0; productCategoryIndex < productCategoryArray.length; productCategoryIndex++) {
-            var currentCategory = productCategoryArray[productCategoryIndex].displayName;
+            currentCategory = productCategoryArray[productCategoryIndex].displayName;
             arrayOfCategories.push(currentCategory);
         }
     } else {
-        var productCategoryArray = product.allCategories.toArray();
+        productCategoryArray = product.allCategories.toArray();
         for (productCategoryIndex = 0; productCategoryIndex < productCategoryArray.length; productCategoryIndex++) {
             currentCategory = productCategoryArray[productCategoryIndex].displayName;
             arrayOfCategories.push(currentCategory);
@@ -194,13 +189,13 @@ function createCategories(product) {
  */
 
 function removeDuplicates(items) {
-	  var unique = {};
-	  items.forEach(function (i) {
-	    if (!unique[i]) {
-	      unique[i] = true;
-	    }
-	  });
-	  return Object.keys(unique);
+    var unique = {};
+    items.forEach(function (i) {
+        if (!unique[i]) {
+            unique[i] = true;
+        }
+    });
+    return Object.keys(unique);
 }
 
 /**
@@ -210,8 +205,8 @@ function removeDuplicates(items) {
  */
 function prepareCheckoutEventForKlaviyo(currentBasket) {
     try {
-        klData = {};
-        basketItems = currentBasket.getProductLineItems().toArray();
+        var klData = {};
+        var basketItems = currentBasket.getProductLineItems().toArray();
         // Create some top-level event data
         klData.event = 'Started Checkout';
         klData['Basket Gross Price'] = currentBasket.getTotalGrossPrice().value;
@@ -223,20 +218,20 @@ function prepareCheckoutEventForKlaviyo(currentBasket) {
         klData.Items = [];
         klData.$email = currentBasket.customerEmail;
 
-        for (itemIndex = 0; itemIndex < basketItems.length; itemIndex++) {
-	  lineItem = basketItems[itemIndex];
-	  currentProductID = lineItem.productID;
-	  basketProduct = productMgr.getProduct(currentProductID);
+        for (var itemIndex = 0; itemIndex < basketItems.length; itemIndex++) {
+            var lineItem = basketItems[itemIndex];
+            var currentProductID = lineItem.productID;
+            var basketProduct = productMgr.getProduct(currentProductID);
 
-	  if (currentProductID != null && !empty(basketProduct) && basketProduct.getPriceModel().getPrice().value > 0) {
-	      productObj = prepareProductObj(lineItem, basketProduct, currentProductID);
+            if (currentProductID != null && !empty(basketProduct) && basketProduct.getPriceModel().getPrice().value > 0) {
+                var productObj = prepareProductObj(lineItem, basketProduct, currentProductID);
 
-	      // add top-level data for the event for segmenting, etc.
-	  klData.line_items.push(productObj);
-	  klData.Categories.push.apply(klData.Categories, klData.line_items[itemIndex].Categories);
-	  klData.Items.push(klData.line_items[itemIndex]['Product Name']);
-	    }
-	  }
+                // add top-level data for the event for segmenting, etc.
+                klData.line_items.push(productObj);
+                klData.Categories.push.apply(klData.Categories, klData.line_items[itemIndex].Categories);
+                klData.Items.push(klData.line_items[itemIndex]['Product Name']);
+            }
+        }
     } catch (e) {
         klData.data.debug_error = [e.message, e.lineNumber];
     }
@@ -264,12 +259,12 @@ function prepareOrderConfirmationEventForKlaviyo(currentOrder) {
 
         for (var giftCertIndex = 0; giftCertIndex < giftCertCollection.length; giftCertIndex++) {
             // gift certificates don't count as orderItems so we need to reconcile that ourselves
-            var giftCardId = dw.system.Site.getCurrent().getCustomPreferenceValue('EgiftProduct-ID');
+            // var giftCardId = dw.system.Site.getCurrent().getCustomPreferenceValue('EgiftProduct-ID');
 
             /* klData["Item Count"]++ */
             var giftCard = giftCertCollection[giftCertIndex];
             var giftCardObj = {};
-            var giftCardObj = preparegiftCardObject(giftCard);
+            giftCardObj = preparegiftCardObject(giftCard);
             orderGiftCards.push(giftCardObj);
         }
 
@@ -297,17 +292,18 @@ function prepareAddToCartEventForKlaviyo(klData) {
     klData.items = [];
     klData.categories = [];
     klData.primaryCategories = [];
-    var currentCategories = [];
-    for (itemIndex = 0; itemIndex < basketItems.length; itemIndex++) {
+
+    for (var itemIndex = 0; itemIndex < basketItems.length; itemIndex++) {
         var lineItem = basketItems[itemIndex];
         var currentProductID = lineItem.productID;
         var basketProduct = productMgr.getProduct(currentProductID);
 
         if (currentProductID != null && !empty(basketProduct) && basketProduct.getPriceModel().getPrice().value > 0) {
+            var primaryCategory;
             if (basketProduct.variant) {
-                var primaryCategory = basketProduct.masterProduct.getPrimaryCategory().displayName;
+                primaryCategory = basketProduct.masterProduct.getPrimaryCategory().displayName;
             } else {
-                var primaryCategory = basketProduct.getPrimaryCategory().displayName;
+                primaryCategory = basketProduct.getPrimaryCategory().displayName;
             }
 
             klData.lineItems.push({
@@ -363,50 +359,28 @@ function sendShipmentConfirmation(orderID) {
  */
 var buildDataLayer = function () {
     var klData = {};
-    var order;
     var pageContext,
-        isValidBasket;
-    var basketItems,
-        itemIndex,
-        basketProduct,
         currentBasket,
-        basketHasLength;
-    var currentOrder,
-        orderItems,
-        orderAddress,
-        addressObj,
-        itemOrderIndex;
-    var product,
+        basketHasLength,
+        currentOrder,
         viewedProduct,
-        currentProduct,
-        productId,
-        productCategory,
-        productPrimeCategory,
-        productSet;
-    var lineItem,
-        productObj,
-        priceValue,
-        promotionID;
-    var couponLineItems = null,
-        productLineItems = null,
-        priceAdjustments = null;
-    var viewedProductCategories,
-        orderedProductCategories;
-    var searchResultsCount;
-    var customer,
-        profile;
-    var klEvent;
+        httpParameterMap,
+        pageProductID,
+        orderID,
+        searchResultsCount,
+        searchTerm,
+        pageCategoryId;
+
     klData.data = '';
     klData.data.debug_error = '';
 
-    var httpParameterMap = request.httpParameterMap;
-    var pageContext = httpParameterMap.pagecontexttype;
-    var pageProductID = httpParameterMap.productid;
-    var orderID = httpParameterMap.orderno;
-    var searchResultsCount = httpParameterMap.searchresultscount;
-    var searchTerm = httpParameterMap.searchterm.value;
-    var pagecontexttitle = httpParameterMap.pagecontexttitle;
-    var pageCategoryId = httpParameterMap.pagecgid.value;
+    httpParameterMap = request.httpParameterMap;
+    pageContext = httpParameterMap.pagecontexttype;
+    pageProductID = httpParameterMap.productid;
+    orderID = httpParameterMap.orderno;
+    searchResultsCount = httpParameterMap.searchresultscount;
+    searchTerm = httpParameterMap.searchterm.value;
+    pageCategoryId = httpParameterMap.pagecgid.value;
 
     try {
         // Checkout Started event
@@ -457,13 +431,7 @@ var buildDataLayer = function () {
 var buildCartDataLayer = function () {
     var klData = {};
     var isValidBasket,
-        basketItems,
-        itemIndex,
-        basketProduct;
-    var basketHasLength,
-        basketProductCategories,
-        currentViewedProductCategory,
-        currentCategories;
+        basketHasLength;
 
     isValidBasket = (basketMgr.getCurrentBasket());
     if (isValidBasket) {
@@ -500,7 +468,7 @@ var trackAddToCart = function () {
     var email = '';
     if (!empty(session.getCustomer()) && !empty(session.getCustomer().profile)) {
         var currentUser = session.getCustomer().profile;
-        var email = currentUser.email;
+        email = currentUser.email;
     }
     var event = 'Add To Cart';
     sendEmail(email, klaviyoDataLayer, event);
@@ -552,7 +520,7 @@ var KlaviyoTrackService = ServiceRegistry.createService('KlaviyoTrackService', {
      * @param {Object} params - Additional paramaters
      * @returns {void}
      */
-    createRequest: function (svc, args) {
+    createRequest: function (svc) {
         svc.setRequestMethod('GET');
     },
     /**
