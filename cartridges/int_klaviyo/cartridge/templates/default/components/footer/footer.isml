@@ -33,4 +33,4 @@
 <isinclude template="util/reporting/ReportUserRegistration.isml"/>
 
 <isinclude template="components/footer/footer_UI"/>
-<isinclude template="components/footer/klaviyo_footer"/>
+<isinclude template="components/footer/klaviyoFooter"/>

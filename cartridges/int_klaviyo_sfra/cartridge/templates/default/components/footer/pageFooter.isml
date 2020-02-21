@@ -29,6 +29,6 @@
                 <iscontentasset aid="footer-copy" />
             </div>
         </div>
-       <isinclude template="klaviyo/klaviyo_footer"/>
+       <isinclude template="klaviyo/klaviyoFooter"/>
     </div>
 </footer>

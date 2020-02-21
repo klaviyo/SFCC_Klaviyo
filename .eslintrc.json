@@ -642,8 +642,7 @@
 				"args": "after-used"
 			}
 		],
-		"prefer-numeric-literals": "off",
-		"no-use-before-define": 1
+		"prefer-numeric-literals": "off"
 	},
 	"overrides": [{
 			"files": [

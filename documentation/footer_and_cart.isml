@@ -2,7 +2,7 @@
 
 <!-- Include this in the footer_UI.isml -->
 
-<isinclude template="klaviyo/klaviyo_footer"/>
+<isinclude template="klaviyo/klaviyoFooter"/>
 
 <!-- Include this in the minicart.isml and cart.isml or wherever you have the cart isml files -->
 

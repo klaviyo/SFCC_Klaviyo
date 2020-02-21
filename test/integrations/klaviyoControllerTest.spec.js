@@ -4,16 +4,16 @@ var config = require('../it.config');
 
 describe('Cart: Get product variant in cart for edit', function () {
     this.timeout(45000);
-    var variantPid1 = '701643421084M';   // 3/4 Sleeve V-Neck Top: icy mint, XS
+    var variantPid1 = '701643421084M'; // 3/4 Sleeve V-Neck Top: icy mint, XS
     var variantUuid1;
     var cookieJar = request.jar();
     var myRequest = {
-        url: '',
-        method: 'POST',
-        rejectUnauthorized: false,
-        resolveWithFullResponse: true,
-        jar: cookieJar,
-        headers: {
+        url                     : '',
+        method                  : 'POST',
+        rejectUnauthorized      : false,
+        resolveWithFullResponse : true,
+        jar                     : cookieJar,
+        headers                 : {
             'X-Requested-With': 'XMLHttpRequest'
         }
     };
@@ -21,8 +21,8 @@ describe('Cart: Get product variant in cart for edit', function () {
     before(function () {
         myRequest.url = config.baseUrl + '/Cart-AddProduct';
         myRequest.form = {
-            pid: variantPid1,
-            quantity: 1
+            pid      : variantPid1,
+            quantity : 1
         };
         return request(myRequest)
             .then(function (response) {
