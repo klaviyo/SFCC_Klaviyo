@@ -141,6 +141,7 @@ function prepareViewedProductEventData(pageProductID, viewedProduct) {
     klData.viewedProductID = pageProductID;
     klData.viewedProductName = viewedProduct.name;
     klData.viewedProductPage = viewedProduct.getPageURL();
+    klData.viewedProductImage = imageSize ? viewedProduct.getImage(imageSize).getAbsURL().toString() : null;
     var price = viewedProduct.getPriceModel().getPrice().getValue();
     if (empty(price) || price <= 0) {
         price = viewedProduct.getPriceModel().getMinPrice().getValue();

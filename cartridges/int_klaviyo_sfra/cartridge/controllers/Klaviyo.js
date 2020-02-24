@@ -8,7 +8,7 @@ var csrfProtection = require('*/cartridge/scripts/middleware/csrf');
 var Logger = require('dw/system/Logger');
 
 /* API Includes */
-var klaviyoUtils = require('*/cartridge/scripts/utils/klaviyo/klaviyoUtils');
+
 
 /**
  * You have to add the values for Klaviyo Account, Klaviyo API Key in
@@ -25,9 +25,14 @@ server.get(
         }
         var logger = Logger.getLogger('renderKlaviyo', 'Klaviyo - Render Klaviyo Controller');
         try {
+            var klaviyoUtils = require('*/cartridge/scripts/utils/klaviyo/klaviyoUtils');
+            var klaviyoTags = require('*/cartridge/scripts/utils/klaviyo/klaviyoOnSiteTags.js').klaviyoOnSiteTags;
+
             var klaviyoDataLayer = klaviyoUtils.buildDataLayer();
+            var sendToDom = klaviyoTags(klaviyoDataLayer);
+
             res.render('/klaviyo/klaviyoTag', {
-                klaviyoData: klaviyoDataLayer
+                klaviyoData: sendToDom
             });
             next();
         } catch (e) {
@@ -43,6 +48,7 @@ server.get(
         if (!dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_enabled')) {
             return;
         }
+        var klaviyoUtils = require('*/cartridge/scripts/utils/klaviyo/klaviyoUtils');
         var klaviyoDataLayer = klaviyoUtils.buildDataLayer();
         res.render('/klaviyo/klaviyoTag', {
             klaviyoData: klaviyoDataLayer
@@ -93,7 +99,7 @@ server.get(
 
         var orderID = req.querystring.orderID;
         if (!empty(orderID)) {
-            klaviyoUtils = require('*/cartridge/scripts/utils/klaviyo/klaviyoUtils');
+            var klaviyoUtils = require('*/cartridge/scripts/utils/klaviyo/klaviyoUtils');
             if (klaviyoUtils.sendShipmentConfirmation(orderID)) {
                 res.json({
                     status: 'success'

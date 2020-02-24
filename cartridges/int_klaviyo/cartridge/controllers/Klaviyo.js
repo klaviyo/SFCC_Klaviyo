@@ -23,9 +23,13 @@ var RenderKlaviyo = function () {
     var logger = Logger.getLogger('renderKlaviyo', 'Klaviyo - Render Klaviyo Controller');
     try {
         var klaviyoUtils = require('*/cartridge/scripts/utils/klaviyo/klaviyoUtils');
+        var klaviyoTags = require('*/cartridge/scripts/utils/klaviyo/klaviyoOnSiteTags.js').klaviyoOnSiteTags;
+
         var klaviyoDataLayer = klaviyoUtils.buildDataLayer();
+        var sendToDom = klaviyoTags(klaviyoDataLayer);
+
         ISML.renderTemplate('klaviyo/klaviyoTag', {
-            klaviyoData: klaviyoDataLayer
+            klaviyoData: sendToDom
         });
     } catch (e) {
         logger.debug('error rendering klaviyo ' + e.message + ' at ' + e.lineNumber);

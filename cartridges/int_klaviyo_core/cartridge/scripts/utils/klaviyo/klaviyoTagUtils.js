@@ -19,7 +19,7 @@ function prepareViewedProductObject(klData) {
     // viewedProductObj["Product Availability Model"] = klData.viewedProductAvailability;
     viewedProductObj.Categories = klData.viewedProductCategories;
     viewedProductObj['Primary Category'] = klData.viewedProductPrimaryCategory;
-    return klData;
+    return viewedProductObj;
 }
 
 

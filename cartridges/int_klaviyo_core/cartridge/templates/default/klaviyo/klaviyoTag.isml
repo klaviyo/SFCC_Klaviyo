@@ -1,16 +1,9 @@
-<!--- TEMPLATENAME: klaviyo_utag.isml --->
+<!--- TEMPLATENAME: klaviyoTag.isml --->
 <iscomment>Add Klaviyo.js to page</iscomment>
-<script type="text/javascript">
-<isscript>
-var klaviyoTags = require("*/cartridge/scripts/utils/klaviyo/klaviyoOnSiteTags.js").klaviyoOnSiteTags;
-var klData = pdict.klaviyoData;
-var currentUser = pdict.CurrentUser.profile;
-var printToDom = klaviyoTags(klData, currentUser)
-out.print(printToDom)
-</isscript>
-</script>
-
 <script
   async type="text/javascript"
   src="//static.klaviyo.com/onsite/js/klaviyo.js?company_id=${dw.system.Site.current.preferences.custom.klaviyo_account}"
 ></script>
+<script type="text/javascript">
+<isprint value="${pdict.klaviyoData}" encoding="off"/>
+</script>
