@@ -26,7 +26,7 @@ server.get(
         var logger = Logger.getLogger('renderKlaviyo', 'Klaviyo - Render Klaviyo Controller');
         try {
             var klaviyoDataLayer = klaviyoUtils.buildDataLayer();
-            res.render('/klaviyo/klaviyo_tag', {
+            res.render('/klaviyo/klaviyoTag', {
                 klaviyoData: klaviyoDataLayer
             });
             next();
@@ -44,7 +44,7 @@ server.get(
             return;
         }
         var klaviyoDataLayer = klaviyoUtils.buildDataLayer();
-        res.render('/klaviyo/klaviyo_tag', {
+        res.render('/klaviyo/klaviyoTag', {
             klaviyoData: klaviyoDataLayer
         });
         next();

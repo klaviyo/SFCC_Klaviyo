@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * This script provides utility functions for klaviyo_tag isml fle.
+ * This script provides utility functions for klaviyoTag isml fle.
  */
 
 

@@ -10,7 +10,7 @@ var ISML = require('dw/template/ISML');
 
 /**
  * Controller that will send the necessary data required for klaviyo to track the user event's
- * such as checkout,order confirmation,searching etc and renders the renders the klaviyo_tag isml file
+ * such as checkout,order confirmation,searching etc and renders the renders the klaviyoTag isml file
  *
  * @module controllers/Klaviyo
 */
@@ -24,7 +24,7 @@ var RenderKlaviyo = function () {
     try {
         var klaviyoUtils = require('*/cartridge/scripts/utils/klaviyo/klaviyoUtils');
         var klaviyoDataLayer = klaviyoUtils.buildDataLayer();
-        ISML.renderTemplate('klaviyo/klaviyo_tag', {
+        ISML.renderTemplate('klaviyo/klaviyoTag', {
             klaviyoData: klaviyoDataLayer
         });
     } catch (e) {
@@ -46,7 +46,7 @@ var RenderKlaviyoAddToCart = function () {
 
     var klaviyoDataLayer = klaviyoUtils.buildCartDataLayer();
 
-    ISML.renderTemplate('klaviyo/klaviyo_tag', {
+    ISML.renderTemplate('klaviyo/klaviyoTag', {
         klaviyoData: klaviyoDataLayer
     });
 };
