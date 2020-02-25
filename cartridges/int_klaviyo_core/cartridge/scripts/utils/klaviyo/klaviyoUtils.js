@@ -533,6 +533,13 @@ var KlaviyoTrackService = ServiceRegistry.createService('KlaviyoTrackService', {
      */
     parseResponse: function (svc, client) {
         return client.text;
-    }
+    },
+
+    getRequestLogMessage: function () {
+        var reqLogMsg = 'sending klaviyo track payload';
+        return reqLogMsg;
+    },
+
+    getResponseLogMessage: function () {}
 
 });
