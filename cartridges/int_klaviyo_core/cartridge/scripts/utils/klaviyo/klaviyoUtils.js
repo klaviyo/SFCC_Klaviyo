@@ -52,6 +52,8 @@ function sendEmail(email, data, event) {
     } else {
         logger.error('Send email via Klaviyo failed. Payload info ' + klaviyoData);
     }
+
+    return resultObj;
 }
 
 
@@ -149,7 +151,6 @@ function prepareViewedProductEventData(pageProductID, viewedProduct) {
     klData.viewedProductPrice = price;
     klData.viewedProductPageURL = require('dw/web/URLUtils').https('Product-Show', 'pid', pageProductID).toString();
     klData.viewedProductUPC = viewedProduct.UPC;
-    klData.viewedProductAvailability = viewedProduct.availabilityModel.availability;
     klData.viewedProductCategories = createCategories(viewedProduct);
     klData.viewedProductPrimaryCategory = !empty(viewedProduct.getPrimaryCategory()) ? viewedProduct.getPrimaryCategory().displayName : '';
     return klData;

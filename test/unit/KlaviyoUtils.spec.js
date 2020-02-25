@@ -9,6 +9,7 @@ var LocalServiceRegistry = require('../mocks/dw/svc/LocalServiceRegistry');
 var URLUtils = require('../mocks/dw/web/URLUtils');
 var ProductMgr = require('../mocks/dw/catalog/ProductMgr');
 var EmailUtils = require('../mocks/EmailUtils');
+var BasketMgr = require('../mocks/dw/order/BasketMgr')
 var OrderMgr = require('../mocks/dw/order/OrderMgr');
 
 global.empty = require('../mocks/empty');
@@ -21,8 +22,18 @@ global.dw = {
   }
 };
 
-describe('KlaviyoUtils.js script', function() {
-  var klaviyoUtilsFile = proxyquire('../../KlaviyoUtils.js', { 'dw/system/Logger': Logger, 'dw/system/Site': Site, 'dw/util/StringUtils': StringUtils, 'dw/svc/LocalServiceRegistry': LocalServiceRegistry, 'dw/web/URLUtils': URLUtils, '~/cartridge/scripts/utils/klaviyo/EmailUtils': EmailUtils, 'dw/order/OrderMgr': OrderMgr });
+describe('klaviyoUtils.js script', function() {
+  var klaviyoUtilsFile = proxyquire('../../cartridges/int_klaviyo_core/cartridge/scripts/utils/klaviyo/klaviyoUtils.js', {
+    'dw/system/Logger': Logger,
+    'dw/system/Site': Site,
+    'dw/util/StringUtils': StringUtils,
+    'dw/svc/LocalServiceRegistry': LocalServiceRegistry,
+    'dw/web/URLUtils': URLUtils,
+    '~/cartridge/scripts/utils/klaviyo/EmailUtils': EmailUtils,
+    'dw/order/OrderMgr': OrderMgr,
+    'dw/order/BasketMgr': BasketMgr,
+    'dw/catalog/ProductMgr': ProductMgr
+  });
 
   var payloadObj = {
     token: 'XXxxXX',
@@ -35,17 +46,10 @@ describe('KlaviyoUtils.js script', function() {
       $email: 'kltest@klaviyo.com'
     }
   };
-  describe('klaviyoTrackEvent function', function() {
+  describe('sendEmail function', function() {
     it('should return a 1 if track call succeeds', function() {
-      var trackCallResult = klaviyoUtilsFile.klaviyoTrackEvent(payloadObj.customer_properties.$email, {}, 'Event Name');
+      var trackCallResult = klaviyoUtilsFile.sendEmail(payloadObj.customer_properties.$email, {}, 'Event Name');
       expect(trackCallResult).to.equal(1);
-    });
-  });
-  describe('preparePayload function', function() {
-    var payloadObjBase64 = Buffer.from(JSON.stringify(payloadObj)).toString('base64');
-    it('should return a base64 string of Klaviyo formatted data', function () {
-      var preparedPayload = klaviyoUtilsFile.preparePayload(payloadObj.customer_properties.$email, payloadObj.properties, payloadObj.event);
-      expect(preparedPayload).to.eql(payloadObjBase64);
     });
   });
   describe('prepareViewedProductEventData function', function() {
@@ -55,12 +59,12 @@ describe('KlaviyoUtils.js script', function() {
         'viewedProductID',
         'viewedProductName',
         'viewedProductPage',
+        'viewedProductImage',
+        'viewedProductPrice',
         'viewedProductPageURL',
         'viewedProductUPC',
         'viewedProductCategories',
-        'viewedProductPrimaryCategory',
-        'viewedProductImage',
-        'viewedProductPrice'
+        'viewedProductPrimaryCategory'
       ];
       var viewedProductObj = klaviyoUtilsFile.prepareViewedProductEventData(1, ProductMgr.getProduct());
       expect(Object.keys(viewedProductObj)).to.eql(viewedProductKeys);
@@ -71,12 +75,6 @@ describe('KlaviyoUtils.js script', function() {
       var removeDuplicates = klaviyoUtilsFile.removeDuplicates
       var dupeArray = ['shoes', 'shoes', 'hats', 'hats', 'coats', 'coats'];
       expect(removeDuplicates(dupeArray)).to.eql(['shoes', 'hats', 'coats']);
-    });
-  });
-  describe('sendMailForShipmentConfirmation function', function() {
-    it('should return true if sendOrderEmail is successful', function() {
-      var sendMailResult = klaviyoUtilsFile.sendMailForShipmentConfirmation(1);
-      expect(sendMailResult).to.eq(true);
     });
   });
 });
