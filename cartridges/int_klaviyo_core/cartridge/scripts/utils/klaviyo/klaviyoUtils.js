@@ -41,16 +41,16 @@ function sendEmail(email, data, event) {
     var result = KlaviyoTrackService.call(requestBody);
 
     if (result == null) {
-        logger.error('Result for send email via Klaviyo returned null. Payload info: ' + klaviyoData);
+        logger.error('Result for send email via Klaviyo returned null.');
         return;
     }
 
     resultObj = JSON.parse(result.object);
 
     if (resultObj == 1) {
-        logger.info('Send email via Klaviyo is successful. Payload info ' + klaviyoData);
+        logger.info('Send email via Klaviyo is successful.');
     } else {
-        logger.error('Send email via Klaviyo failed. Payload info ' + klaviyoData);
+        logger.error('Send email via Klaviyo failed.');
     }
 
     return resultObj;
