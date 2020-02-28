@@ -1,7 +1,3 @@
-<isscript>
-var KlaviyoUtils = require('*/cartridge/scripts/utils/klaviyo/klaviyoUtils');
-var context = KlaviyoUtils.getContext();
-</isscript>
 <isinclude url="${URLUtils.url('Klaviyo-RenderKlaviyo',
 	'title', request.pageMetaData.title,
   	'pagecontexttype', (!empty(context)) ? ''+context : null,
