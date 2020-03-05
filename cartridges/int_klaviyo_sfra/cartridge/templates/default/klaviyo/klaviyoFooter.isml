@@ -1,6 +1,5 @@
 <isinclude url="${URLUtils.url('Klaviyo-RenderKlaviyo',
 	'title', request.pageMetaData.title,
-  	'pagecontexttype', (!empty(context)) ? ''+context : null,
   	'pagecontexttitle', ('pageContext' in this && !empty(pageContext)) ? ''+pageContext.title : null,
   	'searchterm', request.httpParameterMap.q.stringValue,
 'searchresultscount', (!empty(pdict.productSearch) ? ''+pdict.productSearch.count : null),
