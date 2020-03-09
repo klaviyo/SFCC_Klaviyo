@@ -9,8 +9,8 @@
 var klDataElement = "klaviyo-data"
 var klDataAttribute = "data-js"
 var domEl = document.getElementById(klDataElement);
-var klEventTag = domEl.getAttribute(klDataAttribute)
-var klParsedData = JSON.parse(klEventTag)
+var klDataTag = domEl.getAttribute(klDataAttribute)
+var klParsedData = JSON.parse(klDataTag)
 var _learnq = _learnq || [];
 _learnq.push([klParsedData.eventType, klParsedData.eventName, klParsedData.data])
 </script>
