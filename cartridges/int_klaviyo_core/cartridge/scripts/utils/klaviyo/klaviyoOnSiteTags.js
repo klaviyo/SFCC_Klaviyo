@@ -1,11 +1,10 @@
-var klCustomer = new Object();
+// var klCustomer = new Object();
 var viewedProductObj = new Object();
 var checkoutObj = new Object();
 var cartObj = new Object();
 var categoryObj = new Object();
 var searchObj = new Object();
 var klaviyoTagUtils = require('*/cartridge/scripts/utils/klaviyo/klaviyoTagUtils.js');
-var learnq = 'var _learnq = _learnq || [];';
 
 function klaviyoOnSiteTags(klData) {
     // identify call for passing over user info for logged in users
@@ -16,40 +15,41 @@ function klaviyoOnSiteTags(klData) {
     // }
 
     if (klData.event === 'Viewed Product') {
-        viewedProductObj = klaviyoTagUtils.prepareViewedProductObject(klData);
-        var viewProdReturnString = learnq.concat(" _learnq.push(['track', 'Viewed Product', " + JSON.stringify(viewedProductObj) +
-    ']);');
-        return viewProdReturnString;
+        viewedProductObj.data = klaviyoTagUtils.prepareViewedProductObject(klData);
+        viewedProductObj.eventType = 'track';
+        viewedProductObj.eventName = klData.event;
+        return JSON.stringify(viewedProductObj);
     }
 
     if (klData.event === 'Started Checkout') {
-        checkoutObj = klaviyoTagUtils.prepareCheckoutObj(klData);
-        klCustomer.$email = klData.$email;
-        var startCheckoutReturnString = learnq.concat(" _learnq.push(['track', 'Checkout Started', " + JSON.stringify(checkoutObj) +
-    ']);');
-        return startCheckoutReturnString;
+        checkoutObj.data = klaviyoTagUtils.prepareCheckoutObj(klData);
+        checkoutObj.eventType = 'track';
+        checkoutObj.eventName = klData.event;
+        return JSON.stringify(checkoutObj);
     }
 
     if (klData.event === 'Added to Cart') {
-        cartObj = klaviyoTagUtils.prepareAddToCartObj(klData);
-        var cartReturnString = learnq.concat(" _learnq.push(['track', 'Add to Cart', " + JSON.stringify(cartObj) +
-    ']);');
-        return cartReturnString;
+        cartObj.data = klaviyoTagUtils.prepareAddToCartObj(klData);
+        cartObj.eventType = 'track';
+        cartObj.eventName = klData.event;
+        return JSON.stringify(cartObj);
     }
 
     if (klData.event === 'Viewed Category') {
-        categoryObj['Viewed Category'] = klData.pageCategoryId;
-        var catReturnString = learnq.concat(" _learnq.push(['track', 'Viewed Category', " +
-        JSON.stringify(categoryObj) + ']);');
-        return catReturnString;
+        categoryObj.data = {};
+        categoryObj.data['Viewed Category'] = klData.pageCategoryId;
+        categoryObj.eventType = 'track';
+        categoryObj.eventName = klData.event;
+        return JSON.stringify(categoryObj);
     }
 
     if (klData.event === 'Searched Site') {
-        searchObj['Search Term'] = klData.searchTerm;
-        searchObj['Search Results Count'] = klData.searchResultsCount;
-        var searchReturnString = learnq.concat(" _learnq.push(['track', 'Site Search', " + JSON.stringify(searchObj) +
-    ']);');
-        return searchReturnString;
+        searchObj.data = {};
+        searchObj.data['Search Term'] = klData.searchTerm;
+        searchObj.data['Search Results Count'] = klData.searchResultsCount;
+        searchObj.eventType = 'track';
+        searchObj.eventName = klData.event;
+        return JSON.stringify(searchObj);
     }
 
     // identify call for logged-in users (new registrations)

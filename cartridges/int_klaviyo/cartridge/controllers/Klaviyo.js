@@ -47,11 +47,13 @@ var RenderKlaviyoAddToCart = function () {
         return;
     }
     var klaviyoUtils = require('*/cartridge/scripts/utils/klaviyo/klaviyoUtils');
+    var klaviyoTags = require('*/cartridge/scripts/utils/klaviyo/klaviyoOnSiteTags.js').klaviyoOnSiteTags;
 
     var klaviyoDataLayer = klaviyoUtils.buildCartDataLayer();
+    var sendToDom = klaviyoTags(klaviyoDataLayer);
 
     ISML.renderTemplate('klaviyo/klaviyoTag', {
-        klaviyoData: klaviyoDataLayer
+        klaviyoData: sendToDom
     });
 };
 

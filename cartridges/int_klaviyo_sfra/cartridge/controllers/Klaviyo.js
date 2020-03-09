@@ -49,9 +49,13 @@ server.get(
             return;
         }
         var klaviyoUtils = require('*/cartridge/scripts/utils/klaviyo/klaviyoUtils');
+        var klaviyoTags = require('*/cartridge/scripts/utils/klaviyo/klaviyoOnSiteTags.js').klaviyoOnSiteTags;
+
         var klaviyoDataLayer = klaviyoUtils.buildDataLayer();
+        var sendToDom = klaviyoTags(klaviyoDataLayer);
+
         res.render('/klaviyo/klaviyoTag', {
-            klaviyoData: klaviyoDataLayer
+            klaviyoData: sendToDom
         });
         next();
     }
