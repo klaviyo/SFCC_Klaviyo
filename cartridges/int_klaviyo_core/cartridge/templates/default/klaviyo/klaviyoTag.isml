@@ -4,13 +4,13 @@
   async type="text/javascript"
   src="//static.klaviyo.com/onsite/js/klaviyo.js?company_id=${dw.system.Site.current.preferences.custom.klaviyo_account}"
 ></script>
-<data id="klaviyo-data" data-js="<isprint value="${pdict.klaviyoData}" encoding="htmlunquote">"</data>
+<data id="klaviyo-data" data-js="<isprint value="${pdict.klaviyoData}" encoding="htmlunquote">"></data>
 <script type="text/javascript">
-var klDataElement = "klaviyo-data"
-var klDataAttribute = "data-js"
+var klDataElement = "klaviyo-data";
+var klDataAttribute = "data-js";
 var domEl = document.getElementById(klDataElement);
-var klDataTag = domEl.getAttribute(klDataAttribute)
-var klParsedData = JSON.parse(klDataTag)
+var klDataTag = domEl.getAttribute(klDataAttribute);
+var klParsedData = JSON.parse(klDataTag);
 var _learnq = _learnq || [];
-_learnq.push([klParsedData.eventType, klParsedData.eventName, klParsedData.data])
+_learnq.push([klParsedData.eventType, klParsedData.eventName, klParsedData.data]);
 </script>
