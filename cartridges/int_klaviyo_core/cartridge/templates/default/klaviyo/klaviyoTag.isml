@@ -14,7 +14,3 @@ var klParsedData = JSON.parse(klDataTag);
 var _learnq = _learnq || [];
 _learnq.push([klParsedData.eventType, klParsedData.eventName, klParsedData.data]);
 </script>
-
-<isscript>
-out.print('david var is ' + request.httpParameterMap.productid)
-</isscript>
