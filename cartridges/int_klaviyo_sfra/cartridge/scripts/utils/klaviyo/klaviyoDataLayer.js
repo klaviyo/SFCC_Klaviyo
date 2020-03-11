@@ -39,14 +39,14 @@ var buildDataLayer = function () {
             basketHasLength = currentBasket.getProductLineItems().toArray().length >= 1;
 
             if (basketHasLength) {
-                KlaviyoUtils = require('*/cartridge/scripts/utils/klaviyo/KlaviyoUtils');
+                KlaviyoUtils = require('*/cartridge/scripts/utils/klaviyo/klaviyoUtils');
                 klData = KlaviyoUtils.prepareCheckoutEventForKlaviyo(currentBasket);
             }
         }
 
         // Order Placed Event
         if (pageContext == 'orderconfirmation' && orderID) {
-            KlaviyoUtils = require('*/cartridge/scripts/utils/klaviyo/KlaviyoUtils');
+            KlaviyoUtils = require('*/cartridge/scripts/utils/klaviyo/klaviyoUtils');
 
             if (!dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_order_transactional_enabled')) {
                 return;
@@ -59,7 +59,7 @@ var buildDataLayer = function () {
         // Viewed Product event
         if (!empty(pageProductID.rawValue)) {
             viewedProduct = productMgr.getProduct(pageProductID);
-            KlaviyoUtils = require('*/cartridge/scripts/utils/klaviyo/KlaviyoUtils');
+            KlaviyoUtils = require('*/cartridge/scripts/utils/klaviyo/klaviyoUtils');
             klData = KlaviyoUtils.prepareViewedProductEventData(pageProductID, viewedProduct);
         }
 

@@ -25,7 +25,7 @@ server.get(
         }
         var logger = Logger.getLogger('renderKlaviyo', 'Klaviyo - Render Klaviyo Controller');
         try {
-            var klaviyoUtils = require('*/cartridge/scripts/utils/klaviyo/klaviyoUtils');
+            var klaviyoUtils = require('*/cartridge/scripts/utils/klaviyo/klaviyoDataLayer');
             var klaviyoTags = require('*/cartridge/scripts/utils/klaviyo/klaviyoOnSiteTags.js').klaviyoOnSiteTags;
 
             var klaviyoDataLayer = klaviyoUtils.buildDataLayer();

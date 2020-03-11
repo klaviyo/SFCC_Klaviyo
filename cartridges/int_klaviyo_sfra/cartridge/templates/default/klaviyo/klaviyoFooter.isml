@@ -3,7 +3,7 @@
   	'pagecontexttitle', ('pageContext' in this && !empty(pageContext)) ? ''+pageContext.title : null,
   	'searchterm', request.httpParameterMap.q.stringValue,
 'searchresultscount', (!empty(pdict.productSearch) ? ''+pdict.productSearch.count : null),
-'productid', (!empty(pdict.product) ? pdict.product.id : null),
+'productid', request.httpParameterMap.pid.stringValue,
 'pagecgid',  request.httpParameterMap.cgid.stringValue,
 'orderno', (!empty(pdict.order) ? pdict.order.orderNumber : null)
 )}"/>
