@@ -51,7 +51,7 @@ server.get(
         var klaviyoUtils = require('*/cartridge/scripts/utils/klaviyo/klaviyoUtils');
         var klaviyoTags = require('*/cartridge/scripts/utils/klaviyo/klaviyoOnSiteTags.js').klaviyoOnSiteTags;
 
-        var klaviyoDataLayer = klaviyoUtils.buildDataLayer();
+        var klaviyoDataLayer = klaviyoUtils.buildCartDataLayer();
         var sendToDom = klaviyoTags(klaviyoDataLayer);
 
         res.render('/klaviyo/klaviyoTag', {
