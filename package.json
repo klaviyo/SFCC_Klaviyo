@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha ./test/unit/*.js",
-    "lint": "eslint **/*.js"
+    "lint": "eslint **/*.js",
+    "watch": "sgmf-scripts --watch"
   },
   "repository": {
     "type": "git",
@@ -27,7 +28,8 @@
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-sitegenesis": "~1.0.0",
     "eslint-plugin-standard": "^4.0.1",
-    "mocha": "^6.2.2"
+    "mocha": "^6.2.2",
+    "sgmf-scripts": "^2.4.1"
   },
   "dependencies": {
     "proxyquire": "^2.1.3"
