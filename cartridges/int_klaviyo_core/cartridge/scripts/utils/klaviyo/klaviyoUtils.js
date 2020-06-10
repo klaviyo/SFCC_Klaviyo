@@ -307,11 +307,15 @@ function prepareAddToCartEventForKlaviyo(klData) {
             } else {
                 primaryCategory = basketProduct.getPrimaryCategory().displayName;
             }
+            var imageSizeOfProduct = null;
+            if (imageSize && basketProduct.getImage(imageSize)) {
+                imageSizeOfProduct = basketProduct.getImage(imageSize).getAbsURL().toString();
+            }
 
             klData.lineItems.push({
                 productID                 : currentProductID,
                 productName               : basketProduct.name,
-                productImageURL           : imageSize ? basketProduct.getImage(imageSize).getAbsURL().toString() : null,
+                productImageURL           : imageSizeOfProduct,
                 productPageURL            : require('dw/web/URLUtils').https('Product-Show', 'pid', currentProductID).toString(),
                 price                     : dw.util.StringUtils.formatMoney(dw.value.Money(basketProduct.getPriceModel().getPrice().value, session.getCurrency().getCurrencyCode())),
                 productUPC                : basketProduct.UPC,
@@ -481,6 +485,9 @@ var trackAddToCart = function () {
  * @returns obfuscated email like d**********@k******.com
  */
 function obfuscateKlEmail(email) {
+    if (empty(email)) {
+        return;
+    }
     var astericks = '**********';
     var splitEmail = email.split('@');
     var firstLetter = splitEmail[0][0];
