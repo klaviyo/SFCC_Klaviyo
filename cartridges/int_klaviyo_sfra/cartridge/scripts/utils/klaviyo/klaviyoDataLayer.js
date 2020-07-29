@@ -1,3 +1,4 @@
+import {contextValues} from './contextValues.js';
 'use strict';
 
 /* API Includes */
@@ -34,7 +35,7 @@ var buildDataLayer = function () {
     try {
         // Checkout Started event
 
-        if (pageContext == 'checkout') {
+        if (contextValues.startedCheckout.includes(pageContext)) {
             currentBasket = basketMgr.getCurrentBasket();
             basketHasLength = currentBasket.getProductLineItems().toArray().length >= 1;
 
@@ -45,7 +46,7 @@ var buildDataLayer = function () {
         }
 
         // Order Placed Event
-        if (pageContext == 'orderconfirmation' && orderID) {
+        if (contextValues.placedOrder.includes(pageContext) && orderID) {
             KlaviyoUtils = require('*/cartridge/scripts/utils/klaviyo/klaviyoUtils');
 
             if (!dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_order_transactional_enabled')) {
