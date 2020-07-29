@@ -1,10 +1,11 @@
-import {contextValues} from './contextValues.js';
 'use strict';
 
 /* API Includes */
 var productMgr = require('dw/catalog/ProductMgr');
 var orderMgr = require('dw/order/OrderMgr');
 var basketMgr = require('dw/order/BasketMgr');
+
+var contexts = require('*/cartridge/scripts/utils/klaviyo/contextValues.js');
 
 var buildDataLayer = function () {
     var klData = {};
@@ -35,7 +36,7 @@ var buildDataLayer = function () {
     try {
         // Checkout Started event
 
-        if (contextValues.startedCheckout.includes(pageContext)) {
+        if (contexts.startedCheckout.includes(pageContext)) {
             currentBasket = basketMgr.getCurrentBasket();
             basketHasLength = currentBasket.getProductLineItems().toArray().length >= 1;
 
@@ -46,7 +47,7 @@ var buildDataLayer = function () {
         }
 
         // Order Placed Event
-        if (contextValues.placedOrder.includes(pageContext) && orderID) {
+        if (contexts.placedOrder.includes(pageContext) && orderID) {
             KlaviyoUtils = require('*/cartridge/scripts/utils/klaviyo/klaviyoUtils');
 
             if (!dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_order_transactional_enabled')) {

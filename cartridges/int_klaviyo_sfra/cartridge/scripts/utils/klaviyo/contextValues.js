@@ -1,4 +1,4 @@
-export const contextValues = {
+var contexts = {
     startedCheckout: [
         "checkout",
         "checkoutShipping"
@@ -7,3 +7,5 @@ export const contextValues = {
         "placedOrder"
     ]
 }
+
+module.exports = contexts;
