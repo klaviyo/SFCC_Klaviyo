@@ -35,7 +35,6 @@ var buildDataLayer = function () {
 
     try {
         // Checkout Started event
-
         if (contexts.startedCheckout.includes(pageContext)) {
             currentBasket = basketMgr.getCurrentBasket();
             basketHasLength = currentBasket.getProductLineItems().toArray().length >= 1;
