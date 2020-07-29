@@ -4,7 +4,7 @@ var contexts = {
         "checkoutShipping"
     ],
     placedOrder: [
-        "placedOrder"
+        "orderConfirmation"
     ]
 }
 
