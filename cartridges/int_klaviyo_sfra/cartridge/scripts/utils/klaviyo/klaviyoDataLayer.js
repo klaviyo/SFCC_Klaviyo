@@ -56,16 +56,15 @@ var buildDataLayer = function () {
             KlaviyoUtils.prepareOrderConfirmationEventForKlaviyo(currentOrder);
         }
 
-
         // Viewed Product event
-        if (!empty(pageProductID.rawValue)) {
+        if (contexts.viewedProduct.indexOf(pageContext) > -1) {
             viewedProduct = productMgr.getProduct(pageProductID);
             KlaviyoUtils = require('*/cartridge/scripts/utils/klaviyo/klaviyoUtils');
             klData = KlaviyoUtils.prepareViewedProductEventData(pageProductID, viewedProduct);
         }
 
         // Category Viewed event
-        if (!empty(pageCategoryId)) {
+        if (contexts.categoryViewed.indexOf(pageContext) > -1 && pageCategoryId) {
             klData.event = 'Viewed Category';
             klData.pageCategoryId = pageCategoryId;
         }

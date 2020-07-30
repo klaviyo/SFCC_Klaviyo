@@ -5,6 +5,12 @@ var contexts = {
     ],
     placedOrder: [
         "orderConfirmation"
+    ],
+    categoryViewed: [
+        "search"
+    ],
+    viewedProduct: [
+        "product"
     ]
 }
 
