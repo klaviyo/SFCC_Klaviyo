@@ -4,7 +4,13 @@ var contexts = {
         "checkoutShipping"
     ],
     placedOrder: [
-        "orderconfirmation"
+        "orderConfirmation"
+    ],
+    categoryViewed: [
+        "search"
+    ],
+    viewedProduct: [
+        "product"
     ]
 }
 
