@@ -23,14 +23,14 @@ var WHITELISTED_EVENTS = ['Searched Site', 'Viewed Product', 'Viewed Category', 
  * @param event
  * @returns
  */
-function sendEmail(email, data, event) {
+function sendEvent(email, data, event) {
     var requestBody = {};
     var resultObj = {};
 
-    var logger = Logger.getLogger('Klaviyo', 'klaviyoUtils - sendEmail()');
+    var logger = Logger.getLogger('Klaviyo', 'klaviyoUtils - sendEvent()');
 
     if (KlaviyoTrackService == null || empty(email)) {
-        logger.error('sendEmail() failed for email: ' + obfuscateKlEmail(email) + '. Service Connection for send email via Klaviyo returned null.');
+        logger.error('sendEvent() failed for email: ' + obfuscateKlEmail(email) + '. Service Connection for send event to Klaviyo returned null.');
         return;
     }
 
@@ -41,16 +41,16 @@ function sendEmail(email, data, event) {
     var result = KlaviyoTrackService.call(requestBody);
 
     if (result == null) {
-        logger.error('Result for send email via Klaviyo returned null.');
+        logger.error('Result for send event to Klaviyo returned null.');
         return;
     }
 
     resultObj = JSON.parse(result.object);
 
     if (resultObj == 1) {
-        logger.info('Send email via Klaviyo is successful.');
+        logger.info('Send event to Klaviyo is successful.');
     } else {
-        logger.error('Send email via Klaviyo failed.');
+        logger.error('Send event to Klaviyo failed.');
     }
 
     return resultObj;
@@ -253,7 +253,7 @@ function prepareOrderConfirmationEventForKlaviyo(currentOrder) {
         // site specific order object */
         var emailUtils = require('*/cartridge/scripts/utils/klaviyo/emailUtils');
         var dwareOrder = emailUtils.prepareOrderPayload(currentOrder, false, 'orderConfirmation');
-        sendEmail(currentOrder.getCustomerEmail(), dwareOrder, 'Order Confirmation');
+        sendEvent(currentOrder.getCustomerEmail(), dwareOrder, 'Order Confirmation');
 
         // giftcards
         var giftCertCollection = currentOrder.getGiftCertificateLineItems().toArray();
@@ -273,7 +273,7 @@ function prepareOrderConfirmationEventForKlaviyo(currentOrder) {
         // send an event for transactional gift certificate emails
         for (var totalOrderGiftCards = 0; totalOrderGiftCards < orderGiftCards.length; totalOrderGiftCards++) {
             var theGiftCard = orderGiftCards[totalOrderGiftCards];
-            sendEmail(theGiftCard['Recipient Email'], theGiftCard, 'e-Giftcard Notification');
+            sendEvent(theGiftCard['Recipient Email'], theGiftCard, 'e-Giftcard Notification');
         }
     } catch (e) {
         logger.debug('prepareOrderConfirmationEventForKlaviyo -- error ' + e.message + ' at ' + e.lineNumber);
@@ -350,7 +350,7 @@ function sendShipmentConfirmation(orderID) {
             var order = orderList[i];
             try {
                 var emailUtils = require('*/cartridge/scripts/utils/klaviyo/emailUtils');
-                emailUtils.sendOrderEmail(order, 'Shipping Confirmation');
+                emailUtils.sendOrderEvent(order, 'Shipping Confirmation');
                 sendStatus = true;
             } catch (e) {
                 logger.error('resendKlaviyoShipmentEmailsJob failed for order: ' + order.getOrderNo() + '. Error: ' + e.message);
@@ -477,7 +477,7 @@ var trackAddToCart = function () {
         email = currentUser.email;
     }
     var event = 'Add To Cart';
-    sendEmail(email, klaviyoDataLayer, event);
+    sendEvent(email, klaviyoDataLayer, event);
 };
 
 /**
@@ -499,7 +499,7 @@ function obfuscateKlEmail(email) {
 }
 
 module.exports = {
-    sendEmail                               : sendEmail,
+    sendEvent                               : sendEvent,
     preparegiftCardObject                   : preparegiftCardObject,
     prepareViewedProductEventData           : prepareViewedProductEventData,
     prepareProductObj                       : prepareProductObj,

@@ -7,26 +7,26 @@ var productMgr = require('dw/catalog/ProductMgr');
 var imageSize = Site.getCurrent().getCustomPreferenceValue('klaviyo_image_size') || null;
 
 /**
- * Sends an order to Klaviyo with the order email type.
+ * Sends an order to Klaviyo with the order event type.
  *
  * @param order
  * @param mailType
  * @returns
  */
-function sendOrderEmail(order, mailType) {
-    var logger = Logger.getLogger('Klaviyo', 'emailUtils - sendOrderEmail()');
+function sendOrderEvent(order, mailType) {
+    var logger = Logger.getLogger('Klaviyo', 'emailUtils - sendOrderEvent()');
     try {
         var isFutureOrder = (mailType == 'Auto Delivery Order Confirmation');
         var orderPayload = prepareOrderPayload(order, isFutureOrder, mailType);
-        require('*/cartridge/scripts/utils/klaviyo/klaviyoUtils').sendEmail(order.getCustomerEmail(), orderPayload, mailType);
+        require('*/cartridge/scripts/utils/klaviyo/klaviyoUtils').sendEvent(order.getCustomerEmail(), orderPayload, mailType);
     } catch (e) {
-        logger.error('sendOrderEmail() failed for order: ' + order.getOrderNo() + ', mailType: ' + mailType + '. Error: ' + e.message);
+        logger.error('sendOrderEvent() failed for order: ' + order.getOrderNo() + ', mailType: ' + mailType + '. Error: ' + e.message);
     }
 }
 
 
 /**
- * Prepares the order in JSON format for email send.
+ * Prepares the order in JSON format for event send.
  * @param order
  * @param isFutureOrder
  * @param mailType
@@ -372,6 +372,6 @@ function prepareOrderPayload(order, isFutureOrder, mailType) {
 }
 
 module.exports = {
-    sendOrderEmail      : sendOrderEmail,
+    sendOrderEvent      : sendOrderEvent,
     prepareOrderPayload : prepareOrderPayload
 };
