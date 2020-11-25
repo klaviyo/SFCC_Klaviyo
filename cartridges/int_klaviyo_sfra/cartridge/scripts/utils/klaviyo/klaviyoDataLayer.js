@@ -5,6 +5,8 @@ var productMgr = require('dw/catalog/ProductMgr');
 var orderMgr = require('dw/order/OrderMgr');
 var basketMgr = require('dw/order/BasketMgr');
 
+var contexts = require('*/cartridge/scripts/utils/klaviyo/contextValues.js');
+
 var buildDataLayer = function () {
     var klData = {};
     var pageContext,
@@ -33,8 +35,7 @@ var buildDataLayer = function () {
 
     try {
         // Checkout Started event
-
-        if (pageContext == 'checkout') {
+        if (contexts.startedCheckout.indexOf(pageContext) > -1) {
             currentBasket = basketMgr.getCurrentBasket();
             basketHasLength = currentBasket.getProductLineItems().toArray().length >= 1;
 
@@ -45,7 +46,7 @@ var buildDataLayer = function () {
         }
 
         // Order Placed Event
-        if (pageContext == 'orderconfirmation' && orderID) {
+        if (contexts.placedOrder.indexOf(pageContext) > -1 && orderID) {
             KlaviyoUtils = require('*/cartridge/scripts/utils/klaviyo/klaviyoUtils');
 
             if (!dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_order_transactional_enabled')) {
@@ -55,16 +56,15 @@ var buildDataLayer = function () {
             KlaviyoUtils.prepareOrderConfirmationEventForKlaviyo(currentOrder);
         }
 
-
         // Viewed Product event
-        if (!empty(pageProductID.rawValue)) {
+        if (contexts.viewedProduct.indexOf(pageContext) > -1) {
             viewedProduct = productMgr.getProduct(pageProductID);
             KlaviyoUtils = require('*/cartridge/scripts/utils/klaviyo/klaviyoUtils');
             klData = KlaviyoUtils.prepareViewedProductEventData(pageProductID, viewedProduct);
         }
 
         // Category Viewed event
-        if (!empty(pageCategoryId)) {
+        if (contexts.categoryViewed.indexOf(pageContext) > -1 && pageCategoryId) {
             klData.event = 'Viewed Category';
             klData.pageCategoryId = pageCategoryId;
         }
