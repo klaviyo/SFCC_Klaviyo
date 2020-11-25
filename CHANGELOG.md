@@ -13,10 +13,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix image size and email that can crash if empty.
 - Add trackViewedItem for profile tracking.
 
-##### Changed
-
-##### Fixed
-
 [Unreleased]: https://github.com/SalesforceCommerceCloud/link_klaviyo/compare/HEAD...release-20.11.0
 [20.11.0]: https://github.com/SalesforceCommerceCloud/link_klaviyo/compare/release-20.11.0...release-20.1.0
 [20.1.0]: https://github.com/SalesforceCommerceCloud/link_klaviyo/compare/release-20.1.0...master
