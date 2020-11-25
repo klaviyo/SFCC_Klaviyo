@@ -1,4 +1,4 @@
 .DS_Store
-
+dw.json
 node_modules/
 package-lock.json
