@@ -1,9 +1,9 @@
 'use strict';
 
-function sendOrderEmail(order, confirmationType) {
+function sendOrderEvent(order, confirmationType) {
   return 1;
 }
 
 module.exports = {
-  sendOrderEmail: sendOrderEmail
+  sendOrderEvent: sendOrderEvent
 }

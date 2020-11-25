@@ -46,9 +46,9 @@ describe('klaviyoUtils.js script', function() {
       $email: 'kltest@klaviyo.com'
     }
   };
-  describe('sendEmail function', function() {
+  describe('sendEvent function', function() {
     it('should return a 1 if track call succeeds', function() {
-      var trackCallResult = klaviyoUtilsFile.sendEmail(payloadObj.customer_properties.$email, {}, 'Event Name');
+      var trackCallResult = klaviyoUtilsFile.sendEvent(payloadObj.customer_properties.$email, {}, 'Event Name');
       expect(trackCallResult).to.equal(1);
     });
   });
