@@ -48,9 +48,6 @@ var buildDataLayer = function () {
         if (pageContext == 'orderconfirmation' && orderID) {
             KlaviyoUtils = require('*/cartridge/scripts/utils/klaviyo/klaviyoUtils');
 
-            if (!dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_order_transactional_enabled')) {
-                return;
-            }
             currentOrder = orderMgr.getOrder(orderID);
             KlaviyoUtils.prepareOrderConfirmationEventForKlaviyo(currentOrder);
         }
