@@ -82,24 +82,6 @@ var buildDataLayer = function () {
     return klData;
 };
 
-var buildCartDataLayer = function () {
-    var klData = {};
-    var isValidBasket,
-        basketHasLength,
-        KlaviyoUtils;
-
-    isValidBasket = (basketMgr.getCurrentBasket());
-    if (isValidBasket) {
-        basketHasLength = (basketMgr.getCurrentBasket().getProductLineItems().toArray().length >= 1);
-    }
-
-    if (basketHasLength) {
-        KlaviyoUtils = require('*/cartridge/scripts/utils/klaviyo/KlaviyoUtils');
-        klData = KlaviyoUtils.prepareAddToCartEventForKlaviyo(klData);
-    }
-
-    return klData;
-};
 
 /**
  * Creating page context from the request path
@@ -120,6 +102,5 @@ var getContext = function () {
 
 module.exports = {
     buildDataLayer     : buildDataLayer,
-    buildCartDataLayer : buildCartDataLayer,
     getContext         : getContext
 };
