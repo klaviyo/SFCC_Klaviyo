@@ -1,6 +1,6 @@
 {
   "name": "int_klaviyo",
-  "version": "20.1.0",
+  "version": "20.11.0",
   "description": "Klaviyo integration for Commerce Cloud",
   "main": "index.js",
   "scripts": {
