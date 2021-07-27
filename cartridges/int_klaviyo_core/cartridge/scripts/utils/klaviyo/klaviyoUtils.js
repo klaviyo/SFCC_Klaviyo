@@ -331,37 +331,8 @@ function prepareAddToCartEventForKlaviyo(klData) {
     return klData;
 }
 
-
 /**
- * Send shipment confirmation for shipped order's
- * @param orderId
- * @returns object
- */
-function sendShipmentConfirmation(orderID) {
-    var logger = Logger.getLogger('Klaviyo', 'klaviyoUtils - sendShipmentConfirmation()');
-
-    var orderObj = orderMgr.searchOrders('orderNo={0} AND shippingStatus={1}', 'creationDate desc', orderID,
-        dw.order.Order.SHIPPING_STATUS_SHIPPED);
-    var orderList = orderObj.asList();
-
-    var sendStatus = false;
-    if (!empty(orderList)) {
-        for (var i in orderList) {
-            var order = orderList[i];
-            try {
-                var emailUtils = require('*/cartridge/scripts/utils/klaviyo/emailUtils');
-                emailUtils.sendOrderEmail(order, 'Shipping Confirmation');
-                sendStatus = true;
-            } catch (e) {
-                logger.error('resendKlaviyoShipmentEmailsJob failed for order: ' + order.getOrderNo() + '. Error: ' + e.message);
-            }
-        }
-    }
-    return sendStatus;
-}
-
-/**
- * Prepare data's needs to be send to klaviyo in klData object
+ * Prepare data to be sent to klaviyo in klData object
  */
 var buildDataLayer = function () {
     var klData = {};
@@ -506,7 +477,6 @@ module.exports = {
     prepareCheckoutEventForKlaviyo          : prepareCheckoutEventForKlaviyo,
     prepareOrderConfirmationEventForKlaviyo : prepareOrderConfirmationEventForKlaviyo,
     prepareAddToCartEventForKlaviyo         : prepareAddToCartEventForKlaviyo,
-    sendShipmentConfirmation                : sendShipmentConfirmation,
     createCategories                        : createCategories,
     buildDataLayer                          : buildDataLayer,
     buildCartDataLayer                      : buildCartDataLayer,

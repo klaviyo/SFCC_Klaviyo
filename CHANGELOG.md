@@ -7,6 +7,15 @@ first number and the Month is the second number. The third number will be
 bumped for multiple releases during one month.
 
 ### [Unreleased]
+#### Updated
+- Remove unused functions from SFRA and Core cartridges
+    - SFRA controller functions
+        - FooterSubscribe
+        - Subscribe
+        - ShipmentConfirmation
+    - buildCartDataLayer from SFRA klaviyoUtils
+    - sendShipmentConfirmation from Core klaviyoUtils
+
 
 ### [20.11.0] - 2020-11-25
 ##### Added
