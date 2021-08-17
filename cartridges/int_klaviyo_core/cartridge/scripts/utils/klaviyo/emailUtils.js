@@ -206,18 +206,15 @@ function prepareOrderPayload(order, isFutureOrder, mailType) {
         var discountCoupon = '';
         var promotionID = '';
         var shippingLineItems = order.shipments[0].shippingLineItems;
-        // var shippingLineItem = {};
-        // var shippingItemsArray = [];
         if (shippingLineItems && shippingLineItems.length > 0) {
             if (shippingLineItems[0].lineItemCtnr) {
                 var couponLineItems = shippingLineItems[0].lineItemCtnr.couponLineItems;
                 if (couponLineItems && couponLineItems.length > 0) {
-                    var couponLineItem = {};
                     for (var q in couponLineItems) {
-                        if (couponLineItem[q].statusCode == 'APPLIED') {
-                            discountCoupon = couponLineItem[q].couponCode;
-                            if (!empty(couponLineItem[q].promotion)) {
-                                var promotion = couponLineItem[q].promotion;
+                        if (couponLineItems[q].statusCode == 'APPLIED') {
+                            discountCoupon = couponLineItems[q].couponCode;
+                            if (!empty(couponLineItems[q].promotion)) {
+                                var promotion = couponLineItems[q].promotion;
                                 promotionID = promotion.ID;
                             }
                             break;
