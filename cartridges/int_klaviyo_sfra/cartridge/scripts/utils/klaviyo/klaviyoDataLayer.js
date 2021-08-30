@@ -49,6 +49,8 @@ var buildDataLayer = function () {
             KlaviyoUtils = require('*/cartridge/scripts/utils/klaviyo/klaviyoUtils');
 
             currentOrder = orderMgr.getOrder(orderID);
+            // check if the order is in the "New" or "Open" status
+            // relevant SFCC doc https://documentation.b2c.commercecloud.salesforce.com/DOC1/index.jsp?topic=%2Fcom.demandware.dochelp%2FDWAPI%2Fscriptapi%2Fhtml%2Fapi%2Fclass_dw_order_Order.html
             if (currentOrder.status == 3 || currentOrder.status == 4) {
                 KlaviyoUtils.prepareOrderConfirmationEventForKlaviyo(currentOrder);
             }
