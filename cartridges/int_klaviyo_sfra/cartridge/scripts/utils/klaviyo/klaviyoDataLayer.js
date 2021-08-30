@@ -45,14 +45,13 @@ var buildDataLayer = function () {
         }
 
         // Order Placed Event
-        if (pageContext == 'orderconfirmation' && orderID) {
+        if (orderID && !empty(orderID.rawValue)) {
             KlaviyoUtils = require('*/cartridge/scripts/utils/klaviyo/klaviyoUtils');
 
-            if (!dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_order_transactional_enabled')) {
-                return;
-            }
             currentOrder = orderMgr.getOrder(orderID);
-            KlaviyoUtils.prepareOrderConfirmationEventForKlaviyo(currentOrder);
+            if (currentOrder.status == 3 || currentOrder.status == 4) {
+                KlaviyoUtils.prepareOrderConfirmationEventForKlaviyo(currentOrder);
+            }
         }
 
 
