@@ -7,8 +7,11 @@ first number and the Month is the second number. The third number will be
 bumped for multiple releases during one month.
 
 ### [Unreleased]
+##### Fixed
+- Order Confirmation event will now correctly fire for orders with coupons.
 ##### Updated
 - Rename sendEmail function to trackEvent
+
 ### [21.7.0] - 2021-7-27
 ##### Updated
 - Remove unused functions from SFRA and Core cartridges
