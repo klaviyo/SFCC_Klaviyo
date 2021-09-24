@@ -23,14 +23,14 @@ var WHITELISTED_EVENTS = ['Searched Site', 'Viewed Product', 'Viewed Category', 
  * @param event
  * @returns
  */
-function sendEmail(email, data, event) {
+function trackEvent(email, data, event) {
     var requestBody = {};
     var resultObj = {};
 
-    var logger = Logger.getLogger('Klaviyo', 'klaviyoUtils - sendEmail()');
+    var logger = Logger.getLogger('Klaviyo', 'klaviyoUtils - trackEvent()');
 
     if (KlaviyoTrackService == null || empty(email)) {
-        logger.error('sendEmail() failed for email: ' + obfuscateKlEmail(email) + '. Service Connection for send email via Klaviyo returned null.');
+        logger.error('trackEvent() failed for email: ' + obfuscateKlEmail(email) + '. Service Connection for send email via Klaviyo returned null.');
         return;
     }
 
@@ -253,7 +253,7 @@ function prepareOrderConfirmationEventForKlaviyo(currentOrder) {
         // site specific order object */
         var emailUtils = require('*/cartridge/scripts/utils/klaviyo/emailUtils');
         var dwareOrder = emailUtils.prepareOrderPayload(currentOrder, false, 'orderConfirmation');
-        sendEmail(currentOrder.getCustomerEmail(), dwareOrder, 'Order Confirmation');
+        trackEvent(currentOrder.getCustomerEmail(), dwareOrder, 'Order Confirmation');
 
         // giftcards
         var giftCertCollection = currentOrder.getGiftCertificateLineItems().toArray();
@@ -273,7 +273,7 @@ function prepareOrderConfirmationEventForKlaviyo(currentOrder) {
         // send an event for transactional gift certificate emails
         for (var totalOrderGiftCards = 0; totalOrderGiftCards < orderGiftCards.length; totalOrderGiftCards++) {
             var theGiftCard = orderGiftCards[totalOrderGiftCards];
-            sendEmail(theGiftCard['Recipient Email'], theGiftCard, 'e-Giftcard Notification');
+            trackEvent(theGiftCard['Recipient Email'], theGiftCard, 'e-Giftcard Notification');
         }
     } catch (e) {
         logger.debug('prepareOrderConfirmationEventForKlaviyo -- error ' + e.message + ' at ' + e.lineNumber);
@@ -448,7 +448,7 @@ var trackAddToCart = function () {
         email = currentUser.email;
     }
     var event = 'Add To Cart';
-    sendEmail(email, klaviyoDataLayer, event);
+    trackEvent(email, klaviyoDataLayer, event);
 };
 
 /**
@@ -470,7 +470,7 @@ function obfuscateKlEmail(email) {
 }
 
 module.exports = {
-    sendEmail                               : sendEmail,
+    trackEvent                              : trackEvent,
     preparegiftCardObject                   : preparegiftCardObject,
     prepareViewedProductEventData           : prepareViewedProductEventData,
     prepareProductObj                       : prepareProductObj,

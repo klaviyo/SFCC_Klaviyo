@@ -18,7 +18,7 @@ function sendOrderEmail(order, mailType) {
     try {
         var isFutureOrder = (mailType == 'Auto Delivery Order Confirmation');
         var orderPayload = prepareOrderPayload(order, isFutureOrder, mailType);
-        require('*/cartridge/scripts/utils/klaviyo/klaviyoUtils').sendEmail(order.getCustomerEmail(), orderPayload, mailType);
+        require('*/cartridge/scripts/utils/klaviyo/klaviyoUtils').trackEvent(order.getCustomerEmail(), orderPayload, mailType);
     } catch (e) {
         logger.error('sendOrderEmail() failed for order: ' + order.getOrderNo() + ', mailType: ' + mailType + '. Error: ' + e.message);
     }
