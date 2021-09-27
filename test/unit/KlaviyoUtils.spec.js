@@ -8,7 +8,6 @@ var StringUtils = require('../mocks/dw/util/StringUtils');
 var LocalServiceRegistry = require('../mocks/dw/svc/LocalServiceRegistry');
 var URLUtils = require('../mocks/dw/web/URLUtils');
 var ProductMgr = require('../mocks/dw/catalog/ProductMgr');
-var EmailUtils = require('../mocks/EmailUtils');
 var BasketMgr = require('../mocks/dw/order/BasketMgr')
 var OrderMgr = require('../mocks/dw/order/OrderMgr');
 
@@ -29,7 +28,6 @@ describe('klaviyoUtils.js script', function() {
     'dw/util/StringUtils': StringUtils,
     'dw/svc/LocalServiceRegistry': LocalServiceRegistry,
     'dw/web/URLUtils': URLUtils,
-    '~/cartridge/scripts/utils/klaviyo/EmailUtils': EmailUtils,
     'dw/order/OrderMgr': OrderMgr,
     'dw/order/BasketMgr': BasketMgr,
     'dw/catalog/ProductMgr': ProductMgr

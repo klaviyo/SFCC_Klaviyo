@@ -7,25 +7,6 @@ var productMgr = require('dw/catalog/ProductMgr');
 var imageSize = Site.getCurrent().getCustomPreferenceValue('klaviyo_image_size') || null;
 
 /**
- * Sends an order to Klaviyo with the order email type.
- *
- * @param order
- * @param mailType
- * @returns
- */
-function sendOrderEmail(order, mailType) {
-    var logger = Logger.getLogger('Klaviyo', 'emailUtils - sendOrderEmail()');
-    try {
-        var isFutureOrder = (mailType == 'Auto Delivery Order Confirmation');
-        var orderPayload = prepareOrderPayload(order, isFutureOrder, mailType);
-        require('*/cartridge/scripts/utils/klaviyo/klaviyoUtils').trackEvent(order.getCustomerEmail(), orderPayload, mailType);
-    } catch (e) {
-        logger.error('sendOrderEmail() failed for order: ' + order.getOrderNo() + ', mailType: ' + mailType + '. Error: ' + e.message);
-    }
-}
-
-
-/**
  * Prepares the order in JSON format for email send.
  * @param order
  * @param isFutureOrder
@@ -372,6 +353,5 @@ function prepareOrderPayload(order, isFutureOrder, mailType) {
 }
 
 module.exports = {
-    sendOrderEmail      : sendOrderEmail,
-    prepareOrderPayload : prepareOrderPayload
+    prepareOrderPayload : prepareOrderPayload,
 };

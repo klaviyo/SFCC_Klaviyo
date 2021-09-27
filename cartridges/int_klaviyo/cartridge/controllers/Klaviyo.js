@@ -58,29 +58,7 @@ var RenderKlaviyoAddToCart = function () {
 };
 
 
-/**
- *end point for testing shipping confirmation event
- *
-*/
-
-function sendKlaviyoShipmentEmail() {
-    var parameterMap = request.httpParameterMap;
-    var orderID = null;
-    if (!empty(parameterMap)) {
-        orderID = parameterMap.orderID.stringValue;
-    }
-    if (orderID) {
-        var klaviyoUtils = require('*/cartridge/scripts/utils/klaviyo/klaviyoUtils');
-        if (klaviyoUtils.sendMailForShipmentConfirmation(orderID)) {
-            r.renderJSON({ status: 'success' });
-        } else {
-            r.renderJSON({ status: 'failed sending email' });
-        }
-    }
-}
-
 /** Handles the form submission for subscription.
  * @see {@link module:controllers/Klaviyo~Subscribe} */
-exports.sendKlaviyoShipmentEmail = guard.ensure(['get'], sendKlaviyoShipmentEmail);
 exports.RenderKlaviyo = guard.ensure(['get'], RenderKlaviyo);
 exports.RenderKlaviyoAddToCart = guard.ensure(['get'], RenderKlaviyoAddToCart);
