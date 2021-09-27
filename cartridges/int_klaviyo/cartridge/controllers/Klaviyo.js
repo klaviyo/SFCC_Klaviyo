@@ -9,8 +9,8 @@ var ISML = require('dw/template/ISML');
 
 
 /**
- * Controller that will send the necessary data required for klaviyo to track the user event's
- * such as checkout,order confirmation,searching etc and renders the renders the klaviyoTag isml file
+ * Controller that sends the necessary data required for klaviyo to track user events
+ * such as checkout, order confirmation, searching etc and renders the renders the klaviyoTag isml file
  *
  * @module controllers/Klaviyo
 */
@@ -37,7 +37,7 @@ var RenderKlaviyo = function () {
 };
 
 /**
- * Controller that will send the necessary data  to klaviyo when an add to cart event happens
+ * Controller that sends the necessary data to klaviyo when an add to cart event happens
  * @module controllers/Klaviyo
 */
 
