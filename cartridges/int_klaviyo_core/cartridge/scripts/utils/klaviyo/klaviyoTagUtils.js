@@ -5,7 +5,7 @@
  */
 
 
-// prepare viewed product event's data for klaviyo
+// Prepare viewed product event data for klaviyo
 
 function prepareViewedProductObject(klData) {
     var viewedProductObj = new Object();
@@ -23,7 +23,7 @@ function prepareViewedProductObject(klData) {
 }
 
 
-// prepare checkout product event's data for klaviyo
+// Prepare checkout product event data for klaviyo
 
 function prepareCheckoutObj(klData) {
     var checkoutObj = new Object();
@@ -35,7 +35,7 @@ function prepareCheckoutObj(klData) {
     return checkoutObj;
 }
 
-// prepare checkout add to cart  event's data for klaviyo
+// Prepare checkout add to cart event data for klaviyo
 
 function prepareAddToCartObj(klData) {
     var cartObj = new Object();
@@ -49,8 +49,7 @@ function prepareAddToCartObj(klData) {
 }
 
 
-//  Setting customer basic details and information to klaviyo
-
+// Sends customer basic details and information to klaviyo
 
 function setCustomerDetails(currentUser) {
     var klCustomer = new Object();

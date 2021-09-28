@@ -9,8 +9,8 @@ var ISML = require('dw/template/ISML');
 
 
 /**
- * Controller that will send the necessary data required for klaviyo to track the user event's
- * such as checkout,order confirmation,searching etc and renders the renders the klaviyoTag isml file
+ * Controller that sends the necessary data required for klaviyo to track user events
+ * such as checkout, order confirmation, searching etc and renders the renders the klaviyoTag isml file
  *
  * @module controllers/Klaviyo
 */
@@ -37,7 +37,7 @@ var RenderKlaviyo = function () {
 };
 
 /**
- * Controller that will send the necessary data  to klaviyo when an add to cart event happens
+ * Controller that sends the necessary data to klaviyo when an add to cart event happens
  * @module controllers/Klaviyo
 */
 
@@ -58,29 +58,7 @@ var RenderKlaviyoAddToCart = function () {
 };
 
 
-/**
- *end point for testing shipping confirmation event
- *
-*/
-
-function sendKlaviyoShipmentEmail() {
-    var parameterMap = request.httpParameterMap;
-    var orderID = null;
-    if (!empty(parameterMap)) {
-        orderID = parameterMap.orderID.stringValue;
-    }
-    if (orderID) {
-        var klaviyoUtils = require('*/cartridge/scripts/utils/klaviyo/klaviyoUtils');
-        if (klaviyoUtils.sendMailForShipmentConfirmation(orderID)) {
-            r.renderJSON({ status: 'success' });
-        } else {
-            r.renderJSON({ status: 'failed sending email' });
-        }
-    }
-}
-
 /** Handles the form submission for subscription.
  * @see {@link module:controllers/Klaviyo~Subscribe} */
-exports.sendKlaviyoShipmentEmail = guard.ensure(['get'], sendKlaviyoShipmentEmail);
 exports.RenderKlaviyo = guard.ensure(['get'], RenderKlaviyo);
 exports.RenderKlaviyoAddToCart = guard.ensure(['get'], RenderKlaviyoAddToCart);

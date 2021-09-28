@@ -16,7 +16,7 @@ var WHITELISTED_EVENTS = ['Searched Site', 'Viewed Product', 'Viewed Category', 
  * (please see metadata/klaviyo-services.xml) and executes a get call with the payload generated from the
  * preparePayload() method.
  *
- * This is a track API call. Please refer https://www.klaviyo.com/docs/http-api
+ * This is a track API call. Please refer https://apidocs.klaviyo.com/reference/track-identify#track-get
  *
  * @param email
  * @param data
@@ -59,7 +59,7 @@ function trackEvent(email, data, event) {
 
 /**
  * Prepares Track API Payload Data in format per
- * https://www.klaviyo.com/docs/http-api
+ * https://apidocs.klaviyo.com/reference/track-identify#track-get
  *
  * @param email
  * @param data
@@ -107,7 +107,7 @@ function preparegiftCardObject(giftCard) {
 
 /**
  * Prepares Product Object and set necessary product details
- * https://www.klaviyo.com/docs/http-api
+ * https://apidocs.klaviyo.com/reference/track-identify#track-get
  *
  * @param lineItem
  * @param basketProduct
@@ -402,8 +402,9 @@ var buildDataLayer = function () {
 
     return klData;
 };
+
 /**
- * Prepare data's needs to be send to klaviyo in klData object for add to cart
+ * Prepare data to be sent to klaviyo in klData object for add to cart
  */
 var buildCartDataLayer = function () {
     var klData = {};

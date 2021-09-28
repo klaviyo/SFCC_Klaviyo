@@ -11,6 +11,10 @@ bumped for multiple releases during one month.
 - Order Confirmation event will now correctly fire for orders with coupons.
 ##### Updated
 - Rename sendEmail function to trackEvent
+- Fix grammar/typos in comments and docstrings
+- Remove unused functions from Core and SG cartridges
+    - sendOrderEmail from Core emailUtils
+    - sendKlaviyoShipmentEmail from SG Klaviyo.js controller
 
 ### [21.7.0] - 2021-7-27
 ##### Updated
