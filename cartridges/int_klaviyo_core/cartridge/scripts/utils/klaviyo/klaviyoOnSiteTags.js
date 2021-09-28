@@ -1,3 +1,7 @@
+'use strict';
+
+var Logger = require('dw/system/Logger');
+
 // var klCustomer = new Object();
 var viewedProductObj = new Object();
 var checkoutObj = new Object();
@@ -13,6 +17,7 @@ function klaviyoOnSiteTags(klData) {
     //     var userReturnString = learnq.concat(" _learnq.push(['identify'," + JSON.stringify(klCustomer) + ']);');
     //     return userReturnString;
     // }
+    var logger = Logger.getLogger('Klaviyo', 'Core klaviyoOnSiteTags - klaviyoOnSiteTags()');
 
     if (klData.event === 'Viewed Product') {
         viewedProductObj.data = klaviyoTagUtils.prepareViewedProductObject(klData);

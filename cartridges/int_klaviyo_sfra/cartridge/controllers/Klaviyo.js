@@ -23,7 +23,7 @@ server.get(
         if (!dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_enabled')) {
             return;
         }
-        var logger = Logger.getLogger('renderKlaviyo', 'Klaviyo - Render Klaviyo Controller');
+        var logger = Logger.getLogger('Klaviyo', 'SFRA Klaviyo Controller - RenderKlaviyo()');
         try {
             var klaviyoUtils = require('*/cartridge/scripts/utils/klaviyo/klaviyoDataLayer');
             var klaviyoTags = require('*/cartridge/scripts/utils/klaviyo/klaviyoOnSiteTags.js').klaviyoOnSiteTags;
@@ -36,7 +36,7 @@ server.get(
             });
             next();
         } catch (e) {
-            logger.debug('error rendering klaviyo ' + e.message + ' at ' + e.lineNumber);
+            logger.debug('Error encountered with RenderKlaviyo - ' + e.message + ' at ' + e.lineNumber);
         }
     }
 );
@@ -48,16 +48,21 @@ server.get(
         if (!dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_enabled')) {
             return;
         }
-        var klaviyoUtils = require('*/cartridge/scripts/utils/klaviyo/klaviyoUtils');
-        var klaviyoTags = require('*/cartridge/scripts/utils/klaviyo/klaviyoOnSiteTags.js').klaviyoOnSiteTags;
+        var logger = Logger.getLogger('Klaviyo', 'SFRA Klaviyo Controller - RenderKlaviyoAddToCart()');
+        try {
+            var klaviyoUtils = require('*/cartridge/scripts/utils/klaviyo/klaviyoUtils');
+            var klaviyoTags = require('*/cartridge/scripts/utils/klaviyo/klaviyoOnSiteTags.js').klaviyoOnSiteTags;
 
-        var klaviyoDataLayer = klaviyoUtils.buildCartDataLayer();
-        var sendToDom = klaviyoTags(klaviyoDataLayer);
+            var klaviyoDataLayer = klaviyoUtils.buildCartDataLayer();
+            var sendToDom = klaviyoTags(klaviyoDataLayer);
 
-        res.render('/klaviyo/klaviyoTag', {
-            klaviyoData: sendToDom
-        });
-        next();
+            res.render('/klaviyo/klaviyoTag', {
+                klaviyoData: sendToDom
+            });
+            next();
+        } catch (e) {
+            logger.debug('Error encountered with RenderKlaviyoAddToCart - ' + e.message + ' at ' + e.lineNumber);
+        }
     }
 );
 

@@ -1,11 +1,14 @@
 'use strict';
 
+var Logger = require('dw/system/Logger');
+
 /* API Includes */
 var productMgr = require('dw/catalog/ProductMgr');
 var orderMgr = require('dw/order/OrderMgr');
 var basketMgr = require('dw/order/BasketMgr');
 
 var buildDataLayer = function () {
+    var logger = Logger.getLogger('Klaviyo', 'SFRA klaviyoDataLayer - buildDataLayer()');
     var klData = {};
     var pageContext,
         currentBasket,
@@ -88,6 +91,7 @@ var buildDataLayer = function () {
  * @returns context
  */
 var getContext = function () {
+    var logger = Logger.getLogger('Klaviyo', 'SFRA klaviyoDataLayer - getContext()');
     var path = request.httpPath;
     var parts = path.split('/');
     var context = null;

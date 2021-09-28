@@ -1,5 +1,7 @@
 'use strict';
 
+var Logger = require('dw/system/Logger');
+
 /**
  * This script provides utility functions for klaviyoTag isml fle.
  */
@@ -8,6 +10,7 @@
 // Prepare viewed product event data for klaviyo
 
 function prepareViewedProductObject(klData) {
+    var logger = Logger.getLogger('Klaviyo', 'Core klaviyoTagUtils - prepareViewedProductObject()');
     var viewedProductObj = new Object();
     viewedProductObj['Product Name'] = klData.viewedProductName;
     viewedProductObj['Product Image URL'] = !empty(klData.viewedProductImage) ? klData.viewedProductImage.toString() : '';
@@ -26,6 +29,7 @@ function prepareViewedProductObject(klData) {
 // Prepare checkout product event data for klaviyo
 
 function prepareCheckoutObj(klData) {
+    var logger = Logger.getLogger('Klaviyo', 'Core klaviyoTagUtils - prepareCheckoutObj()');
     var checkoutObj = new Object();
     checkoutObj.Items = klData.Items;
     checkoutObj.line_items = klData.line_items;
@@ -38,6 +42,8 @@ function prepareCheckoutObj(klData) {
 // Prepare checkout add to cart event data for klaviyo
 
 function prepareAddToCartObj(klData) {
+    var logger = Logger.getLogger('Klaviyo', 'Core klaviyoTagUtils - prepareAddToCartObj()');
+
     var cartObj = new Object();
     cartObj.Items = klData.items;
     cartObj.line_items = klData.lineItems;
@@ -52,6 +58,8 @@ function prepareAddToCartObj(klData) {
 // Sends customer basic details and information to klaviyo
 
 function setCustomerDetails(currentUser) {
+    var logger = Logger.getLogger('Klaviyo', 'Core klaviyoTagUtils - setCustomerDetails()');
+
     var klCustomer = new Object();
     klCustomer.$email = currentUser.email;
     klCustomer.$first_name = currentUser.firstName || null;

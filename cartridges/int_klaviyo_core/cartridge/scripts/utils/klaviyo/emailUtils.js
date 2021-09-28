@@ -14,6 +14,7 @@ var imageSize = Site.getCurrent().getCustomPreferenceValue('klaviyo_image_size')
  * @returns
  */
 function prepareOrderPayload(order, isFutureOrder, mailType) {
+    var logger = Logger.getLogger('Klaviyo', 'Core emailUtils - prepareOrderPayload()');
     var orderDetails = {};
     var isReplenishmentOrder = !!((mailType != null && mailType == 'Auto Delivery Order Confirmation'));
 
