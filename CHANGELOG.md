@@ -25,6 +25,7 @@ bumped for multiple releases during one month.
         - ShipmentConfirmation
     - buildCartDataLayer from SFRA klaviyoUtils
     - sendShipmentConfirmation from Core klaviyoUtils
+- Removed unused pageFooter.isml file from SFRA cartridge
 
 ### [20.11.0] - 2020-11-25
 ##### Added
