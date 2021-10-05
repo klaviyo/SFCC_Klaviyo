@@ -41,16 +41,16 @@ function trackEvent(email, data, event) {
     var result = KlaviyoTrackService.call(requestBody);
 
     if (result == null) {
-        logger.error('Result for send email via Klaviyo returned null.');
+        logger.error('Result for track event via Klaviyo returned null.');
         return;
     }
 
     resultObj = JSON.parse(result.object);
 
     if (resultObj == 1) {
-        logger.info('Send email via Klaviyo is successful.');
+        logger.info('Track event via Klaviyo is successful.');
     } else {
-        logger.error('Send email via Klaviyo failed.');
+        logger.error('Track event via Klaviyo failed.');
     }
 
     return resultObj;
@@ -344,6 +344,7 @@ function prepareAddToCartEventForKlaviyo(klData) {
  */
 var buildDataLayer = function () {
     var logger = Logger.getLogger('Klaviyo', 'Core klaviyoUtils - buildDataLayer()');
+    logger.info('Calling buildDataLayer().');
     var klData = {};
     var pageContext,
         currentBasket,
@@ -369,9 +370,9 @@ var buildDataLayer = function () {
     pageCategoryId = httpParameterMap.pagecgid.value;
 
     try {
-        // Checkout Started event
-
+        // Started Checkout event
         if (pageContext == 'checkout') {
+            logger.info('Building dataLayer for "Started Checkout" event.');
             currentBasket = basketMgr.getCurrentBasket();
             basketHasLength = currentBasket.getProductLineItems().toArray().length >= 1;
 
@@ -380,8 +381,9 @@ var buildDataLayer = function () {
             }
         }
 
-        // Order Placed Event
+        // Order Confirmation Event
         if (pageContext == 'orderconfirmation' && orderID || !empty(orderID.rawValue)) {
+            logger.info('Building dataLayer for "Order Confirmation" event.');
             currentOrder = orderMgr.getOrder(orderID);
             prepareOrderConfirmationEventForKlaviyo(currentOrder);
         }
@@ -389,18 +391,21 @@ var buildDataLayer = function () {
 
         // Viewed Product event
         if (pageContext == 'product') {
+            logger.info('Building dataLayer for "Viewed Product" event.');
             viewedProduct = productMgr.getProduct(pageProductID);
             klData = prepareViewedProductEventData(pageProductID, viewedProduct);
         }
 
-        // Category Viewed event
+        // Viewed Category event
         if (pageContext == 'search' && !empty(pageCategoryId)) {
+            logger.info('Building dataLayer for "Viewed Category" event.');
             klData.event = 'Viewed Category';
             klData.pageCategoryId = pageCategoryId;
         }
 
-        // Site Search event
+        // Searched Site event
         if (!empty(searchTerm)) {
+            logger.info('Building dataLayer for "Searched Site" event.');
             klData.event = 'Searched Site';
             klData.searchTerm = searchTerm;
             klData.searchResultsCount = (!empty(searchResultsCount)) ? searchResultsCount.value : 0;
@@ -417,6 +422,7 @@ var buildDataLayer = function () {
  */
 var buildCartDataLayer = function () {
     var logger = Logger.getLogger('Klaviyo', 'Core klaviyoUtils - buildCartDataLayer()');
+    logger.info('Calling buildCartDataLayer().');
     var klData = {};
     var isValidBasket,
         basketHasLength;
@@ -439,6 +445,7 @@ var buildCartDataLayer = function () {
  */
 var getContext = function () {
     var logger = Logger.getLogger('Klaviyo', 'Core klaviyoUtils - getContext()');
+    logger.info('Calling getContext().');
     var path = request.httpPath;
     var parts = path.split('/');
     var context = null;
@@ -454,6 +461,7 @@ var getContext = function () {
  */
 var trackAddToCart = function () {
     var logger = Logger.getLogger('Klaviyo', 'Core klaviyoUtils - trackAddToCart()');
+    logger.info('Calling trackAddToCart().');
     var klaviyoDataLayer = buildCartDataLayer();
     var email = '';
     if (!empty(session.getCustomer()) && !empty(session.getCustomer().profile)) {
@@ -470,6 +478,7 @@ var trackAddToCart = function () {
  */
 function obfuscateKlEmail(email) {
     var logger = Logger.getLogger('Klaviyo', 'Core klaviyoUtils - obfuscateEmail()');
+    logger.info('Calling obfuscateKlEmail().');
     if (empty(email)) {
         return;
     }
@@ -480,6 +489,7 @@ function obfuscateKlEmail(email) {
     var newDomain = domainLetter.concat(astericks);
     var newStartEmail = firstLetter.concat(astericks + '@');
     var obfuscatedEmail = newStartEmail.concat(newDomain);
+    logger.debug('obfuscatedEmail: ' + obfuscatedEmail);
     return obfuscatedEmail;
 }
 

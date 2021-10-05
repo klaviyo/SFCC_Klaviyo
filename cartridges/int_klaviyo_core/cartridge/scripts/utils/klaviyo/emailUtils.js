@@ -15,6 +15,7 @@ var imageSize = Site.getCurrent().getCustomPreferenceValue('klaviyo_image_size')
  */
 function prepareOrderPayload(order, isFutureOrder, mailType) {
     var logger = Logger.getLogger('Klaviyo', 'Core emailUtils - prepareOrderPayload()');
+    logger.info('Calling prepareOrderPayload().');
     var orderDetails = {};
     var isReplenishmentOrder = !!((mailType != null && mailType == 'Auto Delivery Order Confirmation'));
 
@@ -43,6 +44,7 @@ function prepareOrderPayload(order, isFutureOrder, mailType) {
     var paymentInstruments = '';
 
     if (order.shipments.length > 0) {
+        logger.info('Found ' + order.shipments.length + 'shipments for order #' + order.orderNo);
         // Shipping Address
         orderShippingAddressFirstName = (order.shipments[0].shippingAddress.firstName) ? order.shipments[0].shippingAddress.firstName : '';
         orderShippingAddressLastName = (order.shipments[0].shippingAddress.lastName) ? order.shipments[0].shippingAddress.lastName : '';
@@ -141,6 +143,7 @@ function prepareOrderPayload(order, isFutureOrder, mailType) {
                 'Is Sample'              : isSample
             });
         }
+        logger.info('Items: ' + items);
 
 
         // Append gift card
@@ -346,6 +349,7 @@ function prepareOrderPayload(order, isFutureOrder, mailType) {
     orderDetails.$event_id = mailType + '-' + order.orderNo;
     orderDetails['Tracking Number'] = (order.shipments[0].trackingNumber) ? order.shipments[0].trackingNumber : '';
 
+    logger.info('orderDetails: ' + orderDetails);
 
     return orderDetails;
 }
