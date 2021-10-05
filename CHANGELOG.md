@@ -15,6 +15,7 @@ bumped for multiple releases during one month.
 - Remove unused functions from Core and SG cartridges
     - sendOrderEmail from Core emailUtils
     - sendKlaviyoShipmentEmail from SG Klaviyo.js controller
+- Increased logging coverage for easier debugging
 
 ### [21.7.0] - 2021-7-27
 ##### Updated
