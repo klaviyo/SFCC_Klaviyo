@@ -143,7 +143,7 @@ function prepareOrderPayload(order, isFutureOrder, mailType) {
                 'Is Sample'              : isSample
             });
         }
-        logger.info('Items: ' + items);
+        logger.info('Items: ' + JSON.stringify(items));
 
 
         // Append gift card
@@ -349,7 +349,7 @@ function prepareOrderPayload(order, isFutureOrder, mailType) {
     orderDetails.$event_id = mailType + '-' + order.orderNo;
     orderDetails['Tracking Number'] = (order.shipments[0].trackingNumber) ? order.shipments[0].trackingNumber : '';
 
-    logger.info('orderDetails: ' + orderDetails);
+    logger.info('orderDetails: ' + JSON.stringify(orderDetails));
 
     return orderDetails;
 }
