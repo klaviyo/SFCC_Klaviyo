@@ -23,7 +23,7 @@ function prepareViewedProductObject(klData) {
     // viewedProductObj["Product Availability Model"] = klData.viewedProductAvailability;
     viewedProductObj.Categories = klData.viewedProductCategories;
     viewedProductObj['Primary Category'] = klData.viewedProductPrimaryCategory;
-    logger.debug('viewedProductObj: ' + viewedProductObj);
+    logger.debug('viewedProductObj: ' + JSON.stringify(viewedProductObj));
     return viewedProductObj;
 }
 
@@ -39,7 +39,7 @@ function prepareCheckoutObj(klData) {
     checkoutObj.$value = klData['Basket Gross Price'].toString();
     checkoutObj.itemCount = klData['Item Count'].toString();
     checkoutObj.Categories = klData.Categories;
-    logger.debug('checkoutObj: ' + checkoutObj);
+    logger.debug('checkoutObj: ' + JSON.stringify(checkoutObj));
     return checkoutObj;
 }
 
@@ -55,7 +55,7 @@ function prepareAddToCartObj(klData) {
     cartObj['Primary Categories'] = klData.primaryCategories;
     cartObj.$value = klData.basketGross;
     cartObj['Item Count'] = klData.itemCount.toString();
-    logger.debug('cartObj: ' + cartObj);
+    logger.debug('cartObj: ' + JSON.stringify(cartObj));
     return cartObj;
 }
 
@@ -81,7 +81,7 @@ function setCustomerDetails(currentUser) {
         klCustomer.$country = currentUserAddress.countryCode;
         klCustomer.$zip = currentUserAddress.postalCode;
     }
-    logger.debug('klCustomer: ' + klCustomer);
+    logger.debug('klCustomer: ' + JSON.stringify(klCustomer));
     return klCustomer;
 }
 

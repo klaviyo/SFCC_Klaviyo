@@ -105,7 +105,7 @@ var getContext = function () {
     if (parts[parts.length - 1] == 'Checkout-Begin') {
         context = 'checkout';
     }
-    logger.debug('Context: ' + context);
+    logger.debug('Context: ' + JSON.stringify(context));
     return context;
 };
 
