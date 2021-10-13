@@ -1,11 +1,15 @@
 'use strict';
 
+var Logger = require('dw/system/Logger');
+
 /* API Includes */
 var productMgr = require('dw/catalog/ProductMgr');
 var orderMgr = require('dw/order/OrderMgr');
 var basketMgr = require('dw/order/BasketMgr');
 
 var buildDataLayer = function () {
+    var logger = Logger.getLogger('Klaviyo', 'SFRA klaviyoDataLayer - buildDataLayer()');
+    logger.info('Calling buildDataLayer().');
     var klData = {};
     var pageContext,
         currentBasket,
@@ -33,8 +37,8 @@ var buildDataLayer = function () {
 
     try {
         // Checkout Started event
-
         if (pageContext == 'checkout') {
+            logger.info('Building dataLayer for "Started Checkout" event.');
             currentBasket = basketMgr.getCurrentBasket();
             basketHasLength = currentBasket.getProductLineItems().toArray().length >= 1;
 
@@ -44,8 +48,9 @@ var buildDataLayer = function () {
             }
         }
 
-        // Order Placed Event
+        // Order Confirmation Event
         if (pageContext == 'orderconfirmation' && orderID) {
+            logger.info('Building dataLayer for "Order Confirmation" event.');
             KlaviyoUtils = require('*/cartridge/scripts/utils/klaviyo/klaviyoUtils');
 
             if (!dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_order_transactional_enabled')) {
@@ -58,25 +63,29 @@ var buildDataLayer = function () {
 
         // Viewed Product event
         if (!empty(pageProductID.rawValue)) {
+            logger.info('Building dataLayer for "Viewed Product" event.');
             viewedProduct = productMgr.getProduct(pageProductID);
             KlaviyoUtils = require('*/cartridge/scripts/utils/klaviyo/klaviyoUtils');
             klData = KlaviyoUtils.prepareViewedProductEventData(pageProductID, viewedProduct);
         }
 
-        // Category Viewed event
+        // Viewed Category event
         if (!empty(pageCategoryId)) {
+            logger.info('Building dataLayer for "Viewed Category" event.');
             klData.event = 'Viewed Category';
             klData.pageCategoryId = pageCategoryId;
         }
 
-        // Site Search event
+        // Searched Site event
         if (!empty(searchTerm)) {
-            klData.event = 'Site Search';
+            logger.info('Building dataLayer for "Searched Site" event.');
+            klData.event = 'Searched Site';
             klData.searchTerm = searchTerm;
             klData.searchResultsCount = (!empty(searchResultsCount)) ? searchResultsCount.value : 0;
         }
     } catch (e) {
         klData.data.debug_error = [e.message, e.lineNumber];
+        logger.debug('Error encountered: ' + klData.data.debug_error);
     }
 
     return klData;
@@ -88,12 +97,15 @@ var buildDataLayer = function () {
  * @returns context
  */
 var getContext = function () {
+    var logger = Logger.getLogger('Klaviyo', 'SFRA klaviyoDataLayer - getContext()');
+    logger.info('Calling getContext().');
     var path = request.httpPath;
     var parts = path.split('/');
     var context = null;
     if (parts[parts.length - 1] == 'Checkout-Begin') {
         context = 'checkout';
     }
+    logger.debug('Context: ' + JSON.stringify(context));
     return context;
 };
 

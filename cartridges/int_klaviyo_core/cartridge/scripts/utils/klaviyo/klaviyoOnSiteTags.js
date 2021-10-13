@@ -1,3 +1,7 @@
+'use strict';
+
+var Logger = require('dw/system/Logger');
+
 // var klCustomer = new Object();
 var viewedProductObj = new Object();
 var checkoutObj = new Object();
@@ -13,11 +17,14 @@ function klaviyoOnSiteTags(klData) {
     //     var userReturnString = learnq.concat(" _learnq.push(['identify'," + JSON.stringify(klCustomer) + ']);');
     //     return userReturnString;
     // }
+    var logger = Logger.getLogger('Klaviyo', 'Core klaviyoOnSiteTags - klaviyoOnSiteTags()');
+    logger.info('Calling klaviyoOnSiteTags() for event type: ' + klData.event);
 
     if (klData.event === 'Viewed Product') {
         viewedProductObj.data = klaviyoTagUtils.prepareViewedProductObject(klData);
         viewedProductObj.eventType = 'track';
         viewedProductObj.eventName = klData.event;
+        logger.debug('Viewed Product data: ' + JSON.stringify(viewedProductObj));
         return JSON.stringify(viewedProductObj);
     }
 
@@ -25,6 +32,7 @@ function klaviyoOnSiteTags(klData) {
         checkoutObj.data = klaviyoTagUtils.prepareCheckoutObj(klData);
         checkoutObj.eventType = 'track';
         checkoutObj.eventName = klData.event;
+        logger.debug('Started Checkout data: ' + JSON.stringify(checkoutObj));
         return JSON.stringify(checkoutObj);
     }
 
@@ -32,6 +40,7 @@ function klaviyoOnSiteTags(klData) {
         cartObj.data = klaviyoTagUtils.prepareAddToCartObj(klData);
         cartObj.eventType = 'track';
         cartObj.eventName = klData.event;
+        logger.debug('Added to Cart data: ' + JSON.stringify(cartObj));
         return JSON.stringify(cartObj);
     }
 
@@ -40,6 +49,7 @@ function klaviyoOnSiteTags(klData) {
         categoryObj.data['Viewed Category'] = klData.pageCategoryId;
         categoryObj.eventType = 'track';
         categoryObj.eventName = klData.event;
+        logger.debug('Viewed Category data: ' + JSON.stringify(categoryObj));
         return JSON.stringify(categoryObj);
     }
 
@@ -49,6 +59,7 @@ function klaviyoOnSiteTags(klData) {
         searchObj.data['Search Results Count'] = klData.searchResultsCount;
         searchObj.eventType = 'track';
         searchObj.eventName = klData.event;
+        logger.debug('Searched Site data: ' + JSON.stringify(searchObj));
         return JSON.stringify(searchObj);
     }
 
