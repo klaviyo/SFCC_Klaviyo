@@ -105,14 +105,17 @@ function prepareOrderPayload(order, isFutureOrder, mailType) {
             }
 
             items.push(productLineItem.productID);
-
             itemCount += productLineItem.quantity.value;
             var allCategories;
             if (productDetail.variant) {
-                itemPrimaryCategories.push(productDetail.masterProduct.getPrimaryCategory().displayName);
+                if (productDetail.masterProduct.getPrimaryCategory()) {
+                    itemPrimaryCategories.push(productDetail.masterProduct.getPrimaryCategory().displayName);
+                }
                 allCategories = productDetail.masterProduct.getAllCategories();
             } else {
-                itemPrimaryCategories.push(productDetail.getPrimaryCategory().displayName);
+                if (productDetail.getPrimaryCategory()) {
+                    itemPrimaryCategories.push(productDetail.getPrimaryCategory().displayName);
+                }
                 allCategories = productDetail.getAllCategories();
             }
 

@@ -6,6 +6,7 @@ var Logger = require('dw/system/Logger');
 var productMgr = require('dw/catalog/ProductMgr');
 var orderMgr = require('dw/order/OrderMgr');
 var basketMgr = require('dw/order/BasketMgr');
+var Logger = require('dw/system/Logger');
 
 var buildDataLayer = function () {
     var logger = Logger.getLogger('Klaviyo', 'SFRA klaviyoDataLayer - buildDataLayer()');
@@ -49,17 +50,15 @@ var buildDataLayer = function () {
         }
 
         // Order Confirmation Event
-        if (pageContext == 'orderconfirmation' && orderID) {
+        if (orderID && !empty(orderID.rawValue)) {
             logger.info('Building dataLayer for "Order Confirmation" event.');
             KlaviyoUtils = require('*/cartridge/scripts/utils/klaviyo/klaviyoUtils');
-
-            if (!dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_order_transactional_enabled')) {
-                return;
-            }
             currentOrder = orderMgr.getOrder(orderID);
-            KlaviyoUtils.prepareOrderConfirmationEventForKlaviyo(currentOrder);
+            // check to see if the status is new or created
+            if (currentOrder.status == 3 || currentOrder.status == 4) {
+                KlaviyoUtils.prepareOrderConfirmationEventForKlaviyo(currentOrder);
+            }
         }
-
 
         // Viewed Product event
         if (!empty(pageProductID.rawValue)) {

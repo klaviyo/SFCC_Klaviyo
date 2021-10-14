@@ -9,6 +9,7 @@ bumped for multiple releases during one month.
 ### [Unreleased]
 ##### Fixed
 - Order Confirmation event will now correctly fire for orders with coupons.
+- Order Confirmation will now correctly fire if product has no primary category.
 ##### Updated
 - Rename sendEmail function to trackEvent
 - Fix grammar/typos in comments and docstrings
