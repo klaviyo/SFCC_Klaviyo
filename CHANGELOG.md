@@ -8,7 +8,7 @@ bumped for multiple releases during one month.
 
 ### [Unreleased]
 
-### [21.10.0 - 2021-10-14
+### [21.10.0] - 2021-10-14
 ##### Fixed
 - Order Confirmation event will now correctly fire for orders with coupons.
 - Order Confirmation will now correctly fire if product has no primary category.
