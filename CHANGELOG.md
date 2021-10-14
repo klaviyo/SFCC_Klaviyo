@@ -7,6 +7,8 @@ first number and the Month is the second number. The third number will be
 bumped for multiple releases during one month.
 
 ### [Unreleased]
+
+### [21.10.0] - 2021-10-14
 ##### Fixed
 - Order Confirmation event will now correctly fire for orders with coupons.
 - Order Confirmation will now correctly fire if product has no primary category.
@@ -17,6 +19,7 @@ bumped for multiple releases during one month.
     - sendOrderEmail from Core emailUtils
     - sendKlaviyoShipmentEmail from SG Klaviyo.js controller
 - Increased logging coverage for easier debugging
+- Updated documentation included with cartridge
 
 ### [21.7.0] - 2021-7-27
 ##### Updated
@@ -36,7 +39,8 @@ bumped for multiple releases during one month.
 - Fix image size and email that can crash if empty.
 - Add trackViewedItem for profile tracking.
 
-[Unreleased]: https://github.com/SalesforceCommerceCloud/link_klaviyo/compare/release-21.7.0...HEAD
+[Unreleased]: https://github.com/SalesforceCommerceCloud/link_klaviyo/compare/release-21.10.0...HEAD
+[21.10.0]: https://github.com/SalesforceCommerceCloud/link_klaviyo/compare/release-21.7.0...release-21.10.0
 [21.7.0]: https://github.com/SalesforceCommerceCloud/link_klaviyo/compare/release-20.11.0...release-21.7.0
 [20.11.0]: https://github.com/SalesforceCommerceCloud/link_klaviyo/compare/release-20.1.0...release-20.11.0
 [20.1.0]: https://github.com/SalesforceCommerceCloud/link_klaviyo/compare/da798cc8d3aeda9465bc9c4bb65d5184e4116e4f...release-20.1.0
