@@ -13,10 +13,10 @@ var klViewedItem = "trackViewedItem";
 var domEl = document.getElementById(klDataElement);
 var klDataTag = domEl.getAttribute(klDataAttribute);
 var klParsedData = JSON.parse(klDataTag);
-var _learnq = _learnq || [];
-_learnq.push([klParsedData.eventType, klParsedData.eventName, klParsedData.data]);
+var klaviyo = klaviyo || [];
+klaviyo.push([klParsedData.eventType, klParsedData.eventName, klParsedData.data]);
 if (klParsedData.eventName === klViewedProduct) {
-  _learnq.push([klViewedItem, {
+  klaviyo.push([klViewedItem, {
     Title: klParsedData.data['Product Name'],
     ItemId: klParsedData.data['Product ID'],
     Categories: klParsedData.data['Categories'],

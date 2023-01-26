@@ -14,7 +14,7 @@ function klaviyoOnSiteTags(klData) {
     // identify call for passing over user info for logged in users
     // if (currentUser && currentUser.email) {
     //     klCustomer = klaviyoTagUtils.setCustomerDetails(currentUser);
-    //     var userReturnString = learnq.concat(" _learnq.push(['identify'," + JSON.stringify(klCustomer) + ']);');
+    //     var userReturnString = learnq.concat(" klaviyo.push(['identify'," + JSON.stringify(klCustomer) + ']);');
     //     return userReturnString;
     // }
     var logger = Logger.getLogger('Klaviyo', 'Core klaviyoOnSiteTags - klaviyoOnSiteTags()');
@@ -65,7 +65,7 @@ function klaviyoOnSiteTags(klData) {
 
     // identify call for logged-in users (new registrations)
     // if (currentUser != null && currentUser.email != null) {
-    //     var currentUserReturnString = learnq.concat(" _learnq.push(['identify'," + JSON.stringify(currentUser.email) + ']);');
+    //     var currentUserReturnString = learnq.concat(" klaviyo.push(['identify'," + JSON.stringify(currentUser.email) + ']);');
     //     return currentUserReturnString;
     // }
 }
