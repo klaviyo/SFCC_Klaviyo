@@ -8,7 +8,6 @@ body:
         Describe your environment.
         Provide all the details that will help us to reproduce the bug.
       value: |
-        PHP version: 
         SiteGenesis or Storefront Reference Architecture:
         Klaviyo Cartridge version: 
         Anything else that would help a developer reproduce the bug?

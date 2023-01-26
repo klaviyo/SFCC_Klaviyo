@@ -1,5 +1,5 @@
 name: Feature request
-description: Request a feature to enhance the Klaviyo extension
+description: Request a feature to enhance the Klaviyo cartridges
 body:
   - type: textarea
     attributes:
@@ -20,7 +20,7 @@ body:
     attributes:
       label: Benefits
       description: |
-        How do you think this feature would improve the Klaviyo extension?
+        How do you think this feature would improve the Klaviyo cartridges?
     validations:
       required: true
   - type: textarea
