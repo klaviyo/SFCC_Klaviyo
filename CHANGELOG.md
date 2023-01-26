@@ -8,6 +8,9 @@ bumped for multiple releases during one month.
 
 ### [Unreleased]
 
+#### Changed
+- Updated the legacy `_learnq` js object to the new `klaviyo` js object.
+
 ### [21.10.0] - 2021-10-14
 ##### Fixed
 - Order Confirmation event will now correctly fire for orders with coupons.
