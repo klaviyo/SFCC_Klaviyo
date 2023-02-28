@@ -5,13 +5,13 @@ npm version > /dev/null || (echo "npm not installed; please install npm." && exi
 
 package='isml-linter'
 if [ `npm list --location=global | grep -c $package` -eq 0 ]; then
-   echo "Installing..."
-    npm install --location=global $package
+   echo "Installing isml-linter"
+   npm install --location=global $package
 fi
 
 errors=$(isml-linter $@)
 if [ ! -z "$errors" ]; then
    isml-linter $@
-   isml-linter --autofix $@
+   isml-linter --autofix $@ > /dev/null
    exit 1
 fi
