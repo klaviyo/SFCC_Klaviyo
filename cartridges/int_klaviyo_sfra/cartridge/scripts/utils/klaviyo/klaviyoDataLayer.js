@@ -1,7 +1,5 @@
 'use strict';
 
-var Logger = require('dw/system/Logger');
-
 /* API Includes */
 var productMgr = require('dw/catalog/ProductMgr');
 var orderMgr = require('dw/order/OrderMgr');
@@ -9,7 +7,10 @@ var basketMgr = require('dw/order/BasketMgr');
 var Logger = require('dw/system/Logger');
 
 var buildDataLayer = function () {
-    var logger = Logger.getLogger('Klaviyo', 'SFRA klaviyoDataLayer - buildDataLayer()');
+    var logger = Logger.getLogger(
+        'Klaviyo',
+        'SFRA klaviyoDataLayer - buildDataLayer()'
+    );
     logger.info('Calling buildDataLayer().');
     var klData = {};
     var pageContext,
@@ -37,11 +38,12 @@ var buildDataLayer = function () {
     pageCategoryId = httpParameterMap.pagecgid.value;
 
     try {
-        // Checkout Started event
+    // Checkout Started event
         if (pageContext == 'checkout') {
             logger.info('Building dataLayer for "Started Checkout" event.');
             currentBasket = basketMgr.getCurrentBasket();
-            basketHasLength = currentBasket.getProductLineItems().toArray().length >= 1;
+            basketHasLength =
+        currentBasket.getProductLineItems().toArray().length >= 1;
 
             if (basketHasLength) {
                 KlaviyoUtils = require('*/cartridge/scripts/utils/klaviyo/klaviyoUtils');
@@ -65,7 +67,10 @@ var buildDataLayer = function () {
             logger.info('Building dataLayer for "Viewed Product" event.');
             viewedProduct = productMgr.getProduct(pageProductID);
             KlaviyoUtils = require('*/cartridge/scripts/utils/klaviyo/klaviyoUtils');
-            klData = KlaviyoUtils.prepareViewedProductEventData(pageProductID, viewedProduct);
+            klData = KlaviyoUtils.prepareViewedProductEventData(
+                pageProductID,
+                viewedProduct
+            );
         }
 
         // Viewed Category event
@@ -80,7 +85,9 @@ var buildDataLayer = function () {
             logger.info('Building dataLayer for "Searched Site" event.');
             klData.event = 'Searched Site';
             klData.searchTerm = searchTerm;
-            klData.searchResultsCount = (!empty(searchResultsCount)) ? searchResultsCount.value : 0;
+            klData.searchResultsCount = !empty(searchResultsCount)
+                ? searchResultsCount.value
+                : 0;
         }
     } catch (e) {
         klData.data.debug_error = [e.message, e.lineNumber];
@@ -90,13 +97,15 @@ var buildDataLayer = function () {
     return klData;
 };
 
-
 /**
  * Creating page context from the request path
  * @returns context
  */
 var getContext = function () {
-    var logger = Logger.getLogger('Klaviyo', 'SFRA klaviyoDataLayer - getContext()');
+    var logger = Logger.getLogger(
+        'Klaviyo',
+        'SFRA klaviyoDataLayer - getContext()'
+    );
     logger.info('Calling getContext().');
     var path = request.httpPath;
     var parts = path.split('/');
@@ -108,10 +117,9 @@ var getContext = function () {
     return context;
 };
 
-
 /** Testable functions **/
 
 module.exports = {
-    buildDataLayer     : buildDataLayer,
-    getContext         : getContext
+    buildDataLayer : buildDataLayer,
+    getContext     : getContext
 };
