@@ -9,6 +9,9 @@ bumped for multiple releases during one month.
 <!-- BEGIN RELEASE NOTES -->
 ### [Unreleased]
 
+#### Added
+- Added pre-commit to the repository and ran across all files
+
 #### Changed
 - Updated the legacy `_learnq` js object to the new `klaviyo` js object.
 
