@@ -13,7 +13,7 @@ function getCurrentBasket() {
                 countryCode: { value: 'us' },
                 phone: '617-555-1234',
                 stateCode: 'MA',
-								
+
                 setFirstName: function (firstNameInput) { this.firstName = firstNameInput; },
                 setLastName: function (lastNameInput) { this.lastName = lastNameInput; },
                 setAddress1: function (address1Input) { this.address1 = address1Input; },
