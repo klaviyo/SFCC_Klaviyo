@@ -1,8 +1,8 @@
 <!--- TEMPLATENAME: klaviyoTag.isml --->
 <iscomment>Add Klaviyo.js to page</iscomment>
 <script
-  async type="text/javascript"
-  src="//static.klaviyo.com/onsite/js/klaviyo.js?company_id=${dw.system.Site.current.preferences.custom.klaviyo_account}"
+    async type="text/javascript"
+    src="//static.klaviyo.com/onsite/js/klaviyo.js?company_id=${dw.system.Site.current.preferences.custom.klaviyo_account}"
 ></script>
 <data id="klaviyo-data" data-js="<isprint value="${pdict.klaviyoData}" encoding="htmlunquote">"></data>
 <script type="text/javascript">

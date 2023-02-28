@@ -1,9 +1,9 @@
-'use strict';
+"use strict";
 
 function https() {
-  return ['https://klaviyo.com'];
+  return ["https://klaviyo.com"];
 }
 
 module.exports = {
-  https: https
+  https: https,
 };

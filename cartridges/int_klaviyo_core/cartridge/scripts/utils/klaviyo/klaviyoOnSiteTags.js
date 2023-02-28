@@ -17,7 +17,10 @@ function klaviyoOnSiteTags(klData) {
     //     var userReturnString = learnq.concat(" klaviyo.push(['identify'," + JSON.stringify(klCustomer) + ']);');
     //     return userReturnString;
     // }
-    var logger = Logger.getLogger('Klaviyo', 'Core klaviyoOnSiteTags - klaviyoOnSiteTags()');
+    var logger = Logger.getLogger(
+        'Klaviyo',
+        'Core klaviyoOnSiteTags - klaviyoOnSiteTags()'
+    );
     logger.info('Calling klaviyoOnSiteTags() for event type: ' + klData.event);
 
     if (klData.event === 'Viewed Product') {

@@ -1,11 +1,11 @@
-'use strict';
+"use strict";
 
 function getCurrent() {
   return {
-    getCustomPreferenceValue: function(str) {
-      if (str === 'klaviyo_account') {
-        return 'XXxxXX';
-      } else if (str === 'EgiftProduct-ID') {
+    getCustomPreferenceValue: function (str) {
+      if (str === "klaviyo_account") {
+        return "XXxxXX";
+      } else if (str === "EgiftProduct-ID") {
         return 111111;
       }
     },
@@ -13,5 +13,5 @@ function getCurrent() {
 }
 
 module.exports = {
-  getCurrent: getCurrent
+  getCurrent: getCurrent,
 };

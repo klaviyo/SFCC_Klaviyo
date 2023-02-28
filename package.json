@@ -20,14 +20,6 @@
   "homepage": "https://github.com/klaviyo/demandware_cartridge_sg#readme",
   "devDependencies": {
     "chai": "^4.2.0",
-    "eslint": "^6.8.0",
-    "eslint-config-airbnb-base": "^5.0.3",
-    "eslint-config-standard": "^14.1.0",
-    "eslint-plugin-import": "^2.20.1",
-    "eslint-plugin-node": "^11.0.0",
-    "eslint-plugin-promise": "^4.2.1",
-    "eslint-plugin-sitegenesis": "~1.0.0",
-    "eslint-plugin-standard": "^4.0.1",
     "mocha": "^6.2.2",
     "sgmf-scripts": "^2.4.1"
   },
