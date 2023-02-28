@@ -7,4 +7,4 @@
 <!-- Include this in the minicart.isml and cart.isml or wherever you have the cart isml files -->
 
 <isif condition="${pdict.CurrentHttpParameterMap.cartAction == 'add' || pdict.CurrentHttpParameterMap.cartAction == 'update'}">
-<isinclude url="${URLUtils.url('Klaviyo-RenderKlaviyoAddToCart')}"/> </isif>
+    <isinclude url="${URLUtils.url('Klaviyo-RenderKlaviyoAddToCart')}"/> </isif>

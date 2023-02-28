@@ -6,3 +6,10 @@ repos:
   - id: check-json
   - id: check-xml
   - id: detect-private-key
+- repo: local
+  hooks:
+  - id: echo-shell
+    name: isml linter
+    entry: ./.github/isml_linter.sh
+    language: system
+    files: ^.*\.isml$
