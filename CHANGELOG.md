@@ -8,7 +8,6 @@ first number and the Month is the second number. The third number will be
 bumped for multiple releases during one month.
 
 <!-- BEGIN RELEASE NOTES -->
-
 ### [Unreleased]
 
 #### Added
@@ -60,13 +59,11 @@ bumped for multiple releases during one month.
 <!-- END RELEASE NOTES -->
 
 <!-- BEGIN LINKS -->
-
-[unreleased]: https://github.com/klaviyo/SFCC_Klaviyo/compare/21.10.0...HEAD
+[Unreleased]: https://github.com/klaviyo/SFCC_Klaviyo/compare/21.10.0...HEAD
 [21.10.0]: https://github.com/klaviyo/SFCC_Klaviyo/compare/21.7.0...21.10.0
 [21.7.0]: https://github.com/klaviyo/SFCC_Klaviyo/compare/20.11.0...21.7.0
 [20.11.0]: https://github.com/klaviyo/SFCC_Klaviyo/compare/20.1.0...20.11.0
 [20.1.0]: https://github.com/klaviyo/SFCC_Klaviyo/compare/da798cc8d3aeda9465bc9c4bb65d5184e4116e4f...20.1.0
-
 <!-- END LINKS -->
 
 #### NOTE
