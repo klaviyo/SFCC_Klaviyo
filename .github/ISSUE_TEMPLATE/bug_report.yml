@@ -9,7 +9,7 @@ body:
         Provide all the details that will help us to reproduce the bug.
       value: |
         SiteGenesis or Storefront Reference Architecture:
-        Klaviyo Cartridge version: 
+        Klaviyo Cartridge version:
         Anything else that would help a developer reproduce the bug?
     validations:
       required: true
