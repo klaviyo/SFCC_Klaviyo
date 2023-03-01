@@ -8,6 +8,7 @@ first number and the Month is the second number. The third number will be
 bumped for multiple releases during one month.
 
 <!-- BEGIN RELEASE NOTES -->
+
 ### [Unreleased]
 
 #### Added
