@@ -17,11 +17,11 @@ jobs:
       with:
         python-version: "3.11"
     - name: Install Changelogger
-      run: pip install changelogged==0.7.0
+      run: pip install changelogged==0.11.3
     - name: Get Latest Version
       id: latest_version
       run: |
-        VERSION=$(changelogger manage versions --latest)
+        VERSION=$(changelogger versions --latest)
         echo "version=${VERSION}" >> $GITHUB_OUTPUT
     - uses: mukunku/tag-exists-action@v1.2.0
       id: tag_exists
@@ -78,38 +78,26 @@ jobs:
         python-version: '3.11'
 
     - name: Install Changelogger
-      run: pip install changelogged==0.7.0
+      run: pip install changelogged==0.11.3
 
     - name: Get Changelog Contents
       id: changelog
       run: |
         DELIMITER=$(openssl rand -base64 12)
-        VERSION=${{ needs.get-stable-tag.outputs.version }}
+        VERSION=${{ needs.determine-if-deploy.outputs.version }}
         # Need to capture multiline output in env to preserve newlines
         echo "content<<${DELIMITER}" >> $GITHUB_ENV
         # Add changelog content to the env for release notes
-        changelogger manage content $VERSION --no-pretty >> $GITHUB_ENV
+        changelogger notes $VERSION --no-pretty >> $GITHUB_ENV
         echo ${DELIMITER} >> $GITHUB_ENV
 
     - name: Create GitHub Tag & Release
       uses: ncipollo/release-action@v1
       with:
-        tag: ${{ needs.get-stable-tag.outputs.version }}
+        tag: ${{ needs.determine-if-deploy.outputs.version }}
         commit: ${{ github.sha }}
-        name: Release ${{ needs.get-stable-tag.outputs.version }}
+        name: Release ${{ needs.determine-if-deploy.outputs.version }}
         body: ${{ env.content }}
-    - name: Send PagerDuty alert on failure
-      if: ${{ failure() }}
-      uses: award28/action-pagerduty-alert@0.4.0
-      with:
-        pagerduty-integration-key: '${{ secrets.PAGERDUTY_INTEGRATION_KEY }}'
-        pagerduty-dedup-key: sfcc_cd
-
-  integration-release:
-    runs-on: ubuntu-latest
-    needs: github-tag-and-release
-    steps:
-    - run: echo "Releasing to SFCC"
     - name: Send PagerDuty alert on failure
       if: ${{ failure() }}
       uses: award28/action-pagerduty-alert@0.4.0
