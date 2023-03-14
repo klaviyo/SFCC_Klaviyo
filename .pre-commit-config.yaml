@@ -1,28 +1,33 @@
 repos:
-  - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.4.0 # Use the ref you want to point at
-    hooks:
-    - id: trailing-whitespace
-    - id: check-json
-    - id: check-xml
-    - id: detect-private-key
-  - repo: https://github.com/pre-commit/mirrors-eslint
-    rev: v8.35.0
-    hooks:
-    - id: eslint
-      additional_dependencies:
-      - eslint@^8.35.0
-      - eslint-config-airbnb-base@^15.0.0
-      - eslint-config-standard@^17.0.0
-      - eslint-plugin-import@^2.27.5
-      - eslint-plugin-node@^11.1.0
-      - eslint-plugin-promise@^6.1.1
-      - eslint-plugin-sitegenesis@^1.0.0
-      - eslint-plugin-standard@^5.0.0
-  - repo: local
-    hooks:
-    - id: isml-linter
-      name: isml linter
-      entry: ./.github/precommit/isml_linter.sh
-      language: system
-      files: ^.*\.isml$
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v4.4.0 # Use the ref you want to point at
+  hooks:
+  - id: trailing-whitespace
+  - id: check-json
+  - id: check-xml
+  - id: detect-private-key
+- repo: https://github.com/pre-commit/mirrors-eslint
+  rev: v8.35.0
+  hooks:
+  - id: eslint
+    additional_dependencies:
+    - eslint@^8.35.0
+    - eslint-config-airbnb-base@^15.0.0
+    - eslint-config-standard@^17.0.0
+    - eslint-plugin-import@^2.27.5
+    - eslint-plugin-node@^11.1.0
+    - eslint-plugin-promise@^6.1.1
+    - eslint-plugin-sitegenesis@^1.0.0
+    - eslint-plugin-standard@^5.0.0
+- repo: local
+  hooks:
+  - id: isml-linter
+    name: isml linter
+    entry: ./.github/pre-commit/isml_linter.sh
+    language: system
+    files: ^.*\.isml$
+  - id: action-validator
+    name: action validator
+    entry: ./.github/pre-commit/action-validator.sh
+    language: system
+    files: ^.github\/workflows\/.*\.ya?ml$
