@@ -24,7 +24,7 @@ function getKlaviyoExchangeID() {
 ****/
 
 // prepares data for "Viewed Product" event
-function klaviyoViewedProductData(productID) {
+function viewedProductData(productID) {
 
     var imageSize = Site.getCurrent().getCustomPreferenceValue('klaviyo_image_size') || 'large';
 
@@ -66,6 +66,23 @@ function klaviyoViewedProductData(productID) {
 
     return klData;
 }
+
+// prepares data for "Viewed Category" event
+function viewedCategoryData(categoryID) {
+    var _b = categoryID;
+    var foo = 'bar';
+
+    var klData = {
+        data: {
+            "viewed Category": categoryID
+        },
+        eventType: "track",
+        eventName: "Viewed Product"
+    };
+
+    return klData;
+}
+
 
 
 
@@ -187,6 +204,7 @@ var KlaviyoTrackService = ServiceRegistry.createService('KlaviyoTrackService', {
 
 module.exports = {
     getKlaviyoExchangeID : getKlaviyoExchangeID,
-    klaviyoViewedProductData : klaviyoViewedProductData,
+    viewedProductData : viewedProductData,
+    viewedCategoryData : viewedCategoryData,
     trackEvent : trackEvent
 }

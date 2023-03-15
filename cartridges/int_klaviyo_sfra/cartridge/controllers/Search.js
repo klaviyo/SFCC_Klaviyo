@@ -12,8 +12,12 @@ server.append('Show', function (req, res, next) {
         var exchange_id = klaviyoScripts.getKlaviyoExchangeID();
 
         if (exchange_id) {
-            var data = klaviyoScripts.viewedProductData(res.viewData.product.id);
-            var serviceCallResult = klaviyoScripts.trackEvent(exchange_id, data, 'Viewed Product');
+            if(req.querystring.cgid) { // category page (PLP)
+                var data = klaviyoScripts.viewedCategoryData(req.querystring.cgid);
+                var serviceCallResult = klaviyoScripts.trackEvent(exchange_id, data, 'Viewed Category');
+            } else { // search results page
+
+            }
         }
 
     }
