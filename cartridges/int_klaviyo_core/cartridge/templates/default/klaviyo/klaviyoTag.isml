@@ -1,30 +1,5 @@
 <!--- TEMPLATENAME: klaviyoTag.isml --->
 <iscomment>Add Klaviyo.js to page</iscomment>
-<script
-    async type="text/javascript"
-    src="//static.klaviyo.com/onsite/js/klaviyo.js?company_id=${dw.system.Site.current.preferences.custom.klaviyo_account}"
-></script>
-<data id="klaviyo-data" data-js="<isprint value="${pdict.klaviyoData}" encoding="htmlunquote">"></data>
-<script type="text/javascript">
-var klDataElement = "klaviyo-data";
-var klDataAttribute = "data-js";
-var klViewedProduct = "Viewed Product";
-var klViewedItem = "trackViewedItem";
-var domEl = document.getElementById(klDataElement);
-var klDataTag = domEl.getAttribute(klDataAttribute);
-var klParsedData = JSON.parse(klDataTag);
-var klaviyo = klaviyo || [];
-klaviyo.push([klParsedData.eventType, klParsedData.eventName, klParsedData.data]);
-if (klParsedData.eventName === klViewedProduct) {
-  klaviyo.push([klViewedItem, {
-    Title: klParsedData.data['Product Name'],
-    ItemId: klParsedData.data['Product ID'],
-    Categories: klParsedData.data['Categories'],
-    ImageUrl: klParsedData.data['Product Image URL'],
-    Url: klParsedData.data['Product Page URL'],
-    Metadata: {
-      Price: klParsedData.data['Price']
-    }
-  }])
-}
-</script>
+<isif condition="${dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_enabled')}">
+    <script async src="//static.klaviyo.com/onsite/js/klaviyo.js?company_id=${dw.system.Site.getCurrent().preferences.custom.klaviyo_account}"></script>
+</isif>
