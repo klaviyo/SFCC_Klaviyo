@@ -69,18 +69,32 @@ function viewedProductData(productID) {
 
 // prepares data for "Viewed Category" event
 function viewedCategoryData(categoryID) {
-    var _b = categoryID;
-    var foo = 'bar';
 
     var klData = {
         data: {
-            "viewed Category": categoryID
+            "Viewed Category": categoryID
         },
         eventType: "track",
-        eventName: "Viewed Product"
+        eventName: "Viewed Category"
     };
 
     return klData;
+}
+
+// prepares data for "Site Searched" event
+function searchedSiteData(term, count) {
+
+    var klData = {
+        data: {
+            "Search Term": term,
+            "Search Results Count": count
+        },
+        eventType: "track",
+        eventName: "Searched Site"
+    };
+
+    return klData;
+
 }
 
 
@@ -206,5 +220,6 @@ module.exports = {
     getKlaviyoExchangeID : getKlaviyoExchangeID,
     viewedProductData : viewedProductData,
     viewedCategoryData : viewedCategoryData,
+    searchedSiteData : searchedSiteData,
     trackEvent : trackEvent
 }
