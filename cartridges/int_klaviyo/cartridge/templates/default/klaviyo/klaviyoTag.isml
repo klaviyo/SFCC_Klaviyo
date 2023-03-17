@@ -1,0 +1,24 @@
+<isscript>
+    var klaviyoUtils = require('*/cartridge/scripts/utils/klaviyo/klaviyoUtils.js');
+</isscript>
+<!--- TEMPLATENAME: klaviyoTag.isml --->
+<isif condition="${dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_enabled')}">
+    <script async src="//static.klaviyo.com/onsite/js/klaviyo.js?company_id=${dw.system.Site.getCurrent().preferences.custom.klaviyo_account}"></script>
+
+    <isif condition="${pageContext.type == 'product' || pageContext.type == 'search'}">
+        <isif condition="${pageContext.type == 'product'}">
+            <isset name="klAction" value="${klaviyoUtils.EVENT_NAMES.viewedProduct}" scope="page" />
+            <isset name="klParms" value="${pdict.Product.ID}" scope="page" />
+        <iselse>
+            <isif condition="${request.httpParameterMap.cgid.stringValue != ''}">
+                <isset name="klAction" value="${klaviyoUtils.EVENT_NAMES.viewedCategory}" scope="page" />
+                <isset name="klParms" value="${request.httpParameterMap.cgid.stringValue}" scope="page" />
+            <iselse>
+                <isset name="klAction" value="${klaviyoUtils.EVENT_NAMES.searchedSite}" scope="page" />
+                <isset name="klParms" value="${request.httpParameterMap.q.stringValue + '|' + pdict.ProductSearchResult.count}" scope="page" />
+            </isif>
+        </isif>
+        <isinclude url="${URLUtils.url('Klaviyo-Event', 'action', klAction, 'parms', klParms)}" />
+    </isif>
+
+</isif>

@@ -1,5 +1,0 @@
-<!--- TEMPLATENAME: klaviyoTag.isml --->
-<iscomment>Add Klaviyo.js to page</iscomment>
-<isif condition="${dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_enabled')}">
-    <script async src="//static.klaviyo.com/onsite/js/klaviyo.js?company_id=${dw.system.Site.getCurrent().preferences.custom.klaviyo_account}"></script>
-</isif>
