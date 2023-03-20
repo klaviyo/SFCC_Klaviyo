@@ -22,6 +22,7 @@ var EVENT_NAMES = {
     'orderedProduct' : 'Ordered Product'
 };
 
+var imageSize = Site.getCurrent().getCustomPreferenceValue('klaviyo_image_size') || 'large';
 
 
 // looks for klaviyo's cookie and if found extracts the exchangeID from it, returning that value
@@ -41,8 +42,6 @@ function getKlaviyoExchangeID() {
 
 // prepares data for "Viewed Product" event
 function viewedProductData(productID) {
-
-    var imageSize = Site.getCurrent().getCustomPreferenceValue('klaviyo_image_size') || 'large';
 
     var productData = {};
 
@@ -119,7 +118,6 @@ function addedToCartData(basket) {
     // TODO: analyze line-by-line.  currently pulled straight from previous cartridge prepareAddToCartEventForKlaviyo function
     var klData = {};
     var basketItems = basket.getProductLineItems().toArray();
-    var imageSize = Site.getCurrent().getCustomPreferenceValue('klaviyo_image_size') || 'large';
 
     klData.event = EVENT_NAMES.addedToCart;
     klData.basketGross = basket.getTotalGrossPrice().getValue().valueOf();
@@ -182,12 +180,131 @@ function addedToCartData(basket) {
 }
 
 
+// prepares data for "Started Checkout" event
+function startedCheckoutData(currentBasket) {
+
+    // TODO: analyze line-by-line.  currently pulled straight from previous cartridge prepareCheckoutEventForKlaviyo function
+
+    var klData = {};
+    var basketItems = currentBasket.getProductLineItems().toArray();
+    // Create some top-level event data
+    klData.event = 'Started Checkout';
+    klData['Basket Gross Price'] = currentBasket.getTotalGrossPrice().value;
+    klData['Item Count'] = basketItems.length;
+
+    // prepare to add top-level data while iterating through product line items
+    klData.line_items = [];
+    klData.Categories = [];
+    klData.Items = [];
+    klData.$email = currentBasket.customerEmail;
+
+    for (var itemIndex = 0; itemIndex < basketItems.length; itemIndex++) {
+        var lineItem = basketItems[itemIndex];
+        var currentProductID = lineItem.productID;
+        var basketProduct = ProductMgr.getProduct(currentProductID);
+
+        if (currentProductID != null && !empty(basketProduct) && basketProduct.getPriceModel().getPrice().value > 0) {
+            var productObj = prepareProductObj(
+                lineItem,
+                basketProduct,
+                currentProductID
+            );
+
+            // add top-level data for the event for segmenting, etc.
+            klData.line_items.push(productObj);
+            klData.Categories.push.apply(klData.Categories, klData.line_items[itemIndex].Categories);
+            klData.Items.push(klData.line_items[itemIndex]['Product Name']);
+        }
+    }
+
+    return klData;
+}
+
+
+// prepares data for "Order Confirmation" event
+function orderConfirmationData(currentOrder, exchangeID) {
+
+    // TODO: this all should be reviewed more closely, particularly the prepareOrderPayload function in "emailUtils"
+    // that function is called nowhere else - although it is large, is it better to inline it here?
+    // if its kept, at least change the filename to something more descriptive of how its being used, ie orderConfirmationUtils or something
+
+    // site specific order object */
+    var emailUtils = require('*/cartridge/scripts/utils/klaviyo/emailUtils');
+    var dwareOrder = emailUtils.prepareOrderPayload( currentOrder, false, 'orderConfirmation' );
+    trackEvent( exchangeID, dwareOrder, 'Order Confirmation' );
+
+    // giftcards
+    var giftCertCollection = currentOrder.getGiftCertificateLineItems().toArray();
+    var orderGiftCards = [];
+
+    for (
+        var giftCertIndex = 0;
+        giftCertIndex < giftCertCollection.length;
+        giftCertIndex++
+    ) {
+        // gift certificates don't count as orderItems so we need to reconcile that ourselves
+        // var giftCardId = dw.system.Site.getCurrent().getCustomPreferenceValue('EgiftProduct-ID');
+
+        /* klData["Item Count"]++ */
+        var giftCard = giftCertCollection[giftCertIndex];
+        var giftCardObj = {};
+        giftCardObj = preparegiftCardObject(giftCard);
+        orderGiftCards.push(giftCardObj);
+    }
+
+    // send an event for transactional gift certificate emails
+    for (
+        var totalOrderGiftCards = 0;
+        totalOrderGiftCards < orderGiftCards.length;
+        totalOrderGiftCards++
+    ) {
+        var theGiftCard = orderGiftCards[totalOrderGiftCards];
+        trackEvent( theGiftCard['Recipient Email'], theGiftCard, 'e-Giftcard Notification' ); // TODO: confirm this special event with Klaviyo... being tracked on recipient email
+    }
+
+};
+
+
+
+
 /****
  *
  * END DATA ASSEMBLY FUNCTIONS FOR INDIVIDUAL EVENT TYPES
  *
 ****/
 
+
+/**
+ * Prepares Product Object and set necessary product details
+ * https://apidocs.klaviyo.com/reference/track-identify#track-get
+ *
+ * @param lineItem
+ * @param basketProduct
+ * @param currentProductID
+ * @returns {Object}
+ */
+
+function prepareProductObj(lineItem, basketProduct, currentProductID) {
+    Logger.getLogger('Klaviyo', 'Core klaviyoUtils - prepareProductObject()');
+    var productObj = {};
+    productObj['Product ID'] = currentProductID;
+    productObj['Product Name'] = basketProduct.name;
+    productObj['Product Image URL'] = imageSize ? basketProduct.getImage(imageSize).getAbsURL().toString() : null;
+    productObj.Price = dw.util.StringUtils.formatMoney( dw.value.Money( basketProduct.getPriceModel().getPrice().value, session.getCurrency().getCurrencyCode() ) );
+    productObj['Product Description'] = basketProduct.pageDescription ? basketProduct.pageDescription.toString() : null;
+    productObj['Product Page URL'] = require('dw/web/URLUtils').https('Product-Show', 'pid', currentProductID).toString();
+    productObj['Product UPC'] = basketProduct.UPC;
+    productObj['Product Availability Model'] = basketProduct.availabilityModel.availability;
+
+    var categories = [];
+    var catProduct = (basketProduct.variant) ? basketProduct.masterProduct : basketProduct; // from orig klav code, always use master for finding cats
+    for(var i=0, len=catProduct.categoryAssignments.length; i<len; i++) {
+        categories.push(catProduct.categoryAssignments[i].category.displayName);
+    }
+
+    productObj.Categories = categories;
+    return productObj;
+}
 
 
 // TODO: DO WE NEED THIS?
@@ -222,7 +339,6 @@ function preparePayload(exchangeID, data, event) {
 }
 
 
-
 function trackEvent(exchangeID, data, event) {
     var requestBody = {};
     var resultObj = {};
@@ -230,11 +346,7 @@ function trackEvent(exchangeID, data, event) {
     var logger = Logger.getLogger('Klaviyo', 'Core klaviyoUtils - trackEvent()');
 
     if (KlaviyoTrackService == null || empty(exchangeID)) {
-        logger.error(
-            'trackEvent() failed for exchange_id: ' +
-            exchangeID +
-        '.'
-        );
+        logger.error('trackEvent() failed for exchange_id: ' + exchangeID + '.');
         return;
     }
 
@@ -245,22 +357,22 @@ function trackEvent(exchangeID, data, event) {
     var result = KlaviyoTrackService.call(requestBody);
 
     if (result == null) {
-        logger.error('Result for track event via Klaviyo returned null.');
+        logger.error('Result for ' + event + ' track event via Klaviyo returned null.');
         return;
     }
 
     resultObj = JSON.parse(result.object);
 
     if (resultObj == 1) {
-        logger.info('Track event via Klaviyo is successful.');
+        // TODO: do we really need to log every successful event?
+        //logger.info(event + ' track event via Klaviyo is successful.');
     } else {
-        logger.error('Track event via Klaviyo failed.');
+        logger.error( event + ' track event via Klaviyo failed.');
     }
 
     return resultObj;
 
 }
-
 
 // HTTP Services
 
@@ -306,5 +418,7 @@ module.exports = {
     viewedCategoryData : viewedCategoryData,
     searchedSiteData : searchedSiteData,
     addedToCartData : addedToCartData,
+    startedCheckoutData : startedCheckoutData,
+    orderConfirmationData : orderConfirmationData,
     trackEvent : trackEvent
 }
