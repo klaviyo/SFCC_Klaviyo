@@ -1,10 +1,18 @@
 <isscript>
     var klaviyoUtils = require('*/cartridge/scripts/utils/klaviyo/klaviyoUtils.js');
 </isscript>
-<!--- TEMPLATENAME: klaviyoTag.isml --->
+<iscomment>
+    this template should be included near the end of the html body on all pages.
+    it calls the Klaviyo JS SDK files into the page, and calls the Klaviyo-Event controller via 
+    remote include for pages whose controllers are cached OOTB
+</iscomment>
+<!--- TEMPLATENAME: klaviyoFooter.isml --->
 <isif condition="${dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_enabled')}">
     <script async src="//static.klaviyo.com/onsite/js/klaviyo.js?company_id=${dw.system.Site.getCurrent().preferences.custom.klaviyo_account}"></script>
-
+    <script>
+        // klaviyo object loader - provided by klaviyo
+        !function(){if(!window.klaviyo){window._klOnsite=window._klOnsite||[];try{window.klaviyo=new Proxy({},{get:function(n,i){return"push"===i?function(){var n;(n=window._klOnsite).push.apply(n,arguments)}:function(){for(var n=arguments.length,o=new Array(n),w=0;w<n;w++)o[w]=arguments[w];var t="function"==typeof o[o.length-1]?o.pop():void 0,e=new Promise((function(n){window._klOnsite.push([i].concat(o,[function(i){t&&t(i),n(i)}]))}));return e}}})}catch(n){window.klaviyo=window.klaviyo||[],window.klaviyo.push=function(){var n;(n=window._klOnsite).push.apply(n,arguments)}}}}();
+    </script>
     <isif condition="${pdict.action == 'Product-Show' || pdict.action == 'Search-Show'}">
         <isif condition="${pdict.action == 'Product-Show'}">
             <isset name="klAction" value="${klaviyoUtils.EVENT_NAMES.viewedProduct}" scope="page" />
@@ -20,5 +28,7 @@
         </isif>
         <isinclude url="${URLUtils.url('Klaviyo-Event', 'action', klAction, 'parms', klParms)}" />
     </isif>
-
+    <isif condition="${pdict.klid}">
+        <isinclude template="klaviyo/klaviyoID" />
+    </isif>
 </isif>

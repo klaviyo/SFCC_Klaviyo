@@ -31,51 +31,11 @@ function getKlaviyoExchangeID() {
     if('__kla_id' in request.httpCookies && !empty(request.httpCookies['__kla_id'])) {
         var kx = JSON.parse(StringUtils.decodeBase64(request.httpCookies['__kla_id'].value)).$exchange_id;
         return (kx && kx != '') ? kx : false;
-    } else {
-        // no klaviyo cookie present.  if user is logged in to SFCC, identify them to klaviyo
-
-        if(customer.authenticated && customer.profile) {
-
-            // need to either:
-            // A) call klaviyo identify server side, get back a klaviyo exchangeID / cookie and then send that to the frontend - or -
-            // B) send some kind of payload to the frontend for JS to pick up on that will trigger identify on the client-side
-
-            /*  server-to-server approach 
-            var requestBody = {};
-            var resultObj = {};
-
-            if (KlaviyoIdentifyService == null) {
-                logger.error('Flayviyo Ientify service failed'); // TODO: more info to log here? customer ID?
-                return;
-            }
-
-            var klaviyoData = {
-                "token" : Site.getCurrent().getCustomPreferenceValue('klaviyo_account'),
-                "properties" : {
-                  "$email" : customer.profile.email,
-                  "$first_name" : customer.profile.firstName,
-                  "$last_name" : customer.profile.lastName
-                }
-            };
-
-            // base64 encode data
-            klaviyoData = JSON.stringify(klaviyoData);
-            klaviyoData = StringUtils.encodeBase64(klaviyoData)
-            KlaviyoIdentifyService.addParam('data', klaviyoData);
-            var result = KlaviyoIdentifyService.call(requestBody);
-
-            // result comes back with OK and no further data... no way to pass this to the frontend for cookie
-            var foo = 'bar';
-            
-            // ?data=eyJ0b2tlbiI6IldjR2tMZCIsInByb3BlcnRpZXMiOnsiJGVtYWlsIjoicHVibGljQHVuaXRvbmUub3JnIiwiJGZpcnN0X25hbWUiOiJBaWRyaWFuIiwiJGxhc3RfbmFtZSI6IkFTREYifX0=
-            */
-
-        }
     }
     return false;
 }
 
-
+// gets SFCC profile info (if available) to use for IDing user to klaviyo
 function getProfileInfo() {
     if(customer.authenticated && customer.profile) {
         var profileInfo = {

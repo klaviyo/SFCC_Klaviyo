@@ -6,6 +6,12 @@ var klaviyoUtils = require('*/cartridge/scripts/utils/klaviyo/klaviyoUtils');
 
 server.extend(module.superModule);
 
+server.append('Show', function (req, res, next) {
+    if(dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_enabled') && !klaviyoUtils.getKlaviyoExchangeID()){
+        res.viewData.klid = klaviyoUtils.getProfileInfo();
+    }
+    next();
+});
 
 server.append('AddProduct', function (req, res, next) {
 

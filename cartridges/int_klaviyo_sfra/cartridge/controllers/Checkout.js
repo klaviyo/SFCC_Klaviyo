@@ -21,9 +21,10 @@ server.append('Begin', function (req, res, next) {
                 dataObj = klaviyoUtils.startedCheckoutData(currentBasket);
                 serviceCallResult = klaviyoUtils.trackEvent(exchangeID, dataObj, klaviyoUtils.EVENT_NAMES.startedCheckout);
                 // TODO: need to do anything here with the service call result, or handle all errs etc within trackEvent? otherwise no need to assign to a var / return a value
-                var foo = 'bar';
             }
 
+        } else {
+            res.viewData.klid = klaviyoUtils.getProfileInfo();
         }
 
     }

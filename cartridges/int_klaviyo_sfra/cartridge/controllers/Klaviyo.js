@@ -4,12 +4,13 @@ var server = require('server');
 var klaviyoUtils = require('*/cartridge/scripts/utils/klaviyo/klaviyoUtils');
 
 /***
- * 
+ *
  * NOTE: the Klaviyo-Event route exists to support event tracking on pages whose OOTB SFCC controllers are cached by default
- * to avoid caching, the Klaviyo-Event route is called via remote include in KlaviyoTag.isml
+ * to avoid caching event data, the Klaviyo-Event route is called via remote include in KlaviyoTag.isml.
  * for event tracking on pages whose controllers are not cached OOTB, server.appends to those OOTB controllers should be utilized
- * 
-***/ 
+ * reference Cart.js, Checkout.js, Order.js in the int_klaviyo_sfra cartridge
+ *
+***/
 
 
 // TODO: any partcular middleware need here?
@@ -21,7 +22,7 @@ server.get('Event', function (req, res, next) {
         var dataObj, serviceCallResult, action, parms;
         var exchangeID = klaviyoUtils.getKlaviyoExchangeID();
 
-        if (exchangeID) {
+        if (exchangeID) { // we have a klaviyo ID, proceed to track events
             action = request.httpParameterMap.action.stringValue;
             parms = request.httpParameterMap.parms.stringValue;
 
@@ -42,12 +43,11 @@ server.get('Event', function (req, res, next) {
             }
             serviceCallResult = klaviyoUtils.trackEvent(exchangeID, dataObj, action);
             // TODO: need to do anything here with the service call result, or handle all errs etc within trackEvent? otherwise no need to assign to a var / return a value
-        } else {
-            res.viewData.klid = klaviyoUtils.getProfileInfo();
         }
 
     }
-    res.render('klaviyo/klaviyoBlank', {});
+
+    res.render('klaviyo/klaviyoEmpty') // we don't need to render anything here, but SFRA requires a .render to be called
     next();
 });
 
