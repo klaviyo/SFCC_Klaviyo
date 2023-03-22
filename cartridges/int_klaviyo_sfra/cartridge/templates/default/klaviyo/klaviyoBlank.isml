@@ -1,1 +1,32 @@
 <iscomment> this template only exists to support the SFCC requirement that a remotely included controller (in this case Klaviyo-Event) must render a template </iscomment>
+<isif condition="${'klid' in pdict && !empty(pdict.klid)}">
+    <script>
+    var klid = JSON.parse(atob('${pdict.klid}'));
+
+    //console.log('klid', klid);
+
+    // klaviyo object loader - provided by klaviyo
+    !function(){if(!window.klaviyo){window._klOnsite=window._klOnsite||[];try{window.klaviyo=new Proxy({},{get:function(n,i){return"push"===i?function(){var n;(n=window._klOnsite).push.apply(n,arguments)}:function(){for(var n=arguments.length,o=new Array(n),w=0;w<n;w++)o[w]=arguments[w];var t="function"==typeof o[o.length-1]?o.pop():void 0,e=new Promise((function(n){window._klOnsite.push([i].concat(o,[function(i){t&&t(i),n(i)}]))}));return e}}})}catch(n){window.klaviyo=window.klaviyo||[],window.klaviyo.push=function(){var n;(n=window._klOnsite).push.apply(n,arguments)}}}}();
+
+    // TODO: for debugging only, remove
+    function getKlaviyoExchangeID() {
+        var klaviyoCookie = document.cookie.split('; ').filter(function(c) {return /__kla_id=/.test(c)});
+        return JSON.parse(atob(klaviyoCookie[0].split("__kla_id=")[1])).$exchange_id;
+    }
+
+    window.addEventListener('DOMContentLoaded', (event) => {
+
+        klaviyo.isIdentified().then((result) => {
+            if(!result) {
+                klaviyo.identify(klid, (result) => {
+                    // TODO: debugging only, remove
+                    //console.log('Identify result ' + result);
+                    //exchange_id = getKlaviyoExchangeID();
+                    //console.log('exchange_id', exchange_id);
+                });
+            }
+        });
+
+    });
+    </script>
+</isif>

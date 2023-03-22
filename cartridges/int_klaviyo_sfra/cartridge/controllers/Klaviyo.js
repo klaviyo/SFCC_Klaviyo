@@ -15,11 +15,11 @@ var klaviyoUtils = require('*/cartridge/scripts/utils/klaviyo/klaviyoUtils');
 // TODO: any partcular middleware need here?
 
 server.get('Event', function (req, res, next) {
-
+    var profileInfo;
     if(dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_enabled')){
 
-        var exchangeID = klaviyoUtils.getKlaviyoExchangeID();
         var dataObj, serviceCallResult, action, parms;
+        var exchangeID = klaviyoUtils.getKlaviyoExchangeID();
 
         if (exchangeID) {
             action = request.httpParameterMap.action.stringValue;
@@ -42,6 +42,8 @@ server.get('Event', function (req, res, next) {
             }
             serviceCallResult = klaviyoUtils.trackEvent(exchangeID, dataObj, action);
             // TODO: need to do anything here with the service call result, or handle all errs etc within trackEvent? otherwise no need to assign to a var / return a value
+        } else {
+            res.viewData.klid = klaviyoUtils.getProfileInfo();
         }
 
     }

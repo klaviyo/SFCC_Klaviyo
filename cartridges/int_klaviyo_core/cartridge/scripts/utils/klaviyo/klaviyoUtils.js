@@ -31,7 +31,63 @@ function getKlaviyoExchangeID() {
     if('__kla_id' in request.httpCookies && !empty(request.httpCookies['__kla_id'])) {
         var kx = JSON.parse(StringUtils.decodeBase64(request.httpCookies['__kla_id'].value)).$exchange_id;
         return (kx && kx != '') ? kx : false;
+    } else {
+        // no klaviyo cookie present.  if user is logged in to SFCC, identify them to klaviyo
+
+        if(customer.authenticated && customer.profile) {
+
+            // need to either:
+            // A) call klaviyo identify server side, get back a klaviyo exchangeID / cookie and then send that to the frontend - or -
+            // B) send some kind of payload to the frontend for JS to pick up on that will trigger identify on the client-side
+
+            /*  server-to-server approach 
+            var requestBody = {};
+            var resultObj = {};
+
+            if (KlaviyoIdentifyService == null) {
+                logger.error('Flayviyo Ientify service failed'); // TODO: more info to log here? customer ID?
+                return;
+            }
+
+            var klaviyoData = {
+                "token" : Site.getCurrent().getCustomPreferenceValue('klaviyo_account'),
+                "properties" : {
+                  "$email" : customer.profile.email,
+                  "$first_name" : customer.profile.firstName,
+                  "$last_name" : customer.profile.lastName
+                }
+            };
+
+            // base64 encode data
+            klaviyoData = JSON.stringify(klaviyoData);
+            klaviyoData = StringUtils.encodeBase64(klaviyoData)
+            KlaviyoIdentifyService.addParam('data', klaviyoData);
+            var result = KlaviyoIdentifyService.call(requestBody);
+
+            // result comes back with OK and no further data... no way to pass this to the frontend for cookie
+            var foo = 'bar';
+            
+            // ?data=eyJ0b2tlbiI6IldjR2tMZCIsInByb3BlcnRpZXMiOnsiJGVtYWlsIjoicHVibGljQHVuaXRvbmUub3JnIiwiJGZpcnN0X25hbWUiOiJBaWRyaWFuIiwiJGxhc3RfbmFtZSI6IkFTREYifX0=
+            */
+
+        }
     }
+    return false;
+}
+
+
+function getProfileInfo() {
+    if(customer.authenticated && customer.profile) {
+        var profileInfo = {
+            "$email" : customer.profile.email,
+            "$first_name" : customer.profile.firstName,
+            "$last_name" : customer.profile.lastName
+        };
+        profileInfo = JSON.stringify(profileInfo);
+        profileInfo = StringUtils.encodeBase64(profileInfo);
+        return profileInfo;
+    }
+    return false;
 }
 
 /****
@@ -204,11 +260,7 @@ function startedCheckoutData(currentBasket) {
         var basketProduct = ProductMgr.getProduct(currentProductID);
 
         if (currentProductID != null && !empty(basketProduct) && basketProduct.getPriceModel().getPrice().value > 0) {
-            var productObj = prepareProductObj(
-                lineItem,
-                basketProduct,
-                currentProductID
-            );
+            var productObj = prepareProductObj( lineItem, basketProduct, currentProductID );
 
             // add top-level data for the event for segmenting, etc.
             klData.line_items.push(productObj);
@@ -248,7 +300,7 @@ function orderConfirmationData(currentOrder, exchangeID) {
         /* klData["Item Count"]++ */
         var giftCard = giftCertCollection[giftCertIndex];
         var giftCardObj = {};
-        giftCardObj = preparegiftCardObject(giftCard);
+        giftCardObj = prepareGiftCardObject(giftCard);
         orderGiftCards.push(giftCardObj);
     }
 
@@ -259,12 +311,12 @@ function orderConfirmationData(currentOrder, exchangeID) {
         totalOrderGiftCards++
     ) {
         var theGiftCard = orderGiftCards[totalOrderGiftCards];
-        trackEvent( theGiftCard['Recipient Email'], theGiftCard, 'e-Giftcard Notification' ); // TODO: confirm this special event with Klaviyo... being tracked on recipient email
+        // TODO: confirm this special event with Klaviyo... being tracked on recipient email
+        // ALSO: add string to event constants?
+        trackEvent( theGiftCard['Recipient Email'], theGiftCard, 'e-Giftcard Notification' ); 
     }
 
 };
-
-
 
 
 /****
@@ -272,6 +324,8 @@ function orderConfirmationData(currentOrder, exchangeID) {
  * END DATA ASSEMBLY FUNCTIONS FOR INDIVIDUAL EVENT TYPES
  *
 ****/
+
+
 
 
 /**
@@ -284,8 +338,9 @@ function orderConfirmationData(currentOrder, exchangeID) {
  * @returns {Object}
  */
 
+// TODO: this is called in one location... can it just be inlined?
+
 function prepareProductObj(lineItem, basketProduct, currentProductID) {
-    Logger.getLogger('Klaviyo', 'Core klaviyoUtils - prepareProductObject()');
     var productObj = {};
     productObj['Product ID'] = currentProductID;
     productObj['Product Name'] = basketProduct.name;
@@ -305,6 +360,30 @@ function prepareProductObj(lineItem, basketProduct, currentProductID) {
     productObj.Categories = categories;
     return productObj;
 }
+
+
+
+/**
+ * Prepares GiftCard Object and set necessary details
+ *
+ * @param giftCard
+ * @returns {Object}
+ */
+
+// TODO: this is called in one location... can it just be inlined?
+
+function prepareGiftCardObject(giftCard) {
+    var giftCardObj = {};
+    giftCardObj['Product Name'] = 'e-Giftcard';
+    // giftCardObj['Product ID'] = dw.system.Site.getCurrent().getCustomPreferenceValue('EgiftProduct-ID');
+    giftCardObj['Recipient Email'] = giftCard.recipientEmail;
+    giftCardObj['Recipient Name'] = giftCard.recipientName;
+    giftCardObj['Sender Name'] = giftCard.senderName;
+    giftCardObj.Message = giftCard.message;
+    giftCardObj.Value = giftCard.price.value;
+    return giftCardObj;
+}
+
 
 
 // TODO: DO WE NEED THIS?
@@ -388,7 +467,7 @@ var KlaviyoTrackService = ServiceRegistry.createService('KlaviyoTrackService', {
    * @returns {void}
    */
     createRequest: function (svc) {
-        svc.setRequestMethod('GET'); // TODO: potentially create new site pref to switch between GET and POST
+        svc.setRequestMethod('GET');  // TODO: switch to POST when shifting to V3 API
     },
     /**
    * JSON parse the response text and return it in configured retData object
@@ -409,11 +488,47 @@ var KlaviyoTrackService = ServiceRegistry.createService('KlaviyoTrackService', {
     getResponseLogMessage: function () {}
 });
 
+// TODO: remove - written by AOC for server-side identify, most likely not useful
+var KlaviyoIdentifyService = ServiceRegistry.createService('KlaviyoIdentifyService', {
+    /**
+   * Create the service request
+   * - Set request method to be the HTTP GET method
+   * - Construct request URL
+   * - Append the request HTTP query string as a URL parameter
+   *
+   * @param {dw.svc.HTTPService} svc - HTTP Service instance
+   * @param {Object} params - Additional paramaters
+   * @returns {void}
+   */
+    createRequest: function (svc) {
+        svc.setRequestMethod('GET'); // TODO: switch to POST when shifting to V3 API
+    },
+    /**
+   * JSON parse the response text and return it in configured retData object
+   *
+   * @param {dw.svc.HTTPService} svc - HTTP Service instance
+   * @param {dw.net.HTTPClient} client - HTTPClient class instance of the current service
+   * @returns {Object} retData - Service response object
+   */
+    parseResponse: function (svc, client) {
+        return client.text;
+    },
+
+    getRequestLogMessage: function () {
+        var reqLogMsg = 'sending klaviyo identify payload';
+        return reqLogMsg;
+    },
+
+    getResponseLogMessage: function () {}
+});
+
+
 
 
 module.exports = {
     EVENT_NAMES : EVENT_NAMES,
     getKlaviyoExchangeID : getKlaviyoExchangeID,
+    getProfileInfo : getProfileInfo,
     viewedProductData : viewedProductData,
     viewedCategoryData : viewedCategoryData,
     searchedSiteData : searchedSiteData,

@@ -55,4 +55,4 @@ var Event = function () {
 };
 
 
-exports.RenderKlaviyo = guard.ensure(['get'], Event);
+exports.Event = guard.ensure(['get'], Event);
