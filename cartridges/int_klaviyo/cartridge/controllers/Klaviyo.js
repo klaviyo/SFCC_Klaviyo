@@ -32,11 +32,9 @@ var Event = function () {
             switch(action) {
                 case klaviyoUtils.EVENT_NAMES.viewedProduct :
                     dataObj = klaviyoUtils.viewedProductData(parms); // parms: product ID
-                    serviceCallResult = klaviyoUtils.trackEvent(exchangeID, dataObj, 'Viewed Product');
                     break;
                 case klaviyoUtils.EVENT_NAMES.viewedCategory :
                     dataObj = klaviyoUtils.viewedCategoryData(parms); // parms: category ID
-                    serviceCallResult = klaviyoUtils.trackEvent(exchangeID, dataObj, 'Viewed Category');
                     break;
                 case klaviyoUtils.EVENT_NAMES.searchedSite :
                     // TODO: add Show-Ajax append?  test to be sure when this happens... if its just on paging, do we want to track that?
@@ -44,10 +42,10 @@ var Event = function () {
                     // TODO: be sure to check for 0 result searches, filtering on both search results and PLPs, re-sorts, etc and get clarity on requirements
                     parms = parms.split('|');
                     dataObj = klaviyoUtils.searchedSiteData(parms[0], parms[1]); // parms: search phrase, result count
-                    serviceCallResult = klaviyoUtils.trackEvent(exchangeID, dataObj, 'Searched Site');
                     break;
             }
-
+            serviceCallResult = klaviyoUtils.trackEvent(exchangeID, dataObj, action);
+            // TODO: need to do anything here with the service call result, or handle all errs etc within trackEvent? otherwise no need to assign to a var / return a value
         }
 
     }

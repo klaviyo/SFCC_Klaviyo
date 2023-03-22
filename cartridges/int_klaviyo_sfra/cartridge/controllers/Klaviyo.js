@@ -16,7 +16,7 @@ var klaviyoUtils = require('*/cartridge/scripts/utils/klaviyo/klaviyoUtils');
 // TODO: any partcular middleware need here?
 
 server.get('Event', function (req, res, next) {
-    var profileInfo;
+
     if(dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_enabled')){
 
         var dataObj, serviceCallResult, action, parms;
