@@ -50,10 +50,16 @@
 
                                                 if (klavInput.pattern && klavInput.value.match(klavInput.pattern)) {
                                                         console.log('VALID EMAIL: PASSED REGEX')
-                                                        klaviyoJS.identifiedUser ? console.log('...PREVIOUSLY IDENTIFIED...', klavInput.value) : console.log('Not Identified!! SENDING : ', klavInput.value);
+                                                        if (!klaviyoJS.identifiedUser) {
+                                                                klaviyo.identify({ '$email' : klavInput.value })
+                                                        }
+                                                        // klaviyoJS.identifiedUser ? console.log('...PREVIOUSLY IDENTIFIED...', klavInput.value) : klaviyo.idenfity({ '$email' : klavInput.value });
                                                 } else {
                                                         console.log('=== UNSURE === | NO REGEX CHECK.')
-                                                        klaviyoJS.identifiedUser ? console.log('...PREVIOUSLY IDENTIFIED...', klavInput.value) : console.log('Not Identified!! SENDING : ', klavInput.value);
+                                                        if (!klaviyoJS.identifiedUser) {
+                                                                klaviyo.identify({ '$email' : klavInput.value })
+                                                        }
+                                                        // klaviyoJS.identifiedUser ? console.log('...PREVIOUSLY IDENTIFIED...', klavInput.value) : klaviyo.idenfity({ '$email' : klavInput.value });
                                                 }
                                         });
                                 }
