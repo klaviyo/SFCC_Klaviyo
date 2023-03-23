@@ -32,31 +32,33 @@
     <isif condition="${pdict.klid}">
         <isinclude template="klaviyo/klaviyoID" />
     </isif>
-    <script>
-        var klaviyoJS = {};
-        klaviyoJS.emailFieldSelectors = JSON.parse("${JSON.stringify(dw.system.Site.current.preferences.custom.KlaviyoIdentification)}".replace(/&quot;/g,'"'));
-        Promise.resolve(klaviyo.isIdentified()).then((result) => { klaviyoJS.identifiedUser = result });
-        console.log(" ====  klaviyoJS OBJ  ==== ", klaviyoJS)
+    <isif condition="${dw.system.Site.getCurrent().getCustomPreferenceValue('KlaviyoIdentification')}">
+          <script>
+                var klaviyoJS = {};
+                klaviyoJS.emailFieldSelectors = JSON.parse("${JSON.stringify(dw.system.Site.current.preferences.custom.KlaviyoIdentification)}".replace(/&quot;/g,'"'));
+                Promise.resolve(klaviyo.isIdentified()).then((result) => { klaviyoJS.identifiedUser = result });
+                console.log(" ====  klaviyoJS OBJ  ==== ", klaviyoJS)
 
-        for (let i = 0; i < klaviyoJS.emailFieldSelectors.length; i++) {
-                let selectedInput = $(klaviyoJS.emailFieldSelectors[i]);
-                if (selectedInput) {
-                        let klavInput = selectedInput[0]
-                        if (klavInput && !klavInput.klaviyoListener) {
-                                console.log( 'klavInput >>>>> ', klavInput );
-                                selectedInput.attr("klaviyoListener", '')  // Add this attribute to DOM to visually inspect where email listeners were applied
-                                selectedInput.change(function(){
+                for (let i = 0; i < klaviyoJS.emailFieldSelectors.length; i++) {
+                        let selectedInput = $(klaviyoJS.emailFieldSelectors[i]);
+                        if (selectedInput) {
+                                let klavInput = selectedInput[0]
+                                if (klavInput && !klavInput.klaviyoListener) {
+                                        console.log( 'klavInput >>>>> ', klavInput );
+                                        selectedInput.attr("klaviyoListener", '')  // Add this attribute to DOM to visually inspect where email listeners were applied
+                                        selectedInput.change(function(){
 
-                                        if (klavInput.pattern.length > 0 && klavInput.value.match(klavInput.pattern)) {
-                                                console.log('VALID EMAIL: PASSED REGEX')
-                                                klaviyoJS.identifiedUser ? console.log('...PREVIOUSLY IDENTIFIED...', klavInput.value) : console.log('Not Identified!! SENDING : ', klavInput.value);
-                                        } else {
-                                                console.log('=== UNSURE === | NO REGEX CHECK.')
-                                                klaviyoJS.identifiedUser ? console.log('...PREVIOUSLY IDENTIFIED...', klavInput.value) : console.log('Not Identified!! SENDING : ', klavInput.value);
-                                        }
-                                });
+                                                if (klavInput.pattern && klavInput.value.match(klavInput.pattern)) {
+                                                        console.log('VALID EMAIL: PASSED REGEX')
+                                                        klaviyoJS.identifiedUser ? console.log('...PREVIOUSLY IDENTIFIED...', klavInput.value) : console.log('Not Identified!! SENDING : ', klavInput.value);
+                                                } else {
+                                                        console.log('=== UNSURE === | NO REGEX CHECK.')
+                                                        klaviyoJS.identifiedUser ? console.log('...PREVIOUSLY IDENTIFIED...', klavInput.value) : console.log('Not Identified!! SENDING : ', klavInput.value);
+                                                }
+                                        });
+                                }
                         }
                 }
-        }
-    </script>
+        </script>
+    </isif>
 </isif>
