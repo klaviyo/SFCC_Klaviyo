@@ -32,10 +32,10 @@
     <isif condition="${pdict.klid}">
         <isinclude template="klaviyo/klaviyoID" />
     </isif>
-    <isif condition="${dw.system.Site.getCurrent().getCustomPreferenceValue('KlaviyoIdentification')}">
+    <isif condition="${dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_email_selectors')}">
           <script>
                 var klaviyoJS = {};
-                klaviyoJS.emailFieldSelectors = JSON.parse("${JSON.stringify(dw.system.Site.current.preferences.custom.KlaviyoIdentification)}".replace(/&quot;/g,'"'));
+                klaviyoJS.emailFieldSelectors = JSON.parse("${JSON.stringify(dw.system.Site.current.preferences.custom.klaviyo_email_selectors)}".replace(/&quot;/g,'"'));
                 Promise.resolve(klaviyo.isIdentified()).then((result) => { klaviyoJS.identifiedUser = result });
                 console.log(" ====  klaviyoJS OBJ  ==== ", klaviyoJS)
 
