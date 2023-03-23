@@ -9,6 +9,7 @@
 <!--- TEMPLATENAME: klaviyoFooter.isml --->
 <isif condition="${dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_enabled')}">
     <script async src="//static.klaviyo.com/onsite/js/klaviyo.js?company_id=${dw.system.Site.getCurrent().preferences.custom.klaviyo_account}"></script>
+    <script src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
     <script>
         // klaviyo object loader - provided by klaviyo
         !function(){if(!window.klaviyo){window._klOnsite=window._klOnsite||[];try{window.klaviyo=new Proxy({},{get:function(n,i){return"push"===i?function(){var n;(n=window._klOnsite).push.apply(n,arguments)}:function(){for(var n=arguments.length,o=new Array(n),w=0;w<n;w++)o[w]=arguments[w];var t="function"==typeof o[o.length-1]?o.pop():void 0,e=new Promise((function(n){window._klOnsite.push([i].concat(o,[function(i){t&&t(i),n(i)}]))}));return e}}})}catch(n){window.klaviyo=window.klaviyo||[],window.klaviyo.push=function(){var n;(n=window._klOnsite).push.apply(n,arguments)}}}}();
@@ -31,4 +32,31 @@
     <isif condition="${pdict.klid}">
         <isinclude template="klaviyo/klaviyoID" />
     </isif>
+    <script>
+        var klaviyoJS = {};
+        klaviyoJS.emailFieldSelectors = JSON.parse("${JSON.stringify(dw.system.Site.current.preferences.custom.KlaviyoIdentification)}".replace(/&quot;/g,'"'));
+        Promise.resolve(klaviyo.isIdentified()).then((result) => { klaviyoJS.identifiedUser = result });
+        console.log(" ====  klaviyoJS OBJ  ==== ", klaviyoJS)
+
+        for (let i = 0; i < klaviyoJS.emailFieldSelectors.length; i++) {
+                let selectedInput = $(klaviyoJS.emailFieldSelectors[i]);
+                if (selectedInput) {
+                        let klavInput = selectedInput[0]
+                        if (klavInput && !klavInput.klaviyoListener) {
+                                console.log( 'klavInput >>>>> ', klavInput );
+                                selectedInput.attr("klaviyoListener", '')  // Add this attribute to DOM to visually inspect where email listeners were applied
+                                selectedInput.change(function(){
+
+                                        if (klavInput.pattern.length > 0 && klavInput.value.match(klavInput.pattern)) {
+                                                console.log('VALID EMAIL: PASSED REGEX')
+                                                klaviyoJS.identifiedUser ? console.log('...PREVIOUSLY IDENTIFIED...', klavInput.value) : console.log('Not Identified!! SENDING : ', klavInput.value);
+                                        } else {
+                                                console.log('=== UNSURE === | NO REGEX CHECK.')
+                                                klaviyoJS.identifiedUser ? console.log('...PREVIOUSLY IDENTIFIED...', klavInput.value) : console.log('Not Identified!! SENDING : ', klavInput.value);
+                                        }
+                                });
+                        }
+                }
+        }
+    </script>
 </isif>
