@@ -33,7 +33,7 @@
         <isinclude template="klaviyo/klaviyoID" />
     </isif>
     <isif condition="${dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_email_selectors')}">
-          <script>
+        <script>
                 var klaviyoJS = {};
                 klaviyoJS.emailFieldSelectors = JSON.parse("${JSON.stringify(dw.system.Site.current.preferences.custom.klaviyo_email_selectors)}".replace(/&quot;/g,'"'));
                 Promise.resolve(klaviyo.isIdentified()).then((result) => { klaviyoJS.identifiedUser = result });
@@ -44,22 +44,18 @@
                         if (selectedInput) {
                                 let klavInput = selectedInput[0]
                                 if (klavInput && !klavInput.klaviyoListener) {
-                                        console.log( 'klavInput >>>>> ', klavInput );
                                         selectedInput.attr("klaviyoListener", '')  // Add this attribute to DOM to visually inspect where email listeners were applied
                                         selectedInput.change(function(){
-
                                                 if (klavInput.pattern && klavInput.value.match(klavInput.pattern)) {
                                                         console.log('VALID EMAIL: PASSED REGEX')
                                                         if (!klaviyoJS.identifiedUser) {
                                                                 klaviyo.identify({ '$email' : klavInput.value })
                                                         }
-                                                        // klaviyoJS.identifiedUser ? console.log('...PREVIOUSLY IDENTIFIED...', klavInput.value) : klaviyo.idenfity({ '$email' : klavInput.value });
                                                 } else {
                                                         console.log('=== UNSURE === | NO REGEX CHECK.')
                                                         if (!klaviyoJS.identifiedUser) {
                                                                 klaviyo.identify({ '$email' : klavInput.value })
                                                         }
-                                                        // klaviyoJS.identifiedUser ? console.log('...PREVIOUSLY IDENTIFIED...', klavInput.value) : klaviyo.idenfity({ '$email' : klavInput.value });
                                                 }
                                         });
                                 }
