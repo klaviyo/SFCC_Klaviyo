@@ -59,26 +59,26 @@ function getProfileInfo() {
 // prepares data for "Viewed Product" event
 function viewedProductData(productID) {
 
-    var productData = {};
+    var data = {};
 
     // product in viewData is flat and doesn't have all data required (to whit, categories)
     var product = ProductMgr.getProduct(productID);
 
 
     // copied & adjusted from kl_core klaviyoUtils prepareViewedProductEventData
-    productData['Product ID'] = product.ID;
-    productData['Product Name'] = product.name;
-    productData['Product Page URL'] = URLUtils.https('Product-Show', 'pid', product.ID).toString();
-    productData['Product Image URL'] = product.getImage(imageSize).getAbsURL().toString();
+    data['Product ID'] = product.ID;
+    data['Product Name'] = product.name;
+    data['Product Page URL'] = URLUtils.https('Product-Show', 'pid', product.ID).toString();
+    data['Product Image URL'] = product.getImage(imageSize).getAbsURL().toString();
 
     var price = product.getPriceModel().getPrice().getValue();
     if (empty(price) || price <= 0) {
         price = product.getPriceModel().getMinPrice().getValue();
     }
-    productData['Price'] = price;
+    data['Price'] = price;
 
     // verify what klav really wants here, UPC rarely used by SFCC clients
-    productData['Product UPC'] = product.UPC;
+    data['Product UPC'] = product.UPC;
 
     var categories = [];
     var catProduct = (product.variant) ? product.masterProduct : product; // from orig klav code, always use master for finding cats
@@ -86,62 +86,39 @@ function viewedProductData(productID) {
         categories.push(catProduct.categoryAssignments[i].category.displayName);
     }
 
-    productData['Categories'] = categories;
-    productData['Primary Category'] = !empty(product.getPrimaryCategory()) ? product.getPrimaryCategory().displayName : '';
+    data['Categories'] = categories;
+    data['Primary Category'] = !empty(product.getPrimaryCategory()) ? product.getPrimaryCategory().displayName : '';
 
-    var klData = {
-        data: productData,
-        eventType: "track",
-        eventName: EVENT_NAMES.viewedProduct
-    };
-
-    return klData;
+    return data;
 }
 
 // prepares data for "Viewed Category" event
 function viewedCategoryData(categoryID) {
-
-    var klData = {
-        data: {
-            "Viewed Category": categoryID
-        },
-        eventType: "track",
-        eventName: EVENT_NAMES.viewedCategory
-    };
-
-    return klData;
+    return { "Viewed Category": categoryID }
 }
 
-// prepares data for "Site Searched" event
+// prepares data for "Searched Site" event
 function searchedSiteData(term, count) {
-
-    var klData = {
-        data: {
-            "Search Term": term,
-            "Search Results Count": count
-        },
-        eventType: "track",
-        eventName: EVENT_NAMES.searchedSite
-    };
-
-    return klData;
-
+    return {
+        "Search Term": term,
+        "Search Results Count": count
+    }
 }
 
 // prepares data for "Added to Cart" event
 function addedToCartData(basket) {
 
     // TODO: analyze line-by-line.  currently pulled straight from previous cartridge prepareAddToCartEventForKlaviyo function
-    var klData = {};
+    var data = {};
     var basketItems = basket.getProductLineItems().toArray();
 
-    klData.event = EVENT_NAMES.addedToCart;
-    klData.basketGross = basket.getTotalGrossPrice().getValue().valueOf();
-    klData.itemCount = basketItems.length;
-    klData.lineItems = [];
-    klData.items = [];
-    klData.categories = [];
-    klData.primaryCategories = [];
+    data.event = EVENT_NAMES.addedToCart;
+    data.basketGross = basket.getTotalGrossPrice().getValue().valueOf();
+    data.itemCount = basketItems.length;
+    data.lineItems = [];
+    data.items = [];
+    data.categories = [];
+    data.primaryCategories = [];
 
     for (var itemIndex = 0; itemIndex < basketItems.length; itemIndex++) {
         var lineItem = basketItems[itemIndex];
@@ -166,7 +143,7 @@ function addedToCartData(basket) {
                 categories.push(catProduct.categoryAssignments[i].category.displayName);
             }
 
-            klData.lineItems.push({
+            data.lineItems.push({
                 productID       : currentProductID,
                 productName     : basketProduct.name,
                 productImageURL : imageSizeOfProduct,
@@ -182,17 +159,17 @@ function addedToCartData(basket) {
                 categories                : categories, // was createCategories(basketProduct) in orig, check that my output from categories above matches expected output
                 primaryCategory           : primaryCategory
             });
-            klData.items.push(basketProduct.name);
-            klData.categories.push.apply(
-                klData.categories,
-                klData.lineItems[itemIndex].categories
+            data.items.push(basketProduct.name);
+            data.categories.push.apply(
+                data.categories,
+                data.lineItems[itemIndex].categories
             );
-            klData.primaryCategories.push(
-                klData.lineItems[itemIndex].primaryCategory
+            data.primaryCategories.push(
+                data.lineItems[itemIndex].primaryCategory
             );
         }
     }
-    return klData;
+    return data;
 }
 
 
@@ -201,18 +178,18 @@ function startedCheckoutData(currentBasket) {
 
     // TODO: analyze line-by-line.  currently pulled straight from previous cartridge prepareCheckoutEventForKlaviyo function
 
-    var klData = {};
+    var data = {};
     var basketItems = currentBasket.getProductLineItems().toArray();
     // Create some top-level event data
-    klData.event = 'Started Checkout';
-    klData['Basket Gross Price'] = currentBasket.getTotalGrossPrice().value;
-    klData['Item Count'] = basketItems.length;
+    //data.event = EVENT_NAMES['startedCheckout'];
+    data['Basket Gross Price'] = currentBasket.getTotalGrossPrice().value;
+    data['Item Count'] = basketItems.length;
 
     // prepare to add top-level data while iterating through product line items
-    klData.line_items = [];
-    klData.Categories = [];
-    klData.Items = [];
-    klData.$email = currentBasket.customerEmail;
+    data.line_items = [];
+    data.Categories = [];
+    data.Items = [];
+    data.$email = currentBasket.customerEmail;
 
     for (var itemIndex = 0; itemIndex < basketItems.length; itemIndex++) {
         var lineItem = basketItems[itemIndex];
@@ -223,13 +200,13 @@ function startedCheckoutData(currentBasket) {
             var productObj = prepareProductObj( lineItem, basketProduct, currentProductID );
 
             // add top-level data for the event for segmenting, etc.
-            klData.line_items.push(productObj);
-            klData.Categories.push.apply(klData.Categories, klData.line_items[itemIndex].Categories);
-            klData.Items.push(klData.line_items[itemIndex]['Product Name']);
+            data.line_items.push(productObj);
+            data.Categories.push.apply(data.Categories, data.line_items[itemIndex].Categories);
+            data.Items.push(data.line_items[itemIndex]['Product Name']);
         }
     }
 
-    return klData;
+    return data;
 }
 
 
@@ -243,38 +220,8 @@ function orderConfirmationData(currentOrder, exchangeID) {
     // site specific order object */
     var emailUtils = require('*/cartridge/scripts/utils/klaviyo/emailUtils');
     var dwareOrder = emailUtils.prepareOrderPayload( currentOrder, false, 'orderConfirmation' );
-    trackEvent( exchangeID, dwareOrder, 'Order Confirmation' );
-
-    // giftcards
-    var giftCertCollection = currentOrder.getGiftCertificateLineItems().toArray();
-    var orderGiftCards = [];
-
-    for (
-        var giftCertIndex = 0;
-        giftCertIndex < giftCertCollection.length;
-        giftCertIndex++
-    ) {
-        // gift certificates don't count as orderItems so we need to reconcile that ourselves
-        // var giftCardId = dw.system.Site.getCurrent().getCustomPreferenceValue('EgiftProduct-ID');
-
-        /* klData["Item Count"]++ */
-        var giftCard = giftCertCollection[giftCertIndex];
-        var giftCardObj = {};
-        giftCardObj = prepareGiftCardObject(giftCard);
-        orderGiftCards.push(giftCardObj);
-    }
-
-    // send an event for transactional gift certificate emails
-    for (
-        var totalOrderGiftCards = 0;
-        totalOrderGiftCards < orderGiftCards.length;
-        totalOrderGiftCards++
-    ) {
-        var theGiftCard = orderGiftCards[totalOrderGiftCards];
-        // TODO: confirm this special event with Klaviyo... being tracked on recipient email
-        // ALSO: add string to event constants?
-        trackEvent( theGiftCard['Recipient Email'], theGiftCard, 'e-Giftcard Notification' ); 
-    }
+    // TODO - shift back back up to controller level to follow pattern of other event controllers
+    trackEvent( exchangeID, dwareOrder, EVENT_NAMES['orderConfirmation'] );
 
 };
 
@@ -322,78 +269,37 @@ function prepareProductObj(lineItem, basketProduct, currentProductID) {
 }
 
 
-
-/**
- * Prepares GiftCard Object and set necessary details
- *
- * @param giftCard
- * @returns {Object}
- */
-
-// TODO: this is called in one location... can it just be inlined?
-
-function prepareGiftCardObject(giftCard) {
-    var giftCardObj = {};
-    giftCardObj['Product Name'] = 'e-Giftcard';
-    // giftCardObj['Product ID'] = dw.system.Site.getCurrent().getCustomPreferenceValue('EgiftProduct-ID');
-    giftCardObj['Recipient Email'] = giftCard.recipientEmail;
-    giftCardObj['Recipient Name'] = giftCard.recipientName;
-    giftCardObj['Sender Name'] = giftCard.senderName;
-    giftCardObj.Message = giftCard.message;
-    giftCardObj.Value = giftCard.price.value;
-    return giftCardObj;
-}
-
-
-
-// TODO: DO WE NEED THIS?
-// ALSO: missing Order Confirmation / Order Confirmed
-var WHITELISTED_EVENTS = [
-    'Searched Site',
-    'Viewed Product',
-    'Viewed Category',
-    'Added to Cart',
-    'Started Checkout',
-    'Placed Order',
-    'Ordered Product'
-];
-
-function preparePayload(exchangeID, data, event) {
-    Logger.getLogger('Klaviyo', 'Core klaviyoUtils - preparePayload()');
-    var jsonData = {};
-    jsonData.token = Site.getCurrent().getCustomPreferenceValue('klaviyo_account');
-    jsonData.event = event;
-    if (WHITELISTED_EVENTS.indexOf(event) > -1) { // TODO: WHAT IS THIS ABOUT?
-        jsonData.service = 'demandware';
-    }
-    var customerProperties = {};
-    customerProperties.$exchange_id = exchangeID;
-    jsonData.customer_properties = customerProperties;
-    jsonData.properties = data;
-    jsonData.time = Math.floor(Date.now() / 1000);
-
-    var klaviyoData = JSON.stringify(jsonData);
-
-    return StringUtils.encodeBase64(klaviyoData);
-}
-
-
 function trackEvent(exchangeID, data, event) {
+
     var requestBody = {};
     var resultObj = {};
 
     var logger = Logger.getLogger('Klaviyo', 'Core klaviyoUtils - trackEvent()');
 
-    if (KlaviyoTrackService == null || empty(exchangeID)) {
+    if (KlaviyoEventService == null || empty(exchangeID)) {
         logger.error('trackEvent() failed for exchange_id: ' + exchangeID + '.');
         return;
     }
 
-    var klaviyoData = preparePayload(exchangeID, data, event);
+    var eventData = {
+        "data": {
+            "type": "event",
+            "attributes": {
+                "profile": {
+                    "$exchange_id": exchangeID,
+                },
+                "metric": {
+                    "name": event,
+                    "service": "demandware" // TODO: update this to work off a site pref toggle
+                },
+                "properties" : data,
+                "time": (new Date()).toISOString()
+                // value: 9.99 // TODO - figure out when this can be set and what it should be set to ie, product price, cart total, order total, etc
+            }
+        }
+    };
 
-    KlaviyoTrackService.addParam('data', klaviyoData);
-
-    var result = KlaviyoTrackService.call(requestBody);
+    var result = KlaviyoEventService.call(eventData);
 
     if (result == null) {
         logger.error('Result for ' + event + ' track event via Klaviyo returned null.');
@@ -402,11 +308,10 @@ function trackEvent(exchangeID, data, event) {
 
     resultObj = JSON.parse(result.object);
 
-    if (resultObj == 1) {
-        // TODO: do we really need to log every successful event?
-        //logger.info(event + ' track event via Klaviyo is successful.');
+    if (result.ok) {
+        logger.info(event + ' track event via Klaviyo is successful.');
     } else {
-        logger.error( event + ' track event via Klaviyo failed.');
+        logger.error( event + ' track event via Klaviyo failed. '+result.errorMessage);
     }
 
     return resultObj;
@@ -415,7 +320,7 @@ function trackEvent(exchangeID, data, event) {
 
 // HTTP Services
 
-var KlaviyoTrackService = ServiceRegistry.createService('KlaviyoTrackService', {
+var KlaviyoEventService = ServiceRegistry.createService('KlaviyoEventService', {
     /**
    * Create the service request
    * - Set request method to be the HTTP GET method
@@ -426,8 +331,24 @@ var KlaviyoTrackService = ServiceRegistry.createService('KlaviyoTrackService', {
    * @param {Object} params - Additional paramaters
    * @returns {void}
    */
-    createRequest: function (svc) {
-        svc.setRequestMethod('GET');  // TODO: switch to POST when shifting to V3 API
+    createRequest: function (svc, args) {
+        // TODO: remove this if its not going to get used
+        //var password = svc.configuration.credential.password;
+
+        var key = Site.getCurrent().getCustomPreferenceValue('klaviyo_api_key');
+        if(!key || key == '') {
+            // TODO: log error - missing Klaviyo Private API Key
+            // also test to see what happens to the calling code when this immediately returns / no key set
+            return;
+        }
+
+        svc.setRequestMethod('POST');
+        svc.addHeader('Authorization', 'Klaviyo-API-Key '+key);
+        svc.addHeader('Content-type', 'application/json');
+        svc.addHeader('Accept', 'application/json');
+        svc.addHeader('revision', '2023-02-22');
+
+        return JSON.stringify(args);
     },
     /**
    * JSON parse the response text and return it in configured retData object
@@ -447,40 +368,6 @@ var KlaviyoTrackService = ServiceRegistry.createService('KlaviyoTrackService', {
 
     getResponseLogMessage: function () {}
 });
-
-// TODO: remove - written by AOC for server-side identify, most likely not useful
-// var KlaviyoIdentifyService = ServiceRegistry.createService('KlaviyoIdentifyService', {
-//     /**
-//    * Create the service request
-//    * - Set request method to be the HTTP GET method
-//    * - Construct request URL
-//    * - Append the request HTTP query string as a URL parameter
-//    *
-//    * @param {dw.svc.HTTPService} svc - HTTP Service instance
-//    * @param {Object} params - Additional paramaters
-//    * @returns {void}
-//    */
-//     createRequest: function (svc) {
-//         svc.setRequestMethod('GET'); // TODO: switch to POST when shifting to V3 API
-//     },
-//     /**
-//    * JSON parse the response text and return it in configured retData object
-//    *
-//    * @param {dw.svc.HTTPService} svc - HTTP Service instance
-//    * @param {dw.net.HTTPClient} client - HTTPClient class instance of the current service
-//    * @returns {Object} retData - Service response object
-//    */
-//     parseResponse: function (svc, client) {
-//         return client.text;
-//     },
-
-//     getRequestLogMessage: function () {
-//         var reqLogMsg = 'sending klaviyo identify payload';
-//         return reqLogMsg;
-//     },
-
-//     getResponseLogMessage: function () {}
-// });
 
 
 
