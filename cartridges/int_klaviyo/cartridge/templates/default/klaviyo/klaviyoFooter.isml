@@ -34,31 +34,30 @@
                 console.log(" ====  klaviyoJS OBJ  ==== ", klaviyoJS)
 
                 for (let i = 0; i < klaviyoJS.emailFieldSelectors.length; i++) {
-                        let selectedInput = $(klaviyoJS.emailFieldSelectors[i]);
-                        if (selectedInput) {
-                                let klavInput = selectedInput[0]
-                                if (klavInput && !klavInput.klaviyoListener) {
-                                        selectedInput.attr("klaviyoListener", '')  // Add this attribute to DOM to visually inspect where email listeners were applied
-                                        selectedInput.change(function(){
-                                                if (klavInput.pattern && klavInput.value.match(klavInput.pattern)) {
-                                                    console.log('VALID EMAIL: PASSED REGEX')
-                                                    console.log('>>> klaviyo.isIdentified() >>>', klaviyo.isIdentified());
-                                                    // if (!klaviyoJS.identifiedUser) {
-                                                    //         klaviyo.identify({ '$email' : klavInput.value }).then(() => console.log('Identify has been completed'))
-                                                    // klaviyo.push(['identify', { '$email' : klavInput.value }]); // identify & track?
+                    let selectedInput = $(klaviyoJS.emailFieldSelectors[i]);
+                    if (selectedInput) {
+                        let klavInput = selectedInput[0]
+                        if (klavInput && !klavInput.klaviyoListener) {
+                            selectedInput.attr("klaviyoListener", '')  // Add this attribute to DOM to visually inspect where email listeners were applied
+                            selectedInput.change(function(){
+                                if (klavInput.pattern && klavInput.value.match(klavInput.pattern)) {
+                                    console.log('VALID EMAIL: PASSED REGEX')
+                                    console.log('>>> klaviyo.isIdentified() >>>', klaviyo.isIdentified());
+                                    // if (!klaviyoJS.identifiedUser) {
+                                    //         klaviyo.identify({ '$email' : klavInput.value }).then(() => console.log('Identify has been completed'))
+                                    // klaviyo.push(['identify', { '$email' : klavInput.value }]); // identify & track?
 
-                                                    // }
-                                                } else {
-                                                    console.log('=== UNSURE === | NO REGEX CHECK.')
-                                                    console.log('>>> klaviyo.isIdentified() >>>', klaviyo.isIdentified());
-                                                    // if (!klaviyoJS.identifiedUser) {
-                                                    //         klaviyo.identify({ '$email' : klavInput.value }).then(() => console.log('Identify has been completed'))
-                                                    // }
-                                                }
-                                        });
-
+                                    // }
+                                } else {
+                                    console.log('=== UNSURE === | NO REGEX CHECK.')
+                                    console.log('>>> klaviyo.isIdentified() >>>', klaviyo.isIdentified());
+                                    // if (!klaviyoJS.identifiedUser) {
+                                    //         klaviyo.identify({ '$email' : klavInput.value }).then(() => console.log('Identify has been completed'))
+                                    // }
                                 }
+                            });
                         }
+                    }
                 }
         </script>
     </isif>
