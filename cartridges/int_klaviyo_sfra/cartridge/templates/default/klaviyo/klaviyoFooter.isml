@@ -3,7 +3,7 @@
 </isscript>
 <iscomment>
     this template should be included near the end of the html body on all pages.
-    it calls the Klaviyo JS SDK files into the page, and calls the Klaviyo-Event controller via 
+    it calls the Klaviyo JS SDK files into the page, and calls the Klaviyo-Event controller via
     remote include for pages whose controllers are cached OOTB
 </iscomment>
 <!--- TEMPLATENAME: klaviyoFooter.isml --->
@@ -53,18 +53,32 @@
                         selectedInput.attr("data-listener", 'klaviyo');  // Add this attribute to DOM to visually inspect where email listeners were applied
                         selectedInput.change(function(){
                             if (klavInput.pattern && klavInput.value.match(klavInput.pattern)) {
-                                // TODO: debugging only, remove this console.log()
-                                console.log('VALID EMAIL: PASSED REGEX');
                                 if (!klaviyoJS.identifiedUser) {
-                                    klaviyo.identify({ '$email' : klavInput.value }).then(() => { klaviyoJS.identifiedUser = true; klaviyoJS.exchangeID = klaviyoJS.getExchangeID(); });
+                                    if (klaviyoJS.sfccEmailRegex.test (klavInput.value)) {
+                                        klaviyo.identify({ '$email' : klavInput.value }).then(() => { klaviyoJS.identifiedUser = true; klaviyoJS.exchangeID = klaviyoJS.getExchangeID(); });
+                                    }
+
+                                    if (Number(klavInput.value.replace(/[^a-z0-9]/gi, ''))) {
+                                        // TODO: debugging only, remove this console.log()
+                                        console.log('CLEANED NUMBER : ', klavInput.value.replace(/[^a-z0-9]/gi, ''));
+                                        klaviyo.identify({ '$phone_number' : klavInput.value.replace(/[^a-z0-9]/gi, '') }).then(() => { klaviyoJS.identifiedUser = true; klaviyoJS.exchangeID = klaviyoJS.getExchangeID(); });
+                                    }
                                 }
                             } else {
-                                 // TODO: debugging only, remove this console.log()
+                                // TODO: debugging only, remove this console.log()
                                 console.log('=== UNSURE === | NO REGEX CHECK.');
-                                if (!klaviyoJS.identifiedUser && klaviyoJS.sfccEmailRegex.test( klavInput.value )) {
-                                    // TODO: debugging only, remove this console.log()
-                                    console.log('REGEX APPLIED. Email is Good: ', klaviyoJS.sfccEmailRegex.test(klavInput.value));
-                                    klaviyo.identify({ '$email' : klavInput.value }).then(() => { klaviyoJS.identifiedUser = true; klaviyoJS.exchangeID = klaviyoJS.getExchangeID(); });
+                                if (!klaviyoJS.identifiedUser) {
+                                    if (klaviyoJS.sfccEmailRegex.test (klavInput.value)) {
+                                        // TODO: debugging only, remove this console.log()
+                                        console.log('REGEX APPLIED. Email is Good: ', klaviyoJS.sfccEmailRegex.test(klavInput.value));
+                                        klaviyo.identify({ '$email' : klavInput.value }).then(() => { klaviyoJS.identifiedUser = true; klaviyoJS.exchangeID = klaviyoJS.getExchangeID(); });
+                                    }
+
+                                    if (Number(klavInput.value.replace(/[^a-z0-9]/gi, ''))) {
+                                        // TODO: debugging only, remove this console.log()
+                                        console.log('CLEANED NUMBER : ', klavInput.value.replace(/[^a-z0-9]/gi, ''));
+                                        klaviyo.identify({ '$phone_number' : klavInput.value.replace(/[^a-z0-9]/gi, '') }).then(() => { klaviyoJS.identifiedUser = true; klaviyoJS.exchangeID = klaviyoJS.getExchangeID(); });
+                                    }
                                 }
                             }
                             // TODO: debugging only, remove this console.log()
