@@ -2,7 +2,8 @@
 
 var server = require('server');
 var OrderMgr = require('dw/order/OrderMgr');
-var klaviyoUtils = require('*/cartridge/scripts/utils/klaviyo/klaviyoUtils');
+var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils');
+var orderConfirmationData = require('*/cartridge/scripts/klaviyo/eventData/orderConfirmation');
 
 
 server.extend(module.superModule);
@@ -10,7 +11,7 @@ server.extend(module.superModule);
 
 server.append('Confirm', function (req, res, next) {
 
-    if(dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_enabled')){
+    if(klaviyoUtils.klaviyoEnabled){
 
         var exchangeID = klaviyoUtils.getKlaviyoExchangeID();
         var dataObj, serviceCallResult, currentOrder;
@@ -19,8 +20,8 @@ server.append('Confirm', function (req, res, next) {
             currentOrder = OrderMgr.getOrder(req.form.orderID, req.form.orderToken);
             // check to see if the status is new or created
             if (currentOrder.status == dw.order.Order.ORDER_STATUS_NEW || currentOrder.status == dw.order.Order.ORDER_STATUS_OPEN) {
-                klaviyoUtils.orderConfirmationData(currentOrder, exchangeID);
-                // trackEvent is called within prepareOrderConfirmationEvent - TODO: reassess this completely to move trackEvent call(s) up to this level
+                dataObj = orderConfirmationData.getData(currentOrder, exchangeID);
+                serviceCallResult = klaviyoUtils.trackEvent(exchangeID, dataObj, klaviyoUtils.EVENT_NAMES.orderConfirmation);
             }
 
         }

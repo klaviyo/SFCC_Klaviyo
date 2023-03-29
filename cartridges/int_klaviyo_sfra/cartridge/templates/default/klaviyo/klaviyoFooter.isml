@@ -1,5 +1,6 @@
+FOOBAR
 <isscript>
-    var klaviyoUtils = require('*/cartridge/scripts/utils/klaviyo/klaviyoUtils.js');
+    var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils');
 </isscript>
 <iscomment>
     this template should be included near the end of the html body on all pages.
@@ -7,7 +8,7 @@
     remote include for pages whose controllers are cached OOTB
 </iscomment>
 <!--- TEMPLATENAME: klaviyoFooter.isml --->
-<isif condition="${dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_enabled')}">
+<isif condition="${klaviyoUtils.klaviyoEnabled}">
     <script async src="//static.klaviyo.com/onsite/js/klaviyo.js?company_id=${dw.system.Site.getCurrent().preferences.custom.klaviyo_account}"></script>
     <script src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
     <script>
