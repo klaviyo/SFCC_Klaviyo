@@ -2,12 +2,13 @@
 
 var server = require('server');
 var basketMgr = require('dw/order/BasketMgr');
-var klaviyoUtils = require('*/cartridge/scripts/utils/klaviyo/klaviyoUtils');
+var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils');
+var addedToCartData = require('*/cartridge/scripts/klaviyo/eventData/addedToCart');
 
 server.extend(module.superModule);
 
 server.append('Show', function (req, res, next) {
-    if(dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_enabled') && !klaviyoUtils.getKlaviyoExchangeID()){
+    if(klaviyoUtils.klaviyoEnabled && !klaviyoUtils.getKlaviyoExchangeID()){
         res.viewData.klid = klaviyoUtils.getProfileInfo();
     }
     next();
@@ -15,7 +16,7 @@ server.append('Show', function (req, res, next) {
 
 server.append('AddProduct', function (req, res, next) {
 
-    if(dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_enabled')){
+    if(klaviyoUtils.klaviyoEnabled){
 
         var exchangeID = klaviyoUtils.getKlaviyoExchangeID();
         var dataObj, serviceCallResult, currentBasket;
@@ -24,7 +25,7 @@ server.append('AddProduct', function (req, res, next) {
             currentBasket = basketMgr.getCurrentBasket()
 
             if (currentBasket && currentBasket.getProductLineItems().toArray().length) { //TODO: is there a property for isEmpty on basket object?
-                dataObj = klaviyoUtils.addedToCartData(currentBasket);
+                dataObj = addedToCartData.getData(currentBasket);
                 serviceCallResult = klaviyoUtils.trackEvent(exchangeID, dataObj, klaviyoUtils.EVENT_NAMES.addedToCart);
                 // TODO: need to do anything here with the service call result, or handle all errs etc within trackEvent? otherwise no need to assign to a var / return a value
             }

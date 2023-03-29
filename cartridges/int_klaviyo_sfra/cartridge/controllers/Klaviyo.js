@@ -1,7 +1,10 @@
 'use strict';
 
 var server = require('server');
-var klaviyoUtils = require('*/cartridge/scripts/utils/klaviyo/klaviyoUtils');
+var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils');
+var viewedProductData = require('*/cartridge/scripts/klaviyo/eventData/viewedProduct');
+var viewedCategoryData = require('*/cartridge/scripts/klaviyo/eventData/viewedCategory');
+var searchedSiteData = require('*/cartridge/scripts/klaviyo/eventData/searchedSite');
 
 /***
  *
@@ -17,7 +20,7 @@ var klaviyoUtils = require('*/cartridge/scripts/utils/klaviyo/klaviyoUtils');
 
 server.get('Event', function (req, res, next) {
 
-    if(dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_enabled')){
+    if(klaviyoUtils.klaviyoEnabled){
 
         var dataObj, serviceCallResult, action, parms;
         var exchangeID = klaviyoUtils.getKlaviyoExchangeID();
@@ -28,17 +31,17 @@ server.get('Event', function (req, res, next) {
 
             switch(action) {
                 case klaviyoUtils.EVENT_NAMES.viewedProduct :
-                    dataObj = klaviyoUtils.viewedProductData(parms); // parms: product ID
+                    dataObj = viewedProductData.getData(parms); // parms: product ID
                     break;
                 case klaviyoUtils.EVENT_NAMES.viewedCategory :
-                    dataObj = klaviyoUtils.viewedCategoryData(parms); // parms: category ID
+                    dataObj = viewedCategoryData.getData(parms); // parms: category ID
                     break;
                 case klaviyoUtils.EVENT_NAMES.searchedSite :
                     // TODO: add Show-Ajax append?  test to be sure when this happens... if its just on paging, do we want to track that?
                     // TODO: what about search-suggestion flyout? probably not supportable
                     // TODO: be sure to check for 0 result searches, filtering on both search results and PLPs, re-sorts, etc and get clarity on requirements
                     parms = parms.split('|');
-                    dataObj = klaviyoUtils.searchedSiteData(parms[0], parms[1]); // parms: search phrase, result count
+                    dataObj = searchedSiteData.getData(parms[0], parms[1]); // parms: search phrase, result count
                     break;
             }
             serviceCallResult = klaviyoUtils.trackEvent(exchangeID, dataObj, action);
