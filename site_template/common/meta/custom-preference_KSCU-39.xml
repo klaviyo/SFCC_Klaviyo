@@ -44,7 +44,6 @@
                 <type>set-of-string</type>
                 <mandatory-flag>false</mandatory-flag>
                 <externally-managed-flag>false</externally-managed-flag>
-                <default-value>large</default-value>
             </attribute-definition>
 
         </custom-attribute-definitions>
