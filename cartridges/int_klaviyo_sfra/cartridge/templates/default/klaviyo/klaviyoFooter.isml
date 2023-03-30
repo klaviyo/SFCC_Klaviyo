@@ -33,7 +33,7 @@ FOOBAR
     <isif condition="${pdict.klid}">
         <isinclude template="klaviyo/klaviyoID" />
     </isif>
-    <isif condition="${dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_email_selectors')}">
+    <isif condition="${dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_email_selectors') && !empty(dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_email_selectors'))}">
         <isinclude template="klaviyo/klaviyoListeners" />
     </isif>
 </isif>

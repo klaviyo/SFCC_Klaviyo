@@ -1,5 +1,5 @@
 <iscomment>
-    The JS in this template captures the selectors set in Business Manager and applies klaviyo to the correspondingiing input fields
+    The JS in this template captures the selectors set in Business Manager and applies klaviyo listeners to the corresponding input fields
     so users can be identified when filling out either phone number or email fields within any part of the site. This template is included in
     klaviyoFooter.isml within both SFRA & SiteGen.
 </iscomment>
