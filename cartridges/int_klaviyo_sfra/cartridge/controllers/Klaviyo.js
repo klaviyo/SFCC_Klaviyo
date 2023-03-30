@@ -13,6 +13,7 @@ var searchedSiteData = require('*/cartridge/scripts/klaviyo/eventData/searchedSi
  * for event tracking on pages whose controllers are not cached OOTB, server.appends to those OOTB controllers should be utilized
  * reference Cart.js, Checkout.js, Order.js in the int_klaviyo_sfra cartridge
  *
+ * Also note that this route gets called via remote include for Home-Show, Page-Show and Default-Start only to check for identifying users to Klaviyo off the user's SFCC Profile
 ***/
 
 
@@ -29,23 +30,28 @@ server.get('Event', function (req, res, next) {
             action = request.httpParameterMap.action.stringValue;
             parms = request.httpParameterMap.parms.stringValue;
 
-            switch(action) {
-                case klaviyoUtils.EVENT_NAMES.viewedProduct :
-                    dataObj = viewedProductData.getData(parms); // parms: product ID
-                    break;
-                case klaviyoUtils.EVENT_NAMES.viewedCategory :
-                    dataObj = viewedCategoryData.getData(parms); // parms: category ID
-                    break;
-                case klaviyoUtils.EVENT_NAMES.searchedSite :
-                    // TODO: add Show-Ajax append?  test to be sure when this happens... if its just on paging, do we want to track that?
-                    // TODO: what about search-suggestion flyout? probably not supportable
-                    // TODO: be sure to check for 0 result searches, filtering on both search results and PLPs, re-sorts, etc and get clarity on requirements
-                    parms = parms.split('|');
-                    dataObj = searchedSiteData.getData(parms[0], parms[1]); // parms: search phrase, result count
-                    break;
+            if(action != 'false') { // string test intentional, action passed as 'false' for pages that do not need to trigger events (Home, Page, Default)
+                switch(action) {
+                    case klaviyoUtils.EVENT_NAMES.viewedProduct :
+                        dataObj = viewedProductData.getData(parms); // parms: product ID
+                        break;
+                    case klaviyoUtils.EVENT_NAMES.viewedCategory :
+                        dataObj = viewedCategoryData.getData(parms); // parms: category ID
+                        break;
+                    case klaviyoUtils.EVENT_NAMES.searchedSite :
+                        // TODO: add Show-Ajax append?  test to be sure when this happens... if its just on paging, do we want to track that?
+                        // TODO: what about search-suggestion flyout? probably not supportable
+                        // TODO: be sure to check for 0 result searches, filtering on both search results and PLPs, re-sorts, etc and get clarity on requirements
+                        parms = parms.split('|');
+                        dataObj = searchedSiteData.getData(parms[0], parms[1]); // parms: search phrase, result count
+                        break;
+                }
+                serviceCallResult = klaviyoUtils.trackEvent(exchangeID, dataObj, action);
+                // TODO: need to do anything here with the service call result, or handle all errs etc within trackEvent? otherwise no need to assign to a var / return a value    
             }
-            serviceCallResult = klaviyoUtils.trackEvent(exchangeID, dataObj, action);
-            // TODO: need to do anything here with the service call result, or handle all errs etc within trackEvent? otherwise no need to assign to a var / return a value
+        } else { 
+            // no klaviyo ID, check for SFCC profile and ID off that if extant
+            res.viewData.klid = klaviyoUtils.getProfileInfo();
         }
 
     }
