@@ -1,5 +1,5 @@
 <isscript>
-    var klaviyoUtils = require('*/cartridge/scripts/utils/klaviyo/klaviyoUtils.js');
+    var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils');
 </isscript>
 <!--- TEMPLATENAME: klaviyoTag.isml --->
 <isif condition="${dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_enabled')}">
@@ -13,7 +13,7 @@
             <isset name="klAction" value="${klaviyoUtils.EVENT_NAMES.viewedProduct}" scope="page" />
             <isset name="klParms" value="${pdict.Product.ID}" scope="page" />
         <iselse>
-            <isif condition="${request.httpParameterMap.cgid.stringValue != ''}">
+            <isif condition="${request.httpParameterMap.cgid.stringValue}">
                 <isset name="klAction" value="${klaviyoUtils.EVENT_NAMES.viewedCategory}" scope="page" />
                 <isset name="klParms" value="${request.httpParameterMap.cgid.stringValue}" scope="page" />
             <iselse>
@@ -21,6 +21,7 @@
                 <isset name="klParms" value="${request.httpParameterMap.q.stringValue + '|' + pdict.ProductSearchResult.count}" scope="page" />
             </isif>
         </isif>
+        xxx ${klAction} ${request.httpParameterMap.cgid.stringValue} xxx
         <isinclude url="${URLUtils.url('Klaviyo-Event', 'action', klAction, 'parms', klParms)}" />
     </isif>
     <isif condition="${pdict.klid}">
