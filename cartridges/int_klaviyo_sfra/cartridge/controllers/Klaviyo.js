@@ -24,7 +24,9 @@ server.get('Event', function (req, res, next) {
     if(klaviyoUtils.klaviyoEnabled){
 
         var dataObj, serviceCallResult, action, parms;
-        var exchangeID = klaviyoUtils.getKlaviyoExchangeID();
+        var kx = request.httpParameterMap.kx;
+
+        var exchangeID = (!kx.empty) ? kx.stringValue : klaviyoUtils.getKlaviyoExchangeID();
 
         if (exchangeID) { // we have a klaviyo ID, proceed to track events
             action = request.httpParameterMap.action.stringValue;
