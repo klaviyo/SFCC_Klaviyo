@@ -4,6 +4,7 @@ var URLUtils = require('dw/web/URLUtils');
 var ProductMgr = require('dw/catalog/ProductMgr');
 var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils');
 var KLImageSize = klaviyoUtils.KLImageSize;
+var StringUtils = require('dw/util/StringUtils');
 
 
 // prepares data for "Added to Cart" event
@@ -12,6 +13,7 @@ function getData(basket) {
     // TODO: analyze line-by-line.  currently pulled straight from previous cartridge prepareAddToCartEventForKlaviyo function
     var data = {};
     var basketItems = basket.getProductLineItems().toArray();
+    var reconstructCartItems = [];
 
     data.event = klaviyoUtils.EVENT_NAMES.addedToCart;
     data.basketGross = basket.getTotalGrossPrice().getValue().valueOf();
@@ -20,11 +22,18 @@ function getData(basket) {
     data.items = [];
     data.categories = [];
     data.primaryCategories = [];
+    // TODO: Remove debugging link with dev note about origin for rebuildingLink...also replace hardcoded URL with proper values to build dynamic URL
+    // this is where rebuild cart link could originate...then be built out as basketItems are iterated through below...
+    data.cartRebuildingLink = `https://zzys-003.dx.commercecloud.salesforce.com/on/demandware.store/Sites-RefArch-Site/en_US/Cart-Recreate?items=${reconstructCartItems}`;
 
     for (var itemIndex = 0; itemIndex < basketItems.length; itemIndex++) {
         var lineItem = basketItems[itemIndex];
         var currentProductID = lineItem.productID;
         var basketProduct = ProductMgr.getProduct(currentProductID);
+        var quantity = lineItem.quantity.value;
+        var basketProductID = basketProduct.ID;
+        var childProducts = []; // TODO: need to identify what this would be...
+        var options = []; // TODO: need to identify what this would be...
 
         if (currentProductID != null && !empty(basketProduct) && basketProduct.getPriceModel().getPrice().value > 0) {
             var primaryCategory;
@@ -43,6 +52,8 @@ function getData(basket) {
             for(var i=0, len=catProduct.categoryAssignments.length; i<len; i++) {
                 categories.push(catProduct.categoryAssignments[i].category.displayName);
             }
+
+            reconstructCartItems.push({ productID: basketProductID, quantity, childProducts, options }); //TODO: shorten key names for brevity.
 
             data.lineItems.push({
                 productID       : currentProductID,
@@ -70,6 +81,9 @@ function getData(basket) {
             );
         }
     }
+    let test = StringUtils.encodeBase64(reconstructCartItems) // replace with proper encoding so reconstructedCartItems can be sent as encoded string
+    data.cartTESTrebuildingLink = data.cartRebuildingLink + test;
+    data.cartRebuildingLink += JSON.stringify(reconstructCartItems); // add the array with products to the query string?
     return data;
 }
 
