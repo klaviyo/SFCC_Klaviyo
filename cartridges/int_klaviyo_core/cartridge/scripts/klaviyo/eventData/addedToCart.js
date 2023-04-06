@@ -22,9 +22,7 @@ function getData(basket) {
     data.items = [];
     data.categories = [];
     data.primaryCategories = [];
-    // TODO: Remove debugging link with dev note about origin for rebuildingLink...also replace hardcoded URL with proper values to build dynamic URL
-    // this is where rebuild cart link could originate...then be built out as basketItems are iterated through below...
-    data.cartRebuildingLink = `https://zzys-003.dx.commercecloud.salesforce.com/on/demandware.store/Sites-RefArch-Site/en_US/Cart-Recreate?items=${reconstructCartItems}`;
+    data.cartRebuildingLink = URLUtils.abs('Cart-Recreate').toString() + `?items=${reconstructCartItems}`;
 
     for (var itemIndex = 0; itemIndex < basketItems.length; itemIndex++) {
         var lineItem = basketItems[itemIndex];
@@ -81,9 +79,8 @@ function getData(basket) {
             );
         }
     }
-    let test = StringUtils.encodeBase64(reconstructCartItems) // replace with proper encoding so reconstructedCartItems can be sent as encoded string
-    data.cartTESTrebuildingLink = data.cartRebuildingLink + test;
-    data.cartRebuildingLink += JSON.stringify(reconstructCartItems); // add the array with products to the query string?
+
+    data.cartRebuildingLink += StringUtils.encodeBase64(JSON.stringify(reconstructCartItems)); // add the encoded array containing products to the query string
     return data;
 }
 

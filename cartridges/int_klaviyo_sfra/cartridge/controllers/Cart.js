@@ -53,9 +53,8 @@ server.append('AddProduct', function (req, res, next) {
  * @param {serverfunction} - get
  */
 server.get('Recreate', function (req, res, next) {
-    var items = JSON.parse(req.querystring.items);
+    var items = JSON.parse(StringUtils.decodeBase64(req.querystring.items));
     var currentBasket = basketMgr.getCurrentOrNewBasket();
-    let test = StringUtils.decodeBase64(req.querystring.items); // TODO: once properly encoded, replace items with this - a decoded cart JSON build (original JSON was encoded addedToCart.js)
 
     // TODO: Delete following debugging comment regarding basketMgr
     // basketMgr.deleteBasket(currentBasket) // ERROR: user not authorized to act on behalf of customer
