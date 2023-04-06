@@ -43,8 +43,8 @@ server.append('AddProduct', function (req, res, next) {
 
 
 /**
- * Cart-Recreate : The Cart-Recreate route rebuilds a cart page based on a query containing JSON with product IDs, product quanty, child products & options within URL / endpoint.
- * proper query should be structured as:  <baseURL>/Cart-Recreate?items=[ {"productID": ProdID, "quantity": QTY, "childProducts": [], "options": []} ]
+ * Cart-Recreate : The Cart-Recreate route rebuilds a cart page based on a query containing an encoded array of objects with product IDs, product quanty, child products & options within URL / endpoint.
+ * A decoded query would be structured as:  <baseURL>/Cart-Recreate?items=[ {"productID": ProdID, "quantity": QTY, "childProducts": [], "options": []} ]
  * @function
  * @memberof Cart
  * @param {querystringparameter} - items - JSON containing product Ids, qty, childProducts, options
