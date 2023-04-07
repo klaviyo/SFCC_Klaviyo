@@ -5,6 +5,7 @@ var ProductMgr = require('dw/catalog/ProductMgr');
 var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils');
 var KLImageSize = klaviyoUtils.KLImageSize;
 var StringUtils = require('dw/util/StringUtils');
+var collections = require('*/cartridge/scripts/util/collections');
 
 
 // prepares data for "Added to Cart" event
@@ -30,8 +31,8 @@ function getData(basket) {
         var basketProduct = ProductMgr.getProduct(currentProductID);
         var quantity = lineItem.quantity.value;
         var basketProductID = basketProduct.ID;
-        var childProducts = []; // TODO: need to identify what this would be...
-        var options = []; // TODO: need to identify what this would be...
+        var childProducts = basketProduct.bundledProducts ? collections.map(basketProduct.bundledProducts, function (product) { return { pid: product.ID, quantity: null } }) : []; // TODO: need to identify what quantity would be...
+        var options = []; // TODO: need to identify what this would be...(ex: options from TVs that have warranties? How to include?)
 
         if (currentProductID != null && !empty(basketProduct) && basketProduct.getPriceModel().getPrice().value > 0) {
             var primaryCategory;

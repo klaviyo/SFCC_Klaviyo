@@ -8,6 +8,7 @@ var Transaction = require('dw/system/Transaction');
 var CartModel = require('*/cartridge/models/cart');
 var StringUtils = require('dw/util/StringUtils');
 var cartHelpers = require('*/cartridge/scripts/cart/cartHelpers');
+var PromotionMgr = require('dw/campaign/PromotionMgr');
 
 server.extend(module.superModule);
 
@@ -43,8 +44,8 @@ server.append('AddProduct', function (req, res, next) {
 
 
 /**
- * Cart-Recreate : The Cart-Recreate route rebuilds a cart page based on a query containing an encoded array of objects with product IDs, product quanty, child products & options within URL / endpoint.
- * A decoded query would be structured as:  <baseURL>/Cart-Recreate?items=[ {"productID": ProdID, "quantity": QTY, "childProducts": [], "options": []} ]
+ * Cart-Recreate : The Cart-Recreate route rebuilds a cart page based on a query containing an ENCODED array of objects with product IDs, product quanty, an array of child product IDs & options within URL / endpoint.
+ * A DECODED query would be structured as:  <baseURL>/Cart-Recreate?items=[ {"productID": ProdID, "quantity": QTY, "childProducts": [ { pid: childID, quantity: null} ], "options": []} ]
  * @function
  * @memberof Cart
  * @param {querystringparameter} - items - JSON containing product Ids, qty, childProducts, options
@@ -57,7 +58,7 @@ server.get('Recreate', function (req, res, next) {
     var currentBasket = basketMgr.getCurrentOrNewBasket();
 
     // TODO: Delete following debugging comment regarding basketMgr
-    // basketMgr.deleteBasket(currentBasket) // ERROR: user not authorized to act on behalf of customer
+    // basketMgr.deleteBasket(currentBasket) // ERROR: user not authorized to act on behalf of customer (NOTE: Only customer service can call this method)
 
     // Clean the basket to prevent product duplication on page refresh
     if (currentBasket && currentBasket.productQuantityTotal > 0) {
@@ -67,6 +68,7 @@ server.get('Recreate', function (req, res, next) {
             let lengthAtIteration = currentBasket.productLineItems.length;
             var shipmentToRemove = currentBasket.productLineItems[i].shipment;
             currentBasket.removeProductLineItem(currentBasket.productLineItems[i]);
+            currentBasket.updateTotals(); // update totals after removing the line item.
             if (currentBasket.productLineItems.length < lengthAtIteration) {
                 // TODO: Delete following debugging comment regarding decrementing index
                 // decrement index by one to account for the productLineItems array shortening by one.
@@ -76,15 +78,15 @@ server.get('Recreate', function (req, res, next) {
             if (shipmentToRemove.productLineItems.empty && !shipmentToRemove.default) {
                 currentBasket.removeShipment(shipmentToRemove);
             }
+            PromotionMgr.applyDiscounts(currentBasket);
         }
     }
+
+    // Transaction.begin();
 
     Transaction.wrap(function () {
         if (items && items.length) {
             for (let i = 0; i < items.length; i++) {
-                let currProductID = items[i].productID;
-                let quanty = items[i].quantity;
-                let options = items[i].options;
                 // TODO: Delete following debugging comment related to addProductToCart call
                 // in here...could call add to cart again for each item....based on query values...
                 cartHelpers.addProductToCart(currentBasket, items[i].productID, items[i].quantity, items[i].childProducts, items[i].options)
