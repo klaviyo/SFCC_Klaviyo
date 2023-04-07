@@ -4,6 +4,8 @@ var ProductMgr = require('dw/catalog/ProductMgr');
 var URLUtils = require('dw/web/URLUtils');
 var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils');
 var KLImageSize = klaviyoUtils.KLImageSize;
+var StringUtils = require('dw/util/StringUtils');
+var collections = require('*/cartridge/scripts/util/collections');
 
 // prepares data for "Started Checkout" event
 function getData(currentBasket) {
@@ -12,6 +14,7 @@ function getData(currentBasket) {
 
     var data = {};
     var basketItems = currentBasket.getProductLineItems().toArray();
+    var reconstructCartItems = [];
     // Create some top-level event data
     //data.event = EVENT_NAMES['startedCheckout'];
     data['Basket Gross Price'] = currentBasket.getTotalGrossPrice().value;
@@ -22,11 +25,15 @@ function getData(currentBasket) {
     data.Categories = [];
     data.Items = [];
     data.$email = currentBasket.customerEmail;
+    data.cartRebuildingLink = URLUtils.abs('Cart-Recreate').toString() + `?items=${reconstructCartItems}`;
 
     for (var itemIndex = 0; itemIndex < basketItems.length; itemIndex++) {
         var lineItem = basketItems[itemIndex];
         var currentProductID = lineItem.productID;
         var basketProduct = ProductMgr.getProduct(currentProductID);
+        var quantity = lineItem.quantityValue;
+        var childProducts = basketProduct.bundledProducts ? collections.map(basketProduct.bundledProducts, function (product) { return { pid: product.ID, quantity: null } }) : []; // TODO: need to identify what quantity would be...
+        var options = []; // TODO: need to identify what this would be...
 
         if (currentProductID != null && !empty(basketProduct) && basketProduct.getPriceModel().getPrice().value > 0) {
             var productObj = prepareProductObj( lineItem, basketProduct, currentProductID );
@@ -35,9 +42,12 @@ function getData(currentBasket) {
             data.line_items.push(productObj);
             data.Categories.push.apply(data.Categories, data.line_items[itemIndex].Categories);
             data.Items.push(data.line_items[itemIndex]['Product Name']);
+
+            reconstructCartItems.push({ productID: currentProductID, quantity, childProducts, options });
         }
     }
 
+    data.cartRebuildingLink += StringUtils.encodeBase64(JSON.stringify(reconstructCartItems)); // add the encoded array containing products to the query string
     return data;
 }
 

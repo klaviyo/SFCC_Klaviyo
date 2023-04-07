@@ -30,7 +30,6 @@ function getData(basket) {
         var currentProductID = lineItem.productID;
         var basketProduct = ProductMgr.getProduct(currentProductID);
         var quantity = lineItem.quantity.value;
-        var basketProductID = basketProduct.ID;
         var childProducts = basketProduct.bundledProducts ? collections.map(basketProduct.bundledProducts, function (product) { return { pid: product.ID, quantity: null } }) : []; // TODO: need to identify what quantity would be...
         var options = []; // TODO: need to identify what this would be...(ex: options from TVs that have warranties? How to include?)
 
@@ -52,7 +51,7 @@ function getData(basket) {
                 categories.push(catProduct.categoryAssignments[i].category.displayName);
             }
 
-            reconstructCartItems.push({ productID: basketProductID, quantity, childProducts, options }); //TODO: shorten key names for brevity.
+            reconstructCartItems.push({ productID: currentProductID, quantity, childProducts, options }); //TODO: shorten key names for brevity.
 
             data.lineItems.push({
                 productID       : currentProductID,
