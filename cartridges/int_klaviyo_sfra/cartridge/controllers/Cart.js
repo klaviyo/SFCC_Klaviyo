@@ -9,6 +9,8 @@ var CartModel = require('*/cartridge/models/cart');
 var StringUtils = require('dw/util/StringUtils');
 var cartHelpers = require('*/cartridge/scripts/cart/cartHelpers');
 var PromotionMgr = require('dw/campaign/PromotionMgr');
+var collections = require('*/cartridge/scripts/util/collections');
+var ProductMgr = require('dw/catalog/ProductMgr');
 
 server.extend(module.superModule);
 
@@ -87,9 +89,13 @@ server.get('Recreate', function (req, res, next) {
     Transaction.wrap(function () {
         if (items && items.length) {
             for (let i = 0; i < items.length; i++) {
+                var productTEST = ProductMgr.getProduct(items[i].productID);
+                var childProducts = productTEST.bundledProducts ? collections.map(productTEST.bundledProducts, function (product) { return { pid: product.ID, quantity: null } }) : []; // TODO: need to identify what quantity would be...
+                var options = []; // TODO: need to identify what this would be...(ex: options from TVs that have warranties? How to include?)
+        
                 // TODO: Delete following debugging comment related to addProductToCart call
                 // in here...could call add to cart again for each item....based on query values...
-                cartHelpers.addProductToCart(currentBasket, items[i].productID, items[i].quantity, items[i].childProducts, items[i].options)
+                cartHelpers.addProductToCart(currentBasket, items[i].productID, items[i].quantity, childProducts, options)
             }
         }
 
