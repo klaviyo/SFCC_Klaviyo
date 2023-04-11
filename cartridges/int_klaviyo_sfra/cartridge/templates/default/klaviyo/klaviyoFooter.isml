@@ -1,4 +1,3 @@
-FOOBAR
 <isscript>
     var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils');
 </isscript>
