@@ -70,7 +70,6 @@
                     klaviyo.identify({ '$email' : input.target.value, '$phone_number' : klaviyoJS.phone }).then(() => { klaviyoJS.identifiedUser = true; klaviyoJS.exchangeID = klaviyoJS.getExchangeID(); });
                 }
             }
-            console.log(' >>>> klaviyoJS OBJ AFTER CHANGE >>>> ', klaviyoJS);  // TODO: debugging only, remove this console.log()
         }
 
         klaviyoListeners();
