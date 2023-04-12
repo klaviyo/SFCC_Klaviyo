@@ -48,11 +48,12 @@
             for (let i = 0; i < klaviyoJS.emailFieldSelectors.length; i++) {
                 let selectedInput = document.querySelectorAll(klaviyoJS.emailFieldSelectors[i]);
                 if (selectedInput) {
-                    let klavInput = selectedInput[0];
-                    if (klavInput && !klavInput.hasAttribute('data-listener')) {
-                        klavInput.setAttribute('data-listener', 'klaviyo');
-                        klavInput.addEventListener("change", (klavInput) => klaviyoChangeEvent(klavInput));
-                    }
+                    Array.from(selectedInput).forEach(klavInput => {
+                        if (klavInput && !klavInput.hasAttribute('data-listener')) {
+                            klavInput.setAttribute('data-listener', 'klaviyo');
+                            klavInput.addEventListener("change", (klavInput) => klaviyoChangeEvent(klavInput));
+                        }
+                    })
                 }
             }
         }
