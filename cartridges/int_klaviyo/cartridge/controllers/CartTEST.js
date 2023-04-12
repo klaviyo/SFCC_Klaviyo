@@ -20,48 +20,9 @@ var ProductMgr = require('dw/catalog/ProductMgr');
 // var CartModel = AbstractModel.extend({
 
 // ENDPOINT ----->>>>> https://zzqk-005.dx.commercecloud.salesforce.com/on/demandware.store/Sites-SiteGenesis-Site/en_US/CartTEST-AddProduct?pid=microsoft-zune120
+// ENDPOINT (with quantity) ----->>>>>> https://zzqk-005.dx.commercecloud.salesforce.com/on/demandware.store/Sites-SiteGenesis-Site/en_US/CartTEST-AddProduct?pid=microsoft-zune120&Quantity=3
+// ENDPOINT (with decoded product & quantity) ----->>>>> https://zzqk-005.dx.commercecloud.salesforce.com/on/demandware.store/Sites-SiteGenesis-Site/en_US/CartTEST-RecreateCart?items=W3sicHJvZHVjdElEIjoibWljcm9zb2Z0LXp1bmUxMjAiLCJxdWFudGl0eSI6MTN9XQ==
 
-function recreate () {
-    var httpQueryString = request.httpQueryString;
-    var items = JSON.parse(StringUtils.decodeBase64(httpQueryString.substring(httpQueryString.indexOf('=')+1)));
-    var currentBasket = BasketMgr.getCurrentOrNewBasket();
-
-    // var cartForm = app.getForm('cart');
-    // app.getForm('login').invalidate();
-    // cartForm.get('shipments').invalidate();
-
-    var cart = app.getModel('Cart').goc();
-    // var renderInfo = cart.addProductToCart();
-    var cartGET = cartModel.get();
-
-    for (let i = 0; i < items.length; i++) {
-        // let currProduct = items[i];
-        var productTEST = ProductMgr.getProduct(items[i].productID);
-        var productList = app.getModel('ProductList').get();
-        // productList.addProduct(productTEST, items[0].quantity, productTEST.productOptionModel);
-        cart.addProductItem(productTEST, items[0].quantity, productTEST.productOptionModel)
-    }
-        // cart: app.getModel('Cart').get(),
-
-        // product, quantity, productOptionModel
-    // productList = app.getModel('ProductList').get();
-    // productList.addProduct(product.object, request.httpParameterMap.Quantity.doubleValue, productOptionModel);
-
-
-    //  app.getView('Cart', {
-    //     cart: app.getModel('Cart').get(),
-    // }).render('checkout/cart/cart');
-    app.getView('Cart', {
-        cart: currentBasket,
-    }).render('checkout/cart/cart');
-
-    // res.renderJSON({
-    //     items: items,
-    //     cartInfo: cartForm,
-    //     basketInfo: currentBasket
-    // });
-
-}
 
 function addProduct() {
     var cart = app.getModel('Cart').goc();
@@ -104,9 +65,97 @@ function addProduct() {
 // });
 
 
+// Controller currently located at CartTEST-RecreateCart route. This captures a query string containing decoded Products, decodes them and adds
+// each product to cart. Finally, this controller renders the Cart page via Cart-Show upon successful conclusion.
+function recreateCart() {
+    var cart = app.getModel('Cart').goc();
+    var test = request.httpParameterMap;
+    var items = JSON.parse(StringUtils.decodeBase64(request.httpParameterMap.items));
+
+    var renderInfo = _addProductToCart(items, cart)
+
+    // TODO: Check each of these line-by-line after finalizing the _addProductToCart function 
+    // The following occurs only AFTER AN ITEM HAS BEEN ADDED TO CART....(original code required obj stored in renderInfo from cart.addProductToCart())
+    if (renderInfo.source === 'giftregistry') {
+        app.getView().render('account/giftregistry/refreshgiftregistry');
+    } else if (renderInfo.template === 'checkout/cart/cart') {
+        app.getView('Cart', {
+            Basket: cart
+        }).render(renderInfo.template);
+    } else if (renderInfo.format === 'ajax') {
+        app.getView('Cart', {
+            cart: cart,
+            BonusDiscountLineItem: renderInfo.BonusDiscountLineItem
+        }).render(renderInfo.template);
+    } else {
+        response.redirect(URLUtils.url('Cart-Show'));
+    }
+}
+
+
+
+function _addProductToCart(decodedItems, cartObj) {
+    var productList = decodedItems.length ? decodedItems : null;
+    var cart = cartObj;
+
+    var params = request.httpParameterMap;
+    var format = params.hasOwnProperty('format') && params.format.stringValue ? params.format.stringValue.toLowerCase() : '';
+    var newBonusDiscountLineItem;
+    var Product = app.getModel('Product');
+    var productOptionModel;
+    var productToAdd;
+    var template = 'checkout/cart/minicart';
+
+    // Edit details of a gift registry
+    if (params.source && params.source.stringValue === 'giftregistry' && params.cartAction && params.cartAction.stringValue === 'update') {
+        ProductList.replaceProductListItem();
+        return {
+            source: 'giftregistry'
+        };
+    }
+
+    if (params.source && params.source.stringValue === 'wishlist' && params.cartAction && params.cartAction.stringValue === 'update') {
+        app.getController('Wishlist').ReplaceProductListItem();
+        return;
+    } else {
+        // var previousBonusDiscountLineItems = cart.getBonusDiscountLineItems();
+        for (let i = 0; i < productList.length; i++) {
+            productToAdd = Product.get(productList[i].productID);
+
+            if (productToAdd.object.isProductSet()) {
+                // var childPids = params.childPids.stringValue.split(','); // comma delimited list of product ids
+                // var childQtys = params.childQtys.stringValue.split(','); // product quantity list or each products.
+                // var counter = 0;
+
+                // for (var i = 0; i < childPids.length; i++) {
+                //     var childProduct = Product.get(childPids[i]);
+
+                //     if (childProduct.object && !childProduct.isProductSet()) {
+                //         var childProductOptionModel = childProduct.updateOptionSelection(params);
+                //         cart.addProductItem(childProduct.object, parseInt(childQtys[counter]), childProductOptionModel);
+                //     }
+                //     counter++;
+                // }
+            } else {
+                productOptionModel = productToAdd.updateOptionSelection(params);
+                cart.addProductItem(productToAdd.object, productList[i].quantity, productOptionModel);
+            }
+
+            // When adding a new product to the cart, check to see if it has triggered a new bonus discount line item.
+            // newBonusDiscountLineItem = cart.getNewBonusDiscountLineItem(previousBonusDiscountLineItems);
+        }
+    }
+
+    return {
+        format: format,
+        template: template,
+        BonusDiscountLineItem: newBonusDiscountLineItem
+    };
+};
+
+
 // /*
 //  * Module exports
 //  */
-exports.Recreate = guard.ensure(['get'], recreate);
 exports.AddProduct = guard.ensure(['get'], addProduct);
-
+exports.RecreateCart = guard.ensure(['get'], recreateCart);
