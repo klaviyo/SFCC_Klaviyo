@@ -20,6 +20,14 @@
                 klaviyo.identify({ '$phone_number' : formattedPhone }).then(() => { klaviyoJS.identifiedUser = true; klaviyoJS.exchangeID = klaviyoJS.getExchangeID(); klaviyoJS.phone = formattedPhone; });
             }
         };
+        klaviyoJS.phoneOrEmail = function(inputVal) {
+            if (klaviyoJS.sfccEmailRegex.test (inputVal.target.value)) {
+                klaviyo.identify({ '$email' : inputVal.target.value }).then(() => { klaviyoJS.identifiedUser = true; klaviyoJS.exchangeID = klaviyoJS.getExchangeID(); });
+            }
+            if (Number(inputVal.target.value.replace(/[^a-z0-9]/gi, ''))) {
+                klaviyoJS.identifyPhone(inputVal.target.value);
+            }
+        };
         Promise.resolve(klaviyo.isIdentified()).then((result) => { klaviyoJS.identifiedUser = result });
 
         window.addEventListener('DOMContentLoaded', (event) => {
@@ -38,57 +46,33 @@
 
         function klaviyoListeners() {
             for (let i = 0; i < klaviyoJS.emailFieldSelectors.length; i++) {
-                let selectedInput;
-                if ($(klaviyoJS.emailFieldSelectors[i])[0]) {
-                    selectedInput = $(klaviyoJS.emailFieldSelectors[i]);
-                } else {
-                    let selector;
-                    if (klaviyoJS.emailFieldSelectors[i][0] === '#') {
-                        selector = 'input[id*="' + klaviyoJS.emailFieldSelectors[i].substring(1) + '"]'
-                    } else if (klaviyoJS.emailFieldSelectors[i][0] === '.') {
-                        selector = 'input[class*="' + klaviyoJS.emailFieldSelectors[i].substring(1) + '"]'
-                    }
-                    selectedInput = $(selector);
-                }
-
+                let selectedInput = document.querySelectorAll(klaviyoJS.emailFieldSelectors[i]);
                 if (selectedInput) {
                     let klavInput = selectedInput[0];
                     if (klavInput && !klavInput.hasAttribute('data-listener')) {
-                        selectedInput.attr("data-listener", 'klaviyo');  // Add this attribute as flag in DOM where listeners were applied & limit duplicate listeners on elems
-                        selectedInput.change(function(){
-                        if (klavInput.pattern && klavInput.value.match(klavInput.pattern)) {
-                            if (!klaviyoJS.identifiedUser) {
-                                if (klaviyoJS.sfccEmailRegex.test (klavInput.value)) {
-                                    klaviyo.identify({ '$email' : klavInput.value }).then(() => { klaviyoJS.identifiedUser = true; klaviyoJS.exchangeID = klaviyoJS.getExchangeID(); });
-                                }
-
-                                if (Number(klavInput.value.replace(/[^a-z0-9]/gi, ''))) {
-                                    klaviyoJS.identifyPhone(klavInput.value);
-                                }
-                            }
-                            if (klaviyoJS.identifiedUser && klaviyoJS.exchangeID && klaviyoJS.phone) {
-                                klaviyo.identify({ '$email' : klavInput.value, '$phone_number' : klaviyoJS.phone }).then(() => { klaviyoJS.identifiedUser = true; klaviyoJS.exchangeID = klaviyoJS.getExchangeID(); });
-                            }
-                        } else {
-                            if (!klaviyoJS.identifiedUser) {
-                                if (klaviyoJS.sfccEmailRegex.test (klavInput.value)) {
-                                    klaviyo.identify({ '$email' : klavInput.value }).then(() => { klaviyoJS.identifiedUser = true; klaviyoJS.exchangeID = klaviyoJS.getExchangeID(); });
-                                }
-
-                                if (Number(klavInput.value.replace(/[^a-z0-9]/gi, ''))) {
-                                    klaviyoJS.identifyPhone(klavInput.value);
-                                }
-                            }
-                            if (klaviyoJS.identifiedUser && klaviyoJS.exchangeID && klaviyoJS.phone && klaviyoJS.sfccEmailRegex.test (klavInput.value)) {
-                                klaviyo.identify({ '$email' : klavInput.value, '$phone_number' : klaviyoJS.phone }).then(() => { klaviyoJS.identifiedUser = true; klaviyoJS.exchangeID = klaviyoJS.getExchangeID(); });
-                            }
-                        }
-                        console.log(' >>>> klaviyoJS OBJ AFTER CHANGE >>>> ', klaviyoJS);  // TODO: debugging only, remove this console.log()
-                        });
+                        klavInput.setAttribute('data-listener', 'klaviyo');
+                        klavInput.addEventListener("change", (klavInput) => klaviyoChangeEvent(klavInput));
                     }
                 }
             }
         }
+
+        function klaviyoChangeEvent(input){
+            if (!klaviyoJS.identifiedUser) {
+                klaviyoJS.phoneOrEmail(input);
+            }
+            if (input.target.pattern.length && input.target.value.match(input.target.pattern)) {
+                if (klaviyoJS.identifiedUser && klaviyoJS.exchangeID && klaviyoJS.phone) {
+                    klaviyo.identify({ '$email' : input.target.value, '$phone_number' : klaviyoJS.phone }).then(() => { klaviyoJS.identifiedUser = true; klaviyoJS.exchangeID = klaviyoJS.getExchangeID(); });
+                }
+            } else {
+                if (klaviyoJS.identifiedUser && klaviyoJS.exchangeID && klaviyoJS.phone && klaviyoJS.sfccEmailRegex.test (input.target.value)) {
+                    klaviyo.identify({ '$email' : input.target.value, '$phone_number' : klaviyoJS.phone }).then(() => { klaviyoJS.identifiedUser = true; klaviyoJS.exchangeID = klaviyoJS.getExchangeID(); });
+                }
+            }
+            console.log(' >>>> klaviyoJS OBJ AFTER CHANGE >>>> ', klaviyoJS);  // TODO: debugging only, remove this console.log()
+        }
+
         klaviyoListeners();
     </script>
 
