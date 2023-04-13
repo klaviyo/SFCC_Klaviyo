@@ -5,7 +5,6 @@ var URLUtils = require('dw/web/URLUtils');
 var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils');
 var KLImageSize = klaviyoUtils.KLImageSize;
 var StringUtils = require('dw/util/StringUtils');
-var collections = require('*/cartridge/scripts/util/collections');
 
 // prepares data for "Started Checkout" event
 function getData(currentBasket) {
@@ -16,7 +15,7 @@ function getData(currentBasket) {
     var basketItems = currentBasket.getProductLineItems().toArray();
     var reconstructCartItems = [];
     // Create some top-level event data
-    //data.event = EVENT_NAMES['startedCheckout'];
+    // data.event = EVENT_NAMES['startedCheckout'];
     data['Basket Gross Price'] = currentBasket.getTotalGrossPrice().value;
     data['Item Count'] = basketItems.length;
 
@@ -25,15 +24,20 @@ function getData(currentBasket) {
     data.Categories = [];
     data.Items = [];
     data.$email = currentBasket.customerEmail;
-    data.cartRebuildingLink = URLUtils.abs('Cart-Recreate').toString() + `?items=${reconstructCartItems}`;
+    data.cartRebuildingLink = URLUtils.abs('KlaviyoRecreate-Cart').toString() + `?items=${reconstructCartItems}`;
 
     for (var itemIndex = 0; itemIndex < basketItems.length; itemIndex++) {
         var lineItem = basketItems[itemIndex];
         var currentProductID = lineItem.productID;
         var basketProduct = ProductMgr.getProduct(currentProductID);
         var quantity = lineItem.quantityValue;
-        var childProducts = basketProduct.bundledProducts ? collections.map(basketProduct.bundledProducts, function (product) { return { pid: product.ID, quantity: null } }) : []; // TODO: need to identify what quantity would be...
-        var options = []; // TODO: need to identify what this would be...
+        var options = []; // TODO: confirm working in SiteGen as is functional in SFRA on recreated cart page.
+        if (lineItem && lineItem.optionProductLineItems) {
+            for (let i = 0; i < lineItem.optionProductLineItems.length; i++){
+                let currOption = lineItem.optionProductLineItems[i];
+                options.push({optionID: lineItem.optionProductLineItems[i].optionID, optionValueID: lineItem.optionProductLineItems[i].optionValueID, lineItemText: lineItem.optionProductLineItems[i].lineItemText})
+            }
+        }
 
         if (currentProductID != null && !empty(basketProduct) && basketProduct.getPriceModel().getPrice().value > 0) {
             var productObj = prepareProductObj( lineItem, basketProduct, currentProductID );
@@ -43,7 +47,7 @@ function getData(currentBasket) {
             data.Categories.push.apply(data.Categories, data.line_items[itemIndex].Categories);
             data.Items.push(data.line_items[itemIndex]['Product Name']);
 
-            reconstructCartItems.push({ productID: currentProductID, quantity, childProducts, options });
+            reconstructCartItems.push({ productID: currentProductID, quantity, options });
         }
     }
 

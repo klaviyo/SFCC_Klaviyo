@@ -22,7 +22,7 @@ function getData(basket) {
     data.items = [];
     data.categories = [];
     data.primaryCategories = [];
-    data.cartRebuildingLink = URLUtils.abs('Cart-Recreate').toString() + `?items=${reconstructCartItems}`;
+    data.cartRebuildingLink = URLUtils.abs('KlaviyoRecreate-Cart').toString() + `?items=${reconstructCartItems}`;
 
     for (var itemIndex = 0; itemIndex < basketItems.length; itemIndex++) {
         var lineItem = basketItems[itemIndex];

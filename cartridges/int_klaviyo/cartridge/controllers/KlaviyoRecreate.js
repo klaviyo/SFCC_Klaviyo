@@ -17,12 +17,10 @@ var URLUtils = require('dw/web/URLUtils');
 var ProductMgr = require('dw/catalog/ProductMgr');
 
 
-// var CartModel = AbstractModel.extend({
-
-// ENDPOINT ----->>>>> https://zzqk-005.dx.commercecloud.salesforce.com/on/demandware.store/Sites-SiteGenesis-Site/en_US/CartTEST-AddProduct?pid=microsoft-zune120
-// ENDPOINT (with quantity) ----->>>>>> https://zzqk-005.dx.commercecloud.salesforce.com/on/demandware.store/Sites-SiteGenesis-Site/en_US/CartTEST-AddProduct?pid=microsoft-zune120&Quantity=3
-// ENDPOINT (with decoded product & quantity) ----->>>>> https://zzqk-005.dx.commercecloud.salesforce.com/on/demandware.store/Sites-SiteGenesis-Site/en_US/CartTEST-RecreateCart?items=W3sicHJvZHVjdElEIjoibWljcm9zb2Z0LXp1bmUxMjAiLCJxdWFudGl0eSI6MTN9XQ==
-// ENDPOING (with decoded reg product and one bundled product) ------>>>>>> https://zzqk-005.dx.commercecloud.salesforce.com/on/demandware.store/Sites-SiteGenesis-Site/en_US/KlaviyoRecreate-Cart?items=W3sicHJvZHVjdElEIjoibWljcm9zb2Z0LXp1bmUxMjAiLCJxdWFudGl0eSI6MTN9LHsicHJvZHVjdElEIjoic29ueS1wczMtYnVuZGxlIiwicXVhbnRpdHkiOjF9XQ==
+// ENDPOINT ----->>>>> https://zzqk-005.dx.commercecloud.salesforce.com/on/demandware.store/Sites-SiteGenesis-Site/en_US/KlaviyoRecreate-Cart?pid=microsoft-zune120
+// ENDPOINT (with quantity) ----->>>>>> https://zzqk-005.dx.commercecloud.salesforce.com/on/demandware.store/Sites-SiteGenesis-Site/en_US/KlaviyoRecreate-Cart?pid=microsoft-zune120&Quantity=3
+// ENDPOINT (with decoded product & quantity) ----->>>>> https://zzqk-005.dx.commercecloud.salesforce.com/on/demandware.store/Sites-SiteGenesis-Site/en_US/KlaviyoRecreate-Cart?items=W3sicHJvZHVjdElEIjoibWljcm9zb2Z0LXp1bmUxMjAiLCJxdWFudGl0eSI6MTN9XQ==
+// ENDPOINT (with decoded reg product and one bundled product) ------>>>>>> https://zzqk-005.dx.commercecloud.salesforce.com/on/demandware.store/Sites-SiteGenesis-Site/en_US/KlaviyoRecreate-Cart?items=W3sicHJvZHVjdElEIjoibWljcm9zb2Z0LXp1bmUxMjAiLCJxdWFudGl0eSI6MTN9LHsicHJvZHVjdElEIjoic29ueS1wczMtYnVuZGxlIiwicXVhbnRpdHkiOjF9XQ==
 
 function addProduct() {
     var cart = app.getModel('Cart').goc();
@@ -62,12 +60,10 @@ function addProduct() {
     }
 }
 
-// });
 
-
-// Controller currently located at CartTEST-RecreateCart route. This captures a query string containing decoded Products, decodes them and adds
+// Controller currently located at KlaviyoRecreate-Cart route. This captures a query string containing decoded Products, decodes them and adds
 // each product to cart. Finally, this controller renders the Cart page via Cart-Show upon successful conclusion.
-function recreateCart() {
+function cart() {
     var cart = app.getModel('Cart').goc();
     var test = request.httpParameterMap;
     var items = JSON.parse(StringUtils.decodeBase64(request.httpParameterMap.items));
@@ -98,6 +94,13 @@ function _addProductToCart(decodedItems, cartObj) {
     var productList = decodedItems.length ? decodedItems : null;
     var cart = cartObj;
 
+    if (cart.object.allProductLineItems) {
+        for (let i = 0; i < cart.object.allProductLineItems.length; i++) {
+            let currItem = cart.object.allProductLineItems[i];
+            cart.removeProductLineItem(cart.object.allProductLineItems[i]);
+        }
+    }
+
     var params = request.httpParameterMap;
     var format = params.hasOwnProperty('format') && params.format.stringValue ? params.format.stringValue.toLowerCase() : '';
     var newBonusDiscountLineItem;
@@ -118,10 +121,9 @@ function _addProductToCart(decodedItems, cartObj) {
         app.getController('Wishlist').ReplaceProductListItem();
         return;
     } else {
-        // var previousBonusDiscountLineItems = cart.getBonusDiscountLineItems();
+        var previousBonusDiscountLineItems = cart.getBonusDiscountLineItems();
         for (let i = 0; i < productList.length; i++) {
             productToAdd = Product.get(productList[i].productID);
-
             if (productToAdd.object.isProductSet()) {
                 // var childPids = params.childPids.stringValue.split(','); // comma delimited list of product ids
                 // var childQtys = params.childQtys.stringValue.split(','); // product quantity list or each products.
@@ -137,12 +139,14 @@ function _addProductToCart(decodedItems, cartObj) {
                 //     counter++;
                 // }
             } else {
-                productOptionModel = productToAdd.updateOptionSelection(params);
-                cart.addProductItem(productToAdd.object, productList[i].quantity, productOptionModel);
+                for (let i = 0; i < productList.length; i++){
+                    productOptionModel = _updateOptions(productList[i], productToAdd.object);
+                    cart.addProductItem(productToAdd.object, productList[i].quantity, productOptionModel);
+                }
             }
 
             // When adding a new product to the cart, check to see if it has triggered a new bonus discount line item.
-            // newBonusDiscountLineItem = cart.getNewBonusDiscountLineItem(previousBonusDiscountLineItems);
+            newBonusDiscountLineItem = cart.getNewBonusDiscountLineItem(previousBonusDiscountLineItems);
         }
     }
 
@@ -154,8 +158,31 @@ function _addProductToCart(decodedItems, cartObj) {
 };
 
 
+function _updateOptions(params, product) {
+    var optionModel = product.getOptionModel();
+
+    for (var i = 0; i < params.options.length; i++) {
+        var optionID      = params.options[i].optionID;
+        var optionValueID = params.options[i].optionValueID;
+
+        if (optionValueID) {
+            var option = optionModel.getOption(optionID);
+
+            if (option && optionValueID) {
+                var optionValue = optionModel.getOptionValue(option, optionValueID);
+                if (optionValue) {
+                    optionModel.setSelectedOptionValue(option, optionValue);
+                }
+            }
+        }
+    }
+    return optionModel;
+}
+
+
 // /*
 //  * Module exports
 //  */
 exports.AddProduct = guard.ensure(['get'], addProduct);
-exports.RecreateCart = guard.ensure(['get'], recreateCart);
+exports.Cart = guard.ensure(['get'], cart);
+
