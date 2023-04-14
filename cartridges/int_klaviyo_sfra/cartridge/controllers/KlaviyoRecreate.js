@@ -42,7 +42,7 @@ server.get('Cart', function (req, res, next) {
             let lengthAtIteration = currentBasket.productLineItems.length;
             var shipmentToRemove = currentBasket.productLineItems[i].shipment;
             currentBasket.removeProductLineItem(currentBasket.productLineItems[i]);
-            currentBasket.updateTotals(); // update totals after removing the line item.
+            currentBasket.updateTotals();
             if (currentBasket.productLineItems.length < lengthAtIteration) {
                 i--;
             }
