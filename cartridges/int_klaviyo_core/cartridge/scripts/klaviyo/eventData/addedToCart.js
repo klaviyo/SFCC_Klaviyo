@@ -25,7 +25,6 @@ function getData(basket) {
         var lineItem = basketItems[itemIndex];
         var currentProductID = lineItem.productID;
         var basketProduct = ProductMgr.getProduct(currentProductID);
-        var quantity = lineItem.quantity.value;
 
         if (currentProductID != null && !empty(basketProduct) && basketProduct.getPriceModel().getPrice().value > 0) {
             var primaryCategory;
@@ -71,7 +70,6 @@ function getData(basket) {
             );
         }
     }
-
     return data;
 }
 

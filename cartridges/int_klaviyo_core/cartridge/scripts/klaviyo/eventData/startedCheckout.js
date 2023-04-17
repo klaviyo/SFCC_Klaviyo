@@ -15,7 +15,7 @@ function getData(currentBasket) {
     var basketItems = currentBasket.getProductLineItems().toArray();
     var reconstructCartItems = [];
     // Create some top-level event data
-    // data.event = EVENT_NAMES['startedCheckout'];
+    //data.event = EVENT_NAMES['startedCheckout'];
     data['Basket Gross Price'] = currentBasket.getTotalGrossPrice().value;
     data['Item Count'] = basketItems.length;
 
@@ -31,7 +31,7 @@ function getData(currentBasket) {
         var currentProductID = lineItem.productID;
         var basketProduct = ProductMgr.getProduct(currentProductID);
         var quantity = lineItem.quantityValue;
-        var options = []; // TODO: confirm working in SiteGen as is functional in SFRA on recreated cart page.
+        var options = [];
         if (lineItem && lineItem.optionProductLineItems) {
             for (let i = 0; i < lineItem.optionProductLineItems.length; i++){
                 let currOption = lineItem.optionProductLineItems[i];
@@ -51,7 +51,7 @@ function getData(currentBasket) {
         }
     }
 
-    data.cartRebuildingLink += StringUtils.encodeBase64(JSON.stringify(reconstructCartItems)); // add the encoded array containing products to the query string
+    data.cartRebuildingLink += StringUtils.encodeBase64(JSON.stringify(reconstructCartItems));
     return data;
 }
 
