@@ -17,6 +17,7 @@ var ProductMgr = require('dw/catalog/ProductMgr');
 var PromotionMgr = require('dw/campaign/PromotionMgr');
 var StringUtils = require('dw/util/StringUtils');
 var Transaction = require('dw/system/Transaction');
+var URLUtils = require('dw/web/URLUtils');
 
 
 /**
@@ -30,8 +31,27 @@ var Transaction = require('dw/system/Transaction');
  * @param {serverfunction} - get
  */
 server.get('Cart', function (req, res, next) {
-    var items = JSON.parse(StringUtils.decodeBase64(req.querystring.items));
     var currentBasket = BasketMgr.getCurrentOrNewBasket();
+    try {
+        var items = req.querystring.items ? JSON.parse(StringUtils.decodeBase64(req.querystring.items)) : null;
+    } catch (error) {
+        res.setStatusCode(500);
+        res.json({
+            error: true,
+            errorMessage: `ERROR - ${error.message}. Please check the encoded obj for any unexpected chars or syntax issues.`,
+        });
+        return next();
+    }
+
+    if (!currentBasket) {
+        res.setStatusCode(500);
+        res.json({
+            error: true,
+            errorMessage: `ERROR - Current Basket is: ${currentBasket}. Please check the Current Basket and try again.`,
+            redirectUrl: URLUtils.url('Cart-Show').toString()
+        });
+        return next();
+    };
 
     // Clean the basket to prevent product duplication on page refresh
     if (currentBasket && currentBasket.productQuantityTotal > 0) {
@@ -55,7 +75,7 @@ server.get('Cart', function (req, res, next) {
         if (items && items.length) {
             for (let i = 0; i < items.length; i++) {
                 var productToAdd = ProductMgr.getProduct(items[i].productID);
-                var childProducts = productToAdd.bundledProducts ? collections.map(productToAdd.bundledProducts, function (product) { return { pid: product.ID, quantity: null } }) : []; // TODO: need to identify what quantity would be...
+                var childProducts = productToAdd.bundledProducts ? collections.map(productToAdd.bundledProducts, function (product) { return { pid: product.ID, quantity: null } }) : [];
                 var options = [];
                 items[i].options.forEach(optionObj => {
                     options.push({ lineItemText: optionObj.lineItemText, optionId: optionObj.optionID, selectedValueId: optionObj.optionValueID});
