@@ -4,7 +4,6 @@ var URLUtils = require('dw/web/URLUtils');
 var ProductMgr = require('dw/catalog/ProductMgr');
 var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils');
 var KLImageSize = klaviyoUtils.KLImageSize;
-var StringUtils = require('dw/util/StringUtils');
 
 
 // prepares data for "Added to Cart" event
@@ -13,7 +12,6 @@ function getData(basket) {
     // TODO: analyze line-by-line.  currently pulled straight from previous cartridge prepareAddToCartEventForKlaviyo function
     var data = {};
     var basketItems = basket.getProductLineItems().toArray();
-    var reconstructCartItems = [];
 
     data.event = klaviyoUtils.EVENT_NAMES.addedToCart;
     data.basketGross = basket.getTotalGrossPrice().getValue().valueOf();
@@ -22,7 +20,6 @@ function getData(basket) {
     data.items = [];
     data.categories = [];
     data.primaryCategories = [];
-    data.cartRebuildingLink = URLUtils.abs('KlaviyoRecreate-Cart').toString() + `?items=${reconstructCartItems}`;
 
     for (var itemIndex = 0; itemIndex < basketItems.length; itemIndex++) {
         var lineItem = basketItems[itemIndex];
@@ -47,8 +44,6 @@ function getData(basket) {
             for(var i=0, len=catProduct.categoryAssignments.length; i<len; i++) {
                 categories.push(catProduct.categoryAssignments[i].category.displayName);
             }
-
-            reconstructCartItems.push({ productID: currentProductID, quantity }); //TODO: shorten key names for brevity.
 
             data.lineItems.push({
                 productID       : currentProductID,
@@ -77,7 +72,6 @@ function getData(basket) {
         }
     }
 
-    data.cartRebuildingLink += StringUtils.encodeBase64(JSON.stringify(reconstructCartItems)); // add the encoded array containing products to the query string
     return data;
 }
 
