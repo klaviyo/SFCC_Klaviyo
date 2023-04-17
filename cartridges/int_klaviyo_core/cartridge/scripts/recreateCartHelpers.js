@@ -22,14 +22,6 @@ function addProductToCart(decodedItems, cartObj) {
     var productToAdd;
     var template = 'checkout/cart/minicart';
 
-    // Edit details of a gift registry
-    if (params.source && params.source.stringValue === 'giftregistry' && params.cartAction && params.cartAction.stringValue === 'update') {
-        productList.replaceProductListItem();
-        return {
-            source: 'giftregistry'
-        };
-    }
-
     if (params.source && params.source.stringValue === 'wishlist' && params.cartAction && params.cartAction.stringValue === 'update') {
         app.getController('Wishlist').ReplaceProductListItem();
         return;

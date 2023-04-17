@@ -26,7 +26,6 @@ var URLUtils = require('dw/web/URLUtils');
  * @function
  * @memberof Cart
  * @param {querystringparameter} - items - JSON containing product Ids, qty, childProducts, options
- * @param {category} - sensitive
  * @param {renders} - isml
  * @param {serverfunction} - get
  */
