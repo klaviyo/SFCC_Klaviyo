@@ -36,7 +36,15 @@ function addProductToCart(decodedItems, cartObj) {
     } else {
         var previousBonusDiscountLineItems = cart.getBonusDiscountLineItems();
         for (let i = 0; i < productList.length; i++) {
-            productToAdd = Product.get(productList[i].productID);
+            try {
+                productToAdd = Product.get(productList[i].productID);
+            } catch (error) {
+                return {
+                    success: false,
+                    error: true,
+                    errorMessage: `ERROR - Please check the encoded obj for any unexpected chars or syntax issues. ${error.message}`
+                };
+            }
             // TODO: check product sets and adjust logic as needed to accomodate. 
             if (productToAdd.object.isProductSet()) {
                 // var childPids = params.childPids.stringValue.split(','); // comma delimited list of product ids
@@ -53,7 +61,7 @@ function addProductToCart(decodedItems, cartObj) {
                 //     counter++;
                 // }
             } else {
-                productOptionModel = _updateOptions(productList[i], productToAdd.object);
+                productOptionModel = productToAdd ? _updateOptions(productList[i], productToAdd.object) : null;
                 cart.addProductItem(productToAdd.object, productList[i].quantity, productOptionModel);
             }
 

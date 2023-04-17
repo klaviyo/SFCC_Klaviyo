@@ -5,8 +5,6 @@ var app = require('*/cartridge/scripts/app');
 var guard = require('*/cartridge/scripts/guard');
 var cartModel = require('*/cartridge/scripts/models/CartModel');
 var recreateHelpers = require('*/cartridge/scripts/recreateCartHelpers');
-
-/* eslint-disable */
 var res = require("*/cartridge/scripts/util/Response");
 
 /* API Includes */
@@ -22,26 +20,54 @@ var URLUtils = require('dw/web/URLUtils');
  * @param {serverfunction} - Get
  */
 function cart() {
-    var cart = app.getModel('Cart').goc();
-    var test = request.httpParameterMap;
-    var items = JSON.parse(StringUtils.decodeBase64(request.httpParameterMap.items));
-    var renderInfo = recreateHelpers.addProductToCart(items, cart)
+    try {
+        var cart = app.getModel('Cart').goc();
+        var items = request.httpParameterMap.items ? JSON.parse(StringUtils.decodeBase64(request.httpParameterMap.items)) : null;
+    } catch (error) {
+        var test = error;
+        res.renderJSON({
+            success: false,
+            error: true,
+            errorMessage: `ERROR - ${error.message}. Please check encoded URL Object and the Cart Model reference.`
+        });
+        return;
+    }
 
-    // TODO: Check each of these line-by-line after finalizing the _addProductToCart function
-    // The following occurs only AFTER AN ITEM HAS BEEN ADDED TO CART....(original code required obj stored in renderInfo from cart.addProductToCart())
-    if (renderInfo.source === 'giftregistry') {
-        app.getView().render('account/giftregistry/refreshgiftregistry');
-    } else if (renderInfo.template === 'checkout/cart/cart') {
-        app.getView('Cart', {
-            Basket: cart
-        }).render(renderInfo.template);
-    } else if (renderInfo.format === 'ajax') {
-        app.getView('Cart', {
-            cart: cart,
-            BonusDiscountLineItem: renderInfo.BonusDiscountLineItem
-        }).render(renderInfo.template);
-    } else {
-        response.redirect(URLUtils.url('Cart-Show'));
+    if (cart && items.length) {
+        var renderInfo = recreateHelpers.addProductToCart(items, cart)
+
+        if (renderInfo.error) {
+            res.renderJSON({
+                success: renderInfo.success,
+                error: renderInfo.error,
+                errorMessage: renderInfo.errorMessage
+            })
+            return;
+        }
+
+        if (renderInfo.source === 'giftregistry') {
+            app.getView().render('account/giftregistry/refreshgiftregistry');
+        } else if (renderInfo.template === 'checkout/cart/cart') {
+            app.getView('Cart', {
+                Basket: cart
+            }).render(renderInfo.template);
+        } else if (renderInfo.format === 'ajax') {
+            app.getView('Cart', {
+                cart: cart,
+                BonusDiscountLineItem: renderInfo.BonusDiscountLineItem
+            }).render(renderInfo.template);
+        } else {
+            response.redirect(URLUtils.url('Cart-Show'));
+        }
+    }
+
+    if (!cart) {
+        res.renderJSON({
+            success: false,
+            error: true,
+            errorMessage: `The Cart is: ${cart}. Please check the Cart obj to ensure there is a value.`
+        })
+        return;
     }
 }
 
