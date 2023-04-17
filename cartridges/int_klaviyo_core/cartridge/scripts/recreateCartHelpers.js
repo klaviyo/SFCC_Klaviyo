@@ -45,27 +45,9 @@ function addProductToCart(decodedItems, cartObj) {
                     errorMessage: `ERROR - Please check the encoded obj for any unexpected chars or syntax issues. ${error.message}`
                 };
             }
-            // TODO: check product sets and adjust logic as needed to accomodate. 
-            if (productToAdd.object.isProductSet()) {
-                // var childPids = params.childPids.stringValue.split(','); // comma delimited list of product ids
-                // var childQtys = params.childQtys.stringValue.split(','); // product quantity list or each products.
-                // var counter = 0;
+            productOptionModel = productToAdd ? _updateOptions(productList[i], productToAdd.object) : null;
+            cart.addProductItem(productToAdd.object, productList[i].quantity, productOptionModel);
 
-                // for (var i = 0; i < childPids.length; i++) {
-                //     var childProduct = Product.get(childPids[i]);
-
-                //     if (childProduct.object && !childProduct.isProductSet()) {
-                //         var childProductOptionModel = childProduct.updateOptionSelection(params);
-                //         cart.addProductItem(childProduct.object, parseInt(childQtys[counter]), childProductOptionModel);
-                //     }
-                //     counter++;
-                // }
-            } else {
-                productOptionModel = productToAdd ? _updateOptions(productList[i], productToAdd.object) : null;
-                cart.addProductItem(productToAdd.object, productList[i].quantity, productOptionModel);
-            }
-
-            // When adding a new product to the cart, check to see if it has triggered a new bonus discount line item.
             newBonusDiscountLineItem = cart.getNewBonusDiscountLineItem(previousBonusDiscountLineItems);
         }
     }
