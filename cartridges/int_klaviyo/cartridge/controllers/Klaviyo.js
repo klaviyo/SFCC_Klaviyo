@@ -27,7 +27,9 @@ var Event = function () {
 
     if(dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_enabled')){
 
-        var exchangeID = klaviyoUtils.getKlaviyoExchangeID();
+        var kx = request.httpParameterMap.kx;
+        var exchangeID = (!kx.empty) ? kx.stringValue : klaviyoUtils.getKlaviyoExchangeID();
+
         var dataObj, serviceCallResult, action, parms;
 
         if (exchangeID) {
@@ -56,7 +58,9 @@ var Event = function () {
         } else { 
             // no klaviyo ID, check for SFCC profile and ID off that if extent
             var klid = klaviyoUtils.getProfileInfo();
-            app.getView({klid: klid}).render('klaviyo/klaviyoID');
+            if(klid) {
+                app.getView({klid: klid}).render('klaviyo/klaviyoID');
+            }
         }
 
     }
