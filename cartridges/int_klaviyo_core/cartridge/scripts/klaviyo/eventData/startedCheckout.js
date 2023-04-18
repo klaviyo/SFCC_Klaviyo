@@ -4,6 +4,7 @@ var ProductMgr = require('dw/catalog/ProductMgr');
 var URLUtils = require('dw/web/URLUtils');
 var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils');
 var KLImageSize = klaviyoUtils.KLImageSize;
+var StringUtils = require('dw/util/StringUtils');
 
 // prepares data for "Started Checkout" event
 function getData(currentBasket) {
@@ -12,6 +13,7 @@ function getData(currentBasket) {
 
     var data = {};
     var basketItems = currentBasket.getProductLineItems().toArray();
+    var reconstructCartItems = [];
     // Create some top-level event data
     //data.event = EVENT_NAMES['startedCheckout'];
     data['Basket Gross Price'] = currentBasket.getTotalGrossPrice().value;
@@ -22,11 +24,20 @@ function getData(currentBasket) {
     data.Categories = [];
     data.Items = [];
     data.$email = currentBasket.customerEmail;
+    data.cartRebuildingLink = URLUtils.abs('KlaviyoRecreate-Cart').toString() + `?items=${reconstructCartItems}`;
 
     for (var itemIndex = 0; itemIndex < basketItems.length; itemIndex++) {
         var lineItem = basketItems[itemIndex];
         var currentProductID = lineItem.productID;
         var basketProduct = ProductMgr.getProduct(currentProductID);
+        var quantity = lineItem.quantityValue;
+        var options = [];
+        if (lineItem && lineItem.optionProductLineItems) {
+            for (let i = 0; i < lineItem.optionProductLineItems.length; i++){
+                let currOption = lineItem.optionProductLineItems[i];
+                options.push({optionID: lineItem.optionProductLineItems[i].optionID, optionValueID: lineItem.optionProductLineItems[i].optionValueID, lineItemText: lineItem.optionProductLineItems[i].lineItemText})
+            }
+        }
 
         if (currentProductID != null && !empty(basketProduct) && basketProduct.getPriceModel().getPrice().value > 0) {
             var productObj = prepareProductObj( lineItem, basketProduct, currentProductID );
@@ -35,9 +46,12 @@ function getData(currentBasket) {
             data.line_items.push(productObj);
             data.Categories.push.apply(data.Categories, data.line_items[itemIndex].Categories);
             data.Items.push(data.line_items[itemIndex]['Product Name']);
+
+            reconstructCartItems.push({ productID: currentProductID, quantity, options });
         }
     }
 
+    data.cartRebuildingLink += StringUtils.encodeBase64(JSON.stringify(reconstructCartItems));
     return data;
 }
 
