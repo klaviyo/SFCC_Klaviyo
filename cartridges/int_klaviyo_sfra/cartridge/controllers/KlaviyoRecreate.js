@@ -72,7 +72,6 @@ server.get('Cart', function (req, res, next) {
     }
 
     try {
-        throw new Error();
         Transaction.wrap(function () {
             if (items && items.length) {
                 for (let i = 0; i < items.length; i++) {
