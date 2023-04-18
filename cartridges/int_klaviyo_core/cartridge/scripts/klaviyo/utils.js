@@ -62,6 +62,19 @@ function trackEvent(exchangeID, data, event) {
         return;
     }
 
+    var metricObj = {
+        "name": event
+    }
+    /* IMPORTANT:
+        If the klaviyo_sendEventsAsSFCC site preference has been set to Yes (true) events will show up in the Klaviyo Dashboard with SFCC as the event provider.
+        Generally speaking this should only be set to Yes if this is a brand new Klaviyo integration - if there is a previous integration with Klaviyo for
+        this site that did not label events with SFCC as provider there will be a break in reporting and functionality between past events that were not
+        labelled with SFCC as provider and the new events that are.  If in doubt, leave the site preference set to No and contact Klaviyo technical support.
+    */
+    if(Site.getCurrent().getCustomPreferenceValue('klaviyo_sendEventsAsSFCC')) {
+        metricObj.service = "demandware"
+    }
+
     var eventData = {
         "data": {
             "type": "event",
@@ -69,10 +82,7 @@ function trackEvent(exchangeID, data, event) {
                 "profile": {
                     "$exchange_id": exchangeID,
                 },
-                "metric": {
-                    "name": event,
-                    "service": "demandware" // TODO: update this to work off a site pref toggle
-                },
+                "metric": metricObj,
                 "properties" : data,
                 "time": (new Date()).toISOString()
                 // value: 9.99 // TODO - figure out when this can be set and what it should be set to ie, product price, cart total, order total, etc

@@ -1,5 +1,6 @@
 'use strict';
 
+var Logger = require('dw/system/Logger');
 var ProductMgr = require('dw/catalog/ProductMgr');
 var URLUtils = require('dw/web/URLUtils');
 var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils');
@@ -10,48 +11,54 @@ var StringUtils = require('dw/util/StringUtils');
 function getData(currentBasket) {
 
     // TODO: analyze line-by-line.  currently pulled straight from previous cartridge prepareCheckoutEventForKlaviyo function
+    var data;
+    try {
+        data = {};
 
-    var data = {};
-    var basketItems = currentBasket.getProductLineItems().toArray();
-    var reconstructCartItems = [];
-    // Create some top-level event data
-    //data.event = EVENT_NAMES['startedCheckout'];
-    data['Basket Gross Price'] = currentBasket.getTotalGrossPrice().value;
-    data['Item Count'] = basketItems.length;
+        var basketItems = currentBasket.getProductLineItems().toArray();
+        var reconstructCartItems = [];
+        // Create some top-level event data
+        //data.event = EVENT_NAMES['startedCheckout'];
+        data['Basket Gross Price'] = currentBasket.getTotalGrossPrice().value;
+        data['Item Count'] = basketItems.length;
 
-    // prepare to add top-level data while iterating through product line items
-    data.line_items = [];
-    data.Categories = [];
-    data.Items = [];
-    data.$email = currentBasket.customerEmail;
-    data.cartRebuildingLink = URLUtils.abs('KlaviyoRecreate-Cart').toString() + `?items=${reconstructCartItems}`;
+        // prepare to add top-level data while iterating through product line items
+        data.line_items = [];
+        data.Categories = [];
+        data.Items = [];
+        data.$email = currentBasket.customerEmail;
+        data.cartRebuildingLink = URLUtils.abs('KlaviyoRecreate-Cart').toString() + `?items=${reconstructCartItems}`;
 
-    for (var itemIndex = 0; itemIndex < basketItems.length; itemIndex++) {
-        var lineItem = basketItems[itemIndex];
-        var currentProductID = lineItem.productID;
-        var basketProduct = ProductMgr.getProduct(currentProductID);
-        var quantity = lineItem.quantityValue;
-        var options = [];
-        if (lineItem && lineItem.optionProductLineItems) {
-            for (let i = 0; i < lineItem.optionProductLineItems.length; i++){
-                let currOption = lineItem.optionProductLineItems[i];
-                options.push({optionID: lineItem.optionProductLineItems[i].optionID, optionValueID: lineItem.optionProductLineItems[i].optionValueID, lineItemText: lineItem.optionProductLineItems[i].lineItemText})
+        for (var itemIndex = 0; itemIndex < basketItems.length; itemIndex++) {
+            var lineItem = basketItems[itemIndex];
+            var currentProductID = lineItem.productID;
+            var basketProduct = ProductMgr.getProduct(currentProductID);
+            var quantity = lineItem.quantityValue;
+            var options = [];
+            if (lineItem && lineItem.optionProductLineItems) {
+                for (let i = 0; i < lineItem.optionProductLineItems.length; i++){
+                    let currOption = lineItem.optionProductLineItems[i];
+                    options.push({optionID: lineItem.optionProductLineItems[i].optionID, optionValueID: lineItem.optionProductLineItems[i].optionValueID, lineItemText: lineItem.optionProductLineItems[i].lineItemText})
+                }
+            }
+
+            if (currentProductID != null && !empty(basketProduct) && basketProduct.getPriceModel().getPrice().value > 0) {
+                var productObj = prepareProductObj( lineItem, basketProduct, currentProductID );
+
+                // add top-level data for the event for segmenting, etc.
+                data.line_items.push(productObj);
+                data.Categories.push.apply(data.Categories, data.line_items[itemIndex].Categories);
+                data.Items.push(data.line_items[itemIndex]['Product Name']);
+
+                reconstructCartItems.push({ productID: currentProductID, quantity: quantity, options: options });
             }
         }
 
-        if (currentProductID != null && !empty(basketProduct) && basketProduct.getPriceModel().getPrice().value > 0) {
-            var productObj = prepareProductObj( lineItem, basketProduct, currentProductID );
-
-            // add top-level data for the event for segmenting, etc.
-            data.line_items.push(productObj);
-            data.Categories.push.apply(data.Categories, data.line_items[itemIndex].Categories);
-            data.Items.push(data.line_items[itemIndex]['Product Name']);
-
-            reconstructCartItems.push({ productID: currentProductID, quantity: quantity, options: options });
-        }
+        data.cartRebuildingLink += StringUtils.encodeBase64(JSON.stringify(reconstructCartItems));
+    } catch(e) {
+        var logger = Logger.getLogger('Klaviyo', 'Klaviyo.core startedCheckout.js');
+        logger.error('startedCheckout.getData() failed to create data object: '+e.message+' '+ e.stack );
     }
-
-    data.cartRebuildingLink += StringUtils.encodeBase64(JSON.stringify(reconstructCartItems));
     return data;
 }
 
