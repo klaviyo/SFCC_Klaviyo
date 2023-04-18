@@ -71,7 +71,7 @@ function trackEvent(exchangeID, data, event) {
         this site that did not label events with SFCC as provider there will be a break in reporting and functionality between past events that were not
         labelled with SFCC as provider and the new events that are.  If in doubt, leave the site preference set to No and contact Klaviyo technical support.
     */
-    if(site.getCustomPreferenceValue('klaviyo_sendEventsAsSFCC')) {
+    if(Site.getCurrent().getCustomPreferenceValue('klaviyo_sendEventsAsSFCC')) {
         metricObj.service = "demandware"
     }
 
