@@ -8,6 +8,8 @@ var recreateHelpers = require('*/cartridge/scripts/recreateCartHelpers');
 var res = require("*/cartridge/scripts/util/Response");
 
 /* API Includes */
+var Logger = require('dw/system/Logger');
+const Resource = require('dw/web/Resource');
 var StringUtils = require('dw/util/StringUtils');
 var URLUtils = require('dw/web/URLUtils');
 
@@ -24,12 +26,14 @@ function cart() {
         var cart = app.getModel('Cart').goc();
         var items = request.httpParameterMap.items ? JSON.parse(StringUtils.decodeBase64(request.httpParameterMap.items)) : null;
     } catch (error) {
-        var test = error;
-        res.renderJSON({
-            success: false,
-            error: true,
-            errorMessage: `ERROR - ${error.message}. Please check encoded URL Object and the Cart Model reference.`
-        });
+        var logger = Logger.getLogger('Klaviyo', 'Klaviyo.SiteGen KlaviyoRecreate.js');
+        logger.error('KlaviyoRecreate-Cart failed. Please check the encoded obj for unexpected chars or syntax issues. ERROR: {0} {1}', error.message, error.stack);
+
+        var additionalErrorContext = Resource.msgf('rebuildcart.message.error.controller.sitegen', 'klaviyo_error', null, error.message);
+        app.getView({
+            message: Resource.msg('rebuildcart.message.error.general.sitegen', 'klaviyo_error', null),
+            errorMessage: Resource.msgf('rebuildcart.message.error.prompt.sitegen', 'klaviyo_error', null, additionalErrorContext),
+        }).render('klaviyo/klaviyoError')
         return;
     }
 
@@ -37,11 +41,10 @@ function cart() {
         var renderInfo = recreateHelpers.addProductToCart(items, cart)
 
         if (renderInfo.error) {
-            res.renderJSON({
-                success: renderInfo.success,
-                error: renderInfo.error,
-                errorMessage: renderInfo.errorMessage
-            })
+            app.getView({
+                message: Resource.msg('rebuildcart.message.error.general.sitegen', 'klaviyo_error', null),
+                errorMessage: Resource.msgf('rebuildcart.message.error.prompt.sitegen', 'klaviyo_error', null, renderInfo.errorMessage)
+            }).render('klaviyo/klaviyoError')
             return;
         }
 
@@ -62,11 +65,13 @@ function cart() {
     }
 
     if (!cart) {
-        res.renderJSON({
-            success: false,
-            error: true,
-            errorMessage: `The Cart is: ${cart}. Please check the Cart obj to ensure there is a value.`
-        })
+        var logger = Logger.getLogger('Klaviyo', 'Klaviyo.core KlaviyoRecreate.js');
+        logger.error(`KlaviyoRecreate-Cart controller failed to create a cart Obj. The currentBasket is ${cart}.`);
+
+        app.getView({
+            message: Resource.msg('rebuildcart.message.error.general.sitegen', 'klaviyo_error', null),
+            errorMessage: Resource.msgf('rebuildcart.message.error.prompt.sitegen', 'klaviyo_error', null, `The Cart is: ${cart} - refer to logs.`)
+        }).render('klaviyo/klaviyoError')
         return;
     }
 }
