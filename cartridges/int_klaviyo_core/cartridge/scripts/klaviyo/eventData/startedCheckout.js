@@ -47,7 +47,7 @@ function getData(currentBasket) {
             data.Categories.push.apply(data.Categories, data.line_items[itemIndex].Categories);
             data.Items.push(data.line_items[itemIndex]['Product Name']);
 
-            reconstructCartItems.push({ productID: currentProductID, quantity: quantity, options: options }); // TODO: ??? DOUBLE CHECK THIS STILL WORKS WITH THESE PROPERTY NAMES ?????
+            reconstructCartItems.push({ productID: currentProductID, quantity: quantity, options: options });
         }
     }
 
