@@ -46,6 +46,15 @@
                 <externally-managed-flag>false</externally-managed-flag>
             </attribute-definition>
 
+            <attribute-definition attribute-id="klaviyo_sendEventsAsSFCC">
+                <display-name xml:lang="x-default">Label Events as SFCC</display-name>
+                <description xml:lang="x-default">Generally if this is a brand new integration with Klaviyo, set this to Yes. If this is an upgrade to a previous Klaviyo integration, set it to No.</description>
+                <type>boolean</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <default-value>false</default-value>
+            </attribute-definition>
+
         </custom-attribute-definitions>
         <group-definitions>
             <attribute-group group-id="klaviyo">
@@ -53,6 +62,7 @@
                 <attribute attribute-id="klaviyo_enabled"/>
                 <attribute attribute-id="klaviyo_api_key"/>
                 <attribute attribute-id="klaviyo_account"/>
+                <attribute attribute-id="klaviyo_sendEventsAsSFCC"/>
                 <attribute attribute-id="klaviyo_image_size"/>
                 <attribute attribute-id="klaviyo_email_selectors"/>
             </attribute-group>
