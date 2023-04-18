@@ -18,6 +18,7 @@
         </iscomment>
         <isset name="klAction" value="false" scope="page" />
         <isset name="klParms" value="false" scope="page" />
+        <isset name="klKx" value="${request.httpParameterMap._kx}" scope="page" />
         <isif condition="${pageContext.type == 'product'}">
             <isset name="klAction" value="${klaviyoUtils.EVENT_NAMES.viewedProduct}" scope="page" />
             <isset name="klParms" value="${pdict.Product.ID}" scope="page" />
@@ -30,7 +31,7 @@
                 <isset name="klParms" value="${request.httpParameterMap.q.stringValue + '|' + pdict.ProductSearchResult.count}" scope="page" />
             </isif>
         </isif>
-        <isinclude url="${URLUtils.url('Klaviyo-Event', 'action', klAction, 'parms', klParms)}" />
+        <isinclude url="${URLUtils.url('Klaviyo-Event', 'action', klAction, 'parms', klParms, 'kx', klKx)}" />
     </isif>
     <isif condition="${pdict.klid}">
         <isinclude template="klaviyo/klaviyoID" />
