@@ -18,6 +18,8 @@ var PromotionMgr = require('dw/campaign/PromotionMgr');
 var StringUtils = require('dw/util/StringUtils');
 var Transaction = require('dw/system/Transaction');
 var URLUtils = require('dw/web/URLUtils');
+var Logger = require('dw/system/Logger');
+var Resource = require('dw/web/Resource');
 
 
 /**
@@ -35,21 +37,20 @@ server.get('Cart', function (req, res, next) {
         var items = req.querystring.items ? JSON.parse(StringUtils.decodeBase64(req.querystring.items)) : null;
     } catch (error) {
         res.setStatusCode(500);
-        res.json({
+        var logger = Logger.getLogger('Klaviyo', 'Klaviyo.core KlaviyoRecreate.js');
+        logger.error('KlaviyoRecreate-Cart failed. Please check the encoded obj for unexpected chars or syntax issues. ERROR: {0} {1}', error.message, error.stack)
+
+        res.render('error', {
             error: true,
-            errorMessage: `ERROR - ${error.message}. Please check the encoded obj for any unexpected chars or syntax issues.`,
+            message: Resource.msgf('rebuildcart.message.error.general', 'klaviyo_error', null, error.message, 'Check the encoded obj for unexpected chars or syntax issues.')
         });
         return next();
     }
 
     if (!currentBasket) {
         res.setStatusCode(500);
-        res.json({
-            error: true,
-            errorMessage: `ERROR - Current Basket is: ${currentBasket}. Please check the Current Basket and try again.`,
-            redirectUrl: URLUtils.url('Cart-Show').toString()
-        });
-        return next();
+        var logger = Logger.getLogger('Klaviyo', 'Klaviyo.core KlaviyoRecreate.js');
+        logger.error(`KlaviyoRecreate-Cart controller failed to create a cart Obj. The currentBasket is ${currentBasket}.`);
     };
 
     // Clean the basket to prevent product duplication on page refresh
@@ -70,26 +71,38 @@ server.get('Cart', function (req, res, next) {
         }
     }
 
-    Transaction.wrap(function () {
-        if (items && items.length) {
-            for (let i = 0; i < items.length; i++) {
-                var productToAdd = ProductMgr.getProduct(items[i].productID);
-                var childProducts = productToAdd.bundledProducts ? collections.map(productToAdd.bundledProducts, function (product) { return { pid: product.ID, quantity: null } }) : [];
-                var options = [];
-                items[i].options.forEach(optionObj => {
-                    options.push({ lineItemText: optionObj.lineItemText, optionId: optionObj.optionID, selectedValueId: optionObj.optionValueID});
-                })
+    try {
+        Transaction.wrap(function () {
+            if (items && items.length) {
+                for (let i = 0; i < items.length; i++) {
+                    var productToAdd = ProductMgr.getProduct(items[i].productID);
+                    var childProducts = productToAdd.bundledProducts ? collections.map(productToAdd.bundledProducts, function (product) { return { pid: product.ID, quantity: null } }) : [];
+                    var options = [];
+                    items[i].options.forEach(optionObj => {
+                        options.push({ lineItemText: optionObj.lineItemText, optionId: optionObj.optionID, selectedValueId: optionObj.optionValueID});
+                    })
 
-                var shipments = Array.from(currentBasket.shipments);
-                shippingHelper.ensureShipmentHasMethod(shipments[0]);
-                cartHelpers.addProductToCart(currentBasket, items[i].productID, items[i].quantity, childProducts, options);
+                    var shipments = Array.from(currentBasket.shipments);
+                    shippingHelper.ensureShipmentHasMethod(shipments[0]);
+                    cartHelpers.addProductToCart(currentBasket, items[i].productID, items[i].quantity, childProducts, options);
+                }
+                COHelpers.recalculateBasket(currentBasket);
             }
-            COHelpers.recalculateBasket(currentBasket);
-        }
 
-        var basketModel = new CartModel(currentBasket);
-        res.render('cart/cart', basketModel);
-    })
+            var basketModel = new CartModel(currentBasket);
+            res.render('cart/cart', basketModel);
+        })
+    } catch (error) {
+        var testError = error;
+        res.setStatusCode(500);
+        var logger = Logger.getLogger('Klaviyo', 'Klaviyo.core KlaviyoRecreate.js');
+        logger.error('Transaction failed in KlaviyoRecreate-Cart controller. ERROR: {0} {1}', error.message, error.stack)
+
+        res.render('error', {
+            error: true,
+            message: Resource.msgf('rebuildcart.message.error.transaction', 'klaviyo_error', null, error.message)
+        });
+    }
     next();
 });
 

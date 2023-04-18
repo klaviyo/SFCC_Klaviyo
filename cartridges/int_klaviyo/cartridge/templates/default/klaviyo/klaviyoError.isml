@@ -1,0 +1,25 @@
+
+<iscontent type="text/html" charset="UTF-8" compact="true"/>
+<isset name="DecoratorTemplate" value="error/pt_error" scope="page"/>
+<iscomment> <isif condition="${!empty(pdict.nodecorator) && pdict.nodecorator == true}">
+    <isset name="DecoratorTemplate" value="util/pt_empty" scope="page"/>
+</isif> </iscomment>
+
+<isdecorate template="${DecoratorTemplate}">
+
+    <isinclude template="util/modules"/>
+    <h1>${Resource.msg('generalerror.erroroccured','error',null)}</h1>
+    <isslot id="error-banner" description="Banner for error pages" context="global"/>
+
+    <div class="error-page-message error-message">
+        <h2>${pdict.message}</h2>
+        <p>${pdict.errorMessage}</p>
+    </div>
+
+    <div class="error-page-footer">
+        <div class="error-page-footer-asset">
+            <iscontentasset aid="error-service"/>
+        </div>
+    </div>
+
+</isdecorate>
