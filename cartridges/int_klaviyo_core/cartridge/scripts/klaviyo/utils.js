@@ -55,10 +55,10 @@ function trackEvent(exchangeID, data, event) {
     var requestBody = {};
     var resultObj = {};
 
-    var logger = Logger.getLogger('Klaviyo', 'Core klaviyoUtils - trackEvent()');
+    var logger = Logger.getLogger('Klaviyo', 'Klaviyo.core utils.js - trackEvent()');
 
     if (klaviyoServices.KlaviyoEventService == null || empty(exchangeID)) {
-        logger.error('trackEvent() failed for exchange_id: ' + exchangeID + '.');
+        logger.error('trackEvent() failed - KlaviyoEventService or exchange_id is null.  exchange_id: ' + exchangeID + '.');
         return;
     }
 
@@ -83,17 +83,18 @@ function trackEvent(exchangeID, data, event) {
     var result = klaviyoServices.KlaviyoEventService.call(eventData);
 
     if (result == null) {
-        logger.error('Result for ' + event + ' track event via Klaviyo returned null.');
+        logger.error('klaviyoServices.KlaviyoEventService call for ' + event + ' returned null result');
         return;
     }
 
     resultObj = JSON.parse(result.object);
 
-    if (result.ok) {
-        logger.info(event + ' track event via Klaviyo is successful.');
-    } else {
-        logger.error( event + ' track event via Klaviyo failed. '+result.errorMessage);
-    }
+    // TODO: remove - results of service calls handled via service framework logging (services.js KlaviyoEventService)
+    // if (result.ok) {
+    //     logger.info(event + ' track event via Klaviyo is successful.');
+    // } else {
+    //     logger.error( event + ' track event via Klaviyo failed. '+result.errorMessage);
+    // }
 
     return resultObj;
 

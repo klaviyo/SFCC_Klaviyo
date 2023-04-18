@@ -46,12 +46,27 @@ var KlaviyoEventService = ServiceRegistry.createService('KlaviyoEventService', {
         return client.text;
     },
 
-    getRequestLogMessage: function () {
-        var reqLogMsg = 'sending klaviyo track payload';
-        return reqLogMsg;
+    getRequestLogMessage: function (request) {
+        return request;
     },
 
-    getResponseLogMessage: function () {}
+    getResponseLogMessage: function (response) {
+        try {
+            var r = {
+                statusCode: response.statusCode,
+                statusMessage: response.statusMessage,
+                errorText: response.errorText,
+                text: response.text
+            };
+            return JSON.stringify(r);
+        } catch(e) {
+            var err = 'failure to generate full response log object in KlaviyoEventService.getResponseLogMessage()';
+            if(response && response.statusCode) {
+                err += ', statusCode: ' + response.statusCode;
+            }
+            return err;
+        }
+    }
 });
 
 module.exports = {
