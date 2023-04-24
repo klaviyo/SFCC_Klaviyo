@@ -7,6 +7,7 @@ var shippingHelper = require('*/cartridge/scripts/checkout/shippingHelpers');
 var COHelpers = require('*/cartridge/scripts/checkout/checkoutHelpers');
 var collections = require('*/cartridge/scripts/util/collections');
 var cartHelpers = require('*/cartridge/scripts/cart/cartHelpers');
+var recreateCartHelpers = require('*/cartridge/scripts/recreateCartHelpers');
 
 /* Models */
 var CartModel = require('*/cartridge/models/cart');
@@ -55,20 +56,7 @@ server.get('Cart', function (req, res, next) {
 
     // Clean the basket to prevent product duplication on page refresh
     if (currentBasket && currentBasket.productQuantityTotal > 0) {
-        for (let i = 0; i < currentBasket.productLineItems.length; i++) {
-            let lengthAtIteration = currentBasket.productLineItems.length;
-            var shipmentToRemove = currentBasket.productLineItems[i].shipment;
-            currentBasket.removeProductLineItem(currentBasket.productLineItems[i]);
-            currentBasket.updateTotals();
-            if (currentBasket.productLineItems.length < lengthAtIteration) {
-                i--;
-            }
-
-            if (shipmentToRemove.productLineItems.length && !shipmentToRemove.default) {
-                currentBasket.removeShipment(shipmentToRemove);
-            }
-            PromotionMgr.applyDiscounts(currentBasket);
-        }
+        recreateCartHelpers.clearCart(currentBasket);
     }
 
     try {
@@ -82,8 +70,8 @@ server.get('Cart', function (req, res, next) {
                         options.push({ lineItemText: optionObj.lineItemText, optionId: optionObj.optionID, selectedValueId: optionObj.optionValueID});
                     })
 
-                    var shipments = Array.from(currentBasket.shipments);
-                    shippingHelper.ensureShipmentHasMethod(shipments[0]);
+                    var shipments = Array.from(currentBasket.shipments); // if during clear cart you remove any other shipments...you can call default shipment here to make sure the default is applied.
+                    shippingHelper.ensureShipmentHasMethod(shipments[0]); // if going to convert to an array...you'll want to check ALL the items.
                     cartHelpers.addProductToCart(currentBasket, items[i].productID, items[i].quantity, childProducts, options);
                 }
                 COHelpers.recalculateBasket(currentBasket);

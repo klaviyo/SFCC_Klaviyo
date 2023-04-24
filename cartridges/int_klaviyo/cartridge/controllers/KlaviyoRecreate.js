@@ -4,7 +4,7 @@
 var app = require('*/cartridge/scripts/app');
 var guard = require('*/cartridge/scripts/guard');
 var cartModel = require('*/cartridge/scripts/models/CartModel');
-var recreateHelpers = require('*/cartridge/scripts/recreateCartHelpers');
+var klaviyoCart = require('*/cartridge/scripts/klaviyoATC')
 var res = require("*/cartridge/scripts/util/Response");
 
 /* API Includes */
@@ -37,14 +37,14 @@ function cart() {
         return;
     }
 
-    if (cart && items.length) {
-        var renderInfo = recreateHelpers.addProductToCart(items, cart)
+    if (cart && items && items.length) {
+        var renderInfo = klaviyoCart.addProductToCart(items, cart);
 
         if (renderInfo.error) {
             app.getView({
                 message: Resource.msg('rebuildcart.message.error.general.sitegen', 'klaviyo_error', null),
                 errorMessage: Resource.msgf('rebuildcart.message.error.prompt.sitegen', 'klaviyo_error', null, renderInfo.errorMessage)
-            }).render('klaviyo/klaviyoError')
+            }).render('klaviyo/klaviyoError');
             return;
         }
 
@@ -71,7 +71,7 @@ function cart() {
         app.getView({
             message: Resource.msg('rebuildcart.message.error.general.sitegen', 'klaviyo_error', null),
             errorMessage: Resource.msgf('rebuildcart.message.error.prompt.sitegen', 'klaviyo_error', null, `The Cart is: ${cart} - refer to logs.`)
-        }).render('klaviyo/klaviyoError')
+        }).render('klaviyo/klaviyoError');
         return;
     }
 }

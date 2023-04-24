@@ -1,64 +1,25 @@
 'use strict';
 
-/* Script Modules */
-var app = require('*/cartridge/scripts/app');
-
 /* API Includes */
-var Logger = require('dw/system/Logger');
+var PromotionMgr = require('dw/campaign/PromotionMgr');
 
 
-function addProductToCart(decodedItems, cartObj) {
-    try {
-        var productList = decodedItems.length ? decodedItems : null;
-        var cart = cartObj;
-
-        if (cart.object.allProductLineItems) {
-            for (let i = 0; i < cart.object.allProductLineItems.length; i++) {
-                let currItem = cart.object.allProductLineItems[i];
-                cart.removeProductLineItem(cart.object.allProductLineItems[i]);
-            }
-        }
-
-        var params = request.httpParameterMap;
-        var format = params.hasOwnProperty('format') && params.format.stringValue ? params.format.stringValue.toLowerCase() : '';
-        var newBonusDiscountLineItem;
-        var Product = app.getModel('Product');
-        var productOptionModel;
-        var productToAdd;
-        var template = 'checkout/cart/minicart';
-
-        if (params.source && params.source.stringValue === 'wishlist' && params.cartAction && params.cartAction.stringValue === 'update') {
-            app.getController('Wishlist').ReplaceProductListItem();
-            return;
-        } else {
-            var previousBonusDiscountLineItems = cart.getBonusDiscountLineItems();
-            for (let i = 0; i < productList.length; i++) {
-                productToAdd = Product.get(productList[i].productID);
-                productOptionModel = productToAdd ? _updateOptions(productList[i], productToAdd.object) : null;
-                cart.addProductItem(productToAdd.object, productList[i].quantity, productOptionModel);
-                newBonusDiscountLineItem = cart.getNewBonusDiscountLineItem(previousBonusDiscountLineItems);
-            }
-        }
-
-        return {
-            format: format,
-            template: template,
-            BonusDiscountLineItem: newBonusDiscountLineItem
-        };
-    } catch (error) {
-        var logger = Logger.getLogger('Klaviyo', 'Klaviyo.SiteGen recreateCartHelpers.js');
-        logger.error('addProductToCart() failed. ERROR at: {0} {1}', error.message, error.stack)
-
-        return {
-            success: false,
-            error: true,
-            errorMessage: `ERROR - Please check the encoded obj for any unexpected chars or syntax issues. ${error.message}`,
-        };
+// The clearCart function is necessary iterate through all items in the cart to clear it and ensure a clean slate
+// (Note: ensures consistency with price, product items and shipping when refreshing the page or loading the page for the first time)
+function clearCart(cartObj) {
+    for (let i = cartObj.allProductLineItems.length - 1; i >= 0; i--) {
+        let currItem = cartObj.allProductLineItems[i];
+        cartObj.removeProductLineItem(cartObj.allProductLineItems[i]);
     }
-};
+
+    cartObj.updateTotals();
+    PromotionMgr.applyDiscounts(cartObj);
+}
 
 
-function _updateOptions(params, product) {
+// This func is necessary to update Update Product Options so they're properly accounted for when adding items to the cart.
+// (Ex: 'Extended Warranty: 3 Year Warranty' - product warranties, etc.)
+function updateOptions(params, product) {
     var optionModel = product.getOptionModel();
 
     for (var i = 0; i < params.options.length; i++) {
@@ -76,6 +37,7 @@ function _updateOptions(params, product) {
             }
         }
     }
+
     return optionModel;
 }
 
@@ -83,5 +45,6 @@ function _updateOptions(params, product) {
  * Module exports
  */
 module.exports = {
-    addProductToCart : addProductToCart,
+    clearCart: clearCart,
+    updateOptions: updateOptions
 }

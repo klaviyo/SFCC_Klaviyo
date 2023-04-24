@@ -17,8 +17,6 @@ function getData(currentBasket) {
 
         var basketItems = currentBasket.getProductLineItems().toArray();
         var reconstructCartItems = [];
-        // Create some top-level event data
-        //data.event = EVENT_NAMES['startedCheckout'];
         data['Basket Gross Price'] = currentBasket.getTotalGrossPrice().value;
         data['Item Count'] = basketItems.length;
 
