@@ -70,8 +70,9 @@ server.get('Cart', function (req, res, next) {
                         options.push({ lineItemText: optionObj.lineItemText, optionId: optionObj.optionID, selectedValueId: optionObj.optionValueID});
                     })
 
-                    var shipments = Array.from(currentBasket.shipments); // if during clear cart you remove any other shipments...you can call default shipment here to make sure the default is applied.
-                    shippingHelper.ensureShipmentHasMethod(shipments[0]); // if going to convert to an array...you'll want to check ALL the items.
+                    for (let key in currentBasket.shipments) {
+                        shippingHelper.ensureShipmentHasMethod(currentBasket.shipments[key]);
+                    }
                     cartHelpers.addProductToCart(currentBasket, items[i].productID, items[i].quantity, childProducts, options);
                 }
                 COHelpers.recalculateBasket(currentBasket);
