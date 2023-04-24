@@ -28,6 +28,7 @@
         <isset name="klAction" value="false" scope="page" />
         <isset name="klParms" value="false" scope="page" />
         <isset name="klKx" value="${request.httpParameterMap._kx}" scope="page" />
+        <isset name="klDebug" value="${request.httpParameterMap.kldebug}" scope="page" />
         <isif condition="${pdict.action == 'Product-Show'}">
             <isset name="klAction" value="${klaviyoUtils.EVENT_NAMES.viewedProduct}" scope="page" />
             <isset name="klParms" value="${request.httpParameterMap.pid.stringValue}" scope="page" />
@@ -40,11 +41,14 @@
                 <isset name="klParms" value="${request.httpParameterMap.q.stringValue + '|' + pdict.productSearch.count}" scope="page" />
             </isif>
         </isif>
-        <isinclude url="${URLUtils.url('Klaviyo-Event', 'action', klAction, 'parms', klParms, 'kx', klKx)}" />
+        <isinclude url="${URLUtils.url('Klaviyo-Event', 'action', klAction, 'parms', klParms, 'kx', klKx, 'kldebug', klDebug)}" />
     </isif>
     <isif condition="${pdict.klid}">
         <isinclude template="klaviyo/klaviyoID" />
     </isif>
+    <isif condition="${pdict.klDebugData}">
+        <isinclude template="klaviyo/klaviyoDebug" />
+   </isif>
     <isif condition="${dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_email_selectors') && !empty(dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_email_selectors'))}">
         <isinclude template="klaviyo/klaviyoListeners" />
     </isif>

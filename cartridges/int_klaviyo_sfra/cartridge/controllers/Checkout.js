@@ -14,12 +14,18 @@ server.append('Begin', function (req, res, next) {
 
         var exchangeID = klaviyoUtils.getKlaviyoExchangeID();
         var dataObj, serviceCallResult, currentBasket;
+        var isKlDebugOn = request.httpParameterMap.kldebug.booleanValue; // needs to be in the Checkout & Add TO Cart as well...(AND ORDER CONFIRMATION...)
 
         if (exchangeID) {
             currentBasket = basketMgr.getCurrentBasket()
 
             if (currentBasket && currentBasket.getProductLineItems().toArray().length) { //TODO: is there a property for isEmpty on basket object?
                 dataObj = startedCheckoutData.getData(currentBasket);
+
+                if (isKlDebugOn) {
+                    res.viewData.klDebugData = klaviyoUtils.prepareDebugData(dataObj);
+                }
+
                 serviceCallResult = klaviyoUtils.trackEvent(exchangeID, dataObj, klaviyoUtils.EVENT_NAMES.startedCheckout);
                 // TODO: need to do anything here with the service call result, or handle all errs etc within trackEvent? otherwise no need to assign to a var / return a value
             }

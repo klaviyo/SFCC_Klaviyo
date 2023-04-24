@@ -6,6 +6,8 @@ var viewedProductData = require('*/cartridge/scripts/klaviyo/eventData/viewedPro
 var viewedCategoryData = require('*/cartridge/scripts/klaviyo/eventData/viewedCategory');
 var searchedSiteData = require('*/cartridge/scripts/klaviyo/eventData/searchedSite');
 
+var StringUtils = require('dw/util/StringUtils');
+
 /***
  *
  * NOTE: the Klaviyo-Event route exists to support event tracking on pages whose OOTB SFCC controllers are cached by default
@@ -25,7 +27,7 @@ server.get('Event', function (req, res, next) {
 
         var dataObj, serviceCallResult, action, parms;
         var kx = request.httpParameterMap.kx;
-
+        var isKlDebugOn = request.httpParameterMap.kldebug.booleanValue; // TODO: Remove this comment. Be sure this variable is also added into the Checkout & Add TO cart as well Order Confirmation, etc.
         var exchangeID = (!kx.empty) ? kx.stringValue : klaviyoUtils.getKlaviyoExchangeID();
 
         if (exchangeID) { // we have a klaviyo ID, proceed to track events
@@ -48,10 +50,30 @@ server.get('Event', function (req, res, next) {
                         dataObj = searchedSiteData.getData(parms[0], parms[1]); // parms: search phrase, result count
                         break;
                 }
+                // TODO: clean up the following debugging / comments for notes.
+                // this is where we call the util function to check if klDebug=true
+                // if isKlDebugOn === true...then do this...
+                    // can do res.viewData.klDebugData = prepareDebugData(dataObj)
+                        // the prepareDebugData utility function will JSON.stringify  the data obj...then base 64Encode that stringified object.
+                        // JSON.stringify(getDataObj)
+                if (isKlDebugOn) {
+                    res.viewData.klDebugData = klaviyoUtils.prepareDebugData(dataObj);
+                    res.render('klaviyo/klaviyoDebug') // TODO: Delete this comment!! THIS WILL NOT OCCUR in Checkout or AddProduct or Confirmation...Because we don't need this template in these cases (is rendered through klaviyoFooter through those paths).
+                    next()
+                    return;
+                }
+
+
                 serviceCallResult = klaviyoUtils.trackEvent(exchangeID, dataObj, action);
-                // TODO: need to do anything here with the service call result, or handle all errs etc within trackEvent? otherwise no need to assign to a var / return a value    
+                // TODO: need to do anything here with the service call result, or handle all errs etc within trackEvent? otherwise no need to assign to a var / return a value
+
+                // TODO: remove debugging comments & notes in following lines.
+                // take service call result...run it through prepareDebugData(serviceCallResult)
+                    // that'll base64 encode...
+                    // res.viewData.klServiceDebugData...that'll make it available to the template layer...
+                // res.viewData.serviceCallResult = klaviyoUtils.prepareDebugData(serviceCallResult)
             }
-        } else { 
+        } else {
             // no klaviyo ID, check for SFCC profile and ID off that if extant
             res.viewData.klid = klaviyoUtils.getProfileInfo();
         }

@@ -49,6 +49,15 @@ function getProfileInfo() {
     return false;
 }
 
+// TODO: finalize this utility function to prepare the debug data that will be displayed on the page.
+// prepares the data object from various events by encoding and returning the data to be used in Klaviyo's Debugger Mode.
+function prepareDebugData(obj) {
+    var stringObj = JSON.stringify(obj)
+    var encodedTest = StringUtils.encodeBase64(stringObj);
+
+    return encodedTest; // TODO: consider how this should be adjusted / altered before returning (ex: if any special properties should be included or removed,  etc. ????).
+}
+
 
 function trackEvent(exchangeID, data, event) {
 
@@ -106,10 +115,11 @@ function trackEvent(exchangeID, data, event) {
     //     logger.error( event + ' track event via Klaviyo failed. '+result.errorMessage);
     // }
 
+    // TODO: look at what the result option is and check what it is if you feed it bad values (intentionally make it fail...then adjust as needed????)
+
     return resultObj;
 
 }
-
 
 
 
@@ -120,5 +130,6 @@ module.exports = {
     KLImageSize : KLImageSize,
     getKlaviyoExchangeID : getKlaviyoExchangeID,
     getProfileInfo : getProfileInfo,
+    prepareDebugData : prepareDebugData,
     trackEvent : trackEvent
 }
