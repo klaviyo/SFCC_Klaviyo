@@ -64,6 +64,9 @@ server.get('Cart', function (req, res, next) {
             if (items && items.length) {
                 for (let i = 0; i < items.length; i++) {
                     var productToAdd = ProductMgr.getProduct(items[i].productID);
+                    if (!productToAdd) {
+                        throw new Error('Product with ID [' + productID + '] not found');
+                    }
                     var childProducts = productToAdd.bundledProducts ? collections.map(productToAdd.bundledProducts, function (product) { return { pid: product.ID, quantity: null } }) : [];
                     var options = [];
                     items[i].options.forEach(optionObj => {
