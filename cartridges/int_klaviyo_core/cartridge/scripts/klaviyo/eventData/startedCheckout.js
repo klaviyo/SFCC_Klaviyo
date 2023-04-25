@@ -31,6 +31,9 @@ function getData(currentBasket) {
             var lineItem = basketItems[itemIndex];
             var currentProductID = lineItem.productID;
             var basketProduct = ProductMgr.getProduct(currentProductID);
+            if (!basketProduct) {
+                throw new Error('Product with ID [' + productID + '] not found');
+            }
             var quantity = lineItem.quantityValue;
             var options = [];
             if (lineItem && lineItem.optionProductLineItems) {

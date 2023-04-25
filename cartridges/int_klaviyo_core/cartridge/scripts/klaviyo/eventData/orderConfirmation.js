@@ -80,6 +80,9 @@ function getData(order) {
                 // Get the product secondary nam
                 var lineItemProduct = productLineItem.product;
                 var productDetail = ProductMgr.getProduct(lineItemProduct.ID);
+                if (!productDetail) {
+                    throw new Error('Product with ID [' + productID + '] not found');
+                }
 
                 if (!productLineItem.bonusProductLineItem) {
                     priceString = dw.util.StringUtils.formatMoney( dw.value.Money( productLineItem.price.value, session.getCurrency().getCurrencyCode() ) );
@@ -162,6 +165,9 @@ function getData(order) {
                 data.GIFT_ITEM_PRESENT = true;
                 var giftCardId = dw.system.Site.getCurrent().getCustomPreferenceValue('EgiftProduct-ID');
                 var giftCardProductDetail = ProductMgr.getProduct(giftCardId);
+                if (!giftCardProductDetail) {
+                    throw new Error('Product with ID [' + productID + '] not found');
+                }
                 var giftCardImage = '';
                 if (!empty(giftCardProductDetail)) {
                     giftCardImage = KLImageSize ? giftCardProductDetail.getImage(KLImageSize).getAbsURL().toString() : null;
