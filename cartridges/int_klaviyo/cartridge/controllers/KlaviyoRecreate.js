@@ -4,7 +4,7 @@
 var app = require('*/cartridge/scripts/app');
 var guard = require('*/cartridge/scripts/guard');
 var cartModel = require('*/cartridge/scripts/models/CartModel');
-var klaviyoCart = require('*/cartridge/scripts/klaviyoATC')
+var klaviyoCart = require('*/cartridge/scripts/klaviyoATC');
 var res = require("*/cartridge/scripts/util/Response");
 
 /* API Includes */
