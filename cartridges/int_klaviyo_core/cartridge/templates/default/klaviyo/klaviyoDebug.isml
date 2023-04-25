@@ -3,6 +3,18 @@
     <script>
     var debugData = JSON.parse(atob('${pdict.klDebugData}'));
     console.log('debugData: ', debugData);
+    var serviceCallData = '${pdict.serviceCallData}';
+    console.log('serviceCallData (encoded): ', serviceCallData);
+
+    window.addEventListener("load", (event) => {
+        $('body').on('product:afterAddToCart', function(evt, data, c){
+            // console.log('evt', evt);
+            // console.log('data', data);
+            // console.log('c', c);
+            var addToCartDebugData = JSON.parse(atob(data.klDebugData));
+            console.log('addToCartDebugData: ', addToCartDebugData);
+        });
+    });
     </script>
     <isset name="klDebugDataDecoded" value="${JSON.parse(StringUtils.decodeBase64(pdict.klDebugData))}" scope="page" />
     ACTION IN THIS CONTEXT >>>> ${pdict.action} <br><br>
