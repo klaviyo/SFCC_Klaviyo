@@ -2,24 +2,7 @@
 <isif condition="${pdict.klDebugData}">
     <script>
     var debugData = JSON.parse(atob('${pdict.klDebugData}'));
-    console.log(debugData);
-
-    // TODO: remove anything not needed...the below was brought over from klaviyoID.isml tempalte.
-    // function getKlaviyoExchangeID() {
-    //     var klaviyoCookie = document.cookie.split('; ').filter(function(c) {return /__kla_id=/.test(c)});
-    //     return JSON.parse(atob(klaviyoCookie[0].split("__kla_id=")[1])).$exchange_id;
-    // }
-
-    // window.addEventListener('DOMContentLoaded', (event) => {
-    //     klaviyo.isIdentified().then((result) => {
-    //         if(!result) {
-    //             klaviyo.identify(klid, (result) => {
-    //                 // TODO: debugging only, remove
-    //                 console.log('exchange_id', getKlaviyoExchangeID());
-    //             });
-    //         }
-    //     });
-    // });
+    console.log('debugData: ', debugData);
     </script>
     <isset name="klDebugDataDecoded" value="${JSON.parse(StringUtils.decodeBase64(pdict.klDebugData))}" scope="page" />
     ACTION IN THIS CONTEXT >>>> ${pdict.action} <br><br>
@@ -31,9 +14,14 @@
         </span>
 
         <isif condition="${pdict.action === "Checkout-Begin"}">
+            <h4>Cart Overview:</h4>
             <p><strong>Basket Gross Price:</strong> ${klDebugDataDecoded["Basket Gross Price"]}</p>
-            <div>
-                <isloop items="${klDebugDataDecoded.line_items}" var="lineItem">
+            <p><strong>Rebuild Cart Link:</strong> ${klDebugDataDecoded["cartRebuildingLink"]}</p>
+            <p><strong>Cart Categories:</strong>&nbsp<isloop items="${klDebugDataDecoded["Categories"]}" var="cartCat" status="loopState">${cartCat}${loopState.last ? '' : ', '}</isloop></p>
+            <p><strong>Cart Item Count:</strong> ${klDebugDataDecoded["Item Count"]}</p>
+            <h4>Cart Items:</h4>
+            <isloop items="${klDebugDataDecoded.line_items}" var="lineItem">
+                <div class="line-dotted line-item-total-text">
                     <p><strong>Product ID:</strong> ${lineItem["Product ID"]}</p>
                     <p><strong>Product Name:</strong> ${lineItem["Product Name"]}</p>
                     <p><strong>Product Image URL:</strong> ${lineItem["Product Image URL"]}</p>
@@ -41,10 +29,11 @@
                     <p><strong>Product Description:</strong> ${lineItem["Product Description"]}</p>
                     <p><strong>Product Page URL:</strong> ${lineItem["Product Page URL"]}</p>
                     <p><strong>Categories:</strong>&nbsp<isloop items="${lineItem["Categories"]}" var="category">${category}</isloop></p>
-                </isloop>
-            </div>
-            <p><strong>Rebuild Cart Link:</strong> ${klDebugDataDecoded["cartRebuildingLink"]}</p>
+                </div>
+            </isloop>
 
+        <iselseif condition="${false}" />
+            <h1>VISIBLE HERE IN ELSE IF</h1>
         <iselse/>
             <isif condition="${klDebugDataDecoded["Product ID"]}">
                 <p><strong>Product ID:</strong> ${klDebugDataDecoded["Product ID"]}</p>
@@ -61,7 +50,7 @@
             <isif condition="${klDebugDataDecoded["Viewed Category"]}">
                 <p><strong>Viewed Category:</strong> ${klDebugDataDecoded["Viewed Category"]}</p>
             </isif>
-            <isif condition="${klDebugDataDecoded["Product UPC"]}">
+            <isif condition="${klDebugDataDecoded["Product UPC"] || !empty(klDebugDataDecoded["Product UPC"])}">
                 <p><strong>Product UPC:</strong> ${klDebugDataDecoded["Product UPC"]}</p>
             </isif>
             <isif condition="${klDebugDataDecoded["Categories"]}">
@@ -69,6 +58,12 @@
             </isif>
             <isif condition="${klDebugDataDecoded["Primary Category"]}">
                 <p><strong>Primary Category:</strong> ${klDebugDataDecoded["Primary Category"]}</p>
+            </isif>
+            <isif condition="${klDebugDataDecoded["Search Term"]}">
+                <p><strong>Search Term:</strong> ${klDebugDataDecoded["Search Term"]}</p>
+            </isif>
+            <isif condition="${klDebugDataDecoded["Search Results Count"]}">
+                <p><strong>Search Results Count:</strong> ${klDebugDataDecoded["Search Results Count"]}</p>
             </isif>
         </isif>
 
@@ -83,3 +78,22 @@
             <iscomment> EXAMPLE         return JSON.parse(atob(klaviyoCookie[0].split("__kla_id=")[1])).$exchange_id; </iscomment>
 
             <iscomment> within this template....can look to see klServiceDebugData on the pdict...and then decode it and figure out how to output it to the screen or console... </iscomment>
+
+
+<iscomment> JS from a script tag to delete (copied over from another file)
+    // TODO: remove anything not needed...the below was brought over from klaviyoID.isml tempalte.
+    // function getKlaviyoExchangeID() {
+    //     var klaviyoCookie = document.cookie.split('; ').filter(function(c) {return /__kla_id=/.test(c)});
+    //     return JSON.parse(atob(klaviyoCookie[0].split("__kla_id=")[1])).$exchange_id;
+    // }
+
+    // window.addEventListener('DOMContentLoaded', (event) => {
+    //     klaviyo.isIdentified().then((result) => {
+    //         if(!result) {
+    //             klaviyo.identify(klid, (result) => {
+    //                 // TODO: debugging only, remove
+    //                 console.log('exchange_id', getKlaviyoExchangeID());
+    //             });
+    //         }
+    //     });
+    // }); </iscomment>
