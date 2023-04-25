@@ -1,3 +1,8 @@
+<iscomment>
+    The JS in this template captures outputs debuggind data to the console when the debugging mode has been activated by entering kldebug=true into
+    the query string. Add To Cart is output to the console and encoded ATC data can be seen in the JSON response within the Network tab of Cart-AddProduct
+    Other data avaible on page load (ex: product info, category info, search info & basket info) is rendered to the screen within the site's Footer.
+</iscomment>
 <!--- TEMPLATENAME: klaviyoDebug.isml --->
 <isif condition="${pdict.klDebugData}">
     <script>
