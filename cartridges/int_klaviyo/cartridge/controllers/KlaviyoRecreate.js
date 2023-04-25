@@ -37,43 +37,42 @@ function cart() {
         return;
     }
 
-    if (cart && items && items.length) {
-        var renderInfo = klaviyoCart.addProductToCart(items, cart);
-
-        if (renderInfo.error) {
-            app.getView({
-                message: Resource.msg('rebuildcart.message.error.general.sitegen', 'klaviyo_error', null),
-                errorMessage: Resource.msgf('rebuildcart.message.error.prompt.sitegen', 'klaviyo_error', null, renderInfo.errorMessage)
-            }).render('klaviyo/klaviyoError');
-            return;
-        }
-
-        if (renderInfo.source === 'giftregistry') {
-            app.getView().render('account/giftregistry/refreshgiftregistry');
-        } else if (renderInfo.template === 'checkout/cart/cart') {
-            app.getView('Cart', {
-                Basket: cart
-            }).render(renderInfo.template);
-        } else if (renderInfo.format === 'ajax') {
-            app.getView('Cart', {
-                cart: cart,
-                BonusDiscountLineItem: renderInfo.BonusDiscountLineItem
-            }).render(renderInfo.template);
-        } else {
-            response.redirect(URLUtils.url('Cart-Show'));
-        }
-    }
-
-    if (!cart) {
+    if (!cart || !items || !items.length) {
         var logger = Logger.getLogger('Klaviyo', 'Klaviyo.core KlaviyoRecreate.js');
-        logger.error(`KlaviyoRecreate-Cart controller failed to create a cart Obj. The currentBasket is ${cart}.`);
+        logger.error(`KlaviyoRecreate-Cart controller failed to create a cart Obj. The currentBasket is ${cart} and items are ${items}.`);
 
         app.getView({
             message: Resource.msg('rebuildcart.message.error.general.sitegen', 'klaviyo_error', null),
-            errorMessage: Resource.msgf('rebuildcart.message.error.prompt.sitegen', 'klaviyo_error', null, `The Cart is: ${cart} - refer to logs.`)
+            errorMessage: Resource.msgf('rebuildcart.message.error.prompt.sitegen', 'klaviyo_error', null, `The Cart is: ${cart} and Items are: ${items} - refer to logs.`)
         }).render('klaviyo/klaviyoError');
         return;
     }
+
+    var renderInfo = klaviyoCart.addProductToCart(items, cart);
+
+    if (renderInfo.error) {
+        app.getView({
+            message: Resource.msg('rebuildcart.message.error.general.sitegen', 'klaviyo_error', null),
+            errorMessage: Resource.msgf('rebuildcart.message.error.prompt.sitegen', 'klaviyo_error', null, renderInfo.errorMessage)
+        }).render('klaviyo/klaviyoError');
+        return;
+    }
+
+    if (renderInfo.source === 'giftregistry') {
+        app.getView().render('account/giftregistry/refreshgiftregistry');
+    } else if (renderInfo.template === 'checkout/cart/cart') {
+        app.getView('Cart', {
+            Basket: cart
+        }).render(renderInfo.template);
+    } else if (renderInfo.format === 'ajax') {
+        app.getView('Cart', {
+            cart: cart,
+            BonusDiscountLineItem: renderInfo.BonusDiscountLineItem
+        }).render(renderInfo.template);
+    } else {
+        response.redirect(URLUtils.url('Cart-Show'));
+    }
+
 }
 
 
