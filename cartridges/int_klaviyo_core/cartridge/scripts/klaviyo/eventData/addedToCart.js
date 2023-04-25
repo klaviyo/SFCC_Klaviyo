@@ -31,6 +31,9 @@ function getData(basket) {
             var lineItem = basketItems[itemIndex];
             var currentProductID = lineItem.productID;
             var basketProduct = ProductMgr.getProduct(currentProductID);
+            if (!basketProduct) {
+                throw new Error('Product with ID [' + productID + '] not found');
+            }
 
             if (currentProductID != null && !empty(basketProduct) && basketProduct.getPriceModel().getPrice().value > 0) {
                 var primaryCategory;
