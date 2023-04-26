@@ -49,7 +49,7 @@
             <p><strong>Decoded klDebugData:</strong>  ${StringUtils.decodeBase64(pdict.klDebugData)}</p>
         </span>
 
-        <isif condition="${pdict.action === "Checkout-Begin"}">
+        <isif condition="${pdict.action === "Checkout-Begin" || klDebugDataDecoded["Basket Gross Price"] }">
             <h4>Cart Overview:</h4>
             <p><strong>Basket Gross Price:</strong> ${klDebugDataDecoded["Basket Gross Price"]}</p>
             <p><strong>Rebuild Cart Link:</strong> ${klDebugDataDecoded["cartRebuildingLink"]}</p>
@@ -57,7 +57,8 @@
             <p><strong>Cart Item Count:</strong> ${klDebugDataDecoded["Item Count"]}</p>
             <h4>Cart Items:</h4>
             <isloop items="${klDebugDataDecoded.line_items}" var="lineItem">
-                <div class="line-dotted line-item-total-text">
+                <hr>
+                <div class="line-item-total-text phrase-suggestions">
                     <p><strong>Product ID:</strong> ${lineItem["Product ID"]}</p>
                     <p><strong>Product Name:</strong> ${lineItem["Product Name"]}</p>
                     <p><strong>Product Image URL:</strong> ${lineItem["Product Image URL"]}</p>
