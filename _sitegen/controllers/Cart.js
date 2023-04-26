@@ -277,6 +277,8 @@ function addProduct() {
     var basketMgr = require('dw/order/BasketMgr');
     var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils');
     var addedToCartData = require('*/cartridge/scripts/klaviyo/eventData/addedToCart');
+    var isKlDebugOn = request.httpReferer.includes('kldebug=true') ? true : false;
+
     if(dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_enabled')){
         var exchangeID = klaviyoUtils.getKlaviyoExchangeID();
         var dataObj, serviceCallResult, currentBasket;
@@ -286,6 +288,14 @@ function addProduct() {
                 dataObj = addedToCartData.getData(currentBasket);
                 serviceCallResult = klaviyoUtils.trackEvent(exchangeID, dataObj, klaviyoUtils.EVENT_NAMES.addedToCart);
                 // TODO: need to do anything here with the service call result, or handle all errs etc within trackEvent? otherwise no need to assign to a var / return a value
+                if (isKlDebugOn) {
+                    var klDebugData = klaviyoUtils.prepareDebugData(dataObj)
+                    var serviceCallData = klaviyoUtils.prepareDebugData(serviceCallResult)
+                    var siteGenKlDebutData = `<input type="hidden" name="siteGenKlDebutData" id="siteGenKlDebutData" value="${klDebugData}"/>`
+                    var siteGenServiceCallData = `<input type="hidden" name="siteGenServiceCallData" id="siteGenServiceCallData" value="${serviceCallData}"/>`
+                    response.writer.print(siteGenKlDebutData);
+                    response.writer.print(siteGenServiceCallData);
+                }
             }
         }
     }

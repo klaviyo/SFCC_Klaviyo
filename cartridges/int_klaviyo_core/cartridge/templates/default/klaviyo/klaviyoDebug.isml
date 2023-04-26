@@ -13,13 +13,31 @@
     console.log('serviceCallData (encoded): ', serviceCallData);
 
     window.addEventListener("load", (event) => {
-        $('body').on('product:afterAddToCart', function(evt, data, c){
-            // console.log('evt', evt);
-            // console.log('data', data);
-            // console.log('c', c);
+        $('body').on('product:afterAddToCart', function(evt, data){
             var addToCartDebugData = JSON.parse(atob(data.klDebugData));
             console.log('addToCartDebugData: ', addToCartDebugData);
         });
+
+        if ("MutationObserver" in window) {
+            let miniCart = document.getElementById('mini-cart')
+            const observer = new MutationObserver(mutations => {
+                mutations.forEach(mutation => {
+                    if (mutation.addedNodes.length) {
+                        let SGaddToCartDebugData = document.getElementById('siteGenKlDebutData');
+                        let SGserviceCallData = document.getElementById('siteGenServiceCallData');
+                        console.log('debugData: ', JSON.parse(atob(SGaddToCartDebugData.value)));
+                        console.log('serviceCallData (encoded): ', SGserviceCallData.value);
+                    }
+                })
+            });
+
+            if (miniCart) {
+                observer.observe(miniCart, {
+                    childList: true,
+                    subtree: true
+                });
+            }
+        }
     });
     </script>
     <isset name="klDebugDataDecoded" value="${JSON.parse(StringUtils.decodeBase64(pdict.klDebugData))}" scope="page" />
