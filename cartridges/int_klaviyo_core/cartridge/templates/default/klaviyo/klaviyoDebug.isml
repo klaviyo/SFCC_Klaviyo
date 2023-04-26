@@ -41,12 +41,12 @@
     });
     </script>
     <isset name="klDebugDataDecoded" value="${JSON.parse(StringUtils.decodeBase64(pdict.klDebugData))}" scope="page" />
-    ACTION IN THIS CONTEXT >>>> ${pdict.action} <br><br>
     <div class="col bml-terms-and-conditions">
-        <h1>Klaviyo -- Debug Mode</h1>
+        <hr>
+        <h1><strong>Klaviyo -- Debug Mode</strong></h1>
         <span>
-            <p>Encoded klDebugData:  ${pdict.klDebugData}</p>
-            <p>Decoded klDebugData:  ${StringUtils.decodeBase64(pdict.klDebugData)}</p>
+            <p><strong>Encoded klDebugData:</strong>  ${pdict.klDebugData}</p>
+            <p><strong>Decoded klDebugData:</strong>  ${StringUtils.decodeBase64(pdict.klDebugData)}</p>
         </span>
 
         <isif condition="${pdict.action === "Checkout-Begin"}">
