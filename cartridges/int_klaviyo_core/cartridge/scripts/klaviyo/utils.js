@@ -49,6 +49,17 @@ function getProfileInfo() {
     return false;
 }
 
+// helper function used in .getData functions to dedupe values in arrays (particularly product category lists)
+function dedupeArray(items) {
+    var unique = {};
+    items.forEach(function (i) {
+        if (!unique[i]) {
+            unique[i] = true;
+        }
+    });
+    return Object.keys(unique);
+}
+
 
 function trackEvent(exchangeID, data, event) {
 
@@ -99,13 +110,6 @@ function trackEvent(exchangeID, data, event) {
 
     resultObj = JSON.parse(result.object);
 
-    // TODO: remove - results of service calls handled via service framework logging (services.js KlaviyoEventService)
-    // if (result.ok) {
-    //     logger.info(event + ' track event via Klaviyo is successful.');
-    // } else {
-    //     logger.error( event + ' track event via Klaviyo failed. '+result.errorMessage);
-    // }
-
     return resultObj;
 
 }
@@ -120,5 +124,6 @@ module.exports = {
     KLImageSize : KLImageSize,
     getKlaviyoExchangeID : getKlaviyoExchangeID,
     getProfileInfo : getProfileInfo,
+    dedupeArray: dedupeArray,
     trackEvent : trackEvent
 }

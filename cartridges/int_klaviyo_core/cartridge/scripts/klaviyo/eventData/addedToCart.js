@@ -32,7 +32,7 @@ function getData(basket) {
             var currentProductID = lineItem.productID;
             var basketProduct = ProductMgr.getProduct(currentProductID);
             if (!basketProduct) {
-                throw new Error('Product with ID [' + productID + '] not found');
+                throw new Error('Product with ID [' + currentProductID + '] not found');
             }
 
             if (currentProductID != null && !empty(basketProduct) && basketProduct.getPriceModel().getPrice().value > 0) {
@@ -77,6 +77,8 @@ function getData(basket) {
                 data.primaryCategories.push(
                     data.lineItems[itemIndex].primaryCategory
                 );
+                data.categories = klaviyoUtils.dedupeArray(data.categories);
+                data.primaryCategories = klaviyoUtils.dedupeArray(data.primaryCategories);
             }
         }
     } catch(e) {
