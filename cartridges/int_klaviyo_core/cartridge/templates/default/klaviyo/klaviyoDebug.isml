@@ -25,8 +25,8 @@
                     if (mutation.addedNodes.length) {
                         let SGaddToCartDebugData = document.getElementById('siteGenKlDebutData');
                         let SGserviceCallData = document.getElementById('siteGenServiceCallData');
-                        console.log('debugData: ', JSON.parse(atob(SGaddToCartDebugData.value)));
-                        console.log('serviceCallData (encoded): ', SGserviceCallData.value);
+                        console.log('addToCartDebugData: ', JSON.parse(atob(SGaddToCartDebugData.value)));
+                        console.log('AddToCart - serviceCallData (encoded): ', SGserviceCallData.value);
                     }
                 })
             });
