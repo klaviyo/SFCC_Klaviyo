@@ -53,15 +53,15 @@ server.get('Event', function (req, res, next) {
                 // TODO: clean up the following debugging / comments for notes.
                 // this is where we call the util function to check if klDebug=true
                 // if isKlDebugOn === true...then do this...
-                    // can do res.viewData.klDebugData = prepareDebugData(dataObj)
-                        // the prepareDebugData utility function will JSON.stringify  the data obj...then base 64Encode that stringified object.
-                        // JSON.stringify(getDataObj)
-                if (isKlDebugOn) {
-                    res.viewData.klDebugData = klaviyoUtils.prepareDebugData(dataObj);
-                    res.render('klaviyo/klaviyoDebug') // TODO: Delete this comment!! THIS WILL NOT OCCUR in Checkout or AddProduct or Confirmation...Because we don't need this template in these cases (is rendered through klaviyoFooter through those paths).
-                    next()
-                    return;
-                }
+                //     can do res.viewData.klDebugData = prepareDebugData(dataObj)
+                //         the prepareDebugData utility function will JSON.stringify  the data obj...then base 64Encode that stringified object.
+                //         JSON.stringify(getDataObj)
+                // if (isKlDebugOn) {
+                //     res.viewData.klDebugData = klaviyoUtils.prepareDebugData(dataObj);
+                //     res.render('klaviyo/klaviyoDebug') // TODO: Delete this comment!! THIS WILL NOT OCCUR in Checkout or AddProduct or Confirmation...Because we don't need this template in these cases (is rendered through klaviyoFooter through those paths).
+                //     next()
+                //     return;
+                // }
 
 
                 serviceCallResult = klaviyoUtils.trackEvent(exchangeID, dataObj, action);
@@ -72,6 +72,15 @@ server.get('Event', function (req, res, next) {
                     // that'll base64 encode...
                     // res.viewData.klServiceDebugData...that'll make it available to the template layer...
                 // res.viewData.serviceCallResult = klaviyoUtils.prepareDebugData(serviceCallResult)
+
+                if (isKlDebugOn) {
+                    res.viewData.klDebugData = klaviyoUtils.prepareDebugData(dataObj);
+                    res.viewData.serviceCallData = klaviyoUtils.prepareDebugData(serviceCallResult);
+                    res.viewData.testVal = 'testing';
+                    res.render('klaviyo/klaviyoDebug') // TODO: Delete this comment!! THIS WILL NOT OCCUR in Checkout or AddProduct or Confirmation...Because we don't need this template in these cases (is rendered through klaviyoFooter through those paths).
+                    next()
+                    return;
+                }
             }
         } else {
             // no klaviyo ID, check for SFCC profile and ID off that if extant
