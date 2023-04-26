@@ -34,7 +34,7 @@ function getData(currentBasket) {
             var currentProductID = lineItem.productID;
             var basketProduct = ProductMgr.getProduct(currentProductID);
             if (!basketProduct) {
-                throw new Error('Product with ID [' + productID + '] not found');
+                throw new Error('Product with ID [' + currentProductID + '] not found');
             }
             var quantity = lineItem.quantityValue;
             var options = [];
@@ -51,6 +51,7 @@ function getData(currentBasket) {
                 // add top-level data for the event for segmenting, etc.
                 data.line_items.push(productObj);
                 data.Categories.push.apply(data.Categories, data.line_items[itemIndex].Categories);
+                data.Categories = klaviyoUtils.dedupeArray(data.Categories);
                 data.Items.push(data.line_items[itemIndex]['Product Name']);
 
                 reconstructCartItems.push({ productID: currentProductID, quantity: quantity, options: options });
