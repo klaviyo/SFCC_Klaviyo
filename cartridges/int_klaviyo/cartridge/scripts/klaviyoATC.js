@@ -14,7 +14,7 @@ function addProductToCart(decodedItems, cartObj) {
         var cart = cartObj;
 
         if (cart.object.allProductLineItems.length) {
-            recreateHelpers.clearCart(cart.object)
+            recreateHelpers.clearCart(cart.object);
         }
 
         var params = request.httpParameterMap;

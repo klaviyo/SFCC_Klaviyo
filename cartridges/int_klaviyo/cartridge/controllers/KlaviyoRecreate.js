@@ -22,11 +22,11 @@ var URLUtils = require('dw/web/URLUtils');
  * @param {serverfunction} - Get
  */
 function cart() {
+    var logger = Logger.getLogger('Klaviyo', 'Klaviyo.SiteGen KlaviyoRecreate.js');
     try {
         var cart = app.getModel('Cart').goc();
         var items = request.httpParameterMap.items ? JSON.parse(StringUtils.decodeBase64(request.httpParameterMap.items)) : null;
     } catch (error) {
-        var logger = Logger.getLogger('Klaviyo', 'Klaviyo.SiteGen KlaviyoRecreate.js');
         logger.error('KlaviyoRecreate-Cart failed. Please check the encoded obj for unexpected chars or syntax issues. ERROR: {0} {1}', error.message, error.stack);
 
         var additionalErrorContext = Resource.msgf('rebuildcart.message.error.controller.sitegen', 'klaviyo_error', null, error.message);
@@ -38,7 +38,6 @@ function cart() {
     }
 
     if (!cart || !items || !items.length) {
-        var logger = Logger.getLogger('Klaviyo', 'Klaviyo.core KlaviyoRecreate.js');
         logger.error(`KlaviyoRecreate-Cart controller failed to create a cart Obj. The currentBasket is ${cart} and items are ${items}.`);
 
         app.getView({
