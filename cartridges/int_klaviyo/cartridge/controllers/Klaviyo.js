@@ -29,7 +29,7 @@ var Event = function () {
 
         var kx = request.httpParameterMap.kx;
         var exchangeID = (!kx.empty) ? kx.stringValue : klaviyoUtils.getKlaviyoExchangeID();
-
+        var isKlDebugOn = request.httpParameterMap.kldebug.booleanValue;
         var dataObj, serviceCallResult, action, parms;
 
         if (exchangeID) {
@@ -54,8 +54,15 @@ var Event = function () {
                 }
                 serviceCallResult = klaviyoUtils.trackEvent(exchangeID, dataObj, action);
                 // TODO: need to do anything here with the service call result, or handle all errs etc within trackEvent? otherwise no need to assign to a var / return a value
+                if (isKlDebugOn) {
+                    app.getView({
+                        klDebugData: klaviyoUtils.prepareDebugData(dataObj),
+                        serviceCallData: klaviyoUtils.prepareDebugData(serviceCallResult)
+                    }).render('klaviyo/klaviyoDebug');
+                    return;
+                }
             }
-        } else { 
+        } else {
             // no klaviyo ID, check for SFCC profile and ID off that if extent
             var klid = klaviyoUtils.getProfileInfo();
             if(klid) {

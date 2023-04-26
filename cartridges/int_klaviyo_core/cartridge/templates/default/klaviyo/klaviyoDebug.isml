@@ -24,7 +24,7 @@
     </script>
     <isset name="klDebugDataDecoded" value="${JSON.parse(StringUtils.decodeBase64(pdict.klDebugData))}" scope="page" />
     ACTION IN THIS CONTEXT >>>> ${pdict.action} <br><br>
-    <div class="col">
+    <div class="col bml-terms-and-conditions">
         <h1>Klaviyo -- Debug Mode</h1>
         <span>
             <p>Encoded klDebugData:  ${pdict.klDebugData}</p>
