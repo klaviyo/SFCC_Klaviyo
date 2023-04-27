@@ -4,7 +4,7 @@
 var app = require('*/cartridge/scripts/app');
 var guard = require('*/cartridge/scripts/guard');
 var cartModel = require('*/cartridge/scripts/models/CartModel');
-var recreateHelpers = require('*/cartridge/scripts/recreateCartHelpers');
+var klaviyoCart = require('*/cartridge/scripts/klaviyoATC');
 var res = require("*/cartridge/scripts/util/Response");
 
 /* API Includes */
@@ -22,11 +22,11 @@ var URLUtils = require('dw/web/URLUtils');
  * @param {serverfunction} - Get
  */
 function cart() {
+    var logger = Logger.getLogger('Klaviyo', 'Klaviyo.SiteGen KlaviyoRecreate.js');
     try {
         var cart = app.getModel('Cart').goc();
         var items = request.httpParameterMap.items ? JSON.parse(StringUtils.decodeBase64(request.httpParameterMap.items)) : null;
     } catch (error) {
-        var logger = Logger.getLogger('Klaviyo', 'Klaviyo.SiteGen KlaviyoRecreate.js');
         logger.error('KlaviyoRecreate-Cart failed. Please check the encoded obj for unexpected chars or syntax issues. ERROR: {0} {1}', error.message, error.stack);
 
         var additionalErrorContext = Resource.msgf('rebuildcart.message.error.controller.sitegen', 'klaviyo_error', null, error.message);
@@ -37,43 +37,39 @@ function cart() {
         return;
     }
 
-    if (cart && items.length) {
-        var renderInfo = recreateHelpers.addProductToCart(items, cart)
-
-        if (renderInfo.error) {
-            app.getView({
-                message: Resource.msg('rebuildcart.message.error.general.sitegen', 'klaviyo_error', null),
-                errorMessage: Resource.msgf('rebuildcart.message.error.prompt.sitegen', 'klaviyo_error', null, renderInfo.errorMessage)
-            }).render('klaviyo/klaviyoError')
-            return;
-        }
-
-        if (renderInfo.source === 'giftregistry') {
-            app.getView().render('account/giftregistry/refreshgiftregistry');
-        } else if (renderInfo.template === 'checkout/cart/cart') {
-            app.getView('Cart', {
-                Basket: cart
-            }).render(renderInfo.template);
-        } else if (renderInfo.format === 'ajax') {
-            app.getView('Cart', {
-                cart: cart,
-                BonusDiscountLineItem: renderInfo.BonusDiscountLineItem
-            }).render(renderInfo.template);
-        } else {
-            response.redirect(URLUtils.url('Cart-Show'));
-        }
-    }
-
-    if (!cart) {
-        var logger = Logger.getLogger('Klaviyo', 'Klaviyo.core KlaviyoRecreate.js');
-        logger.error(`KlaviyoRecreate-Cart controller failed to create a cart Obj. The currentBasket is ${cart}.`);
+    if (!cart || !items || !items.length) {
+        logger.error(`KlaviyoRecreate-Cart controller failed to create a cart Obj. The currentBasket is ${cart} and items are ${items}.`);
 
         app.getView({
             message: Resource.msg('rebuildcart.message.error.general.sitegen', 'klaviyo_error', null),
-            errorMessage: Resource.msgf('rebuildcart.message.error.prompt.sitegen', 'klaviyo_error', null, `The Cart is: ${cart} - refer to logs.`)
-        }).render('klaviyo/klaviyoError')
+            errorMessage: Resource.msgf('rebuildcart.message.error.prompt.sitegen', 'klaviyo_error', null, `The Cart is: ${cart} and Items are: ${items} - refer to logs.`)
+        }).render('klaviyo/klaviyoError');
         return;
     }
+
+    var renderInfo = klaviyoCart.addProductToCart(items, cart);
+
+    if (renderInfo.error) {
+        app.getView({
+            message: Resource.msg('rebuildcart.message.error.general.sitegen', 'klaviyo_error', null),
+            errorMessage: Resource.msgf('rebuildcart.message.error.prompt.sitegen', 'klaviyo_error', null, renderInfo.errorMessage)
+        }).render('klaviyo/klaviyoError');
+        return;
+    }
+
+    if (renderInfo.template === 'checkout/cart/cart') {
+        app.getView('Cart', {
+            Basket: cart
+        }).render(renderInfo.template);
+    } else if (renderInfo.format === 'ajax') {
+        app.getView('Cart', {
+            cart: cart,
+            BonusDiscountLineItem: renderInfo.BonusDiscountLineItem
+        }).render(renderInfo.template);
+    } else {
+        response.redirect(URLUtils.url('Cart-Show'));
+    }
+
 }
 
 

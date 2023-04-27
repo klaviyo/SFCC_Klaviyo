@@ -7,6 +7,7 @@ var shippingHelper = require('*/cartridge/scripts/checkout/shippingHelpers');
 var COHelpers = require('*/cartridge/scripts/checkout/checkoutHelpers');
 var collections = require('*/cartridge/scripts/util/collections');
 var cartHelpers = require('*/cartridge/scripts/cart/cartHelpers');
+var recreateCartHelpers = require('*/cartridge/scripts/recreateCartHelpers');
 
 /* Models */
 var CartModel = require('*/cartridge/models/cart');
@@ -55,20 +56,7 @@ server.get('Cart', function (req, res, next) {
 
     // Clean the basket to prevent product duplication on page refresh
     if (currentBasket && currentBasket.productQuantityTotal > 0) {
-        for (let i = 0; i < currentBasket.productLineItems.length; i++) {
-            let lengthAtIteration = currentBasket.productLineItems.length;
-            var shipmentToRemove = currentBasket.productLineItems[i].shipment;
-            currentBasket.removeProductLineItem(currentBasket.productLineItems[i]);
-            currentBasket.updateTotals();
-            if (currentBasket.productLineItems.length < lengthAtIteration) {
-                i--;
-            }
-
-            if (shipmentToRemove.productLineItems.length && !shipmentToRemove.default) {
-                currentBasket.removeShipment(shipmentToRemove);
-            }
-            PromotionMgr.applyDiscounts(currentBasket);
-        }
+        recreateCartHelpers.clearCart(currentBasket);
     }
 
     try {
@@ -76,14 +64,18 @@ server.get('Cart', function (req, res, next) {
             if (items && items.length) {
                 for (let i = 0; i < items.length; i++) {
                     var productToAdd = ProductMgr.getProduct(items[i].productID);
+                    if (!productToAdd) {
+                        throw new Error('Product with ID [' + items[i].productID + '] not found');
+                    }
                     var childProducts = productToAdd.bundledProducts ? collections.map(productToAdd.bundledProducts, function (product) { return { pid: product.ID, quantity: null } }) : [];
                     var options = [];
                     items[i].options.forEach(optionObj => {
                         options.push({ lineItemText: optionObj.lineItemText, optionId: optionObj.optionID, selectedValueId: optionObj.optionValueID});
                     })
 
-                    var shipments = Array.from(currentBasket.shipments);
-                    shippingHelper.ensureShipmentHasMethod(shipments[0]);
+                    for (let key in currentBasket.shipments) {
+                        shippingHelper.ensureShipmentHasMethod(currentBasket.shipments[key]);
+                    }
                     cartHelpers.addProductToCart(currentBasket, items[i].productID, items[i].quantity, childProducts, options);
                 }
                 COHelpers.recalculateBasket(currentBasket);
