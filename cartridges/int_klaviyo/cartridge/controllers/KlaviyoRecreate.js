@@ -57,9 +57,7 @@ function cart() {
         return;
     }
 
-    if (renderInfo.source === 'giftregistry') {
-        app.getView().render('account/giftregistry/refreshgiftregistry');
-    } else if (renderInfo.template === 'checkout/cart/cart') {
+    if (renderInfo.template === 'checkout/cart/cart') {
         app.getView('Cart', {
             Basket: cart
         }).render(renderInfo.template);
