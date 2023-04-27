@@ -39,19 +39,25 @@ function start() {
     var basketMgr = require('dw/order/BasketMgr');
     var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils');
     var startedCheckoutData = require('*/cartridge/scripts/klaviyo/eventData/startedCheckout');
+    var isKlDebugOn = request.httpReferer.includes('kldebug=true') ? true : false;
     if(dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_enabled')){
         var exchangeID = klaviyoUtils.getKlaviyoExchangeID();
         var dataObj, serviceCallResult, currentBasket;
         if (exchangeID) {
-            currentBasket = basketMgr.getCurrentBasket()
+            currentBasket = basketMgr.getCurrentBasket();
             if (currentBasket && currentBasket.getProductLineItems().toArray().length) { //TODO: is there a property for isEmpty on basket object?
                 dataObj = startedCheckoutData.getData(currentBasket);
                 serviceCallResult = klaviyoUtils.trackEvent(exchangeID, dataObj, klaviyoUtils.EVENT_NAMES.startedCheckout);
+                if (isKlDebugOn) {
+                    app.getView({
+                        klDebugData: klaviyoUtils.prepareDebugData(dataObj),
+                        serviceCallData: klaviyoUtils.prepareDebugData(serviceCallResult)
+                    }).render('klaviyo/klaviyoDebug');
+                }
             }
         }
     }
     /* END Klaviyo Started Checkout event tracking */
-
 
     // Direct to first checkout step if already authenticated.
     if (customer.authenticated) {
