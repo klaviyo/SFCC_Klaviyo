@@ -8,8 +8,8 @@
     <script>
     var debugData = JSON.parse(atob('${pdict.klDebugData}'));
     console.log('debugData: ', debugData);
-    var serviceCallData = '${pdict.serviceCallData}';
-    console.log('serviceCallData (encoded): ', serviceCallData);
+    var serviceCallData = JSON.parse(atob('${pdict.serviceCallData}'));
+    console.log('serviceCallData: ', serviceCallData);
 
     window.addEventListener("load", (event) => {
         $('body').on('product:afterAddToCart', function(evt, data){
