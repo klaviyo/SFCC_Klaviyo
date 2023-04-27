@@ -106,17 +106,11 @@ function trackEvent(exchangeID, data, event) {
         return;
     }
 
-    resultObj = JSON.parse(result.object);
-    // resultObj = JSON.parse(result); // TODO: remove this before PR (kscu-57 note)
-
-    // TODO: remove - results of service calls handled via service framework logging (services.js KlaviyoEventService)
-    // if (result.ok) {
-    //     logger.info(event + ' track event via Klaviyo is successful.');
-    // } else {
-    //     logger.error( event + ' track event via Klaviyo failed. '+result.errorMessage);
-    // }
-
-    return resultObj;
+    if (result.ok === true) {
+        return { success: true };
+    } else {
+        return JSON.parse(result.errorMessage);
+    }
 }
 
 
