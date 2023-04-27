@@ -49,13 +49,13 @@ function getProfileInfo() {
     return false;
 }
 
-// TODO: finalize this utility function to prepare the debug data that will be displayed on the page.
-// prepares the data object from various events by encoding and returning the data to be used in Klaviyo's Debugger Mode.
+// This takes data passed from the controller and encodes it so it can be used when Klaviyo's Debugger mode has been activated (ex: when including 'kldebug=true' as a URL query)
+// Data from this is available in the following Events: 'Viewed Product', 'Viewed Category', 'Searched Site', 'Added to Cart' and 'Started Checkout'.
 function prepareDebugData(obj) {
-    var stringObj = JSON.stringify(obj)
-    var encodedTest = StringUtils.encodeBase64(stringObj);
+    var stringObj = JSON.stringify(obj);
+    var encodedDataObj = StringUtils.encodeBase64(stringObj);
 
-    return encodedTest; // TODO: consider how this should be adjusted / altered before returning (ex: if any special properties should be included or removed,  etc. ????).
+    return encodedDataObj;
 }
 
 
@@ -107,6 +107,7 @@ function trackEvent(exchangeID, data, event) {
     }
 
     resultObj = JSON.parse(result.object);
+    // resultObj = JSON.parse(result); // TODO: remove this before PR (kscu-57 note)
 
     // TODO: remove - results of service calls handled via service framework logging (services.js KlaviyoEventService)
     // if (result.ok) {
@@ -115,10 +116,7 @@ function trackEvent(exchangeID, data, event) {
     //     logger.error( event + ' track event via Klaviyo failed. '+result.errorMessage);
     // }
 
-    // TODO: look at what the result option is and check what it is if you feed it bad values (intentionally make it fail...then adjust as needed????)
-
     return resultObj;
-
 }
 
 

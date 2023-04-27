@@ -51,7 +51,6 @@ server.get('Event', function (req, res, next) {
                         break;
                 }
                 serviceCallResult = klaviyoUtils.trackEvent(exchangeID, dataObj, action);
-                // TODO: need to do anything here with the service call result, or handle all errs etc within trackEvent? otherwise no need to assign to a var / return a value
                 if (isKlDebugOn) {
                     res.viewData.klDebugData = klaviyoUtils.prepareDebugData(dataObj);
                     res.viewData.serviceCallData = klaviyoUtils.prepareDebugData(serviceCallResult);

@@ -23,7 +23,7 @@ server.append('AddProduct', function (req, res, next) {
         var isKlDebugOn = request.getHttpReferer().includes('kldebug=true') ? true : false;
 
         if (exchangeID) {
-            currentBasket = basketMgr.getCurrentBasket()
+            currentBasket = basketMgr.getCurrentBasket();
 
             if (currentBasket && currentBasket.getProductLineItems().toArray().length) { //TODO: is there a property for isEmpty on basket object?
                 dataObj = addedToCartData.getData(currentBasket);
