@@ -17,8 +17,6 @@ function getData(currentBasket) {
 
         var basketItems = currentBasket.getProductLineItems().toArray();
         var reconstructCartItems = [];
-        // Create some top-level event data
-        //data.event = EVENT_NAMES['startedCheckout'];
         data['Basket Gross Price'] = currentBasket.getTotalGrossPrice().value;
         data['Item Count'] = basketItems.length;
 
@@ -33,6 +31,9 @@ function getData(currentBasket) {
             var lineItem = basketItems[itemIndex];
             var currentProductID = lineItem.productID;
             var basketProduct = ProductMgr.getProduct(currentProductID);
+            if (!basketProduct) {
+                throw new Error('Product with ID [' + currentProductID + '] not found');
+            }
             var quantity = lineItem.quantityValue;
             var options = [];
             if (lineItem && lineItem.optionProductLineItems) {
@@ -48,6 +49,7 @@ function getData(currentBasket) {
                 // add top-level data for the event for segmenting, etc.
                 data.line_items.push(productObj);
                 data.Categories.push.apply(data.Categories, data.line_items[itemIndex].Categories);
+                data.Categories = klaviyoUtils.dedupeArray(data.Categories);
                 data.Items.push(data.line_items[itemIndex]['Product Name']);
 
                 reconstructCartItems.push({ productID: currentProductID, quantity: quantity, options: options });

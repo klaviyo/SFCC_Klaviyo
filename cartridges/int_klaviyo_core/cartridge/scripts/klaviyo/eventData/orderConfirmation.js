@@ -80,6 +80,9 @@ function getData(order) {
                 // Get the product secondary nam
                 var lineItemProduct = productLineItem.product;
                 var productDetail = ProductMgr.getProduct(lineItemProduct.ID);
+                if (!productDetail) {
+                    throw new Error('Product with ID [' + lineItemProduct.ID + '] not found');
+                }
 
                 if (!productLineItem.bonusProductLineItem) {
                     priceString = dw.util.StringUtils.formatMoney( dw.value.Money( productLineItem.price.value, session.getCurrency().getCurrencyCode() ) );
@@ -122,35 +125,18 @@ function getData(order) {
                     allCategories = productDetail.getAllCategories();
                 }
 
-                var isSample = false;
-                if (!empty(allCategories) && allCategories.length > 0) {
-                    var category = '';
-                    for (
-                        var categoryCount = 0;
-                        categoryCount < allCategories.length;
-                        categoryCount++
-                    ) {
-                        category = allCategories[categoryCount];
-                        itemCategories.push(category.displayName);
-                        if (category.ID == 'samples') {
-                            isSample = true;
-                        }
-                    }
-                }
-
                 productLineItemsArray.push({
                     'Product ID'             : productLineItem.productID,
                     'Product Name'           : productLineItem.productName,
                     'Product Secondary Name' : secondaryName,
-                    Quantity                 : productLineItem.quantity.value,
-                    Price                    : priceString,
-                    Discount                 : productLineItem.adjustedPrice.value,
+                    'Quantity'                 : productLineItem.quantity.value,
+                    'Price'                    : priceString,
+                    'Discount'                 : productLineItem.adjustedPrice.value,
                     'Product Page URL'       : prdUrl,
-                    Replenishment            : replenishment,
+                    'Replenishment'            : replenishment,
                     'Product Variant'        : variationValues,
                     'Price Value'            : productLineItem.price.value,
-                    'Product Image URL'      : KLImageSize ? productDetail.getImage(KLImageSize).getAbsURL().toString() : null,
-                    'Is Sample': isSample
+                    'Product Image URL'      : KLImageSize ? productDetail.getImage(KLImageSize).getAbsURL().toString() : null
                 });
             }
 
@@ -162,6 +148,9 @@ function getData(order) {
                 data.GIFT_ITEM_PRESENT = true;
                 var giftCardId = dw.system.Site.getCurrent().getCustomPreferenceValue('EgiftProduct-ID');
                 var giftCardProductDetail = ProductMgr.getProduct(giftCardId);
+                if (!giftCardProductDetail) {
+                    throw new Error('Product with ID [' + giftCardId + '] not found');
+                }
                 var giftCardImage = '';
                 if (!empty(giftCardProductDetail)) {
                     giftCardImage = KLImageSize ? giftCardProductDetail.getImage(KLImageSize).getAbsURL().toString() : null;
@@ -352,7 +341,7 @@ function getData(order) {
         data.Items = items;
         data['Item Count'] = itemCount;
         data['Item Primary Categories'] = itemPrimaryCategories;
-        data['Item Categories'] = removeDuplicates( itemCategories );
+        data['Item Categories'] = klaviyoUtils.dedupeArray(itemCategories);
         data.$value = orderTotal;
         data.$event_id = 'orderConfirmation' + '-' + order.orderNo;
         data['Tracking Number'] = order.shipments[0].trackingNumber ? order.shipments[0].trackingNumber : '';
@@ -363,18 +352,6 @@ function getData(order) {
 
     return data;
 }
-
-// TODO: rework code above so that this is not necessary, then kill it off
-function removeDuplicates(items) {
-    var unique = {};
-    items.forEach(function (i) {
-        if (!unique[i]) {
-            unique[i] = true;
-        }
-    });
-    return Object.keys(unique);
-}
-
 
 module.exports = {
     getData: getData

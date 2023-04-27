@@ -17,6 +17,9 @@ function getData(productID) {
 
         // product in viewData is flat and doesn't have all data required (to whit, categories)
         var product = ProductMgr.getProduct(productID);
+        if (!product) {
+            throw new Error('Product with ID [' + productID + '] not found');
+        }
 
         // copied & adjusted from kl_core klaviyoUtils prepareViewedProductEventData
         data['Product ID'] = product.ID;

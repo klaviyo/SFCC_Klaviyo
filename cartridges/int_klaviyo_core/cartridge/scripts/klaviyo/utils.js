@@ -34,6 +34,7 @@ function getKlaviyoExchangeID() {
     return false;
 }
 
+
 // gets SFCC profile info (if available) to use for IDing user to klaviyo
 function getProfileInfo() {
     if(customer.authenticated && customer.profile) {
@@ -49,6 +50,7 @@ function getProfileInfo() {
     return false;
 }
 
+
 // This takes data passed from the controller and encodes it so it can be used when Klaviyo's Debugger mode has been activated (ex: when including 'kldebug=true' as a URL query)
 // Data from this is available in the following Events: 'Viewed Product', 'Viewed Category', 'Searched Site', 'Added to Cart' and 'Started Checkout'.
 function prepareDebugData(obj) {
@@ -56,6 +58,18 @@ function prepareDebugData(obj) {
     var encodedDataObj = StringUtils.encodeBase64(stringObj);
 
     return encodedDataObj;
+}
+
+
+// helper function used in .getData functions to dedupe values in arrays (particularly product category lists)
+function dedupeArray(items) {
+    var unique = {};
+    items.forEach(function (i) {
+        if (!unique[i]) {
+            unique[i] = true;
+        }
+    });
+    return Object.keys(unique);
 }
 
 
@@ -123,5 +137,6 @@ module.exports = {
     getKlaviyoExchangeID : getKlaviyoExchangeID,
     getProfileInfo : getProfileInfo,
     prepareDebugData : prepareDebugData,
+    dedupeArray: dedupeArray,
     trackEvent : trackEvent
 }
