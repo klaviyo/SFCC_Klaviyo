@@ -15,7 +15,7 @@ server.append('Begin', function (req, res, next) {
 
         var exchangeID = klaviyoUtils.getKlaviyoExchangeID();
         var dataObj, serviceCallResult, currentBasket;
-        var isKlDebugOn = request.httpParameterMap.kldebug.booleanValue; // needs to be in the Checkout & Add TO Cart as well...(AND ORDER CONFIRMATION...)
+        var isKlDebugOn = request.httpParameterMap.kldebug.booleanValue;
 
         if (exchangeID) {
             currentBasket = basketMgr.getCurrentBasket()
