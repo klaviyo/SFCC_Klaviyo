@@ -25,7 +25,7 @@ function getData(currentBasket) {
         data.Categories = [];
         data.Items = [];
         data.$email = currentBasket.customerEmail;
-        data.cartRebuildingLink = URLUtils.abs('KlaviyoRecreate-Cart').toString() + `?items=${reconstructCartItems}`;
+        data.cartRebuildingLink = URLUtils.abs('KlaviyoRecreate-Cart').toString() + `?items=`;
 
         for (var itemIndex = 0; itemIndex < basketItems.length; itemIndex++) {
             var lineItem = basketItems[itemIndex];
