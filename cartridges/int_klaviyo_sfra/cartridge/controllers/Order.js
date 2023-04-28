@@ -13,6 +13,9 @@ server.append('Confirm', function (req, res, next) {
 
     if(klaviyoUtils.klaviyoEnabled){
 
+        // resetting to default state after successful checkout
+        req.session.privacyCache.set('klaviyoCheckoutTracked', false);
+
         var exchangeID = klaviyoUtils.getKlaviyoExchangeID();
         var dataObj, serviceCallResult, currentOrder;
 
