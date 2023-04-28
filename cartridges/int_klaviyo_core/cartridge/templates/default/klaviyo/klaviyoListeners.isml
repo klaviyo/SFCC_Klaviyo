@@ -1,13 +1,14 @@
+<!--- TEMPLATENAME: klaviyoListeners.isml --->
 <iscomment>
     The JS in this template captures the selectors set in Business Manager and applies klaviyo listeners to the corresponding input fields
     so users can be identified when filling out either phone number or email fields within any part of the site. This template is included in
     klaviyoFooter.isml within both SFRA & SiteGen.
 </iscomment>
-<!--- TEMPLATENAME: klaviyoListeners.isml --->
 <isif condition="${dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_email_selectors')}">
     <script>
         var klaviyoJS = {};
-        klaviyoJS.emailFieldSelectors = <isprint value="${JSON.stringify(dw.system.Site.current.preferences.custom.klaviyo_email_selectors)}" encoding="off" />;
+        var KLselectors = <isprint value="${JSON.stringify(dw.system.Site.current.preferences.custom.klaviyo_email_selectors)}" encoding="off" />;
+        klaviyoJS.emailFieldSelectors = Array.isArray(KLselectors) ? KLselectors : Object.values(KLselectors);
         klaviyoJS.sfccEmailRegex = new RegExp(/^[\w.%+-]+@[\w.-]+\.[\w]{2,6}$/);
         klaviyoJS.e164PhoneRegex = new RegExp(/^\+[1-9]\d{1,14}$/);
         klaviyoJS.getExchangeID = function () {

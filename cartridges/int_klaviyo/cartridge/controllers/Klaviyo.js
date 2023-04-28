@@ -45,9 +45,6 @@ var Event = function () {
                         dataObj = viewedCategoryData.getData(parms); // parms: category ID
                         break;
                     case klaviyoUtils.EVENT_NAMES.searchedSite :
-                        // TODO: add Show-Ajax append?  test to be sure when this happens... if its just on paging, do we want to track that?
-                        // TODO: what about search-suggestion flyout? probably not supportable
-                        // TODO: be sure to check for 0 result searches, filtering on both search results and PLPs, re-sorts, etc and get clarity on requirements
                         parms = parms.split('|');
                         dataObj = searchedSiteData.getData(parms[0], parms[1]); // parms: search phrase, result count
                         break;
