@@ -6,25 +6,10 @@
 <isif condition="${'klid' in pdict && !empty(pdict.klid)}">
     <script>
     var klid = JSON.parse(atob('${pdict.klid}'));
-
-    // TODO: for debugging only, remove
-    console.log('klid', klid);
-    function getKlaviyoExchangeID() {
-        var klaviyoCookie = document.cookie.split('; ').filter(function(c) {return /__kla_id=/.test(c)});
-        return JSON.parse(atob(klaviyoCookie[0].split("__kla_id=")[1])).$exchange_id;
-    }
-
     window.addEventListener('DOMContentLoaded', (event) => {
-
         klaviyo.isIdentified().then((result) => {
-            if(!result) {
-                klaviyo.identify(klid, (result) => {
-                    // TODO: debugging only, remove
-                    console.log('exchange_id', getKlaviyoExchangeID());
-                });
-            }
+            if(!result) klaviyo.identify(klid);
         });
-
     });
     </script>
 </isif>
