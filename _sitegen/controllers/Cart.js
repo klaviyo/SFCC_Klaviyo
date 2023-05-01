@@ -277,11 +277,10 @@ function addProduct() {
     var basketMgr = require('dw/order/BasketMgr');
     var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils');
     var addedToCartData = require('*/cartridge/scripts/klaviyo/eventData/addedToCart');
-    var isKlDebugOn = request.httpReferer.includes('kldebug=true') ? true : false;
-
     if(dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_enabled')){
         var exchangeID = klaviyoUtils.getKlaviyoExchangeID();
         var dataObj, serviceCallResult, currentBasket;
+        var isKlDebugOn = request.getHttpReferer().includes('kldebug=true') ? true : false;
         if (exchangeID) {
             currentBasket = basketMgr.getCurrentBasket()
             if (currentBasket && currentBasket.getProductLineItems().toArray().length) { //TODO: is there a property for isEmpty on basket object?

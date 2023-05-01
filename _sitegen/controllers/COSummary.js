@@ -95,6 +95,7 @@ function showConfirmation(order) {
     var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils');
     var orderConfirmationData = require('*/cartridge/scripts/klaviyo/eventData/orderConfirmation');
     if(dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_enabled')){
+        session.privacy.klaviyoCheckoutTracked = false;
         var exchangeID = klaviyoUtils.getKlaviyoExchangeID();
         var dataObj, serviceCallResult; //, currentOrder;
         if (exchangeID && order) {
@@ -106,7 +107,7 @@ function showConfirmation(order) {
 
         }
     }
-    /* ENDKlaviyo Order Confirmation event tracking */
+    /* END Klaviyo Order Confirmation event tracking */
 
 
     app.getForm('profile.login.passwordconfirm').clear();
