@@ -1,13 +1,13 @@
 # Contributing
 
-Thank you for investing your time in contributing to our module! Any
+Thank you for investing your time in contributing to our cartridge! Any
 contribution you make helps us make this project better. There are a number
 of sections that cover various different contribution methods. Make sure to
 review the one that's right for your type of contribution.
 
 ## Creating an Issue
 
-Found a bug in our module? Raise an issue with the appropriate template and
+Found a bug in our cartridge? Raise an issue with the appropriate template and
 we'll look into it! Please add any notes that you believe will be helpful to
 our team in determining a solution for the issue.
 
@@ -45,7 +45,7 @@ Once this is done, run `pre-commit install` from the root of this project.
 
 ### Changelogger
 
-Our Magento 2 module has a number of _versioned_ files (i.e. files that include
+Our SFCC cartridge has a number of _versioned_ files (i.e. files that include
 versioning data). [Changelogger](https://pypi.org/project/changelogged/) automates
 the upgrade for each of these files and manages updates to our changelog. You can
 install Changelogger with `pip`: `pip install changelogged`.
