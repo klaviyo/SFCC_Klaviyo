@@ -20,14 +20,20 @@ server.append('AddProduct', function (req, res, next) {
 
         var exchangeID = klaviyoUtils.getKlaviyoExchangeID();
         var dataObj, serviceCallResult, currentBasket;
+        var isKlDebugOn = request.getHttpReferer().includes('kldebug=true') ? true : false;
 
         if (exchangeID) {
-            currentBasket = basketMgr.getCurrentBasket()
+            currentBasket = basketMgr.getCurrentBasket();
 
             if (currentBasket && currentBasket.getProductLineItems().toArray().length) { //TODO: is there a property for isEmpty on basket object?
                 dataObj = addedToCartData.getData(currentBasket);
                 serviceCallResult = klaviyoUtils.trackEvent(exchangeID, dataObj, klaviyoUtils.EVENT_NAMES.addedToCart);
-                // TODO: need to do anything here with the service call result, or handle all errs etc within trackEvent? otherwise no need to assign to a var / return a value
+                if (isKlDebugOn) {
+                    res.json({
+                        klDebugData : klaviyoUtils.prepareDebugData(dataObj),
+                        serviceCallData : klaviyoUtils.prepareDebugData(serviceCallResult)
+                    });
+                }
             }
 
         }

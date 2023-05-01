@@ -6,7 +6,11 @@ var startedCheckoutHelper = require('*/cartridge/scripts/klaviyo/checkoutHelpers
 server.extend(module.superModule);
 
 server.append('SubmitShipping', function (req, res, next) {
-    res.viewData.klid = startedCheckoutHelper(false);
+    var templateVars = startedCheckoutHelper(false);
+    res.viewData.klid = templateVars.klid;
+    res.viewData.klDebugData = templateVars.klDebugData;
+    res.viewData.serviceCallData = templateVars.serviceCallData;
+
     next();
 });
 

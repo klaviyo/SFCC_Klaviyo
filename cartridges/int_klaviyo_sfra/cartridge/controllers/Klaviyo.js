@@ -6,6 +6,8 @@ var viewedProductData = require('*/cartridge/scripts/klaviyo/eventData/viewedPro
 var viewedCategoryData = require('*/cartridge/scripts/klaviyo/eventData/viewedCategory');
 var searchedSiteData = require('*/cartridge/scripts/klaviyo/eventData/searchedSite');
 
+var StringUtils = require('dw/util/StringUtils');
+
 /***
  *
  * NOTE: the Klaviyo-Event route exists to support event tracking on pages whose OOTB SFCC controllers are cached by default
@@ -25,7 +27,7 @@ server.get('Event', function (req, res, next) {
 
         var dataObj, serviceCallResult, action, parms;
         var kx = request.httpParameterMap.kx;
-
+        var isKlDebugOn = request.httpParameterMap.kldebug.booleanValue;
         var exchangeID = (!kx.empty) ? kx.stringValue : klaviyoUtils.getKlaviyoExchangeID();
 
         if (exchangeID) { // we have a klaviyo ID, proceed to track events
@@ -49,16 +51,22 @@ server.get('Event', function (req, res, next) {
                         break;
                 }
                 serviceCallResult = klaviyoUtils.trackEvent(exchangeID, dataObj, action);
-                // TODO: need to do anything here with the service call result, or handle all errs etc within trackEvent? otherwise no need to assign to a var / return a value    
+                if (isKlDebugOn) {
+                    res.viewData.klDebugData = klaviyoUtils.prepareDebugData(dataObj);
+                    res.viewData.serviceCallData = klaviyoUtils.prepareDebugData(serviceCallResult);
+                    res.render('klaviyo/klaviyoDebug');
+                    next();
+                    return;
+                }
             }
-        } else { 
+        } else {
             // no klaviyo ID, check for SFCC profile and ID off that if extant
             res.viewData.klid = klaviyoUtils.getProfileInfo();
         }
 
     }
 
-    res.render('klaviyo/klaviyoEmpty') // we don't need to render anything here, but SFRA requires a .render to be called
+    res.render('klaviyo/klaviyoEmpty'); // we don't need to render anything here, but SFRA requires a .render to be called
     next();
 });
 

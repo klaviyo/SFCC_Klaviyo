@@ -36,22 +36,15 @@ function start() {
     });
 
     /* Klaviyo Started Checkout event tracking */
-    var basketMgr = require('dw/order/BasketMgr');
-    var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils');
-    var startedCheckoutData = require('*/cartridge/scripts/klaviyo/eventData/startedCheckout');
-    if(dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_enabled')){
-        var exchangeID = klaviyoUtils.getKlaviyoExchangeID();
-        var dataObj, serviceCallResult, currentBasket;
-        if (exchangeID) {
-            currentBasket = basketMgr.getCurrentBasket()
-            if (currentBasket && currentBasket.getProductLineItems().toArray().length) { //TODO: is there a property for isEmpty on basket object?
-                dataObj = startedCheckoutData.getData(currentBasket);
-                serviceCallResult = klaviyoUtils.trackEvent(exchangeID, dataObj, klaviyoUtils.EVENT_NAMES.startedCheckout);
-            }
-        }
+    var startedCheckoutHelper = require('*/cartridge/scripts/klaviyo/checkoutHelpers').startedCheckoutHelper;
+    var KLTplVars = startedCheckoutHelper(true);
+    if (KLTplVars.klDebugData || KLTplVars.serviceCallData) {
+        app.getView({
+            klDebugData: KLTplVars.klDebugData,
+            serviceCallData: KLTplVars.serviceCallData
+        }).render('klaviyo/klaviyoDebug');
     }
     /* END Klaviyo Started Checkout event tracking */
-
 
     // Direct to first checkout step if already authenticated.
     if (customer.authenticated) {
@@ -73,7 +66,8 @@ function start() {
         pageMeta.update(loginAsset);
 
         app.getView({
-            ContinueURL: URLUtils.https('COCustomer-LoginForm').append('scope', 'checkout')
+            ContinueURL: URLUtils.https('COCustomer-LoginForm').append('scope', 'checkout'),
+            klid: KLTplVars.klid,  // klaviyo
         }).render('checkout/checkoutlogin');
     }
 
