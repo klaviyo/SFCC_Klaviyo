@@ -47,6 +47,10 @@ var KlaviyoEventService = ServiceRegistry.createService('KlaviyoEventService', {
     },
 
     getRequestLogMessage: function (request) {
+        // underlying SFCC code (Java?) will translate "$1" in the request into a reference to the Request object and
+        // "$2" into a reference to the Request's value, so we add a space between dollar sign and number
+        // to not break logged data
+        request = request.replace(/\$1/g, '$ 1').replace(/\$2/g, '$ 2');
         return request;
     },
 
