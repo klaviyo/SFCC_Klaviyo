@@ -73,6 +73,20 @@ function dedupeArray(items) {
 }
 
 
+// helper function to extract product options and return each selected option into an object with three keys: lineItemText, optionId and selectedValueId.
+// This helper accomodates products that may have been configured with or feature multiple options by returning an array of each selected product option as its own optionObj.
+function captureProductOptions(prodOptions) {
+    var options = Array.isArray(prodOptions) ? prodOptions : Array.from(prodOptions);
+    var selectedOptions = [];
+
+    options.forEach(optionObj => {
+        selectedOptions.push({ lineItemText: optionObj.lineItemText, optionID: optionObj.optionID, optionValueID: optionObj.optionValueID});
+    })
+
+    return selectedOptions;
+}
+
+
 function trackEvent(exchangeID, data, event) {
 
     var requestBody = {};
@@ -129,7 +143,6 @@ function trackEvent(exchangeID, data, event) {
 
 
 
-
 module.exports = {
     EVENT_NAMES : EVENT_NAMES,
     klaviyoEnabled : klaviyoEnabled,
@@ -138,5 +151,6 @@ module.exports = {
     getProfileInfo : getProfileInfo,
     prepareDebugData : prepareDebugData,
     dedupeArray: dedupeArray,
+    captureProductOptions : captureProductOptions,
     trackEvent : trackEvent
 }

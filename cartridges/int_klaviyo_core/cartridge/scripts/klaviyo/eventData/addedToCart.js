@@ -36,7 +36,7 @@ function getData(basket) {
             }
 
             if (currentProductID != null && !empty(basketProduct) && basketProduct.getPriceModel().getPrice().value > 0) {
-                var primaryCategory;
+                var primaryCategory, selectedOptions;
                 if (basketProduct.variant) {
                     primaryCategory = basketProduct.masterProduct.getPrimaryCategory().displayName;
                 } else {
@@ -53,7 +53,7 @@ function getData(basket) {
                     categories.push(catProduct.categoryAssignments[i].category.displayName);
                 }
 
-                data.lineItems.push({
+                var currentLineItem = {
                     productID       : currentProductID,
                     productName     : basketProduct.name,
                     productImageURL : imageSizeOfProduct,
@@ -67,8 +67,15 @@ function getData(basket) {
                     productUPC                : basketProduct.UPC,
                     viewedProductAvailability : basketProduct.availabilityModel.availability,
                     categories                : categories, // was createCategories(basketProduct) in orig, check that my output from categories above matches expected output
-                    primaryCategory           : primaryCategory
-                });
+                    primaryCategory           : primaryCategory,
+                };
+
+                selectedOptions = lineItem && lineItem.optionProductLineItems ? klaviyoUtils.captureProductOptions(lineItem.optionProductLineItems) : null;
+                if (selectedOptions && selectedOptions.length) {
+                    currentLineItem.productOptions = selectedOptions;
+                }
+
+                data.lineItems.push(currentLineItem);
                 data.items.push(basketProduct.name);
                 data.categories.push.apply(
                     data.categories,

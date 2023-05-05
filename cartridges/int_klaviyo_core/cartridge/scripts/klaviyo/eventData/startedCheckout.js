@@ -35,16 +35,14 @@ function getData(currentBasket) {
                 throw new Error('Product with ID [' + currentProductID + '] not found');
             }
             var quantity = lineItem.quantityValue;
-            var options = [];
-            if (lineItem && lineItem.optionProductLineItems) {
-                for (let i = 0; i < lineItem.optionProductLineItems.length; i++){
-                    let currOption = lineItem.optionProductLineItems[i];
-                    options.push({optionID: lineItem.optionProductLineItems[i].optionID, optionValueID: lineItem.optionProductLineItems[i].optionValueID, lineItemText: lineItem.optionProductLineItems[i].lineItemText})
-                }
-            }
+            var options = lineItem && lineItem.optionProductLineItems ? klaviyoUtils.captureProductOptions(lineItem.optionProductLineItems) : null;
 
             if (currentProductID != null && !empty(basketProduct) && basketProduct.getPriceModel().getPrice().value > 0) {
                 var productObj = prepareProductObj( lineItem, basketProduct, currentProductID );
+
+                if (options && options.length) {
+                    productObj['Product Options'] = options;
+                }
 
                 // add top-level data for the event for segmenting, etc.
                 data.line_items.push(productObj);
