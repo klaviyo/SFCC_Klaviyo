@@ -44,6 +44,10 @@ function getData(currentBasket) {
                     productObj['Product Options'] = options;
                 }
 
+                if (lineItem.bundledProductLineItem || lineItem.bundledProductLineItems.length) {
+                    klaviyoUtils.captureProductBundles(productObj, lineItem.bundledProductLineItems);
+                }
+
                 // add top-level data for the event for segmenting, etc.
                 data.line_items.push(productObj);
                 data.Categories.push.apply(data.Categories, data.line_items[itemIndex].Categories);

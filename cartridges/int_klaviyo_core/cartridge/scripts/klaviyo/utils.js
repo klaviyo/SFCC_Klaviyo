@@ -86,6 +86,17 @@ function captureProductOptions(prodOptions) {
     return selectedOptions;
 }
 
+// helper function to extract child products from product bundles & set appropriate properties on dataObjs.
+// Used in three key tracked events: 'Added to Cart', 'Started Checkout' and 'Order Confirmation.
+function captureProductBundles(basketObj, bundledProducts) {
+    basketObj['Bundled Product IDs'] = [];
+    basketObj['Is Product Bundle'] = true;
+    for (let i = 0; i < bundledProducts.length; i++) {
+        var childObj = bundledProducts[i];
+        basketObj['Bundled Product IDs'].push(childObj.productID);
+    }
+}
+
 
 function trackEvent(exchangeID, data, event) {
 
@@ -152,5 +163,6 @@ module.exports = {
     prepareDebugData : prepareDebugData,
     dedupeArray: dedupeArray,
     captureProductOptions : captureProductOptions,
+    captureProductBundles : captureProductBundles,
     trackEvent : trackEvent
 }

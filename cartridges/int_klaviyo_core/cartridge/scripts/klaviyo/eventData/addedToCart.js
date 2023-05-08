@@ -75,6 +75,10 @@ function getData(basket) {
                     currentLineItem.productOptions = selectedOptions;
                 }
 
+                if (lineItem.bundledProductLineItem || lineItem.bundledProductLineItems.length) {
+                    klaviyoUtils.captureProductBundles(currentLineItem, lineItem.bundledProductLineItems);
+                }
+
                 data.lineItems.push(currentLineItem);
                 data.items.push(basketProduct.name);
                 data.categories.push.apply(

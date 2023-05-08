@@ -144,6 +144,10 @@ function getData(order) {
                     currentLineItem['Product Options'] = selectedOptions;
                 }
 
+                if (productLineItem.bundledProductLineItem || productLineItem.bundledProductLineItems.length) {
+                    klaviyoUtils.captureProductBundles(currentLineItem, productLineItem.bundledProductLineItems);
+                }
+
                 productLineItemsArray.push(currentLineItem);
             }
 
