@@ -125,7 +125,7 @@ function getData(order) {
                     allCategories = productDetail.getAllCategories();
                 }
 
-                productLineItemsArray.push({
+                var currentLineItem = {
                     'Product ID'             : productLineItem.productID,
                     'Product Name'           : productLineItem.productName,
                     'Product Secondary Name' : secondaryName,
@@ -137,7 +137,14 @@ function getData(order) {
                     'Product Variant'        : variationValues,
                     'Price Value'            : productLineItem.price.value,
                     'Product Image URL'      : KLImageSize ? productDetail.getImage(KLImageSize).getAbsURL().toString() : null
-                });
+                };
+
+                var selectedOptions = productLineItem && productLineItem.optionProductLineItems ? klaviyoUtils.captureProductOptions(productLineItem.optionProductLineItems) : null;
+                if (selectedOptions && selectedOptions.length) {
+                    currentLineItem.productOptions = selectedOptions;
+                }
+
+                productLineItemsArray.push(currentLineItem);
             }
 
             // Append gift card
