@@ -141,7 +141,7 @@ function getData(order) {
 
                 var selectedOptions = productLineItem && productLineItem.optionProductLineItems ? klaviyoUtils.captureProductOptions(productLineItem.optionProductLineItems) : null;
                 if (selectedOptions && selectedOptions.length) {
-                    currentLineItem.productOptions = selectedOptions;
+                    currentLineItem['Product Options'] = selectedOptions;
                 }
 
                 productLineItemsArray.push(currentLineItem);
