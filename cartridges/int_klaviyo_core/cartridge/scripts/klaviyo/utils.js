@@ -86,8 +86,9 @@ function captureProductOptions(prodOptions) {
     return selectedOptions;
 }
 
+
 // helper function to extract child products from product bundles & set appropriate properties on dataObjs.
-// Used in three key tracked events: 'Added to Cart', 'Started Checkout' and 'Order Confirmation.
+// Used in three key tracked events: 'Added to Cart', 'Started Checkout' and 'Order Confirmation'.
 function captureProductBundles(basketObj, bundledProducts) {
     basketObj['Bundled Product IDs'] = [];
     basketObj['Is Product Bundle'] = true;
@@ -95,6 +96,15 @@ function captureProductBundles(basketObj, bundledProducts) {
         var childObj = bundledProducts[i];
         basketObj['Bundled Product IDs'].push(childObj.productID);
     }
+}
+
+
+// helper function to handle bonus products & set appropriate properties on dataObjs.
+// Used in two key tracked events: 'Started Checkout' and 'Order Confirmation'.
+function captureBonusProduct (lineItem, prodObj, trackedObj) {
+    trackedObj['Is Bonus Product'] = true;
+    trackedObj['Original Price'] = dw.util.StringUtils.formatMoney(dw.value.Money( prodObj.getPriceModel().getPrice().value, session.getCurrency().getCurrencyCode() ));
+    trackedObj['Price'] = dw.util.StringUtils.formatMoney(dw.value.Money( lineItem.adjustedPrice.value, session.getCurrency().getCurrencyCode() ));
 }
 
 
@@ -164,5 +174,6 @@ module.exports = {
     dedupeArray: dedupeArray,
     captureProductOptions : captureProductOptions,
     captureProductBundles : captureProductBundles,
+    captureBonusProduct : captureBonusProduct,
     trackEvent : trackEvent
 }

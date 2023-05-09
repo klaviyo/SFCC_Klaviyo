@@ -131,7 +131,7 @@ function getData(order) {
                     'Product Secondary Name' : secondaryName,
                     'Quantity'                 : productLineItem.quantity.value,
                     'Price'                    : priceString,
-                    'Discount'                 : productLineItem.adjustedPrice.value,
+                    'Discount'                 : productLineItem.adjustedPrice.value, // TODO: this does not appear to be correct...just provides the adjusted price...but does not show a 'discounted' product value
                     'Product Page URL'       : prdUrl,
                     'Replenishment'            : replenishment,
                     'Product Variant'        : variationValues,
@@ -142,6 +142,10 @@ function getData(order) {
                 var selectedOptions = productLineItem && productLineItem.optionProductLineItems ? klaviyoUtils.captureProductOptions(productLineItem.optionProductLineItems) : null;
                 if (selectedOptions && selectedOptions.length) {
                     currentLineItem['Product Options'] = selectedOptions;
+                }
+
+                if (productLineItem.bonusProductLineItem) {
+                    klaviyoUtils.captureBonusProduct(productLineItem, productDetail, currentLineItem);
                 }
 
                 if (productLineItem.bundledProductLineItem || productLineItem.bundledProductLineItems.length) {

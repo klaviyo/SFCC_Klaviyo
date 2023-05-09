@@ -70,10 +70,14 @@ function getData(currentBasket) {
 // TODO: this is called in one location... can it just be inlined?
 function prepareProductObj(lineItem, basketProduct, currentProductID) {
     var productObj = {};
+    if (lineItem.bonusProductLineItem) {
+        klaviyoUtils.captureBonusProduct(lineItem, basketProduct, productObj);
+    } else {
+        productObj.Price = dw.util.StringUtils.formatMoney( dw.value.Money( basketProduct.getPriceModel().getPrice().value, session.getCurrency().getCurrencyCode() ) );
+    }
     productObj['Product ID'] = currentProductID;
     productObj['Product Name'] = basketProduct.name;
     productObj['Product Image URL'] = KLImageSize ? basketProduct.getImage(KLImageSize).getAbsURL().toString() : null;
-    productObj.Price = dw.util.StringUtils.formatMoney( dw.value.Money( basketProduct.getPriceModel().getPrice().value, session.getCurrency().getCurrencyCode() ) );
     productObj['Product Description'] = basketProduct.pageDescription ? basketProduct.pageDescription.toString() : null;
     productObj['Product Page URL'] = URLUtils.https('Product-Show', 'pid', currentProductID).toString();
     productObj['Product UPC'] = basketProduct.UPC;
