@@ -58,17 +58,19 @@ function getData(basket) {
                     productName     : basketProduct.name,
                     productImageURL : imageSizeOfProduct,
                     productPageURL  : URLUtils.https('Product-Show', 'pid', currentProductID).toString(),
-                    price: dw.util.StringUtils.formatMoney(
-                        dw.value.Money(
-                            basketProduct.getPriceModel().getPrice().value,
-                            session.getCurrency().getCurrencyCode()
-                        )
-                    ),
+                    // price: dw.util.StringUtils.formatMoney(
+                    //     dw.value.Money(
+                    //         basketProduct.getPriceModel().getPrice().value,
+                    //         session.getCurrency().getCurrencyCode()
+                    //     )
+                    // ),
                     productUPC                : basketProduct.UPC,
                     viewedProductAvailability : basketProduct.availabilityModel.availability,
                     categories                : categories, // was createCategories(basketProduct) in orig, check that my output from categories above matches expected output
                     primaryCategory           : primaryCategory,
                 };
+
+                klaviyoUtils.priceCheck(lineItem, basketProduct, currentLineItem);
 
                 selectedOptions = lineItem && lineItem.optionProductLineItems ? klaviyoUtils.captureProductOptions(lineItem.optionProductLineItems) : null;
                 if (selectedOptions && selectedOptions.length) {
