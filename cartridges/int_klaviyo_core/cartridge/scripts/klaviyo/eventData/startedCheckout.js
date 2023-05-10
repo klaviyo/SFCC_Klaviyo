@@ -54,7 +54,10 @@ function getData(currentBasket) {
                 data.Categories = klaviyoUtils.dedupeArray(data.Categories);
                 data.Items.push(data.line_items[itemIndex]['Product Name']);
 
-                reconstructCartItems.push({ productID: currentProductID, quantity: quantity, options: options });
+                // Exclude bonus products from reconstructCartItems array (Note: This excludes bonus products from being included in the cart rebuilding link))
+                if (!lineItem.bonusProductLineItem) {
+                    reconstructCartItems.push({ productID: currentProductID, quantity: quantity, options: options });
+                }
             }
         }
 
