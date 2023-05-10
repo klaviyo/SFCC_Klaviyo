@@ -101,10 +101,25 @@ function captureProductBundles(basketObj, bundledProducts) {
 
 // helper function to handle bonus products & set appropriate properties on dataObjs.
 // Used in two key tracked events: 'Started Checkout' and 'Order Confirmation'.
-function captureBonusProduct (lineItem, prodObj, trackedObj) {
+function captureBonusProduct (lineItemObj, prodObj, trackedObj) {
     trackedObj['Is Bonus Product'] = true;
-    trackedObj['Original Price'] = dw.util.StringUtils.formatMoney(dw.value.Money( prodObj.getPriceModel().getPrice().value, session.getCurrency().getCurrencyCode() ));
-    trackedObj['Price'] = dw.util.StringUtils.formatMoney(dw.value.Money( lineItem.adjustedPrice.value, session.getCurrency().getCurrencyCode() ));
+    trackedObj['Original Price'] = StringUtils.formatMoney(dw.value.Money( prodObj.getPriceModel().getPrice().value, session.getCurrency().getCurrencyCode() ));
+    trackedObj['Price'] = StringUtils.formatMoney(dw.value.Money( lineItemObj.adjustedPrice.value, session.getCurrency().getCurrencyCode() ));
+}
+
+
+// helper function to consider promos & set Price and Original Pride properties on dataObjs.
+// Used in order level events: 'Started Checkout' and 'Order Confirmation'.
+function priceCheck (lineItemObj, basketProdObj, trackedObj) {
+    if (trackedObj) {
+        var adjustedPromoPrice = lineItemObj && lineItemObj.adjustedPrice < lineItemObj.basePrice ? StringUtils.formatMoney(dw.value.Money( lineItemObj.adjustedPrice.value, session.getCurrency().getCurrencyCode() )) : null;
+        if (adjustedPromoPrice) {
+            trackedObj['Price'] = StringUtils.formatMoney(dw.value.Money( lineItemObj.adjustedPrice.value, session.getCurrency().getCurrencyCode() ));
+            trackedObj['Original Price'] = StringUtils.formatMoney(dw.value.Money( basketProdObj.getPriceModel().getPrice().value, session.getCurrency().getCurrencyCode() ));
+        } else {
+            trackedObj['Price'] = basketProdObj ? StringUtils.formatMoney(dw.value.Money( basketProdObj.getPriceModel().getPrice().value, session.getCurrency().getCurrencyCode() )) : null;
+        }
+    }
 }
 
 
@@ -175,5 +190,6 @@ module.exports = {
     captureProductOptions : captureProductOptions,
     captureProductBundles : captureProductBundles,
     captureBonusProduct : captureBonusProduct,
+    priceCheck : priceCheck,
     trackEvent : trackEvent
 }

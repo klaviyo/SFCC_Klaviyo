@@ -73,7 +73,7 @@ function prepareProductObj(lineItem, basketProduct, currentProductID) {
     if (lineItem.bonusProductLineItem) {
         klaviyoUtils.captureBonusProduct(lineItem, basketProduct, productObj);
     } else {
-        productObj.Price = dw.util.StringUtils.formatMoney( dw.value.Money( basketProduct.getPriceModel().getPrice().value, session.getCurrency().getCurrencyCode() ) );
+        klaviyoUtils.priceCheck(lineItem, basketProduct, productObj);
     }
     productObj['Product ID'] = currentProductID;
     productObj['Product Name'] = basketProduct.name;
