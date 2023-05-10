@@ -5,6 +5,7 @@ var StringUtils = require('dw/util/StringUtils');
 var Logger = require('dw/system/Logger');
 
 var klaviyoServices = require('*/cartridge/scripts/klaviyo/services.js');
+var priceHelper = require('*/cartridge/scripts/helpers/pricing');
 
 // event name constants
 // TODO: currently crossover with WHITELISTED_EVENTS below - square them when answers are found to why WHITELISTED_EVENTS exists
@@ -111,11 +112,15 @@ function captureBonusProduct (lineItemObj, prodObj, trackedObj) {
 // helper function to consider promos & set Price and Original Pride properties on dataObjs.
 // Used in order level events: 'Started Checkout' and 'Order Confirmation'.
 function priceCheck (lineItemObj, basketProdObj, trackedObj) {
+    var priceModel = basketProdObj ? basketProdObj.getPriceModel() : null;
+    var priceBook = priceModel ? priceHelper.getRootPriceBook(priceModel.priceInfo.priceBook) : null;
+    var priceBookPrice = priceBook && priceModel ? priceModel.getPriceBookPrice(priceBook.ID) : null;
+
     if (trackedObj) {
-        var adjustedPromoPrice = lineItemObj && lineItemObj.adjustedPrice < lineItemObj.basePrice ? StringUtils.formatMoney(dw.value.Money( lineItemObj.adjustedPrice.value, session.getCurrency().getCurrencyCode() )) : null;
+        var adjustedPromoPrice = lineItemObj && lineItemObj.adjustedPrice < priceBookPrice ? StringUtils.formatMoney(dw.value.Money( lineItemObj.adjustedPrice.value, session.getCurrency().getCurrencyCode() )) : null;
         if (adjustedPromoPrice) {
             trackedObj['Price'] = StringUtils.formatMoney(dw.value.Money( lineItemObj.adjustedPrice.value, session.getCurrency().getCurrencyCode() ));
-            trackedObj['Original Price'] = StringUtils.formatMoney(dw.value.Money( basketProdObj.getPriceModel().getPrice().value, session.getCurrency().getCurrencyCode() ));
+            trackedObj['Original Price'] = priceBookPrice ? StringUtils.formatMoney(dw.value.Money( priceBookPrice.value, session.getCurrency().getCurrencyCode() )) : StringUtils.formatMoney(dw.value.Money( basketProdObj.getPriceModel().getPrice().value, session.getCurrency().getCurrencyCode() ));
         } else {
             trackedObj['Price'] = basketProdObj ? StringUtils.formatMoney(dw.value.Money( basketProdObj.getPriceModel().getPrice().value, session.getCurrency().getCurrencyCode() )) : null;
         }
