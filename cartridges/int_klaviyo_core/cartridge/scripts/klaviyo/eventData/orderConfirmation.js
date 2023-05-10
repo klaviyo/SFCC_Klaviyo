@@ -71,7 +71,6 @@ function getData(order) {
                 productLineItem = productLineItems[j];
                 var prdUrl = '';
                 var replenishment = false;
-                var priceString = '';
                 // var priceValue = 0.0;
                 // var hasOsfSmartOrderRefill = false;
                 prdUrl = URLUtils.https( 'Product-Show', 'pid', productLineItem.productID ).toString();
@@ -84,15 +83,9 @@ function getData(order) {
                     throw new Error('Product with ID [' + lineItemProduct.ID + '] not found');
                 }
 
-                if (!productLineItem.bonusProductLineItem) {
-                    priceString = dw.util.StringUtils.formatMoney( dw.value.Money( productLineItem.price.value, session.getCurrency().getCurrencyCode() ) );
-                } else {
-                    priceString = dw.util.StringUtils.formatMoney( dw.value.Money(0, session.getCurrency().getCurrencyCode()) );
-                }
-
                 // Variation values
                 var variationValues = '';
-                if (productDetail.isVariant()) { 
+                if (productDetail.isVariant()) {
                     var variationAttrs = productDetail.variationModel.getProductVariationAttributes();
                     for (var i = 0; i < variationAttrs.length; i++) {
                         var VA = variationAttrs[i];
@@ -130,7 +123,6 @@ function getData(order) {
                     'Product Name'           : productLineItem.productName,
                     'Product Secondary Name' : secondaryName,
                     'Quantity'                 : productLineItem.quantity.value,
-                    'Price'                    : priceString,
                     'Discount'                 : productLineItem.adjustedPrice.value, // TODO: this does not appear to be correct...just provides the adjusted price...but does not show a 'discounted' product value
                     'Product Page URL'       : prdUrl,
                     'Replenishment'            : replenishment,
@@ -139,6 +131,7 @@ function getData(order) {
                     'Product Image URL'      : KLImageSize ? productDetail.getImage(KLImageSize).getAbsURL().toString() : null
                 };
 
+                klaviyoUtils.priceCheck(productLineItem, productDetail, currentLineItem);
                 var selectedOptions = productLineItem && productLineItem.optionProductLineItems ? klaviyoUtils.captureProductOptions(productLineItem.optionProductLineItems) : null;
                 if (selectedOptions && selectedOptions.length) {
                     currentLineItem['Product Options'] = selectedOptions;
