@@ -82,7 +82,7 @@ function captureProductOptions(prodOptions) {
     var selectedOptions = [];
 
     options.forEach(optionObj => {
-        selectedOptions.push({ lineItemText: optionObj.lineItemText, optionID: optionObj.optionID, optionValueID: optionObj.optionValueID});
+        selectedOptions.push({ lineItemText: optionObj.lineItemText, optionID: optionObj.optionID, optionValueID: optionObj.optionValueID, optionPrice: optionObj.basePrice.value });
     })
 
     return selectedOptions;
