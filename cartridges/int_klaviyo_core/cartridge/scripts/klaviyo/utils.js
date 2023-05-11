@@ -1,11 +1,12 @@
 'use strict';
 
+/* API Includes */
 var Site = require('dw/system/Site');
 var StringUtils = require('dw/util/StringUtils');
 var Logger = require('dw/system/Logger');
 
+/* Script Modules */
 var klaviyoServices = require('*/cartridge/scripts/klaviyo/services.js');
-var priceHelper = require('*/cartridge/scripts/helpers/pricing');
 
 // event name constants
 // TODO: currently crossover with WHITELISTED_EVENTS below - square them when answers are found to why WHITELISTED_EVENTS exists
@@ -113,7 +114,7 @@ function captureBonusProduct (lineItemObj, prodObj, trackedObj) {
 // Used in order level events: 'Started Checkout' and 'Order Confirmation'.
 function priceCheck (lineItemObj, basketProdObj, trackedObj) {
     var priceModel = basketProdObj ? basketProdObj.getPriceModel() : null;
-    var priceBook = priceModel ? priceHelper.getRootPriceBook(priceModel.priceInfo.priceBook) : null;
+    var priceBook = priceModel ? _getRootPriceBook(priceModel.priceInfo.priceBook) : null;
     var priceBookPrice = priceBook && priceModel ? priceModel.getPriceBookPrice(priceBook.ID) : null;
 
     if (trackedObj) {
@@ -125,6 +126,20 @@ function priceCheck (lineItemObj, basketProdObj, trackedObj) {
             trackedObj['Price'] = basketProdObj ? StringUtils.formatMoney(dw.value.Money( basketProdObj.getPriceModel().getPrice().value, session.getCurrency().getCurrencyCode() )) : null;
         }
     }
+}
+
+
+/**
+ * Return root price book for a given price book
+ * @param {dw.catalog.PriceBook} priceBook - Provided price book
+ * @returns {dw.catalog.PriceBook} root price book
+ */
+function _getRootPriceBook(priceBook) {
+    var rootPriceBook = priceBook;
+    while (rootPriceBook.parentPriceBook) {
+        rootPriceBook = rootPriceBook.parentPriceBook;
+    }
+    return rootPriceBook;
 }
 
 
