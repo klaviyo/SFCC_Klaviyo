@@ -49,7 +49,5 @@
     <isif condition="${pdict.klDebugData}">
         <isinclude template="klaviyo/klaviyoDebug" />
    </isif>
-    <isif condition="${dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_email_selectors') && !empty(dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_email_selectors'))}">
-        <isinclude template="klaviyo/klaviyoListeners" />
-    </isif>
+   <isinclude template="klaviyo/klaviyoListeners" />
 </isif>

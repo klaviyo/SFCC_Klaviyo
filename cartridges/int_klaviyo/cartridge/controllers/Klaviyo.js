@@ -10,6 +10,7 @@ var r = require("*/cartridge/scripts/util/Response");
 
 /* API Includes */
 var ISML = require('dw/template/ISML');
+var StringUtils = require('dw/util/StringUtils');
 
 var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils');
 var viewedProductData = require('*/cartridge/scripts/klaviyo/eventData/viewedProduct');
@@ -49,7 +50,7 @@ var Event = function () {
                         dataObj = searchedSiteData.getData(parms[0], parms[1]); // parms: search phrase, result count
                         break;
                 }
-                serviceCallResult = klaviyoUtils.trackEvent(exchangeID, dataObj, action);
+                serviceCallResult = klaviyoUtils.trackEvent(exchangeID, dataObj, action, false);
                 if (isKlDebugOn) {
                     app.getView({
                         klDebugData: klaviyoUtils.prepareDebugData(dataObj),
@@ -71,4 +72,16 @@ var Event = function () {
 };
 
 
+/* receives AJAX call from email field indicated by custom Site Preference "klaviyo_checkout_email_selector" */
+var StartedCheckoutEvent = function() {
+
+    var KLCheckoutHelpers = require('*/cartridge/scripts/klaviyo/checkoutHelpers');
+    var email = StringUtils.decodeBase64(request.httpParameterMap.a);
+    var KLTplVars = KLCheckoutHelpers.startedCheckoutHelper(true, email);
+
+    res.json({ success: true });
+
+};
+
 exports.Event = guard.ensure(['get'], Event);
+exports.StartedCheckoutEvent = guard.ensure(['post'], StartedCheckoutEvent);

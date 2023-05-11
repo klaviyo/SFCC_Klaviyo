@@ -91,18 +91,17 @@ function showConfirmation(order) {
     }
 
     /* Klaviyo Order Confirmation event tracking */
-    //var OrderMgr = require('dw/order/OrderMgr');
     var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils');
     var orderConfirmationData = require('*/cartridge/scripts/klaviyo/eventData/orderConfirmation');
     if(dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_enabled')){
         session.privacy.klaviyoCheckoutTracked = false;
         var exchangeID = klaviyoUtils.getKlaviyoExchangeID();
-        var dataObj, serviceCallResult; //, currentOrder;
-        if (exchangeID && order) {
+        var dataObj, serviceCallResult;
+        if (order && order.customerEmail) {
             // check to see if the status is new or created
             if (order.status == dw.order.Order.ORDER_STATUS_NEW || order.status == dw.order.Order.ORDER_STATUS_OPEN) {
                 dataObj = orderConfirmationData.getData(order, exchangeID);
-                serviceCallResult = klaviyoUtils.trackEvent(exchangeID, dataObj, klaviyoUtils.EVENT_NAMES.orderConfirmation);
+                serviceCallResult = klaviyoUtils.trackEvent(exchangeID, dataObj, klaviyoUtils.EVENT_NAMES.orderConfirmation, order.customerEmail);
             }
 
         }

@@ -285,7 +285,7 @@ function addProduct() {
             currentBasket = basketMgr.getCurrentBasket()
             if (currentBasket && currentBasket.getProductLineItems().toArray().length) { //TODO: is there a property for isEmpty on basket object?
                 dataObj = addedToCartData.getData(currentBasket);
-                serviceCallResult = klaviyoUtils.trackEvent(exchangeID, dataObj, klaviyoUtils.EVENT_NAMES.addedToCart);
+                serviceCallResult = klaviyoUtils.trackEvent(exchangeID, dataObj, klaviyoUtils.EVENT_NAMES.addedToCart, false);
                 if (isKlDebugOn) {
                     var klDebugData = klaviyoUtils.prepareDebugData(dataObj);
                     var serviceCallData = klaviyoUtils.prepareDebugData(serviceCallResult);

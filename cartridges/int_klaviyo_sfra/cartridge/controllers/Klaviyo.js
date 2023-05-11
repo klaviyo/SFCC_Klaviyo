@@ -5,6 +5,7 @@ var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils');
 var viewedProductData = require('*/cartridge/scripts/klaviyo/eventData/viewedProduct');
 var viewedCategoryData = require('*/cartridge/scripts/klaviyo/eventData/viewedCategory');
 var searchedSiteData = require('*/cartridge/scripts/klaviyo/eventData/searchedSite');
+var KLCheckoutHelpers = require('*/cartridge/scripts/klaviyo/checkoutHelpers');
 
 var StringUtils = require('dw/util/StringUtils');
 
@@ -50,7 +51,7 @@ server.get('Event', function (req, res, next) {
                         dataObj = searchedSiteData.getData(parms[0], parms[1]); // parms: search phrase, result count
                         break;
                 }
-                serviceCallResult = klaviyoUtils.trackEvent(exchangeID, dataObj, action);
+                serviceCallResult = klaviyoUtils.trackEvent(exchangeID, dataObj, action, false);
                 if (isKlDebugOn) {
                     res.viewData.klDebugData = klaviyoUtils.prepareDebugData(dataObj);
                     res.viewData.serviceCallData = klaviyoUtils.prepareDebugData(serviceCallResult);
@@ -68,6 +69,18 @@ server.get('Event', function (req, res, next) {
 
     res.render('klaviyo/klaviyoEmpty'); // we don't need to render anything here, but SFRA requires a .render to be called
     next();
+});
+
+
+/* receives AJAX call from email field indicated by custom Site Preference "klaviyo_checkout_email_selector" */
+server.post('StartedCheckoutEvent', server.middleware.https, function(req, res, next) {
+    var email = StringUtils.decodeBase64(req.httpParameterMap.a);
+    var templateVars = startedCheckoutHelper(true, email);
+
+    res.json({ success: true });
+
+    next();
+    return;
 });
 
 

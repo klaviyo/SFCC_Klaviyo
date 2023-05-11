@@ -38,9 +38,9 @@ function getData(basket) {
             if (currentProductID != null && !empty(basketProduct) && basketProduct.getPriceModel().getPrice().value > 0) {
                 var primaryCategory;
                 if (basketProduct.variant) {
-                    primaryCategory = basketProduct.masterProduct.getPrimaryCategory().displayName;
+                    primaryCategory = (basketProduct.masterProduct.primaryCategory) ? basketProduct.masterProduct.primaryCategory.displayName : '';
                 } else {
-                    primaryCategory = basketProduct.getPrimaryCategory().displayName;
+                    primaryCategory = (basketProduct.primaryCategory) ? basketProduct.primaryCategory.displayName : '';
                 }
                 var imageSizeOfProduct = null;
                 if (KLImageSize && basketProduct.getImage(KLImageSize)) {
