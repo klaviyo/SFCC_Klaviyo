@@ -99,9 +99,11 @@ function start() {
     });
 
 
+
     /* Klaviyo Started Checkout event tracking */
-    var startedCheckoutHelper = require('*/cartridge/scripts/klaviyo/checkoutHelpers').startedCheckoutHelper;
-    var klid = startedCheckoutHelper(false);
+    var KLCheckoutHelpers = require('*/cartridge/scripts/klaviyo/checkoutHelpers');
+    var customerEmail = KLCheckoutHelpers.getEmailFromBasket();
+    var KLTplVars = KLCheckoutHelpers.startedCheckoutHelper(false, customerEmail);
     /* END Klaviyo Started Checkout event tracking */
 
 
@@ -119,7 +121,7 @@ function start() {
             ContinueURL: URLUtils.https('COShipping-SingleShipping'),
             Basket: cart.object,
             HomeDeliveries: homeDeliveries,
-            klid: klid
+            klid: KLTplVars.klid // Klaviyo
         }).render('checkout/shipping/singleshipping');
     }
 }

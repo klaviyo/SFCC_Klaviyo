@@ -192,8 +192,9 @@ function publicStart() {
 
 
         /* Klaviyo Started Checkout event tracking */
-        var startedCheckoutHelper = require('*/cartridge/scripts/klaviyo/checkoutHelpers').startedCheckoutHelper;
-        var klid = startedCheckoutHelper(false);
+        var KLCheckoutHelpers = require('*/cartridge/scripts/klaviyo/checkoutHelpers');
+        var customerEmail = KLCheckoutHelpers.getEmailFromBasket();
+        var KLTplVars = KLCheckoutHelpers.startedCheckoutHelper(false, customerEmail);
         /* END Klaviyo Started Checkout event tracking */
 
 
@@ -562,10 +563,10 @@ function billing() {
 
 
 
-
                     /* Klaviyo Started Checkout event tracking */
-                    var startedCheckoutHelper = require('*/cartridge/scripts/klaviyo/checkoutHelpers').startedCheckoutHelper;
-                    var klid = startedCheckoutHelper(false);
+                    var KLCheckoutHelpers = require('*/cartridge/scripts/klaviyo/checkoutHelpers');
+                    var customerEmail = KLCheckoutHelpers.getEmailFromBasket();
+                    var klid = KLCheckoutHelpers.startedCheckoutHelper(false, customerEmail);
                     /* END Klaviyo Started Checkout event tracking */
 
 

@@ -38,6 +38,15 @@
                 <default-value>large</default-value>
             </attribute-definition>
 
+            <attribute-definition attribute-id="klaviyo_checkout_email_selector">
+                <display-name xml:lang="x-default">Checkout Email Selector</display-name>
+                <description xml:lang="x-default">CSS selector targeting the email field in checkout. ex: "#email-guest"</description>
+                <type>string</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <min-length>0</min-length>
+            </attribute-definition>
+
             <attribute-definition attribute-id="klaviyo_email_selectors">
                 <display-name xml:lang="x-default">Klaviyo Email Selectors</display-name>
                 <description xml:lang="x-default">Enter CSS selectors to capture data from an input field on any page (ex: #idname, .classname, etc.)</description>
@@ -65,6 +74,7 @@
                 <attribute attribute-id="klaviyo_sendEventsAsSFCC"/>
                 <attribute attribute-id="klaviyo_image_size"/>
                 <attribute attribute-id="klaviyo_email_selectors"/>
+                <attribute attribute-id="klaviyo_checkout_email_selector"/>
             </attribute-group>
         </group-definitions>
     </type-extension>

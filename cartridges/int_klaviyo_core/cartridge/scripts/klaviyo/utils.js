@@ -72,8 +72,7 @@ function dedupeArray(items) {
     return Object.keys(unique);
 }
 
-
-function trackEvent(exchangeID, data, event) {
+function trackEvent(exchangeID, data, event, customerEmail) {
 
     var requestBody = {};
     var resultObj = {};
@@ -98,13 +97,18 @@ function trackEvent(exchangeID, data, event) {
         metricObj.service = "demandware"
     }
 
+    var profileObj = {};
+    if(!customerEmail) {
+        profileObj = { "$exchange_id": exchangeID }
+    } else {
+        profileObj = { "$email": customerEmail }
+    }
+
     var eventData = {
         "data": {
             "type": "event",
             "attributes": {
-                "profile": {
-                    "$exchange_id": exchangeID,
-                },
+                "profile": profileObj,
                 "metric": metricObj,
                 "properties" : data,
                 "time": (new Date()).toISOString()

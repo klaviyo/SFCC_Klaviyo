@@ -92,9 +92,11 @@ function start() {
     }
 
 
+
     /* Klaviyo Started Checkout event tracking */
-    var startedCheckoutHelper = require('*/cartridge/scripts/klaviyo/checkoutHelpers').startedCheckoutHelper;
-    var KLTplVars = startedCheckoutHelper(true);
+    var KLCheckoutHelpers = require('*/cartridge/scripts/klaviyo/checkoutHelpers');
+    var customerEmail = KLCheckoutHelpers.getEmailFromBasket();
+    var KLTplVars = KLCheckoutHelpers.startedCheckoutHelper(false, customerEmail);
     if (KLTplVars.klDebugData || KLTplVars.serviceCallData) {
         app.getView({
             klDebugData: KLTplVars.klDebugData,

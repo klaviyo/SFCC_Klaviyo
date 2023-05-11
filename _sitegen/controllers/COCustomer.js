@@ -35,9 +35,12 @@ function start() {
         Cart.goc().removeAllPaymentInstruments();
     });
 
+
+
     /* Klaviyo Started Checkout event tracking */
-    var startedCheckoutHelper = require('*/cartridge/scripts/klaviyo/checkoutHelpers').startedCheckoutHelper;
-    var KLTplVars = startedCheckoutHelper(true);
+    var KLCheckoutHelpers = require('*/cartridge/scripts/klaviyo/checkoutHelpers');
+    var customerEmail = KLCheckoutHelpers.getEmailFromBasket();
+    var KLTplVars = KLCheckoutHelpers.startedCheckoutHelper(true, customerEmail);
     if (KLTplVars.klDebugData || KLTplVars.serviceCallData) {
         app.getView({
             klDebugData: KLTplVars.klDebugData,
@@ -67,7 +70,7 @@ function start() {
 
         app.getView({
             ContinueURL: URLUtils.https('COCustomer-LoginForm').append('scope', 'checkout'),
-            klid: KLTplVars.klid,  // klaviyo
+            klid: KLTplVars.klid,  // Klaviyo
         }).render('checkout/checkoutlogin');
     }
 
