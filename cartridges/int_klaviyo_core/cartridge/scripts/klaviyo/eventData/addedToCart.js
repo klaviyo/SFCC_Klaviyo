@@ -64,14 +64,21 @@ function getData(basket) {
                     primaryCategory           : primaryCategory
                 };
 
-                klaviyoUtils.priceCheck(lineItem, basketProduct, currentLineItem);
+                var priceData = klaviyoUtils.priceCheck(lineItem, basketProduct);
+                currentLineItem.Price = priceData.purchasePrice
+                if (priceData.originalPrice) {
+                    currentLineItem.originalPrice = priceData.originalPrice
+                }
+
                 selectedOptions = lineItem && lineItem.optionProductLineItems ? klaviyoUtils.captureProductOptions(lineItem.optionProductLineItems) : null;
                 if (selectedOptions && selectedOptions.length) {
                     currentLineItem.productOptions = selectedOptions;
                 }
 
                 if (lineItem.bundledProductLineItem || lineItem.bundledProductLineItems.length) {
-                    klaviyoUtils.captureProductBundles(currentLineItem, lineItem.bundledProductLineItems);
+                    var prodBundle = klaviyoUtils.captureProductBundles(lineItem.bundledProductLineItems);
+                    currentLineItem['Is Product Bundle'] = prodBundle.isProdBundle;
+                    currentLineItem['Bundled Product IDs'] = prodBundle.prodBundleIDs;
                 }
 
                 data.lineItems.push(currentLineItem);

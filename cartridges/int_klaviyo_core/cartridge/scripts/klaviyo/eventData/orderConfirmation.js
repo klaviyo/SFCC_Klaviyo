@@ -123,7 +123,7 @@ function getData(order) {
                     'Product Name'           : productLineItem.productName,
                     'Product Secondary Name' : secondaryName,
                     'Quantity'                 : productLineItem.quantity.value,
-                    'Discount'                 : productLineItem.adjustedPrice.value, // TODO: this does not appear to be correct...just provides the adjusted price...but does not show a 'discounted' product value
+                    'Discount'                 : productLineItem.adjustedPrice.value,
                     'Product Page URL'       : prdUrl,
                     'Replenishment'            : replenishment,
                     'Product Variant'        : variationValues,
@@ -131,18 +131,28 @@ function getData(order) {
                     'Product Image URL'      : KLImageSize ? productDetail.getImage(KLImageSize).getAbsURL().toString() : null
                 };
 
-                klaviyoUtils.priceCheck(productLineItem, productDetail, currentLineItem);
+                var priceData = klaviyoUtils.priceCheck(productLineItem, productDetail);
+                currentLineItem['Price'] = priceData.purchasePrice
+                if (priceData.originalPrice) {
+                    currentLineItem['Original Price'] = priceData.originalPrice
+                }
+
                 var selectedOptions = productLineItem && productLineItem.optionProductLineItems ? klaviyoUtils.captureProductOptions(productLineItem.optionProductLineItems) : null;
                 if (selectedOptions && selectedOptions.length) {
                     currentLineItem['Product Options'] = selectedOptions;
                 }
 
                 if (productLineItem.bonusProductLineItem) {
-                    klaviyoUtils.captureBonusProduct(productLineItem, productDetail, currentLineItem);
+                    var bonusProduct = klaviyoUtils.captureBonusProduct(productLineItem, productDetail);
+                    currentLineItem['Is Bonus Product'] = bonusProduct.isbonusProduct;
+                    currentLineItem['Original Price'] = bonusProduct.originalPrice;
+                    currentLineItem['Price'] = bonusProduct.price;
                 }
 
                 if (productLineItem.bundledProductLineItem || productLineItem.bundledProductLineItems.length) {
-                    klaviyoUtils.captureProductBundles(currentLineItem, productLineItem.bundledProductLineItems);
+                    var prodBundle = klaviyoUtils.captureProductBundles(productLineItem.bundledProductLineItems);
+                    currentLineItem['Is Product Bundle'] = prodBundle.isProdBundle;
+                    currentLineItem['Bundled Product IDs'] = prodBundle.prodBundleIDs;
                 }
 
                 productLineItemsArray.push(currentLineItem);

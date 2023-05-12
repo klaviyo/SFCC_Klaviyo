@@ -45,7 +45,9 @@ function getData(currentBasket) {
                 }
 
                 if (lineItem.bundledProductLineItem || lineItem.bundledProductLineItems.length) {
-                    klaviyoUtils.captureProductBundles(productObj, lineItem.bundledProductLineItems);
+                    var prodBundle = klaviyoUtils.captureProductBundles(lineItem.bundledProductLineItems);
+                    productObj['Is Product Bundle'] = prodBundle.isProdBundle;
+                    productObj['Bundled Product IDs'] = prodBundle.prodBundleIDs;
                 }
 
                 // add top-level data for the event for segmenting, etc.
@@ -74,9 +76,16 @@ function getData(currentBasket) {
 function prepareProductObj(lineItem, basketProduct, currentProductID) {
     var productObj = {};
     if (lineItem.bonusProductLineItem) {
-        klaviyoUtils.captureBonusProduct(lineItem, basketProduct, productObj);
+        var bonusProduct = klaviyoUtils.captureBonusProduct(lineItem, basketProduct);
+        productObj['Is Bonus Product'] = bonusProduct.isbonusProduct;
+        productObj['Original Price'] = bonusProduct.originalPrice;
+        productObj['Price'] = bonusProduct.price;
     } else {
-        klaviyoUtils.priceCheck(lineItem, basketProduct, productObj);
+        var lineItemPriceData = klaviyoUtils.priceCheck(lineItem, basketProduct);
+        productObj['Price'] = lineItemPriceData.purchasePrice
+        if (lineItemPriceData.originalPrice) {
+            productObj['Original Price'] = lineItemPriceData.originalPrice
+        }
     }
     productObj['Product ID'] = currentProductID;
     productObj['Product Name'] = basketProduct.name;
