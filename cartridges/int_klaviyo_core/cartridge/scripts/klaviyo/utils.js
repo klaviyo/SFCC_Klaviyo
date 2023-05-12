@@ -1,9 +1,11 @@
 'use strict';
 
+/* API Includes */
 var Site = require('dw/system/Site');
 var StringUtils = require('dw/util/StringUtils');
 var Logger = require('dw/system/Logger');
 
+/* Script Modules */
 var klaviyoServices = require('*/cartridge/scripts/klaviyo/services.js');
 
 // event name constants
@@ -72,6 +74,82 @@ function dedupeArray(items) {
     return Object.keys(unique);
 }
 
+
+// helper function to extract product options and return each selected option into an object with three keys: lineItemText, optionId and selectedValueId.
+// This helper accomodates products that may have been configured with or feature multiple options by returning an array of each selected product option as its own optionObj.
+function captureProductOptions(prodOptions) {
+    var options = Array.isArray(prodOptions) ? prodOptions : Array.from(prodOptions);
+    var selectedOptions = [];
+
+    options.forEach(optionObj => {
+        selectedOptions.push({ lineItemText: optionObj.lineItemText, optionID: optionObj.optionID, optionValueID: optionObj.optionValueID, optionPrice: optionObj.basePrice.value });
+    })
+
+    return selectedOptions;
+}
+
+
+// helper function to extract child products from product bundles & set appropriate properties on a returned object.
+// Used in three key tracked events: 'Added to Cart', 'Started Checkout' and 'Order Confirmation'.
+function captureProductBundles(bundledProducts) {
+    var prodBundleData = {};
+    prodBundleData.prodBundleIDs = [];
+    prodBundleData.isProdBundle = true;
+    for (let i = 0; i < bundledProducts.length; i++) {
+        var childObj = bundledProducts[i];
+        prodBundleData.prodBundleIDs.push(childObj.productID);
+    }
+
+    return prodBundleData;
+}
+
+
+// helper function to handle bonus products & set appropriate properties on a returned object.
+// Used in two key tracked events: 'Started Checkout' and 'Order Confirmation'.
+function captureBonusProduct (lineItemObj, prodObj) {
+    var bonusProductData = {};
+    bonusProductData.isbonusProduct = true;
+    bonusProductData.originalPrice = StringUtils.formatMoney(dw.value.Money( prodObj.getPriceModel().getPrice().value, session.getCurrency().getCurrencyCode() ));
+    bonusProductData.price = StringUtils.formatMoney(dw.value.Money( lineItemObj.adjustedPrice.value, session.getCurrency().getCurrencyCode() ));
+
+    return bonusProductData;
+}
+
+
+// helper function to consider promos & set Price and Original Pride properties on a returned object.
+// Used in order level events: 'Started Checkout' and 'Order Confirmation'.
+function priceCheck (lineItemObj, basketProdObj) {
+    var priceModel = basketProdObj ? basketProdObj.getPriceModel() : null;
+    var priceBook = priceModel ? _getRootPriceBook(priceModel.priceInfo.priceBook) : null;
+    var priceBookPrice = priceBook && priceModel ? priceModel.getPriceBookPrice(priceBook.ID) : null;
+    var priceData = {};
+
+    var adjustedPromoPrice = lineItemObj && lineItemObj.adjustedPrice < priceBookPrice ? StringUtils.formatMoney(dw.value.Money( lineItemObj.adjustedPrice.value, session.getCurrency().getCurrencyCode() )) : null;
+    if (adjustedPromoPrice) {
+        priceData.purchasePrice = StringUtils.formatMoney(dw.value.Money( lineItemObj.adjustedPrice.value, session.getCurrency().getCurrencyCode() ));
+        priceData.originalPrice = priceBookPrice ? StringUtils.formatMoney(dw.value.Money( priceBookPrice.value, session.getCurrency().getCurrencyCode() )) : StringUtils.formatMoney(dw.value.Money( basketProdObj.getPriceModel().getPrice().value, session.getCurrency().getCurrencyCode() ));
+    } else {
+        priceData.purchasePrice = basketProdObj ? StringUtils.formatMoney(dw.value.Money( basketProdObj.getPriceModel().getPrice().value, session.getCurrency().getCurrencyCode() )) : null;
+    }
+
+    return priceData
+}
+
+
+/**
+ * Return root price book for a given price book
+ * @param {dw.catalog.PriceBook} priceBook - Provided price book
+ * @returns {dw.catalog.PriceBook} root price book
+ */
+function _getRootPriceBook(priceBook) {
+    var rootPriceBook = priceBook;
+    while (rootPriceBook.parentPriceBook) {
+        rootPriceBook = rootPriceBook.parentPriceBook;
+    }
+    return rootPriceBook;
+}
+
+
 function trackEvent(exchangeID, data, event, customerEmail) {
 
     var requestBody = {};
@@ -133,7 +211,6 @@ function trackEvent(exchangeID, data, event, customerEmail) {
 
 
 
-
 module.exports = {
     EVENT_NAMES : EVENT_NAMES,
     klaviyoEnabled : klaviyoEnabled,
@@ -142,5 +219,9 @@ module.exports = {
     getProfileInfo : getProfileInfo,
     prepareDebugData : prepareDebugData,
     dedupeArray: dedupeArray,
+    captureProductOptions : captureProductOptions,
+    captureProductBundles : captureProductBundles,
+    captureBonusProduct : captureBonusProduct,
+    priceCheck : priceCheck,
     trackEvent : trackEvent
 }

@@ -71,7 +71,6 @@ function getData(order) {
                 productLineItem = productLineItems[j];
                 var prdUrl = '';
                 var replenishment = false;
-                var priceString = '';
                 // var priceValue = 0.0;
                 // var hasOsfSmartOrderRefill = false;
                 prdUrl = URLUtils.https( 'Product-Show', 'pid', productLineItem.productID ).toString();
@@ -84,15 +83,9 @@ function getData(order) {
                     throw new Error('Product with ID [' + lineItemProduct.ID + '] not found');
                 }
 
-                if (!productLineItem.bonusProductLineItem) {
-                    priceString = dw.util.StringUtils.formatMoney( dw.value.Money( productLineItem.price.value, session.getCurrency().getCurrencyCode() ) );
-                } else {
-                    priceString = dw.util.StringUtils.formatMoney( dw.value.Money(0, session.getCurrency().getCurrencyCode()) );
-                }
-
                 // Variation values
                 var variationValues = '';
-                if (productDetail.isVariant()) { 
+                if (productDetail.isVariant()) {
                     var variationAttrs = productDetail.variationModel.getProductVariationAttributes();
                     for (var i = 0; i < variationAttrs.length; i++) {
                         var VA = variationAttrs[i];
@@ -125,19 +118,44 @@ function getData(order) {
                     allCategories = productDetail.getAllCategories();
                 }
 
-                productLineItemsArray.push({
+                var currentLineItem = {
                     'Product ID'             : productLineItem.productID,
                     'Product Name'           : productLineItem.productName,
                     'Product Secondary Name' : secondaryName,
                     'Quantity'                 : productLineItem.quantity.value,
-                    'Price'                    : priceString,
                     'Discount'                 : productLineItem.adjustedPrice.value,
                     'Product Page URL'       : prdUrl,
                     'Replenishment'            : replenishment,
                     'Product Variant'        : variationValues,
                     'Price Value'            : productLineItem.price.value,
                     'Product Image URL'      : KLImageSize ? productDetail.getImage(KLImageSize).getAbsURL().toString() : null
-                });
+                };
+
+                var priceData = klaviyoUtils.priceCheck(productLineItem, productDetail);
+                currentLineItem['Price'] = priceData.purchasePrice
+                if (priceData.originalPrice) {
+                    currentLineItem['Original Price'] = priceData.originalPrice
+                }
+
+                var selectedOptions = productLineItem && productLineItem.optionProductLineItems ? klaviyoUtils.captureProductOptions(productLineItem.optionProductLineItems) : null;
+                if (selectedOptions && selectedOptions.length) {
+                    currentLineItem['Product Options'] = selectedOptions;
+                }
+
+                if (productLineItem.bonusProductLineItem) {
+                    var bonusProduct = klaviyoUtils.captureBonusProduct(productLineItem, productDetail);
+                    currentLineItem['Is Bonus Product'] = bonusProduct.isbonusProduct;
+                    currentLineItem['Original Price'] = bonusProduct.originalPrice;
+                    currentLineItem['Price'] = bonusProduct.price;
+                }
+
+                if (productLineItem.bundledProductLineItem || productLineItem.bundledProductLineItems.length) {
+                    var prodBundle = klaviyoUtils.captureProductBundles(productLineItem.bundledProductLineItems);
+                    currentLineItem['Is Product Bundle'] = prodBundle.isProdBundle;
+                    currentLineItem['Bundled Product IDs'] = prodBundle.prodBundleIDs;
+                }
+
+                productLineItemsArray.push(currentLineItem);
             }
 
             // Append gift card

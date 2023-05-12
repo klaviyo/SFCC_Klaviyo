@@ -35,16 +35,20 @@ function getData(currentBasket) {
                 throw new Error('Product with ID [' + currentProductID + '] not found');
             }
             var quantity = lineItem.quantityValue;
-            var options = [];
-            if (lineItem && lineItem.optionProductLineItems) {
-                for (let i = 0; i < lineItem.optionProductLineItems.length; i++){
-                    let currOption = lineItem.optionProductLineItems[i];
-                    options.push({optionID: lineItem.optionProductLineItems[i].optionID, optionValueID: lineItem.optionProductLineItems[i].optionValueID, lineItemText: lineItem.optionProductLineItems[i].lineItemText})
-                }
-            }
+            var options = lineItem && lineItem.optionProductLineItems ? klaviyoUtils.captureProductOptions(lineItem.optionProductLineItems) : null;
 
             if (currentProductID != null && !empty(basketProduct) && basketProduct.getPriceModel().getPrice().value > 0) {
                 var productObj = prepareProductObj( lineItem, basketProduct, currentProductID );
+
+                if (options && options.length) {
+                    productObj['Product Options'] = options;
+                }
+
+                if (lineItem.bundledProductLineItem || lineItem.bundledProductLineItems.length) {
+                    var prodBundle = klaviyoUtils.captureProductBundles(lineItem.bundledProductLineItems);
+                    productObj['Is Product Bundle'] = prodBundle.isProdBundle;
+                    productObj['Bundled Product IDs'] = prodBundle.prodBundleIDs;
+                }
 
                 // add top-level data for the event for segmenting, etc.
                 data.line_items.push(productObj);
@@ -52,7 +56,10 @@ function getData(currentBasket) {
                 data.Categories = klaviyoUtils.dedupeArray(data.Categories);
                 data.Items.push(data.line_items[itemIndex]['Product Name']);
 
-                reconstructCartItems.push({ productID: currentProductID, quantity: quantity, options: options });
+                // Exclude bonus products from reconstructCartItems array (Note: This excludes bonus products from being included in the cart rebuilding link))
+                if (!lineItem.bonusProductLineItem) {
+                    reconstructCartItems.push({ productID: currentProductID, quantity: quantity, options: options });
+                }
             }
         }
 
@@ -68,10 +75,21 @@ function getData(currentBasket) {
 // TODO: this is called in one location... can it just be inlined?
 function prepareProductObj(lineItem, basketProduct, currentProductID) {
     var productObj = {};
+    if (lineItem.bonusProductLineItem) {
+        var bonusProduct = klaviyoUtils.captureBonusProduct(lineItem, basketProduct);
+        productObj['Is Bonus Product'] = bonusProduct.isbonusProduct;
+        productObj['Original Price'] = bonusProduct.originalPrice;
+        productObj['Price'] = bonusProduct.price;
+    } else {
+        var lineItemPriceData = klaviyoUtils.priceCheck(lineItem, basketProduct);
+        productObj['Price'] = lineItemPriceData.purchasePrice
+        if (lineItemPriceData.originalPrice) {
+            productObj['Original Price'] = lineItemPriceData.originalPrice
+        }
+    }
     productObj['Product ID'] = currentProductID;
     productObj['Product Name'] = basketProduct.name;
     productObj['Product Image URL'] = KLImageSize ? basketProduct.getImage(KLImageSize).getAbsURL().toString() : null;
-    productObj.Price = dw.util.StringUtils.formatMoney( dw.value.Money( basketProduct.getPriceModel().getPrice().value, session.getCurrency().getCurrencyCode() ) );
     productObj['Product Description'] = basketProduct.pageDescription ? basketProduct.pageDescription.toString() : null;
     productObj['Product Page URL'] = URLUtils.https('Product-Show', 'pid', currentProductID).toString();
     productObj['Product UPC'] = basketProduct.UPC;
