@@ -61,7 +61,7 @@ function getData(basket) {
                     productUPC                : basketProduct.UPC,
                     viewedProductAvailability : basketProduct.availabilityModel.availability,
                     categories                : categories, // was createCategories(basketProduct) in orig, check that my output from categories above matches expected output
-                    primaryCategory           : primaryCategory,
+                    primaryCategory           : primaryCategory
                 };
 
                 klaviyoUtils.priceCheck(lineItem, basketProduct, currentLineItem);
