@@ -83,13 +83,6 @@ function captureProductOptions(prodOptions) {
 
     options.forEach(optionObj => {
         var formattedOptionPrice = optionObj ? StringUtils.formatMoney(dw.value.Money( optionObj.basePrice.value, session.getCurrency().getCurrencyCode() )) : null;
-        // selectedOptions.push({
-        //     lineItemText: optionObj.lineItemText,
-        //     optionID: optionObj.optionID,
-        //     optionValueID: optionObj.optionValueID,
-        //     optionPrice: formattedOptionPrice,
-        //     optionPriceValue: optionObj.basePrice.value
-        // });
         selectedOptions.push({
             'Line Item Text': optionObj.lineItemText,
             'Option ID': optionObj.optionID,
