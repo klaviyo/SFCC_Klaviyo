@@ -65,10 +65,10 @@ function getData(basket) {
                 };
 
                 var priceData = klaviyoUtils.priceCheck(lineItem, basketProduct);
-                currentLineItem.Price = priceData.purchasePrice
-                if (priceData.originalPrice) {
-                    currentLineItem.originalPrice = priceData.originalPrice
-                }
+                currentLineItem.price = priceData.purchasePrice;
+                currentLineItem.priceValue = priceData.purchasePriceValue;
+                currentLineItem.originalPrice = priceData.originalPrice;
+                currentLineItem.originalPriceValue = priceData.originalPriceValue;
 
                 selectedOptions = lineItem && lineItem.optionProductLineItems ? klaviyoUtils.captureProductOptions(lineItem.optionProductLineItems) : null;
                 if (selectedOptions && selectedOptions.length) {

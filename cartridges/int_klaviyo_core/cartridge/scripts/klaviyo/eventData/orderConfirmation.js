@@ -127,15 +127,14 @@ function getData(order) {
                     'Product Page URL'       : prdUrl,
                     'Replenishment'            : replenishment,
                     'Product Variant'        : variationValues,
-                    'Price Value'            : productLineItem.price.value,
                     'Product Image URL'      : KLImageSize ? productDetail.getImage(KLImageSize).getAbsURL().toString() : null
                 };
 
                 var priceData = klaviyoUtils.priceCheck(productLineItem, productDetail);
-                currentLineItem['Price'] = priceData.purchasePrice
-                if (priceData.originalPrice) {
-                    currentLineItem['Original Price'] = priceData.originalPrice
-                }
+                currentLineItem['Price'] = priceData.purchasePrice;
+                currentLineItem['Price Value'] = priceData.purchasePriceValue;
+                currentLineItem['Original Price'] = priceData.originalPrice;
+                currentLineItem['Original Price Value'] = priceData.originalPriceValue;
 
                 var selectedOptions = productLineItem && productLineItem.optionProductLineItems ? klaviyoUtils.captureProductOptions(productLineItem.optionProductLineItems) : null;
                 if (selectedOptions && selectedOptions.length) {
@@ -146,7 +145,9 @@ function getData(order) {
                     var bonusProduct = klaviyoUtils.captureBonusProduct(productLineItem, productDetail);
                     currentLineItem['Is Bonus Product'] = bonusProduct.isbonusProduct;
                     currentLineItem['Original Price'] = bonusProduct.originalPrice;
+                    currentLineItem['Original Price Value'] = bonusProduct.originalPriceValue;
                     currentLineItem['Price'] = bonusProduct.price;
+                    currentLineItem['Price Value'] = bonusProduct.priceValue;
                 }
 
                 if (productLineItem.bundledProductLineItem || productLineItem.bundledProductLineItems.length) {
