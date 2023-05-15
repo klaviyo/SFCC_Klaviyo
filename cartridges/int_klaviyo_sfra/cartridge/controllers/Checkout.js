@@ -8,7 +8,7 @@ server.extend(module.superModule);
 
 server.append('Begin', function (req, res, next) {
     var customerEmail = KLCheckoutHelpers.getEmailFromBasket();
-    var templateVars = KLCheckoutHelper.startedCheckoutHelper(true, customerEmail);
+    var templateVars = KLCheckoutHelpers.startedCheckoutHelper(true, customerEmail);
     res.viewData.klid = templateVars.klid;
     res.viewData.klDebugData = templateVars.klDebugData;
     res.viewData.serviceCallData = templateVars.serviceCallData;
