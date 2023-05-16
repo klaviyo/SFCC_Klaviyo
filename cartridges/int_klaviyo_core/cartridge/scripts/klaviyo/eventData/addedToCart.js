@@ -26,6 +26,7 @@ function getData(basket) {
         data.items = [];
         data.categories = [];
         data.primaryCategories = [];
+        data.productAddedToCart = {};
 
         for (var itemIndex = 0; itemIndex < basketItems.length; itemIndex++) {
             var lineItem = basketItems[itemIndex];
@@ -92,6 +93,19 @@ function getData(basket) {
                 );
                 data.categories = klaviyoUtils.dedupeArray(data.categories);
                 data.primaryCategories = klaviyoUtils.dedupeArray(data.primaryCategories);
+
+                // item added to cart:
+                data.productAddedToCart['Product ID'] = currentProductID;
+                data.productAddedToCart['Product Name'] = basketProduct.name;
+                data.productAddedToCart['Product Page URL'] = URLUtils.https('Product-Show', 'pid', currentProductID).toString();
+                data.productAddedToCart['Product Image URL'] = imageSizeOfProduct;
+                data.productAddedToCart['Price'] = priceData.purchasePrice;
+                data.productAddedToCart['Price Value'] = priceData.purchasePriceValue;
+                data.productAddedToCart['Original Price'] = priceData.originalPrice;
+                data.productAddedToCart['Original Price Value'] = priceData.originalPriceValue;
+                data.productAddedToCart['Categories'] = klaviyoUtils.dedupeArray(data.categories);
+                data.productAddedToCart['Primary Category'] = !empty(basketProduct.getPrimaryCategory()) ? basketProduct.getPrimaryCategory().displayName : '';
+                data.productAddedToCart['Product Options'] = selectedOptions;
             }
         }
     } catch(e) {
