@@ -129,7 +129,7 @@ function captureBonusProduct (lineItemObj, prodObj) {
 // Used in order level events: 'Started Checkout' and 'Order Confirmation'.
 function priceCheck (lineItemObj, basketProdObj) {
     var priceModel = basketProdObj ? basketProdObj.getPriceModel() : null;
-    var priceBook = priceModel ? _getRootPriceBook(priceModel.priceInfo.priceBook) : null;
+    var priceBook = priceModel ? getRootPriceBook(priceModel.priceInfo.priceBook) : null;
     var priceBookPrice = priceBook && priceModel ? priceModel.getPriceBookPrice(priceBook.ID) : null;
     var priceData = {};
 
@@ -155,7 +155,7 @@ function priceCheck (lineItemObj, basketProdObj) {
  * @param {dw.catalog.PriceBook} priceBook - Provided price book
  * @returns {dw.catalog.PriceBook} root price book
  */
-function _getRootPriceBook(priceBook) {
+function getRootPriceBook(priceBook) {
     var rootPriceBook = priceBook;
     while (rootPriceBook.parentPriceBook) {
         rootPriceBook = rootPriceBook.parentPriceBook;
@@ -237,5 +237,6 @@ module.exports = {
     captureProductBundles : captureProductBundles,
     captureBonusProduct : captureBonusProduct,
     priceCheck : priceCheck,
+    getRootPriceBook : getRootPriceBook,
     trackEvent : trackEvent
 }
