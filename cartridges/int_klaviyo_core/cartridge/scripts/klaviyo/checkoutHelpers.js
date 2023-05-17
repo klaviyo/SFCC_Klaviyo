@@ -31,8 +31,6 @@ function startedCheckoutHelper(beginCheckout, customerEmail) {
 
             currentBasket = basketMgr.getCurrentBasket();
 
-            var foo = 'bar';
-
             if ( customerEmail ) {
 
                 if (currentBasket && currentBasket.getProductLineItems().toArray().length) { //TODO: is there a property for isEmpty on basket object?
