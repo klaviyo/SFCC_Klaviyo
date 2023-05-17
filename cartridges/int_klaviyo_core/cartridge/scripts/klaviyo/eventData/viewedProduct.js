@@ -76,6 +76,10 @@ function getData(productID) {
         // verify what klav really wants here, UPC rarely used by SFCC clients
         data['Product UPC'] = product.UPC;
 
+        if(!product.master && 'masterProduct' in product) {
+            data['Master Product ID'] = product.masterProduct.ID;
+        }
+
         var categories = [];
         var catProduct = (product.variant) ? product.masterProduct : product; // from orig klav code, always use master for finding cats
         for(var i=0, len=catProduct.categoryAssignments.length; i<len; i++) {

@@ -75,7 +75,7 @@ server.get('Event', function (req, res, next) {
 /* receives AJAX call from email field indicated by custom Site Preference "klaviyo_checkout_email_selector" */
 server.post('StartedCheckoutEvent', server.middleware.https, function(req, res, next) {
     var email = StringUtils.decodeBase64(req.httpParameterMap.a);
-    var templateVars = startedCheckoutHelper(true, email);
+    var templateVars = KLCheckoutHelpers.startedCheckoutHelper(true, email);
 
     res.json({ success: true });
 

@@ -55,9 +55,6 @@ function getData(order) {
             orderShippingAddressCountryCode = order.shipments[0].shippingAddress.countryCode.value ? order.shipments[0].shippingAddress.countryCode.value : '';
             orderShippingAddressPhone = order.shipments[0].shippingAddress.phone ? order.shipments[0].shippingAddress.phone : '';
 
-            // var lineItems = order.getAllProductLineItems();
-            // var iterator_lines = lineItems.iterator();
-
             // Product Details
             productLineItems = order.shipments[0].productLineItems;
             var productLineItem = {};
@@ -70,13 +67,10 @@ function getData(order) {
             for (var j in productLineItems) {
                 productLineItem = productLineItems[j];
                 var prdUrl = '';
-                var replenishment = false;
-                // var priceValue = 0.0;
-                // var hasOsfSmartOrderRefill = false;
                 prdUrl = URLUtils.https( 'Product-Show', 'pid', productLineItem.productID ).toString();
                 var secondaryName = '';
 
-                // Get the product secondary nam
+                // Get the product secondary name
                 var lineItemProduct = productLineItem.product;
                 var productDetail = ProductMgr.getProduct(lineItemProduct.ID);
                 if (!productDetail) {
@@ -118,6 +112,14 @@ function getData(order) {
                     allCategories = productDetail.getAllCategories();
                 }
 
+                if (!empty(allCategories) && allCategories.length > 0) {
+                    var category = '';
+                    for (var categoryCount = 0; categoryCount < allCategories.length; categoryCount++) {
+                        category = allCategories[categoryCount];
+                        itemCategories.push(category.displayName);
+                    }
+                }
+
                 var currentLineItem = {
                     'Product ID'             : productLineItem.productID,
                     'Product Name'           : productLineItem.productName,
@@ -125,10 +127,13 @@ function getData(order) {
                     'Quantity'                 : productLineItem.quantity.value,
                     'Discount'                 : productLineItem.adjustedPrice.value,
                     'Product Page URL'       : prdUrl,
-                    'Replenishment'            : replenishment,
                     'Product Variant'        : variationValues,
                     'Product Image URL'      : KLImageSize ? productDetail.getImage(KLImageSize).getAbsURL().toString() : null
                 };
+
+                if(!productDetail.master && 'masterProduct' in productDetail) {
+                    currentLineItem['Master Product ID'] = productDetail.masterProduct.ID;
+                }
 
                 var priceData = klaviyoUtils.priceCheck(productLineItem, productDetail);
                 currentLineItem['Price'] = priceData.purchasePrice;
@@ -157,50 +162,6 @@ function getData(order) {
                 }
 
                 productLineItemsArray.push(currentLineItem);
-            }
-
-            // Append gift card
-            var giftCertificateLineItems = order.giftCertificateLineItems;
-            var giftLineItem = {};
-            var giftLineItemsArray = [];
-            if (giftCertificateLineItems && giftCertificateLineItems.length > 0) {
-                data.GIFT_ITEM_PRESENT = true;
-                var giftCardId = dw.system.Site.getCurrent().getCustomPreferenceValue('EgiftProduct-ID');
-                var giftCardProductDetail = ProductMgr.getProduct(giftCardId);
-                if (!giftCardProductDetail) {
-                    throw new Error('Product with ID [' + giftCardId + '] not found');
-                }
-                var giftCardImage = '';
-                if (!empty(giftCardProductDetail)) {
-                    giftCardImage = KLImageSize ? giftCardProductDetail.getImage(KLImageSize).getAbsURL().toString() : null;
-                }
-                for (var l in giftCertificateLineItems) {
-                    giftLineItem = giftCertificateLineItems[l];
-
-                    giftLineItemsArray.push({
-                        'Recipient Name'  : giftLineItem.recipientName,
-                        'Recipient Email' : giftLineItem.recipientEmail,
-                        'Sender Name'     : giftLineItem.senderName,
-                        'Sender Email'    : order.getCustomerEmail(),
-                        Price             : dw.util.StringUtils.formatMoney( dw.value.Money( giftLineItem.price.value, session.getCurrency().getCurrencyCode() ) ),
-                        Message : giftLineItem.message,
-                        Image   : !empty(giftLineItem.custom.giftCertificateImage) ? giftLineItem.custom.giftCertificateImage : giftCardImage 
-                    });
-
-                    items.push( Site.getCurrent().getCustomPreferenceValue('EgiftProduct-ID') );
-                    itemCount += 1;
-                    itemPrimaryCategories.push('Gift cards');
-                    itemCategories.push('Gift cards');
-                }
-            } else {
-                data['Gift Item Present'] = false;
-                giftLineItemsArray.push({
-                    'Recipient Name'  : '',
-                    'Recipient Email' : '',
-                    'Sender Name'     : '',
-                    'Sender Email'    : '',
-                    Price             : ''
-                });
             }
 
             // Get the coupon attached to the order
@@ -232,19 +193,11 @@ function getData(order) {
             var ccLastFourDigits = '';
             var creditCardType = '';
             var paymentInstrumentItem = {};
-            // var paymentInstrumentsArray = [];
-            var maskedGiftCertificateCode = '';
             for (var k in paymentInstruments) {
                 paymentInstrumentItem = paymentInstruments[k];
                 if (paymentInstrumentItem.creditCardNumberLastDigits) {
                     ccLastFourDigits = paymentInstrumentItem.maskedCreditCardNumber;
-                    creditCardType = paymentInstrumentItem.creditCardType
-                        ? paymentInstrumentItem.creditCardType
-                        : '';
-                }
-                if (paymentInstrumentItem.maskedGiftCertificateCode) {
-                    maskedGiftCertificateCode =
-            paymentInstrumentItem.maskedGiftCertificateCode;
+                    creditCardType = paymentInstrumentItem.creditCardType ? paymentInstrumentItem.creditCardType : '';
                 }
             }
 
@@ -252,16 +205,12 @@ function getData(order) {
             var merchTotalExclOrderDiscounts = order.getAdjustedMerchandizeTotalPrice(false);
             var merchTotalInclOrderDiscounts = order.getAdjustedMerchandizeTotalPrice(true);
 
-            // Merchandise total
-            // var merchandiseTotal = merchTotalExclOrderDiscounts.add(order.giftCertificateTotalPrice);
-            // var merchandiseTotalString = dw.util.StringUtils.formatMoney(dw.value.Money(merchandiseTotal.value, session.getCurrency().getCurrencyCode()));
-
             // discounts
             var orderDiscount = merchTotalExclOrderDiscounts.subtract( merchTotalInclOrderDiscounts );
             var orderDiscountString = dw.util.StringUtils.formatMoney( dw.value.Money( orderDiscount.value, session.getCurrency().getCurrencyCode()) );
 
             // Sub Total
-            var subTotal = merchTotalInclOrderDiscounts.add( order.giftCertificateTotalPrice );
+            var subTotal = merchTotalInclOrderDiscounts;
             var subTotalString = dw.util.StringUtils.formatMoney( dw.value.Money(subTotal.value, session.getCurrency().getCurrencyCode()) );
 
             // Shipping
@@ -275,8 +224,6 @@ function getData(order) {
             var totalTax = 0.0;
             if (order.totalTax.available) {
                 totalTax = order.totalTax.value;
-            } else if (order.giftCertificateTotalPrice.available) {
-                totalTax = order.merchandizeTotalTax.value;
             }
             var totalTaxString = dw.util.StringUtils.formatMoney(
                 dw.value.Money(totalTax, session.getCurrency().getCurrencyCode())
@@ -286,27 +233,21 @@ function getData(order) {
             var orderTotal = '';
             if (order.totalNetPrice.available) {
                 orderTotal = order.totalNetPrice.value + totalTax;
-            } else {
-                orderTotal = order.getAdjustedMerchandizeTotalPrice(true) + order.giftCertificateTotalPrice + order.shippingTotalPrice + totalTax;
             }
             var orderTotalString = dw.util.StringUtils.formatMoney(
                 dw.value.Money(orderTotal, session.getCurrency().getCurrencyCode())
             );
 
             data['Order Total'] = orderTotalString;
-            data.Tax = totalTaxString;
-            data.Subtotal = subTotalString;
+            data['Tax'] = totalTaxString;
+            data['Subtotal'] = subTotalString;
             data['Shipping Cost'] = shippingTotalCostString;
             if (orderDiscountString) {
-                data.Discount = orderDiscountString;
+                data['Discount'] = orderDiscountString;
             } else {
-                data.Discount = '';
+                data['Discount'] = '';
             }
         }
-
-        // Add gift message if exists
-        var giftMsg = order.shipments[0].giftMessage ? order.shipments[0].giftMessage : '';
-        data.GIFT_MESSAGE = giftMsg;
 
         // Order Details
         // var orderDate = new Date(order.creationDate);
@@ -318,7 +259,6 @@ function getData(order) {
         data['Shipping Method'] = order.shipments[0].shippingMethod && order.shipments[0].shippingMethod.displayName ? order.shipments[0].shippingMethod.displayName : '';
         data['Card Last Four Digits'] = ccLastFourDigits;
         data['Card Type'] = creditCardType;
-        data['Gift Card Last Four'] = maskedGiftCertificateCode;
         data['Promo Code'] = discountCoupon;
         data['Promotion ID'] = promotionID;
 
@@ -327,13 +267,13 @@ function getData(order) {
         billingaddress.push({
             'First Name'   : orderBillingAddressFirstName,
             'Last Name'    : orderBillingAddressLastName,
-            Address1       : orderBillingAddressAddress1,
-            Address2       : orderBillingAddressAddress2,
-            City           : orderBillingAddressCity,
+            'Address1'       : orderBillingAddressAddress1,
+            'Address2'       : orderBillingAddressAddress2,
+            'City'           : orderBillingAddressCity,
             'Postal Code'  : orderShippingAddressPostalCode,
             'State Code'   : orderBillingAddressStateCode,
             'Country Code' : orderBillingAddressCountryCode,
-            Phone          : orderBillingAddressPhone
+            'Phone'          : orderBillingAddressPhone
         });
 
         // Shipping Address
@@ -341,28 +281,27 @@ function getData(order) {
         shippingaddress.push({
             'First Name'   : orderShippingAddressFirstName,
             'Last Name'    : orderShippingAddressLastName,
-            Address1       : orderShippingAddressAddress1,
-            Address2       : orderShippingAddressAddress2,
-            City           : orderShippingAddressCity,
+            'Address1'       : orderShippingAddressAddress1,
+            'Address2'       : orderShippingAddressAddress2,
+            'City'           : orderShippingAddressCity,
             'Postal Code'  : orderShippingAddressPostalCode,
             'State Code'   : orderShippingAddressStateCode,
             'Country Code' : orderShippingAddressCountryCode,
-            Phone          : orderShippingAddressPhone
+            'Phone'          : orderShippingAddressPhone
         });
 
         // Add product / billing / shipping
 
         data.product_line_items = productLineItemsArray;
-        data['Gift Items'] = giftLineItemsArray;
         data['Billing Address'] = billingaddress;
         data['Shipping Address'] = shippingaddress;
         data['Manage Order URL'] = URLUtils.https('Account-Show').toString();
-        data.Items = items;
+        data['Items'] = items;
         data['Item Count'] = itemCount;
         data['Item Primary Categories'] = itemPrimaryCategories;
         data['Item Categories'] = klaviyoUtils.dedupeArray(itemCategories);
-        data.$value = orderTotal;
-        data.$event_id = 'orderConfirmation' + '-' + order.orderNo;
+        data['$value'] = orderTotal;
+        data['$event_id'] = 'orderConfirmation' + '-' + order.orderNo;
         data['Tracking Number'] = order.shipments[0].trackingNumber ? order.shipments[0].trackingNumber : '';
     } catch(e) {
         var logger = Logger.getLogger('Klaviyo', 'Klaviyo.core orderConfirmation.js');

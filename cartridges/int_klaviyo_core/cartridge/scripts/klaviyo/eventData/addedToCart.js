@@ -65,6 +65,10 @@ function getData(basket) {
                     primaryCategory           : primaryCategory
                 };
 
+                if(!basketProduct.master && 'masterProduct' in basketProduct) {
+                    currentLineItem.masterProductID = basketProduct.masterProduct.ID;
+                }
+
                 var priceData = klaviyoUtils.priceCheck(lineItem, basketProduct);
                 currentLineItem.price = priceData.purchasePrice;
                 currentLineItem.priceValue = priceData.purchasePriceValue;
