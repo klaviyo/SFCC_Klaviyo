@@ -82,7 +82,14 @@ function captureProductOptions(prodOptions) {
     var selectedOptions = [];
 
     options.forEach(optionObj => {
-        selectedOptions.push({ lineItemText: optionObj.lineItemText, optionID: optionObj.optionID, optionValueID: optionObj.optionValueID, optionPrice: optionObj.basePrice.value });
+        var formattedOptionPrice = optionObj ? StringUtils.formatMoney(dw.value.Money( optionObj.basePrice.value, session.getCurrency().getCurrencyCode() )) : null;
+        selectedOptions.push({
+            'Line Item Text': optionObj.lineItemText,
+            'Option ID': optionObj.optionID,
+            'Option Value ID': optionObj.optionValueID,
+            'Option Price': formattedOptionPrice,
+            'Option Price Value': optionObj.basePrice.value
+        });
     })
 
     return selectedOptions;
@@ -110,7 +117,9 @@ function captureBonusProduct (lineItemObj, prodObj) {
     var bonusProductData = {};
     bonusProductData.isbonusProduct = true;
     bonusProductData.originalPrice = StringUtils.formatMoney(dw.value.Money( prodObj.getPriceModel().getPrice().value, session.getCurrency().getCurrencyCode() ));
+    bonusProductData.originalPriceValue = prodObj.getPriceModel().getPrice().value;
     bonusProductData.price = StringUtils.formatMoney(dw.value.Money( lineItemObj.adjustedPrice.value, session.getCurrency().getCurrencyCode() ));
+    bonusProductData.priceValue = lineItemObj.adjustedPrice.value;
 
     return bonusProductData;
 }
@@ -120,16 +129,21 @@ function captureBonusProduct (lineItemObj, prodObj) {
 // Used in order level events: 'Started Checkout' and 'Order Confirmation'.
 function priceCheck (lineItemObj, basketProdObj) {
     var priceModel = basketProdObj ? basketProdObj.getPriceModel() : null;
-    var priceBook = priceModel ? _getRootPriceBook(priceModel.priceInfo.priceBook) : null;
+    var priceBook = priceModel ? getRootPriceBook(priceModel.priceInfo.priceBook) : null;
     var priceBookPrice = priceBook && priceModel ? priceModel.getPriceBookPrice(priceBook.ID) : null;
     var priceData = {};
 
     var adjustedPromoPrice = lineItemObj && lineItemObj.adjustedPrice < priceBookPrice ? StringUtils.formatMoney(dw.value.Money( lineItemObj.adjustedPrice.value, session.getCurrency().getCurrencyCode() )) : null;
     if (adjustedPromoPrice) {
         priceData.purchasePrice = StringUtils.formatMoney(dw.value.Money( lineItemObj.adjustedPrice.value, session.getCurrency().getCurrencyCode() ));
+        priceData.purchasePriceValue = lineItemObj.adjustedPrice.value;
         priceData.originalPrice = priceBookPrice ? StringUtils.formatMoney(dw.value.Money( priceBookPrice.value, session.getCurrency().getCurrencyCode() )) : StringUtils.formatMoney(dw.value.Money( basketProdObj.getPriceModel().getPrice().value, session.getCurrency().getCurrencyCode() ));
+        priceData.originalPriceValue = priceBookPrice.value;
     } else {
-        priceData.purchasePrice = basketProdObj ? StringUtils.formatMoney(dw.value.Money( basketProdObj.getPriceModel().getPrice().value, session.getCurrency().getCurrencyCode() )) : null;
+        priceData.purchasePrice = lineItemObj ? StringUtils.formatMoney(dw.value.Money( lineItemObj.price.value, session.getCurrency().getCurrencyCode() )) : null;
+        priceData.purchasePriceValue = lineItemObj ? lineItemObj.price.value : null;
+        priceData.originalPrice = basketProdObj ? StringUtils.formatMoney(dw.value.Money( basketProdObj.getPriceModel().getPrice().value, session.getCurrency().getCurrencyCode() )) : null;
+        priceData.originalPriceValue = basketProdObj.getPriceModel().getPrice().value;
     }
 
     return priceData
@@ -141,7 +155,7 @@ function priceCheck (lineItemObj, basketProdObj) {
  * @param {dw.catalog.PriceBook} priceBook - Provided price book
  * @returns {dw.catalog.PriceBook} root price book
  */
-function _getRootPriceBook(priceBook) {
+function getRootPriceBook(priceBook) {
     var rootPriceBook = priceBook;
     while (rootPriceBook.parentPriceBook) {
         rootPriceBook = rootPriceBook.parentPriceBook;
@@ -223,5 +237,6 @@ module.exports = {
     captureProductBundles : captureProductBundles,
     captureBonusProduct : captureBonusProduct,
     priceCheck : priceCheck,
+    getRootPriceBook : getRootPriceBook,
     trackEvent : trackEvent
 }

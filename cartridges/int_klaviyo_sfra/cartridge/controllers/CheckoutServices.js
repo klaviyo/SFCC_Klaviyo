@@ -10,7 +10,7 @@ server.extend(module.superModule);
 
 server.append('SubmitCustomer', function (req, res, next) {
     var customerEmail = KLCheckoutHelpers.getEmailFromBasket();
-    var templateVars = KLCheckoutHelper.startedCheckoutHelper(false, customerEmail);
+    var templateVars = KLCheckoutHelpers.startedCheckoutHelper(false, customerEmail);
     res.viewData.klid = templateVars.klid;
     res.viewData.klDebugData = templateVars.klDebugData;
     res.viewData.serviceCallData = templateVars.serviceCallData;
@@ -19,7 +19,7 @@ server.append('SubmitCustomer', function (req, res, next) {
 
 server.append('LoginCustomer', function (req, res, next) {
     var customerEmail = KLCheckoutHelpers.getEmailFromBasket();
-    var templateVars = KLCheckoutHelper.startedCheckoutHelper(false, customerEmail);
+    var templateVars = KLCheckoutHelpers.startedCheckoutHelper(false, customerEmail);
     res.viewData.klid = templateVars.klid;
     res.viewData.klDebugData = templateVars.klDebugData;
     res.viewData.serviceCallData = templateVars.serviceCallData;
@@ -29,7 +29,7 @@ server.append('LoginCustomer', function (req, res, next) {
 
 server.append('SubmitPayment', function (req, res, next) {
     var customerEmail = KLCheckoutHelpers.getEmailFromBasket();
-    var templateVars = KLCheckoutHelper.startedCheckoutHelper(false, customerEmail);
+    var templateVars = KLCheckoutHelpers.startedCheckoutHelper(false, customerEmail);
     res.viewData.klid = templateVars.klid;
     res.viewData.klDebugData = templateVars.klDebugData;
     res.viewData.serviceCallData = templateVars.serviceCallData;
@@ -39,7 +39,7 @@ server.append('SubmitPayment', function (req, res, next) {
 
 server.append('PlaceOrder', function (req, res, next) {
     var customerEmail = KLCheckoutHelpers.getEmailFromBasket();
-    var templateVars = KLCheckoutHelper.startedCheckoutHelper(false, customerEmail);
+    var templateVars = KLCheckoutHelpers.startedCheckoutHelper(false, customerEmail);
     res.viewData.klid = templateVars.klid;
     res.viewData.klDebugData = templateVars.klDebugData;
     res.viewData.serviceCallData = templateVars.serviceCallData;

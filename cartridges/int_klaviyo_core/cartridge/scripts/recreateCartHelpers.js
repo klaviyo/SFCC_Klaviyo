@@ -23,8 +23,8 @@ function updateOptions(params, product) {
     var optionModel = product.getOptionModel();
 
     for (var i = 0; i < params.options.length; i++) {
-        var optionID      = params.options[i].optionID;
-        var optionValueID = params.options[i].optionValueID;
+        var optionID      = params.options[i]['Option ID'];
+        var optionValueID = params.options[i]['Option Value ID'];
 
         if (optionValueID) {
             var option = optionModel.getOption(optionID);

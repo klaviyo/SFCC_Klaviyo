@@ -70,7 +70,7 @@ server.get('Cart', function (req, res, next) {
                     var childProducts = productToAdd.bundledProducts ? collections.map(productToAdd.bundledProducts, function (product) { return { pid: product.ID, quantity: null } }) : [];
                     var options = [];
                     items[i].options.forEach(optionObj => {
-                        options.push({ lineItemText: optionObj.lineItemText, optionId: optionObj.optionID, selectedValueId: optionObj.optionValueID});
+                        options.push({ lineItemText: optionObj['Line Item Text'], optionId: optionObj['Option ID'], selectedValueId: optionObj['Option Value ID']});
                     })
 
                     for (let key in currentBasket.shipments) {

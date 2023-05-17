@@ -26,6 +26,7 @@ function getData(basket) {
         data.items = [];
         data.categories = [];
         data.primaryCategories = [];
+        data.productAddedToCart = {};
 
         for (var itemIndex = 0; itemIndex < basketItems.length; itemIndex++) {
             var lineItem = basketItems[itemIndex];
@@ -65,10 +66,10 @@ function getData(basket) {
                 };
 
                 var priceData = klaviyoUtils.priceCheck(lineItem, basketProduct);
-                currentLineItem.Price = priceData.purchasePrice
-                if (priceData.originalPrice) {
-                    currentLineItem.originalPrice = priceData.originalPrice
-                }
+                currentLineItem.price = priceData.purchasePrice;
+                currentLineItem.priceValue = priceData.purchasePriceValue;
+                currentLineItem.originalPrice = priceData.originalPrice;
+                currentLineItem.originalPriceValue = priceData.originalPriceValue;
 
                 selectedOptions = lineItem && lineItem.optionProductLineItems ? klaviyoUtils.captureProductOptions(lineItem.optionProductLineItems) : null;
                 if (selectedOptions && selectedOptions.length) {
@@ -92,6 +93,11 @@ function getData(basket) {
                 );
                 data.categories = klaviyoUtils.dedupeArray(data.categories);
                 data.primaryCategories = klaviyoUtils.dedupeArray(data.primaryCategories);
+
+                // Item added to the cart in this event
+                if (itemIndex === basketItems.length - 1) {
+                    data.productAddedToCart = currentLineItem;
+                }
             }
         }
     } catch(e) {

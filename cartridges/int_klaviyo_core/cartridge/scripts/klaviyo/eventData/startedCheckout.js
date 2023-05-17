@@ -79,13 +79,15 @@ function prepareProductObj(lineItem, basketProduct, currentProductID) {
         var bonusProduct = klaviyoUtils.captureBonusProduct(lineItem, basketProduct);
         productObj['Is Bonus Product'] = bonusProduct.isbonusProduct;
         productObj['Original Price'] = bonusProduct.originalPrice;
+        productObj['Original Price Value'] = bonusProduct.originalPriceValue;
         productObj['Price'] = bonusProduct.price;
+        productObj['Price Value'] = bonusProduct.priceValue;
     } else {
         var lineItemPriceData = klaviyoUtils.priceCheck(lineItem, basketProduct);
-        productObj['Price'] = lineItemPriceData.purchasePrice
-        if (lineItemPriceData.originalPrice) {
-            productObj['Original Price'] = lineItemPriceData.originalPrice
-        }
+        productObj['Price'] = lineItemPriceData.purchasePrice;
+        productObj['Price Value'] = lineItemPriceData.purchasePriceValue;
+        productObj['Original Price'] = lineItemPriceData.originalPrice;
+        productObj['Original Price Value'] = lineItemPriceData.originalPriceValue;
     }
     productObj['Product ID'] = currentProductID;
     productObj['Product Name'] = basketProduct.name;
