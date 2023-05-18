@@ -12,6 +12,7 @@ var KLCheckoutHelpers = require('*/cartridge/scripts/klaviyo/checkoutHelpers');
 /* API Includes */
 var StringUtils = require('dw/util/StringUtils');
 
+
 /***
  *
  * NOTE: The Klaviyo-Event route exists to support event tracking on pages whose OOTB SFCC controllers are cached by default.
@@ -21,7 +22,6 @@ var StringUtils = require('dw/util/StringUtils');
  *
  * Also note that this route gets called via remote include for Home-Show, Page-Show and Default-Start only to check for identifying users to Klaviyo off the user's SFCC Profile.
 ***/
-
 server.get('Event', function (req, res, next) {
 
     if(klaviyoUtils.klaviyoEnabled){
@@ -57,11 +57,11 @@ server.get('Event', function (req, res, next) {
                     return;
                 }
             }
+
         } else {
             // no klaviyo ID, check for SFCC profile and ID off that if extant
             res.viewData.klid = klaviyoUtils.getProfileInfo();
         }
-
     }
 
     res.render('klaviyo/klaviyoEmpty'); // we don't need to render anything here, but SFRA requires a .render to be called

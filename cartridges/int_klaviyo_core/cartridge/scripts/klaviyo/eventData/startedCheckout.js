@@ -79,7 +79,6 @@ function getData(currentBasket) {
 }
 
 
-// TODO: this is called in one location... can it just be inlined?
 function prepareProductObj(lineItem, basketProduct, currentProductID) {
     var productObj = {};
     if (lineItem.bonusProductLineItem) {
@@ -107,7 +106,7 @@ function prepareProductObj(lineItem, basketProduct, currentProductID) {
 
     var categories = [];
     var catProduct = (basketProduct.variant) ? basketProduct.masterProduct : basketProduct;
-    for(var i=0, len=catProduct.categoryAssignments.length; i<len; i++) {
+    for(var i = 0, len = catProduct.categoryAssignments.length; i < len; i++) {
         categories.push(catProduct.categoryAssignments[i].category.displayName);
     }
 

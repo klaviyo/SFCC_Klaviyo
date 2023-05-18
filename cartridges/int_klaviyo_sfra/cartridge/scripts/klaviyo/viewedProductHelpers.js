@@ -1,5 +1,6 @@
 'use strict';
 
+/* Script Modules */
 var fullProductModel = require('*/cartridge/models/product/fullProduct');
 var productHelper = require('*/cartridge/scripts/helpers/productHelpers');
 
@@ -18,9 +19,6 @@ function getProductPrices(product) {
 }
 
 
-/*
- * Module exports
- */
 module.exports = {
     getProductPrices : getProductPrices
-}
+};

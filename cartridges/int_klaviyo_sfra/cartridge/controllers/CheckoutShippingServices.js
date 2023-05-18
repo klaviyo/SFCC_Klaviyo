@@ -1,9 +1,10 @@
 'use strict';
 
 var server = require('server');
-var KLCheckoutHelpers = require('*/cartridge/scripts/klaviyo/checkoutHelpers');
-
 server.extend(module.superModule);
+
+/* Script Modules */
+var KLCheckoutHelpers = require('*/cartridge/scripts/klaviyo/checkoutHelpers');
 
 
 server.append('SubmitShipping', function (req, res, next) {
@@ -15,5 +16,6 @@ server.append('SubmitShipping', function (req, res, next) {
 
     next();
 });
+
 
 module.exports = server.exports();

@@ -1,6 +1,7 @@
 'use strict';
 
 var server = require('server');
+server.extend(module.superModule);
 
 /* Script Modules */
 var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils');
@@ -9,13 +10,12 @@ var addedToCartData = require('*/cartridge/scripts/klaviyo/eventData/addedToCart
 /* API Includes */
 var basketMgr = require('dw/order/BasketMgr');
 
-server.extend(module.superModule);
-
 
 server.append('Show', function (req, res, next) {
     if(klaviyoUtils.klaviyoEnabled && !klaviyoUtils.getKlaviyoExchangeID()){
         res.viewData.klid = klaviyoUtils.getProfileInfo();
     }
+
     next();
 });
 

@@ -1,22 +1,21 @@
 'use strict';
 
+/* Script Modules */
+var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils');
+var KLImageSize = klaviyoUtils.KLImageSize;
+
+/* API Includes */
 var Logger = require('dw/system/Logger');
 var URLUtils = require('dw/web/URLUtils');
 var ProductMgr = require('dw/catalog/ProductMgr');
-var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils');
-var KLImageSize = klaviyoUtils.KLImageSize;
 
 
 // prepares data for "Added to Cart" event
 function getData(basket) {
-
-    var data;
+    var data; // TODO: double check this variable...DELETE if not needed.
 
     try {
-
-        // TODO: analyze line-by-line.  currently pulled straight from previous cartridge prepareAddToCartEventForKlaviyo function
         var data = {};
-
         var basketItems = basket.getProductLineItems().toArray();
 
         data.event = klaviyoUtils.EVENT_NAMES.addedToCart;
@@ -50,7 +49,7 @@ function getData(basket) {
 
                 var categories = [];
                 var catProduct = (basketProduct.variant) ? basketProduct.masterProduct : basketProduct; // from orig klav code, always use master for finding cats
-                for(var i=0, len=catProduct.categoryAssignments.length; i<len; i++) {
+                for(var i = 0, len = catProduct.categoryAssignments.length; i < len; i++) {
                     categories.push(catProduct.categoryAssignments[i].category.displayName);
                 }
 
@@ -104,15 +103,16 @@ function getData(basket) {
                 }
             }
         }
+
     } catch(e) {
         var logger = Logger.getLogger('Klaviyo', 'Klaviyo.core addedToCart.js');
-        logger.error('addedToCart.getData() failed to create data object: '+e.message+' '+ e.stack );
+        logger.error('addedToCart.getData() failed to create data object: ' + e.message + ' ' + e.stack);
     }
+
     return data;
 }
 
 
-
 module.exports = {
     getData : getData
-}
+};

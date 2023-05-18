@@ -1,8 +1,13 @@
 'use strict';
 
-var basketMgr = require('dw/order/BasketMgr');
+
+/* Script Modules */
 var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils');
 var startedCheckoutData = require('*/cartridge/scripts/klaviyo/eventData/startedCheckout');
+
+/* API Includes */
+var basketMgr = require('dw/order/BasketMgr');
+
 
 // beginCheckout set to true if this is being called from the first view / step of checkout.
 // otherwise assume this is a continuation of checkout
@@ -56,6 +61,7 @@ function startedCheckoutHelper(beginCheckout, customerEmail) {
     return returnObj;
 };
 
+
 function getEmailFromBasket() {
     var currentBasket = basketMgr.getCurrentBasket();
     if(currentBasket && currentBasket.customerEmail) {
@@ -65,8 +71,9 @@ function getEmailFromBasket() {
     //     return currentBasket.customer.profile.email;
     // }
     return false;
-
 }
+
+
 module.exports = {
     startedCheckoutHelper: startedCheckoutHelper,
     getEmailFromBasket: getEmailFromBasket
