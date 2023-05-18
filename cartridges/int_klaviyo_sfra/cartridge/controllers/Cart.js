@@ -1,11 +1,16 @@
 'use strict';
 
 var server = require('server');
-var basketMgr = require('dw/order/BasketMgr');
+
+/* Script Modules */
 var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils');
 var addedToCartData = require('*/cartridge/scripts/klaviyo/eventData/addedToCart');
 
+/* API Includes */
+var basketMgr = require('dw/order/BasketMgr');
+
 server.extend(module.superModule);
+
 
 server.append('Show', function (req, res, next) {
     if(klaviyoUtils.klaviyoEnabled && !klaviyoUtils.getKlaviyoExchangeID()){
@@ -25,7 +30,7 @@ server.append('AddProduct', function (req, res, next) {
         if (exchangeID) {
             currentBasket = basketMgr.getCurrentBasket();
 
-            if (currentBasket && currentBasket.getProductLineItems().toArray().length) { //TODO: is there a property for isEmpty on basket object?
+            if (currentBasket && currentBasket.getProductLineItems().toArray().length) {
                 dataObj = addedToCartData.getData(currentBasket);
                 serviceCallResult = klaviyoUtils.trackEvent(exchangeID, dataObj, klaviyoUtils.EVENT_NAMES.addedToCart, false);
                 if (isKlDebugOn) {
@@ -35,9 +40,7 @@ server.append('AddProduct', function (req, res, next) {
                     });
                 }
             }
-
         }
-
     }
 
     next();

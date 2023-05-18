@@ -35,105 +35,72 @@
 </script>
 
 <isif condition="${KLselectors && !empty(KLselectors)}">
-<script>
-    var KLselectors = <isprint value="${JSON.stringify(dw.system.Site.current.preferences.custom.klaviyo_email_selectors)}" encoding="off" />;
-    klaviyoJS.emailFieldSelectors = Array.isArray(KLselectors) ? KLselectors : Object.values(KLselectors);
-    klaviyoJS.getExchangeID = function () {
-        var klaviyoCookie = document.cookie.split('; ').filter(function(c) {return /__kla_id=/.test(c)});
-        return JSON.parse(atob(klaviyoCookie[0].split("__kla_id=")[1])).$exchange_id;
-    };
-    klaviyoJS.identifyPhone = function(inputVal) {
-        let formattedPhone = '+' + inputVal.replace(/[^a-z0-9]/gi, '');
-        if (klaviyoJS.e164PhoneRegex.test(formattedPhone)){
-            klaviyo.identify({ '$phone_number' : formattedPhone }).then(() => { klaviyoJS.identifiedUser = true; klaviyoJS.exchangeID = klaviyoJS.getExchangeID(); klaviyoJS.phone = formattedPhone; });
-        }
-    };
-    klaviyoJS.phoneOrEmail = function(inputVal) {
-        if (klaviyoJS.sfccEmailRegex.test (inputVal.target.value)) {
-            klaviyo.identify({ '$email' : inputVal.target.value }).then(() => { klaviyoJS.identifiedUser = true; klaviyoJS.exchangeID = klaviyoJS.getExchangeID(); });
-        }
-        if (Number(inputVal.target.value.replace(/[^a-z0-9]/gi, ''))) {
-            klaviyoJS.identifyPhone(inputVal.target.value);
-        }
-    };
-    Promise.resolve(klaviyo.isIdentified()).then((result) => { klaviyoJS.identifiedUser = result });
-
-    window.addEventListener('DOMContentLoaded', (event) => {
-        if ("MutationObserver" in window) {
-            let page = document.body;
-            const observer = new MutationObserver(mutations => {
-                klaviyoListeners();
-            });
-
-            observer.observe(page, {
-                childList: true,
-                subtree: true
-            });
-        }
-    });
-
-    function klaviyoListeners() {
-        for (let i = 0; i < klaviyoJS.emailFieldSelectors.length; i++) {
-            let selectedInput = document.querySelectorAll(klaviyoJS.emailFieldSelectors[i]);
-            if (selectedInput) {
-                Array.from(selectedInput).forEach(klavInput => {
-                    if (klavInput && !klavInput.hasAttribute('data-listener')) {
-                        klavInput.setAttribute('data-listener', 'klaviyo');
-                        klavInput.addEventListener("change", (klavInput) => klaviyoChangeEvent(klavInput));
-                    }
-                })
-            }
-        }
-    }
-
-    function klaviyoChangeEvent(input){
-        if (!klaviyoJS.identifiedUser) {
-            klaviyoJS.phoneOrEmail(input);
-        }
-        if (input.target.pattern.length && input.target.value.match(input.target.pattern)) {
-            if (klaviyoJS.identifiedUser && klaviyoJS.exchangeID && klaviyoJS.phone) {
-                klaviyo.identify({ '$email' : input.target.value, '$phone_number' : klaviyoJS.phone }).then(() => { klaviyoJS.identifiedUser = true; klaviyoJS.exchangeID = klaviyoJS.getExchangeID(); });
-            }
-        } else {
-            if (klaviyoJS.identifiedUser && klaviyoJS.exchangeID && klaviyoJS.phone && klaviyoJS.sfccEmailRegex.test (input.target.value)) {
-                klaviyo.identify({ '$email' : input.target.value, '$phone_number' : klaviyoJS.phone }).then(() => { klaviyoJS.identifiedUser = true; klaviyoJS.exchangeID = klaviyoJS.getExchangeID(); });
-            }
-        }
-    }
-
-    klaviyoListeners();
-</script>
-
-    <iscomment> ====== TODO: All mutation testing code below to be removed after testing is completed ====== </iscomment>
     <script>
+        var KLselectors = <isprint value="${JSON.stringify(dw.system.Site.current.preferences.custom.klaviyo_email_selectors)}" encoding="off" />;
+        klaviyoJS.emailFieldSelectors = Array.isArray(KLselectors) ? KLselectors : Object.values(KLselectors);
+        klaviyoJS.getExchangeID = function () {
+            var klaviyoCookie = document.cookie.split('; ').filter(function(c) {return /__kla_id=/.test(c)});
+            return JSON.parse(atob(klaviyoCookie[0].split("__kla_id=")[1])).$exchange_id;
+        };
+        klaviyoJS.identifyPhone = function(inputVal) {
+            let formattedPhone = '+' + inputVal.replace(/[^a-z0-9]/gi, '');
+            if (klaviyoJS.e164PhoneRegex.test(formattedPhone)){
+                klaviyo.identify({ '$phone_number' : formattedPhone }).then(() => { klaviyoJS.identifiedUser = true; klaviyoJS.exchangeID = klaviyoJS.getExchangeID(); klaviyoJS.phone = formattedPhone; });
+            }
+        };
+        klaviyoJS.phoneOrEmail = function(inputVal) {
+            if (klaviyoJS.sfccEmailRegex.test (inputVal.target.value)) {
+                klaviyo.identify({ '$email' : inputVal.target.value }).then(() => { klaviyoJS.identifiedUser = true; klaviyoJS.exchangeID = klaviyoJS.getExchangeID(); });
+            }
+            if (Number(inputVal.target.value.replace(/[^a-z0-9]/gi, ''))) {
+                klaviyoJS.identifyPhone(inputVal.target.value);
+            }
+        };
+        Promise.resolve(klaviyo.isIdentified()).then((result) => { klaviyoJS.identifiedUser = result });
+
         window.addEventListener('DOMContentLoaded', (event) => {
-            let btn = document.getElementById("testButton")
-            btn.addEventListener('click', function () {
-                // create new elements
-                const div = document.createElement('div');
-                const label = document.createElement('label');
-                const input = document.createElement('input');
+            if ("MutationObserver" in window) {
+                let page = document.body;
+                const observer = new MutationObserver(mutations => {
+                    klaviyoListeners();
+                });
 
-                // set basic styles & attributes necessary for testing needs
-                label.innerHTML ='Enter Phone or Email';
-                div.classList.add('form-group');
-                div.style.width = '50%';
-                label.classList.add('form-control-label');
-                input.classList.add('form-control');
-                input.setAttribute('type', 'text');
-                input.setAttribute('id', 'pop-up-test-input');
-
-                div.appendChild(label);
-                div.appendChild(input);
-
-                const box = document.getElementById('klaviyo-pop-up-test-container');
-                box.prepend(div);
-            });
+                observer.observe(page, {
+                    childList: true,
+                    subtree: true
+                });
+            }
         });
+
+        function klaviyoListeners() {
+            for (let i = 0; i < klaviyoJS.emailFieldSelectors.length; i++) {
+                let selectedInput = document.querySelectorAll(klaviyoJS.emailFieldSelectors[i]);
+                if (selectedInput) {
+                    Array.from(selectedInput).forEach(klavInput => {
+                        if (klavInput && !klavInput.hasAttribute('data-listener')) {
+                            klavInput.setAttribute('data-listener', 'klaviyo');
+                            klavInput.addEventListener("change", (klavInput) => klaviyoChangeEvent(klavInput));
+                        }
+                    })
+                }
+            }
+        }
+
+        function klaviyoChangeEvent(input){
+            if (!klaviyoJS.identifiedUser) {
+                klaviyoJS.phoneOrEmail(input);
+            }
+            if (input.target.pattern.length && input.target.value.match(input.target.pattern)) {
+                if (klaviyoJS.identifiedUser && klaviyoJS.exchangeID && klaviyoJS.phone) {
+                    klaviyo.identify({ '$email' : input.target.value, '$phone_number' : klaviyoJS.phone }).then(() => { klaviyoJS.identifiedUser = true; klaviyoJS.exchangeID = klaviyoJS.getExchangeID(); });
+                }
+            } else {
+                if (klaviyoJS.identifiedUser && klaviyoJS.exchangeID && klaviyoJS.phone && klaviyoJS.sfccEmailRegex.test (input.target.value)) {
+                    klaviyo.identify({ '$email' : input.target.value, '$phone_number' : klaviyoJS.phone }).then(() => { klaviyoJS.identifiedUser = true; klaviyoJS.exchangeID = klaviyoJS.getExchangeID(); });
+                }
+            }
+        }
+
+        klaviyoListeners();
     </script>
-    <div id="klaviyo-pop-up-test-container" class="card-body">
-        <div class="test-pop-up">
-            <button id="testButton" class="btn-primary btn">Render Test Input</button>
-        </div>
-    <div>
 </isif>

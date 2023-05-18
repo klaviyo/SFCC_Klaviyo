@@ -11,4 +11,4 @@ function getData(term, count) {
 
 module.exports = {
     getData : getData
-}
+};

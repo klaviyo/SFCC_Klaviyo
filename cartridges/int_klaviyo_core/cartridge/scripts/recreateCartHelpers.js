@@ -17,7 +17,7 @@ function clearCart(cartObj) {
 }
 
 
-// This func is necessary to update Update Product Options so they're properly accounted for when adding items to the cart.
+// The updateOptions func is necessary to update Update Product Options so they're properly accounted for when adding items to the cart.
 // (Ex: 'Extended Warranty: 3 Year Warranty' - product warranties, etc.)
 function updateOptions(params, product) {
     var optionModel = product.getOptionModel();
@@ -41,10 +41,8 @@ function updateOptions(params, product) {
     return optionModel;
 }
 
-/*
- * Module exports
- */
+
 module.exports = {
     clearCart: clearCart,
     updateOptions: updateOptions
-}
+};

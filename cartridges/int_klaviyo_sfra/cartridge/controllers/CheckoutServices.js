@@ -3,8 +3,6 @@
 var server = require('server');
 var KLCheckoutHelpers = require('*/cartridge/scripts/klaviyo/checkoutHelpers');
 
-
-
 server.extend(module.superModule);
 
 

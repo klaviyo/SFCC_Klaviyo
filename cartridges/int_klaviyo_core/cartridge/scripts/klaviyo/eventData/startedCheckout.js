@@ -1,16 +1,19 @@
 'use strict';
 
-var Logger = require('dw/system/Logger');
-var ProductMgr = require('dw/catalog/ProductMgr');
-var URLUtils = require('dw/web/URLUtils');
+/* Script Modules */
 var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils');
 var KLImageSize = klaviyoUtils.KLImageSize;
+
+/* API Includes */
+var Logger = require('dw/system/Logger');
+var ProductMgr = require('dw/catalog/ProductMgr');
 var StringUtils = require('dw/util/StringUtils');
+var URLUtils = require('dw/web/URLUtils');
+
 
 // prepares data for "Started Checkout" event
 function getData(currentBasket) {
 
-    // TODO: analyze line-by-line.  currently pulled straight from previous cartridge prepareCheckoutEventForKlaviyo function
     var data;
     try {
         data = {};
@@ -93,6 +96,7 @@ function prepareProductObj(lineItem, basketProduct, currentProductID) {
         productObj['Original Price'] = lineItemPriceData.originalPrice;
         productObj['Original Price Value'] = lineItemPriceData.originalPriceValue;
     }
+
     productObj['Product ID'] = currentProductID;
     productObj['Product Name'] = basketProduct.name;
     productObj['Product Image URL'] = KLImageSize ? basketProduct.getImage(KLImageSize).getAbsURL().toString() : null;
@@ -102,7 +106,7 @@ function prepareProductObj(lineItem, basketProduct, currentProductID) {
     productObj['Product Availability Model'] = basketProduct.availabilityModel.availability;
 
     var categories = [];
-    var catProduct = (basketProduct.variant) ? basketProduct.masterProduct : basketProduct; // from orig klav code, always use master for finding cats
+    var catProduct = (basketProduct.variant) ? basketProduct.masterProduct : basketProduct;
     for(var i=0, len=catProduct.categoryAssignments.length; i<len; i++) {
         categories.push(catProduct.categoryAssignments[i].category.displayName);
     }
@@ -114,4 +118,4 @@ function prepareProductObj(lineItem, basketProduct, currentProductID) {
 
 module.exports = {
     getData : getData
-}
+};

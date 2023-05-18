@@ -1,10 +1,13 @@
 'use strict';
 
 var server = require('server');
-var OrderMgr = require('dw/order/OrderMgr');
+
+/* Script Modules */
 var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils');
 var orderConfirmationData = require('*/cartridge/scripts/klaviyo/eventData/orderConfirmation');
 
+/* API Includes */
+var OrderMgr = require('dw/order/OrderMgr');
 
 server.extend(module.superModule);
 
