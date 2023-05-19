@@ -9,12 +9,14 @@ function getProductPrices(product) {
     var options = productHelper.getConfig(product, { pid: product.ID });
     var newProdObj = Object.create(Object.prototype);
     var fullProduct = fullProductModel(newProdObj, options.apiProduct, options);
+    var fullPriceValue = fullProduct.price.sales ? fullProduct.price.sales.value : fullProduct.price.min.sales.value;
+    var fullPriceFormatted = fullProduct.price.sales ? fullProduct.price.sales.formatted : fullProduct.price.min.sales.formatted;
 
     return {
-        price : fullProduct.price.sales.value,
-        priceString : fullProduct.price.sales.formatted,
-        originalPrice : fullProduct.price.list ? fullProduct.price.list.value : fullProduct.price.sales.value,
-        originalPriceString : fullProduct.price.list ? fullProduct.price.list.formatted : fullProduct.price.sales.formatted
+        price : fullPriceValue,
+        priceString : fullPriceFormatted,
+        originalPrice : fullProduct.price.list ? fullProduct.price.list.value : fullPriceValue,
+        originalPriceString : fullProduct.price.list ? fullProduct.price.list.formatted : fullPriceFormatted
     }
 }
 
