@@ -85,6 +85,10 @@ function getData(basket) {
                     currentLineItem['Bundled Product IDs'] = prodBundle.prodBundleIDs;
                 }
 
+                if (lineItem.bonusProductLineItem) {
+                    currentLineItem['Is Bonus Product'] = true;
+                }
+
                 data.lineItems.push(currentLineItem);
                 data.items.push(basketProduct.name);
                 data.categories.push.apply(
@@ -96,15 +100,20 @@ function getData(basket) {
                 );
                 data.categories = klaviyoUtils.dedupeArray(data.categories);
                 data.primaryCategories = klaviyoUtils.dedupeArray(data.primaryCategories);
+            }
+        }
 
-                // Item added to the cart in this event
-                if (itemIndex === basketItems.length - 1) {
-                    data.productAddedToCart = currentLineItem;
-                }
+        // Item added to the cart in this event
+        // Bonus products can occasionally appear as final item in the cart. We exclude these from the line items to accurately track the item added to cart in this event.
+        for (let i = data.lineItems.length - 1; i >= 0; i--) {
+            if (!data.lineItems[i]['Is Bonus Product']) {
+                data.productAddedToCart = data.lineItems[i];
+                break;
             }
         }
 
     } catch(e) {
+        var errorTest = e;
         var logger = Logger.getLogger('Klaviyo', 'Klaviyo.core addedToCart.js');
         logger.error('addedToCart.getData() failed to create data object: ' + e.message + ' ' + e.stack);
     }
