@@ -103,7 +103,6 @@ function showConfirmation(order) {
                 dataObj = orderConfirmationData.getData(order, exchangeID);
                 serviceCallResult = klaviyoUtils.trackEvent(exchangeID, dataObj, klaviyoUtils.EVENT_NAMES.orderConfirmation, order.customerEmail);
             }
-
         }
     }
     /* END Klaviyo Order Confirmation event tracking */

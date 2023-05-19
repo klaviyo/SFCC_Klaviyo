@@ -1,16 +1,14 @@
 'use strict';
 
 /* API Includes */
+var Logger = require('dw/system/Logger');
 var Site = require('dw/system/Site');
 var StringUtils = require('dw/util/StringUtils');
-var Logger = require('dw/system/Logger');
 
 /* Script Modules */
 var klaviyoServices = require('*/cartridge/scripts/klaviyo/services.js');
 
 // event name constants
-// TODO: currently crossover with WHITELISTED_EVENTS below - square them when answers are found to why WHITELISTED_EVENTS exists
-
 var EVENT_NAMES = {
     'viewedProduct' : 'Viewed Product',
     'viewedCategory' : 'Viewed Category',
@@ -168,7 +166,6 @@ function trackEvent(exchangeID, data, event, customerEmail) {
 
     var requestBody = {};
     var resultObj = {};
-
     var logger = Logger.getLogger('Klaviyo', 'Klaviyo.core utils.js - trackEvent()');
 
     if (klaviyoServices.KlaviyoEventService == null || empty(exchangeID)) {
@@ -204,7 +201,6 @@ function trackEvent(exchangeID, data, event, customerEmail) {
                 "metric": metricObj,
                 "properties" : data,
                 "time": (new Date()).toISOString()
-                // value: 9.99 // TODO - figure out when this can be set and what it should be set to ie, product price, cart total, order total, etc
             }
         }
     };
@@ -224,7 +220,6 @@ function trackEvent(exchangeID, data, event, customerEmail) {
 }
 
 
-
 module.exports = {
     EVENT_NAMES : EVENT_NAMES,
     klaviyoEnabled : klaviyoEnabled,
@@ -239,4 +234,4 @@ module.exports = {
     priceCheck : priceCheck,
     getRootPriceBook : getRootPriceBook,
     trackEvent : trackEvent
-}
+};

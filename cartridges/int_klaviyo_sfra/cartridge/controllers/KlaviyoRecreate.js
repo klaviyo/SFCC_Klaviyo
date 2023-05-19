@@ -2,25 +2,25 @@
 
 var server = require('server');
 
+/* API Includes */
+var BasketMgr = require('dw/order/BasketMgr');
+var Logger = require('dw/system/Logger');
+var ProductMgr = require('dw/catalog/ProductMgr');
+var PromotionMgr = require('dw/campaign/PromotionMgr');
+var Resource = require('dw/web/Resource');
+var StringUtils = require('dw/util/StringUtils');
+var Transaction = require('dw/system/Transaction');
+var URLUtils = require('dw/web/URLUtils');
+
 /* Script Modules */
 var shippingHelper = require('*/cartridge/scripts/checkout/shippingHelpers');
 var COHelpers = require('*/cartridge/scripts/checkout/checkoutHelpers');
 var collections = require('*/cartridge/scripts/util/collections');
 var cartHelpers = require('*/cartridge/scripts/cart/cartHelpers');
-var recreateCartHelpers = require('*/cartridge/scripts/recreateCartHelpers');
+var recreateCartHelpers = require('*/cartridge/scripts/klaviyo/recreateCartHelpers');
 
 /* Models */
 var CartModel = require('*/cartridge/models/cart');
-
-/* API Includes */
-var BasketMgr = require('dw/order/BasketMgr');
-var ProductMgr = require('dw/catalog/ProductMgr');
-var PromotionMgr = require('dw/campaign/PromotionMgr');
-var StringUtils = require('dw/util/StringUtils');
-var Transaction = require('dw/system/Transaction');
-var URLUtils = require('dw/web/URLUtils');
-var Logger = require('dw/system/Logger');
-var Resource = require('dw/web/Resource');
 
 
 /**
@@ -97,5 +97,6 @@ server.get('Cart', function (req, res, next) {
     }
     next();
 });
+
 
 module.exports = server.exports();

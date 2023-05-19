@@ -92,7 +92,6 @@ function start() {
     }
 
 
-
     /* Klaviyo Started Checkout event tracking */
     var KLCheckoutHelpers = require('*/cartridge/scripts/klaviyo/checkoutHelpers');
     var customerEmail = KLCheckoutHelpers.getEmailFromBasket();
@@ -104,7 +103,6 @@ function start() {
         }).render('klaviyo/klaviyoDebug');
     }
     /* END Klaviyo Started Checkout event tracking */
-
 
 
     var COShipping = app.getController('COShipping');

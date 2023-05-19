@@ -1,11 +1,10 @@
 'use strict';
 
 var server = require('server');
-var KLCheckoutHelpers = require('*/cartridge/scripts/klaviyo/checkoutHelpers');
-
-
-
 server.extend(module.superModule);
+
+/* Script Modules */
+var KLCheckoutHelpers = require('*/cartridge/scripts/klaviyo/checkoutHelpers');
 
 
 server.append('SubmitCustomer', function (req, res, next) {
@@ -14,8 +13,10 @@ server.append('SubmitCustomer', function (req, res, next) {
     res.viewData.klid = templateVars.klid;
     res.viewData.klDebugData = templateVars.klDebugData;
     res.viewData.serviceCallData = templateVars.serviceCallData;
+
     next();
 });
+
 
 server.append('LoginCustomer', function (req, res, next) {
     var customerEmail = KLCheckoutHelpers.getEmailFromBasket();
@@ -27,6 +28,7 @@ server.append('LoginCustomer', function (req, res, next) {
     next();
 });
 
+
 server.append('SubmitPayment', function (req, res, next) {
     var customerEmail = KLCheckoutHelpers.getEmailFromBasket();
     var templateVars = KLCheckoutHelpers.startedCheckoutHelper(false, customerEmail);
@@ -36,6 +38,7 @@ server.append('SubmitPayment', function (req, res, next) {
 
     next();
 });
+
 
 server.append('PlaceOrder', function (req, res, next) {
     var customerEmail = KLCheckoutHelpers.getEmailFromBasket();

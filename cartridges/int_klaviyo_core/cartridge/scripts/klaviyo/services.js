@@ -1,11 +1,14 @@
 'use strict';
 
-var Site = require('dw/system/Site');
+/* API Includes */
+var Logger = require('dw/system/Logger');
 var ServiceRegistry = require('dw/svc/LocalServiceRegistry');
+var Site = require('dw/system/Site');
+
 
 // HTTP Services
-
 var KlaviyoEventService = ServiceRegistry.createService('KlaviyoEventService', {
+
     /**
    * Create the service request
    * - Set request method to be the HTTP GET method
@@ -17,13 +20,11 @@ var KlaviyoEventService = ServiceRegistry.createService('KlaviyoEventService', {
    * @returns {void}
    */
     createRequest: function (svc, args) {
-        // TODO: remove this if its not going to get used
-        //var password = svc.configuration.credential.password;
 
         var key = Site.getCurrent().getCustomPreferenceValue('klaviyo_api_key');
         if(!key || key == '') {
-            // TODO: log error - missing Klaviyo Private API Key
-            // also test to see what happens to the calling code when this immediately returns / no key set
+            var logger = Logger.getLogger('Klaviyo', 'Klaviyo.core:  services.js  -  createRequest()');
+            logger.error(`KlaviyoEventService failed because of a missing Klaviyo Private API key. Review key & configs for inconsistencies. Klaviyo API Key: ${key}`);
             return;
         }
 
@@ -35,6 +36,7 @@ var KlaviyoEventService = ServiceRegistry.createService('KlaviyoEventService', {
 
         return JSON.stringify(args);
     },
+
     /**
    * JSON parse the response text and return it in configured retData object
    *
@@ -47,9 +49,9 @@ var KlaviyoEventService = ServiceRegistry.createService('KlaviyoEventService', {
     },
 
     getRequestLogMessage: function (request) {
-        // underlying SFCC code (Java?) will translate "$1" in the request into a reference to the Request object and
-        // "$2" into a reference to the Request's value, so we add a space between dollar sign and number
-        // to not break logged data. note this does not alter the request data that is actually sent to Klaviyo.
+        // Underlying SFCC code (Java) will translate "$1" in the request into a reference to the Request object and
+        // "$2" into a reference to the Request's value. As a result, we add a space between dollar sign and number
+        // to avoid breaking logged data. Note: this does not alter the request data that is actually sent to Klaviyo.
         request = request.replace(/\$1/g, '$ 1').replace(/\$2/g, '$ 2');
         return request;
     },
@@ -62,17 +64,20 @@ var KlaviyoEventService = ServiceRegistry.createService('KlaviyoEventService', {
                 errorText: response.errorText,
                 text: response.text
             };
+
             return JSON.stringify(r);
         } catch(e) {
             var err = 'failure to generate full response log object in KlaviyoEventService.getResponseLogMessage()';
             if(response && response.statusCode) {
                 err += ', statusCode: ' + response.statusCode;
             }
+
             return err;
         }
     }
 });
 
+
 module.exports = {
     KlaviyoEventService : KlaviyoEventService
-}
+};

@@ -1,27 +1,27 @@
 'use strict';
 
 var server = require('server');
+
+/* API Includes */
+var StringUtils = require('dw/util/StringUtils');
+
+/* Script Modules */
 var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils');
 var viewedProductData = require('*/cartridge/scripts/klaviyo/eventData/viewedProduct');
 var viewedCategoryData = require('*/cartridge/scripts/klaviyo/eventData/viewedCategory');
 var searchedSiteData = require('*/cartridge/scripts/klaviyo/eventData/searchedSite');
 var KLCheckoutHelpers = require('*/cartridge/scripts/klaviyo/checkoutHelpers');
 
-var StringUtils = require('dw/util/StringUtils');
 
 /***
  *
- * NOTE: the Klaviyo-Event route exists to support event tracking on pages whose OOTB SFCC controllers are cached by default
- * to avoid caching event data, the Klaviyo-Event route is called via remote include in KlaviyoTag.isml.
- * for event tracking on pages whose controllers are not cached OOTB, server.appends to those OOTB controllers should be utilized
- * reference Cart.js, Checkout.js, Order.js in the int_klaviyo_sfra cartridge
+ * NOTE: The Klaviyo-Event route exists to support event tracking on pages whose OOTB SFCC controllers are cached by default.
+ * To avoid caching event data, the Klaviyo-Event route is called via remote include in KlaviyoTag.isml.
+ * For event tracking on pages whose controllers are not cached OOTB, server.appends to those OOTB controllers should be utilized.
+ * Reference Cart.js, Checkout.js, Order.js in the int_klaviyo_sfra cartridge
  *
- * Also note that this route gets called via remote include for Home-Show, Page-Show and Default-Start only to check for identifying users to Klaviyo off the user's SFCC Profile
+ * Also note that this route gets called via remote include for Home-Show, Page-Show and Default-Start only to check for identifying users to Klaviyo off the user's SFCC Profile.
 ***/
-
-
-// TODO: any partcular middleware need here?
-
 server.get('Event', function (req, res, next) {
 
     if(klaviyoUtils.klaviyoEnabled){
@@ -44,9 +44,6 @@ server.get('Event', function (req, res, next) {
                         dataObj = viewedCategoryData.getData(parms); // parms: category ID
                         break;
                     case klaviyoUtils.EVENT_NAMES.searchedSite :
-                        // TODO: add Show-Ajax append?  test to be sure when this happens... if its just on paging, do we want to track that?
-                        // TODO: what about search-suggestion flyout? probably not supportable
-                        // TODO: be sure to check for 0 result searches, filtering on both search results and PLPs, re-sorts, etc and get clarity on requirements
                         parms = parms.split('|');
                         dataObj = searchedSiteData.getData(parms[0], parms[1]); // parms: search phrase, result count
                         break;
@@ -60,11 +57,11 @@ server.get('Event', function (req, res, next) {
                     return;
                 }
             }
+
         } else {
             // no klaviyo ID, check for SFCC profile and ID off that if extant
             res.viewData.klid = klaviyoUtils.getProfileInfo();
         }
-
     }
 
     res.render('klaviyo/klaviyoEmpty'); // we don't need to render anything here, but SFRA requires a .render to be called

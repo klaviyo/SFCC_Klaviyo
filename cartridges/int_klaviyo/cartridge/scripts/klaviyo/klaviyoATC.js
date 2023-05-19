@@ -1,11 +1,11 @@
 'use strict';
 
-/* Script Modules */
-var app = require('*/cartridge/scripts/app');
-var recreateHelpers = require('*/cartridge/scripts/recreateCartHelpers');
-
 /* API Includes */
 var Logger = require('dw/system/Logger');
+
+/* Script Modules */
+var app = require('*/cartridge/scripts/app');
+var recreateHelpers = require('*/cartridge/scripts/klaviyo/recreateCartHelpers');
 
 
 function addProductToCart(decodedItems, cartObj) {

@@ -1,12 +1,14 @@
 'use strict';
 
 var server = require('server');
+server.extend(module.superModule);
+
+/* API Includes */
 var OrderMgr = require('dw/order/OrderMgr');
+
+/* Script Modules */
 var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils');
 var orderConfirmationData = require('*/cartridge/scripts/klaviyo/eventData/orderConfirmation');
-
-
-server.extend(module.superModule);
 
 
 server.append('Confirm', function (req, res, next) {
@@ -28,10 +30,8 @@ server.append('Confirm', function (req, res, next) {
                     dataObj = orderConfirmationData.getData(currentOrder, exchangeID);
                     serviceCallResult = klaviyoUtils.trackEvent(exchangeID, dataObj, klaviyoUtils.EVENT_NAMES.orderConfirmation, currentOrder.customerEmail);
                 }
-
             }
         }
-
     }
 
     next();

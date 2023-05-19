@@ -189,15 +189,11 @@ function publicStart() {
         app.getForm('billing.giftCertCode').clear();
 
 
-
-
         /* Klaviyo Started Checkout event tracking */
         var KLCheckoutHelpers = require('*/cartridge/scripts/klaviyo/checkoutHelpers');
         var customerEmail = KLCheckoutHelpers.getEmailFromBasket();
         var KLTplVars = KLCheckoutHelpers.startedCheckoutHelper(false, customerEmail);
         /* END Klaviyo Started Checkout event tracking */
-
-
 
 
         start(cart, {ApplicableCreditCards: creditCardList.ApplicableCreditCards});
@@ -561,15 +557,11 @@ function billing() {
                     app.getForm('billing').object.fulfilled.value = true;
 
 
-
-
                     /* Klaviyo Started Checkout event tracking */
                     var KLCheckoutHelpers = require('*/cartridge/scripts/klaviyo/checkoutHelpers');
                     var customerEmail = KLCheckoutHelpers.getEmailFromBasket();
                     var klid = KLCheckoutHelpers.startedCheckoutHelper(false, customerEmail);
                     /* END Klaviyo Started Checkout event tracking */
-
-
 
 
 

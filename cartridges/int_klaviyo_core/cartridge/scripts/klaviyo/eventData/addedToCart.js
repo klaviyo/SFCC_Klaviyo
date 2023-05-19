@@ -1,22 +1,21 @@
 'use strict';
 
+/* API Includes */
 var Logger = require('dw/system/Logger');
 var URLUtils = require('dw/web/URLUtils');
 var ProductMgr = require('dw/catalog/ProductMgr');
+
+/* Script Modules */
 var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils');
 var KLImageSize = klaviyoUtils.KLImageSize;
 
 
 // prepares data for "Added to Cart" event
 function getData(basket) {
-
     var data;
 
     try {
-
-        // TODO: analyze line-by-line.  currently pulled straight from previous cartridge prepareAddToCartEventForKlaviyo function
-        var data = {};
-
+        data = {};
         var basketItems = basket.getProductLineItems().toArray();
 
         data.event = klaviyoUtils.EVENT_NAMES.addedToCart;
@@ -50,7 +49,7 @@ function getData(basket) {
 
                 var categories = [];
                 var catProduct = (basketProduct.variant) ? basketProduct.masterProduct : basketProduct; // from orig klav code, always use master for finding cats
-                for(var i=0, len=catProduct.categoryAssignments.length; i<len; i++) {
+                for(var i = 0, len = catProduct.categoryAssignments.length; i < len; i++) {
                     categories.push(catProduct.categoryAssignments[i].category.displayName);
                 }
 
@@ -86,6 +85,10 @@ function getData(basket) {
                     currentLineItem['Bundled Product IDs'] = prodBundle.prodBundleIDs;
                 }
 
+                if (lineItem.bonusProductLineItem) {
+                    currentLineItem['Is Bonus Product'] = true;
+                }
+
                 data.lineItems.push(currentLineItem);
                 data.items.push(basketProduct.name);
                 data.categories.push.apply(
@@ -97,22 +100,28 @@ function getData(basket) {
                 );
                 data.categories = klaviyoUtils.dedupeArray(data.categories);
                 data.primaryCategories = klaviyoUtils.dedupeArray(data.primaryCategories);
-
-                // Item added to the cart in this event
-                if (itemIndex === basketItems.length - 1) {
-                    data.productAddedToCart = currentLineItem;
-                }
             }
         }
+
+        // Item added to the cart in this event
+        // Bonus products can occasionally appear as final item in the cart. We exclude these from the line items to accurately track the item added to cart in this event.
+        for (let i = data.lineItems.length - 1; i >= 0; i--) {
+            if (!data.lineItems[i]['Is Bonus Product']) {
+                data.productAddedToCart = data.lineItems[i];
+                break;
+            }
+        }
+
     } catch(e) {
+        var errorTest = e;
         var logger = Logger.getLogger('Klaviyo', 'Klaviyo.core addedToCart.js');
-        logger.error('addedToCart.getData() failed to create data object: '+e.message+' '+ e.stack );
+        logger.error('addedToCart.getData() failed to create data object: ' + e.message + ' ' + e.stack);
     }
+
     return data;
 }
 
 
-
 module.exports = {
     getData : getData
-}
+};

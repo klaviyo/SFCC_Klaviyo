@@ -1,11 +1,15 @@
 'use strict';
 
+/* API Includes */
 var Site = require('dw/system/Site');
 var Logger = require('dw/system/Logger');
 var URLUtils = require('dw/web/URLUtils');
 var ProductMgr = require('dw/catalog/ProductMgr');
+
+/* Script Modules */
 var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils');
 var KLImageSize = klaviyoUtils.KLImageSize;
+
 
 /**
  * Prepares the order in JSON format for email send.
@@ -25,7 +29,6 @@ function getData(order) {
         var orderBillingAddressAddress1 = order.billingAddress.address1 ? order.billingAddress.address1 : '';
         var orderBillingAddressAddress2 = order.billingAddress.address2 ? order.billingAddress.address2 : '';
         var orderBillingAddressCity = order.billingAddress.city ? order.billingAddress.city : '';
-        // var orderBillingAddressPostalCode = (order.billingAddress.postalCode) ? order.billingAddress.postalCode : '';
         var orderBillingAddressStateCode = order.billingAddress.stateCode ? order.billingAddress.stateCode : '';
         var orderBillingAddressCountryCode = order.billingAddress.countryCode.value ? order.billingAddress.countryCode.value : '';
         var orderBillingAddressPhone = order.billingAddress.phone ? order.billingAddress.phone : '';
@@ -216,7 +219,7 @@ function getData(order) {
             // Shipping
             var shippingExclDiscounts = order.shippingTotalPrice;
             var shippingInclDiscounts = order.getAdjustedShippingTotalPrice();
-            var shippingDiscount = shippingExclDiscounts.subtract( shippingInclDiscounts );
+            var shippingDiscount = shippingExclDiscounts.subtract(shippingInclDiscounts);
             var shippingTotalCost = shippingExclDiscounts.subtract(shippingDiscount);
             var shippingTotalCostString = dw.util.StringUtils.formatMoney( dw.value.Money( shippingTotalCost.value, session.getCurrency().getCurrencyCode() ) );
 
@@ -250,7 +253,6 @@ function getData(order) {
         }
 
         // Order Details
-        // var orderDate = new Date(order.creationDate);
         var orderCreationDate = dw.util.StringUtils.formatCalendar( new dw.util.Calendar(new Date(order.creationDate)), 'yyyy-MM-dd' );
         data['Order Number'] = order.orderNo;
         data['Order Date'] = orderCreationDate;
@@ -291,7 +293,6 @@ function getData(order) {
         });
 
         // Add product / billing / shipping
-
         data.product_line_items = productLineItemsArray;
         data['Billing Address'] = billingaddress;
         data['Shipping Address'] = shippingaddress;
@@ -303,6 +304,7 @@ function getData(order) {
         data['$value'] = orderTotal;
         data['$event_id'] = 'orderConfirmation' + '-' + order.orderNo;
         data['Tracking Number'] = order.shipments[0].trackingNumber ? order.shipments[0].trackingNumber : '';
+
     } catch(e) {
         var logger = Logger.getLogger('Klaviyo', 'Klaviyo.core orderConfirmation.js');
         logger.error('orderConfirmation.getData() failed to create data object: '+e.message+' '+ e.stack );
@@ -310,6 +312,7 @@ function getData(order) {
 
     return data;
 }
+
 
 module.exports = {
     getData: getData
