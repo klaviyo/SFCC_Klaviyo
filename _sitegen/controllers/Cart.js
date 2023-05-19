@@ -43,12 +43,14 @@ function show() {
 
     cartForm.get('shipments').invalidate();
 
+
     // KLAVIYO
     var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils'), klid;
     if(dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_enabled') && !klaviyoUtils.getKlaviyoExchangeID()){
         klid = klaviyoUtils.getProfileInfo();
     }
     // END KLAVIYO
+
 
     app.getView('Cart', {
         cart: app.getModel('Cart').get(),
@@ -400,9 +402,6 @@ function addBonusProductJson() {
                     childProduct = Product.get(childPids[j]).object;
 
                     if (childProduct) {
-
-                        // TODO: CommonJSify cart/UpdateProductOptionSelections.ds and import here
-
                         var UpdateProductOptionSelections = require('app_storefront_core/cartridge/scripts/cart/UpdateProductOptionSelections');
                         UpdateProductOptionSelections.update({
                             SelectedOptions: new ArrayList(productsJSON[i].options),

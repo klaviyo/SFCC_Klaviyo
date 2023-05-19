@@ -99,14 +99,11 @@ function start() {
     });
 
 
-
     /* Klaviyo Started Checkout event tracking */
     var KLCheckoutHelpers = require('*/cartridge/scripts/klaviyo/checkoutHelpers');
     var customerEmail = KLCheckoutHelpers.getEmailFromBasket();
     var KLTplVars = KLCheckoutHelpers.startedCheckoutHelper(false, customerEmail);
     /* END Klaviyo Started Checkout event tracking */
-
-
 
 
     // Go to billing step, if we have no product line items, but only gift certificates in the basket, shipping is not required.
