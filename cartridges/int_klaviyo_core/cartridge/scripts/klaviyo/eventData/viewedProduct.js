@@ -35,7 +35,7 @@ function getData(productID) {
         data['Price String'] = prices.priceString;
         data['Original Price'] = prices.originalPrice ? prices.originalPrice : prices.price;
         data['Original Price String'] = prices.originalPriceString ? prices.originalPriceString : prices.priceString;
-        data['Product UPC'] = product.UPC; // verify what klav really wants here, UPC rarely used by SFCC clients
+        data['Product UPC'] = product.UPC;
 
         if(!product.master && 'masterProduct' in product) {
             data['Master Product ID'] = product.masterProduct.ID;
