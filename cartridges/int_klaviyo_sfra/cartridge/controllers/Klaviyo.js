@@ -2,15 +2,15 @@
 
 var server = require('server');
 
+/* API Includes */
+var StringUtils = require('dw/util/StringUtils');
+
 /* Script Modules */
 var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils');
 var viewedProductData = require('*/cartridge/scripts/klaviyo/eventData/viewedProduct');
 var viewedCategoryData = require('*/cartridge/scripts/klaviyo/eventData/viewedCategory');
 var searchedSiteData = require('*/cartridge/scripts/klaviyo/eventData/searchedSite');
 var KLCheckoutHelpers = require('*/cartridge/scripts/klaviyo/checkoutHelpers');
-
-/* API Includes */
-var StringUtils = require('dw/util/StringUtils');
 
 
 /***

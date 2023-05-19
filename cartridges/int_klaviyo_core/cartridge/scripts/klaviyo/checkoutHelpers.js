@@ -1,12 +1,11 @@
 'use strict';
 
+/* API Includes */
+var BasketMgr = require('dw/order/BasketMgr');
 
 /* Script Modules */
 var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils');
 var startedCheckoutData = require('*/cartridge/scripts/klaviyo/eventData/startedCheckout');
-
-/* API Includes */
-var BasketMgr = require('dw/order/BasketMgr');
 
 
 // beginCheckout set to true if this is being called from the first view / step of checkout.

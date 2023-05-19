@@ -1,15 +1,14 @@
 'use strict';
 
-/* Script Modules */
-var app = require('*/cartridge/scripts/app');
-var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils');
-
 /* API Includes */
 var PromotionMgr = require('dw/campaign/PromotionMgr');
 var Promotion = require('dw/campaign/Promotion');
 var StringUtils = require('dw/util/StringUtils');
 var Logger = require('dw/system/Logger');
 
+/* Script Modules */
+var app = require('*/cartridge/scripts/app');
+var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils');
 
 
 function getProductPrices(product) {

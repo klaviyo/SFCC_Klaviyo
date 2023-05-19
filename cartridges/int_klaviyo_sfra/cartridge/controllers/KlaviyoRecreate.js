@@ -2,6 +2,16 @@
 
 var server = require('server');
 
+/* API Includes */
+var BasketMgr = require('dw/order/BasketMgr');
+var Logger = require('dw/system/Logger');
+var ProductMgr = require('dw/catalog/ProductMgr');
+var PromotionMgr = require('dw/campaign/PromotionMgr');
+var Resource = require('dw/web/Resource');
+var StringUtils = require('dw/util/StringUtils');
+var Transaction = require('dw/system/Transaction');
+var URLUtils = require('dw/web/URLUtils');
+
 /* Script Modules */
 var shippingHelper = require('*/cartridge/scripts/checkout/shippingHelpers');
 var COHelpers = require('*/cartridge/scripts/checkout/checkoutHelpers');
@@ -11,16 +21,6 @@ var recreateCartHelpers = require('*/cartridge/scripts/klaviyo/recreateCartHelpe
 
 /* Models */
 var CartModel = require('*/cartridge/models/cart');
-
-/* API Includes */
-var BasketMgr = require('dw/order/BasketMgr');
-var ProductMgr = require('dw/catalog/ProductMgr');
-var PromotionMgr = require('dw/campaign/PromotionMgr');
-var StringUtils = require('dw/util/StringUtils');
-var Transaction = require('dw/system/Transaction');
-var URLUtils = require('dw/web/URLUtils');
-var Logger = require('dw/system/Logger');
-var Resource = require('dw/web/Resource');
 
 
 /**

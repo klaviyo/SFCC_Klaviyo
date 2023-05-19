@@ -1,14 +1,14 @@
 'use strict';
 
-/* Script Modules */
-var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils');
-var KLImageSize = klaviyoUtils.KLImageSize;
-
 /* API Includes */
 var Logger = require('dw/system/Logger');
 var ProductMgr = require('dw/catalog/ProductMgr');
 var URLUtils = require('dw/web/URLUtils');
 var StringUtils = require('dw/util/StringUtils');
+
+/* Script Modules */
+var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils');
+var KLImageSize = klaviyoUtils.KLImageSize;
 
 
 // prepares data for "Viewed Product" event

@@ -1,17 +1,17 @@
 'use strict';
 
+/* API Includes */
+var Logger = require('dw/system/Logger');
+const Resource = require('dw/web/Resource');
+var StringUtils = require('dw/util/StringUtils');
+var URLUtils = require('dw/web/URLUtils');
+
 /* Script Modules */
 var app = require('*/cartridge/scripts/app');
 var guard = require('*/cartridge/scripts/guard');
 var cartModel = require('*/cartridge/scripts/models/CartModel');
 var klaviyoCart = require('*/cartridge/scripts/klaviyo/klaviyoATC');
 var res = require("*/cartridge/scripts/util/Response");
-
-/* API Includes */
-var Logger = require('dw/system/Logger');
-const Resource = require('dw/web/Resource');
-var StringUtils = require('dw/util/StringUtils');
-var URLUtils = require('dw/web/URLUtils');
 
 
 /**

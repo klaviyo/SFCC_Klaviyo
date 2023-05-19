@@ -3,12 +3,12 @@
 var server = require('server');
 server.extend(module.superModule);
 
+/* API Includes */
+var OrderMgr = require('dw/order/OrderMgr');
+
 /* Script Modules */
 var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils');
 var orderConfirmationData = require('*/cartridge/scripts/klaviyo/eventData/orderConfirmation');
-
-/* API Includes */
-var OrderMgr = require('dw/order/OrderMgr');
 
 
 server.append('Confirm', function (req, res, next) {

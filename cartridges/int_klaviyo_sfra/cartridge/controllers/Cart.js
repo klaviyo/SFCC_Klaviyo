@@ -3,12 +3,12 @@
 var server = require('server');
 server.extend(module.superModule);
 
+/* API Includes */
+var BasketMgr = require('dw/order/BasketMgr');
+
 /* Script Modules */
 var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils');
 var addedToCartData = require('*/cartridge/scripts/klaviyo/eventData/addedToCart');
-
-/* API Includes */
-var BasketMgr = require('dw/order/BasketMgr');
 
 
 server.append('Show', function (req, res, next) {

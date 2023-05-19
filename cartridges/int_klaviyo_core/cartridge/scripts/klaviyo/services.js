@@ -1,9 +1,9 @@
 'use strict';
 
 /* API Includes */
-var Site = require('dw/system/Site');
-var ServiceRegistry = require('dw/svc/LocalServiceRegistry');
 var Logger = require('dw/system/Logger');
+var ServiceRegistry = require('dw/svc/LocalServiceRegistry');
+var Site = require('dw/system/Site');
 
 
 // HTTP Services

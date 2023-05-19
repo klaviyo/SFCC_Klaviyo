@@ -1,5 +1,9 @@
 'use strict';
 
+/* API Includes */
+var ISML = require('dw/template/ISML');
+var StringUtils = require('dw/util/StringUtils');
+
 /* Script Modules */
 var app = require('*/cartridge/scripts/app');
 var guard = require('*/cartridge/scripts/guard');
@@ -11,10 +15,6 @@ var searchedSiteData = require('*/cartridge/scripts/klaviyo/eventData/searchedSi
 /* eslint-disable */
 var r = require("*/cartridge/scripts/util/Response");
 /* eslint-enable */
-
-/* API Includes */
-var ISML = require('dw/template/ISML');
-var StringUtils = require('dw/util/StringUtils');
 
 
 /**

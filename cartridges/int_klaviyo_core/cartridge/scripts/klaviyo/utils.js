@@ -1,9 +1,9 @@
 'use strict';
 
 /* API Includes */
+var Logger = require('dw/system/Logger');
 var Site = require('dw/system/Site');
 var StringUtils = require('dw/util/StringUtils');
-var Logger = require('dw/system/Logger');
 
 /* Script Modules */
 var klaviyoServices = require('*/cartridge/scripts/klaviyo/services.js');
@@ -166,7 +166,6 @@ function trackEvent(exchangeID, data, event, customerEmail) {
 
     var requestBody = {};
     var resultObj = {};
-
     var logger = Logger.getLogger('Klaviyo', 'Klaviyo.core utils.js - trackEvent()');
 
     if (klaviyoServices.KlaviyoEventService == null || empty(exchangeID)) {
