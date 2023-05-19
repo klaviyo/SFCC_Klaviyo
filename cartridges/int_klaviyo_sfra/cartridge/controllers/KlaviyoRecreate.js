@@ -7,7 +7,7 @@ var shippingHelper = require('*/cartridge/scripts/checkout/shippingHelpers');
 var COHelpers = require('*/cartridge/scripts/checkout/checkoutHelpers');
 var collections = require('*/cartridge/scripts/util/collections');
 var cartHelpers = require('*/cartridge/scripts/cart/cartHelpers');
-var recreateCartHelpers = require('*/cartridge/scripts/recreateCartHelpers');
+var recreateCartHelpers = require('*/cartridge/scripts/klaviyo/recreateCartHelpers');
 
 /* Models */
 var CartModel = require('*/cartridge/models/cart');

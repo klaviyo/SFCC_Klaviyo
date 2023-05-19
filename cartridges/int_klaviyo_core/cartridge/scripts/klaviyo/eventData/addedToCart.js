@@ -12,10 +12,10 @@ var ProductMgr = require('dw/catalog/ProductMgr');
 
 // prepares data for "Added to Cart" event
 function getData(basket) {
-    var data; // TODO: double check this variable...DELETE if not needed.
+    var data;
 
     try {
-        var data = {};
+        data = {};
         var basketItems = basket.getProductLineItems().toArray();
 
         data.event = klaviyoUtils.EVENT_NAMES.addedToCart;

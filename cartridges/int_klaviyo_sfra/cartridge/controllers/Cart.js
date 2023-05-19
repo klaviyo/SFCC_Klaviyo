@@ -8,7 +8,7 @@ var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils');
 var addedToCartData = require('*/cartridge/scripts/klaviyo/eventData/addedToCart');
 
 /* API Includes */
-var basketMgr = require('dw/order/BasketMgr');
+var BasketMgr = require('dw/order/BasketMgr');
 
 
 server.append('Show', function (req, res, next) {
@@ -28,7 +28,7 @@ server.append('AddProduct', function (req, res, next) {
         var isKlDebugOn = request.getHttpReferer().includes('kldebug=true') ? true : false;
 
         if (exchangeID) {
-            currentBasket = basketMgr.getCurrentBasket();
+            currentBasket = BasketMgr.getCurrentBasket();
 
             if (currentBasket && currentBasket.getProductLineItems().toArray().length) {
                 dataObj = addedToCartData.getData(currentBasket);

@@ -274,7 +274,7 @@ function addProduct() {
     var renderInfo = cart.addProductToCart();
 
     /* Klaviyo Added to Cart event tracking */
-    var basketMgr = require('dw/order/BasketMgr');
+    var BasketMgr = require('dw/order/BasketMgr');
     var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils');
     var addedToCartData = require('*/cartridge/scripts/klaviyo/eventData/addedToCart');
     if(dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_enabled')){
@@ -282,8 +282,8 @@ function addProduct() {
         var dataObj, serviceCallResult, currentBasket;
         var isKlDebugOn = request.getHttpReferer().includes('kldebug=true') ? true : false;
         if (exchangeID) {
-            currentBasket = basketMgr.getCurrentBasket()
-            if (currentBasket && currentBasket.getProductLineItems().toArray().length) { //TODO: is there a property for isEmpty on basket object?
+            currentBasket = BasketMgr.getCurrentBasket();
+            if (currentBasket && currentBasket.getProductLineItems().toArray().length) {
                 dataObj = addedToCartData.getData(currentBasket);
                 serviceCallResult = klaviyoUtils.trackEvent(exchangeID, dataObj, klaviyoUtils.EVENT_NAMES.addedToCart, false);
                 if (isKlDebugOn) {

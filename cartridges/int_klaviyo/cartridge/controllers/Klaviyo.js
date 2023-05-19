@@ -3,6 +3,10 @@
 /* Script Modules */
 var app = require('*/cartridge/scripts/app');
 var guard = require('*/cartridge/scripts/guard');
+var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils');
+var viewedProductData = require('*/cartridge/scripts/klaviyo/eventData/viewedProduct');
+var viewedCategoryData = require('*/cartridge/scripts/klaviyo/eventData/viewedCategory');
+var searchedSiteData = require('*/cartridge/scripts/klaviyo/eventData/searchedSite');
 
 /* eslint-disable */
 var r = require("*/cartridge/scripts/util/Response");
@@ -12,10 +16,6 @@ var r = require("*/cartridge/scripts/util/Response");
 var ISML = require('dw/template/ISML');
 var StringUtils = require('dw/util/StringUtils');
 
-var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils');
-var viewedProductData = require('*/cartridge/scripts/klaviyo/eventData/viewedProduct');
-var viewedCategoryData = require('*/cartridge/scripts/klaviyo/eventData/viewedCategory');
-var searchedSiteData = require('*/cartridge/scripts/klaviyo/eventData/searchedSite');
 
 /**
  * Controller that sends the necessary data required for klaviyo to track user events

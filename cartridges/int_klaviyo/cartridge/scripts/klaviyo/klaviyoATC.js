@@ -2,7 +2,7 @@
 
 /* Script Modules */
 var app = require('*/cartridge/scripts/app');
-var recreateHelpers = require('*/cartridge/scripts/recreateCartHelpers');
+var recreateHelpers = require('*/cartridge/scripts/klaviyo/recreateCartHelpers');
 
 /* API Includes */
 var Logger = require('dw/system/Logger');
