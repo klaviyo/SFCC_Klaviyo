@@ -4,7 +4,7 @@
 var PromotionMgr = require('dw/campaign/PromotionMgr');
 
 
-// KL RECREATE CART CONTROLLER (SFRA & SiteGen)
+// KL RECREATE CART (SFRA & SiteGen)
 // The clearCart function is necessary iterate through all items in the cart to clear it and ensure a clean slate
 // (Note: ensures consistency with price, product items and shipping when refreshing the page or loading the page for the first time)
 function clearCart(cartObj) {
@@ -18,7 +18,7 @@ function clearCart(cartObj) {
 }
 
 
-// KL RECREATE CART CONTROLLER (SiteGen)
+// KL RECREATE CART (SiteGen)
 // The updateOptions func is necessary to update Update Product Options so they're properly accounted for when adding items to the cart.
 // (Ex: 'Extended Warranty: 3 Year Warranty' - product warranties, etc.)
 function updateOptions(params, product) {

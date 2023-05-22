@@ -15,11 +15,21 @@ var res = require("*/cartridge/scripts/util/Response");
 
 
 /**
- * KlaviyoRecreate-Cart : The KlaviyoRecreate-Cart route rebuilds a cart page based on a query containing an ENCODED array of objects with product IDs, product quanty, the product's selected options within URL / endpoint.
- * A DECODED query would be structured as:  <baseURL>/Cart-Recreate?items=[ {"productID": ProdID, "quantity": QTY, "options": [ {lineItemText, optionID, optionValueID} ]} ] *
+ * KL RECREATE CART (SiteGen)
+ * KlaviyoRecreate-Cart : The KlaviyoRecreate-Cart route rebuilds a cart page based on a query containing an ENCODED array of objects with product IDs, product quanty,
+ * and the product's selected options within URL / endpoint. This controller will decode the encoded array of objects, and process and organize the data of each product to capture expected values.
+ * The controller then creates a new transaction by leveraging core SFCC patterns & functions in SiteGen, so items are added in a similar OOTB flow as when clicking the Add to Cart button on a PDP.
+ *
+ * A query would be structured as:  * <baseURL>/Cart-Recreate?items=[{ "productID": string, "quantity": number, "options": [{optionObj}] }]
+ * Verbose view of the DECODED structure:  <baseURL>/Cart-Recreate?items=[{ "productID": ProdID, "quantity": QTY, "options": [{'Line Item Text': text, 'Option ID': string, 'Option Value ID': string, 'Option Price': formattedString, 'Option Price Value': number}] }]
+ *
+ * Note: Three values in the optionObj are needed for the KL RECREATE CART ('Line Item Text', 'Option ID' and 'Option Value ID').
+ * The other two values in the optionObj ('Option Price' and 'Option Price Value') are only used for KL EVENT TRACKING when the recreate cart link is constructed in startedCheckout.js.
+ * @function
+ * @memberof Cart
  * @param {querystringparameter} - items - JSON containing product Ids, qty, options
- * @param {renders} - isml via the Cart-Show controller
- * @param {serverfunction} - Get
+ * @param {renders} - isml
+ * @param {serverfunction} - get
  */
 function cart() {
     var logger = Logger.getLogger('Klaviyo', 'Klaviyo.SiteGen KlaviyoRecreate.js');
@@ -47,6 +57,7 @@ function cart() {
         return;
     }
 
+    // The klaviyoCart.addProductToCart() method mimicks core SFCC logic (SiteGen) and returns an object with values to pass to the templates (Ex: minicart).
     var renderInfo = klaviyoCart.addProductToCart(items, cart);
 
     if (renderInfo.error) {

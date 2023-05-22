@@ -76,7 +76,7 @@ function dedupeArray(items) {
 }
 
 
-// KL EVENT TRACKING & KL RECREATE CART CONTROLLER:
+// KL EVENT TRACKING & KL RECREATE CART:
 // helper function to extract product options and return each selected option into an object with five keys in readable format: 'Line Item Text', 'Option ID', 'Option Value ID',
 // 'Option Price' and 'Option Price Value'. Each of these five values is available in relevant eventData (ex: within line items in 'Started Checkout', 'Order Confirmation', etc.)
 // Three of these keys are also used for the KlaviyoRecreate-Cart controller:  'Line Item Text', 'Option ID' and 'Option Value ID'.
@@ -88,9 +88,9 @@ function captureProductOptions(prodOptions) {
     options.forEach(optionObj => {
         var formattedOptionPrice = optionObj ? StringUtils.formatMoney(dw.value.Money( optionObj.basePrice.value, session.getCurrency().getCurrencyCode() )) : null;
         selectedOptions.push({
-            'Line Item Text': optionObj.lineItemText,       // KL RECREATE CART CONTROLLER & KL EVENT TRACKING
-            'Option ID': optionObj.optionID,                // KL RECREATE CART CONTROLLER & KL EVENT TRACKING
-            'Option Value ID': optionObj.optionValueID,     // KL RECREATE CART CONTROLLER & KL EVENT TRACKING
+            'Line Item Text': optionObj.lineItemText,       // KL RECREATE CART & KL EVENT TRACKING
+            'Option ID': optionObj.optionID,                // KL RECREATE CART & KL EVENT TRACKING
+            'Option Value ID': optionObj.optionValueID,     // KL RECREATE CART & KL EVENT TRACKING
             'Option Price': formattedOptionPrice,           // KL EVENT TRACKING
             'Option Price Value': optionObj.basePrice.value // KL EVENT TRACKING
         });

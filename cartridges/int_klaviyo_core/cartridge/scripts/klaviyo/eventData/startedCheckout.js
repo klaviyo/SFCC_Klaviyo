@@ -19,7 +19,7 @@ function getData(currentBasket) {
         data = {};
 
         var basketItems = currentBasket.getProductLineItems().toArray();
-        var reconstructCartItems = []; // KL RECREATE CART CONTROLLER
+        var reconstructCartItems = []; // KL RECREATE CART
         data['Basket Gross Price'] = currentBasket.getTotalGrossPrice().value;
         data['Item Count'] = basketItems.length;
 
@@ -28,7 +28,7 @@ function getData(currentBasket) {
         data.Categories = [];
         data.Items = [];
         data.$email = currentBasket.customerEmail;
-        data.cartRebuildingLink = URLUtils.abs('KlaviyoRecreate-Cart').toString() + `?items=`; // KL RECREATE CART CONTROLLER
+        data.cartRebuildingLink = URLUtils.abs('KlaviyoRecreate-Cart').toString() + `?items=`; // KL RECREATE CART
 
         for (var itemIndex = 0; itemIndex < basketItems.length; itemIndex++) {
             var lineItem = basketItems[itemIndex];
@@ -65,12 +65,12 @@ function getData(currentBasket) {
 
                 // Exclude bonus products from reconstructCartItems array (Note: This excludes bonus products from being included in the cart rebuilding link))
                 if (!lineItem.bonusProductLineItem) {
-                    reconstructCartItems.push({ productID: currentProductID, quantity: quantity, options: options }); // KL RECREATE CART CONTROLLER
+                    reconstructCartItems.push({ productID: currentProductID, quantity: quantity, options: options }); // KL RECREATE CART
                 }
             }
         }
 
-        data.cartRebuildingLink += StringUtils.encodeBase64(JSON.stringify(reconstructCartItems)); // KL RECREATE CART CONTROLLER
+        data.cartRebuildingLink += StringUtils.encodeBase64(JSON.stringify(reconstructCartItems)); // KL RECREATE CART
     } catch(e) {
         var logger = Logger.getLogger('Klaviyo', 'Klaviyo.core startedCheckout.js');
         logger.error('startedCheckout.getData() failed to create data object: '+e.message+' '+ e.stack );
