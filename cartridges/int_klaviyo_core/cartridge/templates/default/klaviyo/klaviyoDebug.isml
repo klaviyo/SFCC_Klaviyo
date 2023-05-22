@@ -1,7 +1,8 @@
 <iscomment>
+    KL CLIENT-SIDE DEBUGGING:
     The JS in this template outputs debugging data to the console when the debugging mode has been activated by entering kldebug=true as a query in the URL.
-    Add To Cart data is output to the console using inline JS and encoded ATC data can be seen in the JSON response within the Network tab of Cart-AddProduct
-    Other data avaible on page load (ex: 'Viewed Product', 'Viewed Category', 'Searched Site' & 'Started Checkout') is output to the console on page load.
+    Add To Cart data is outputted to the console using inline JS and encoded ATC data can be seen in the JSON response within the Network tab of Cart-AddProduct
+    Other data avaible on page load (ex: 'Viewed Product', 'Viewed Category', 'Searched Site') is outputted to the console on page load.
 </iscomment>
 <!--- TEMPLATENAME: klaviyoDebug.isml --->
 <isif condition="${pdict.klDebugData}">

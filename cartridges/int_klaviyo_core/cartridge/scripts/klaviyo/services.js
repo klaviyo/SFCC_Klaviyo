@@ -6,14 +6,26 @@ var ServiceRegistry = require('dw/svc/LocalServiceRegistry');
 var Site = require('dw/system/Site');
 
 
-// HTTP Services
+/***
+ * KL EVENT TRACKING - HTTP Services
+ * Service connection is handled via the KlaviyoEventService, configured in Business Manager at Administration >  Operations >  Services
+ * Initial setup of the service is handled via importing the provided metadata.xml file.
+ * Authentication is handled via the client-specific Klaviyo Private API Key Site Preference (ID: klaviyo_api_key)
+ *  at Merchant Tools > Site Preferences > Custom Site Preference Groups > Klaviyo
+ *
+ * KL SERVER SIDE LOGGING: In order to enabled verbose logging of all calls to the KL API, check the "Communication Log Enabled" box in the
+ *  KlaviyoEventService config in BM.  The returned values for the methods below are directly tied to what is outputted to the logs for each
+ *  step of a given service call.  Logs will be written to the "service-KlaviyoEventService..." log file (Administration > Site Development > Development Setup > Logs)
+***/
+
+
+
 var KlaviyoEventService = ServiceRegistry.createService('KlaviyoEventService', {
 
-    /**
+/**
    * Create the service request
    * - Set request method to be the HTTP GET method
    * - Construct request URL
-   * - Append the request HTTP query string as a URL parameter
    *
    * @param {dw.svc.HTTPService} svc - HTTP Service instance
    * @param {Object} params - Additional paramaters
@@ -50,8 +62,9 @@ var KlaviyoEventService = ServiceRegistry.createService('KlaviyoEventService', {
 
     getRequestLogMessage: function (request) {
         // Underlying SFCC code (Java) will translate "$1" in the request into a reference to the Request object and
-        // "$2" into a reference to the Request's value. As a result, we add a space between dollar sign and number
-        // to avoid breaking logged data. Note: this does not alter the request data that is actually sent to Klaviyo.
+        // "$2" into a reference to the Request's value. As a result, we add a space between dollar sign and number.
+        // To avoid breaking logged price data. Note: this does not alter the request data that is actually sent to Klaviyo, only
+        // what is written to the log files.
         request = request.replace(/\$1/g, '$ 1').replace(/\$2/g, '$ 2');
         return request;
     },

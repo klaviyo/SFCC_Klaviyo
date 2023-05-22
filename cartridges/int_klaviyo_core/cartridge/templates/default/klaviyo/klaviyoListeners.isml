@@ -1,8 +1,22 @@
 <!--- TEMPLATENAME: klaviyoListeners.isml --->
 <iscomment>
-    The JS in this template captures the selectors set in Business Manager and applies klaviyo listeners to the corresponding input fields
-    so users can be identified when filling out either phone number or email fields within any part of the site. This template is included in
-    klaviyoFooter.isml within both SFRA & SiteGen.
+    KL IDENTIFY:
+    The JS in this template captures the CSS selectors set in two Site Preferences in Business Manager and applies klaviyo listeners to the corresponding input fields
+    so that users can be identified when filling out either phone number or email fields within any part of the site. This template is included in
+    klaviyoFooter.isml.
+
+    Site Preference "Klaviyo Email Selectors" (ID: klaviyo_email_selectors) is a Set of Strings, meaning that multiple individual CSS selectors can be entered to target
+    different email and/or phone fields that appear in the site.  Note that Mutation Observers have been utilized to allow for targeting fields that might get added
+    to the page post-page-load (ie, via third party JS DOM injection, as one example)
+
+    KL EVENT TRACKING:
+    Site Preference "Klaviyo Checkout Email Selector" (ID: klaviyo_checkout_email_selector) is a single String field that should be set to contain a CSS selector that targets
+    the input field that collects the user's email address in the checkout flow.  This is important as it allows for tracking the Started Checkout event with the email address
+    that is associated with the basket / order as soon as possible during the checkout process.  Note that where and when email address collection occurs in checkout is often 
+    customized in SFCC sites, thus necessitating a dedicated Site Preference to allow the end client to target this field regardless of how it has been customized.
+
+    Once the user has entered their email address in the targeted field, AJAX is triggered to call the Klaviyo-StartedCheckoutEvent route, passing along a BASE64 encoded
+    version of the email address.  That controller then takes over to send the Started Checkout event via the standard server-side service framework.
 </iscomment>
 
 <isset name="KLselectors" value="${dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_email_selectors')}" scope="page" />
@@ -13,6 +27,7 @@
     klaviyoJS.sfccEmailRegex = new RegExp(/^[\w.%+-]+@[\w.-]+\.[\w]{2,6}$/);
     klaviyoJS.e164PhoneRegex = new RegExp(/^\+[1-9]\d{1,14}$/);
 
+<iscomment>KL EVENT TRACKING: Started Checkout email collection and trigger</iscomment>
 <isif condition="${KLCheckoutSelector && !empty(KLCheckoutSelector)}">
     let selectedInput = document.querySelectorAll('${KLCheckoutSelector}');
     if (selectedInput) {
@@ -34,6 +49,7 @@
 </isif>
 </script>
 
+<iscomment>KL IDENTIFY: JS to wire up listeners to all fields targeted via the Klaviyo Email Selectors Site Preference</iscomment>
 <isif condition="${KLselectors && !empty(KLselectors)}">
     <script>
         var KLselectors = <isprint value="${JSON.stringify(dw.system.Site.current.preferences.custom.klaviyo_email_selectors)}" encoding="off" />;
