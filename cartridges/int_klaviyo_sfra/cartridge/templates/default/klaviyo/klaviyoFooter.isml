@@ -10,7 +10,7 @@
 </iscomment>
 <!--- TEMPLATENAME: klaviyoFooter.isml --->
 <isif condition="${klaviyoUtils.klaviyoEnabled}">
-    <iscomment> the client-specific acouunt ID is store in a Site preference in Business Manager (site pref name: Klaviyo Account, ID klaviyo_account)</iscomment>
+    <iscomment> the client-specific account ID is store in a Site preference in Business Manager (site pref name: Klaviyo Account, ID klaviyo_account) </iscomment>
     <script async src="//static.klaviyo.com/onsite/js/klaviyo.js?company_id=${dw.system.Site.getCurrent().preferences.custom.klaviyo_account}"></script>
     <script>
         <iscomment>client-side klaviyo object instantiation</iscomment>
@@ -31,7 +31,7 @@
             If it is set we pass it to the controller to be used as the user's klaviyo ID
 
             KL CLIENT-SIDE DEBUGGING:
-            klDebug is passed if "kldebug=true" is present in the querystring.  This can be manually added to URLs (except in Checkout and 
+            klDebug is passed if "kldebug=true" is present in the querystring.  This can be manually added to URLs (except in Checkout and
             Order Confirmation pages) in order to output event data to the JS console.
         </iscomment>
         <isset name="klAction" value="false" scope="page" />

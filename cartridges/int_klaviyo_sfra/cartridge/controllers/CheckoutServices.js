@@ -18,7 +18,7 @@ var KLCheckoutHelpers = require('*/cartridge/scripts/klaviyo/checkoutHelpers');
  *  the email address to the basket, it would be safe to eliminate some of the route appends below.
  *  Careful debugging to ensure the correct append remains would certainly be required.
  *
- * Do refer to the notes at the top of Checkout.js for more information on the Started Checkout event!
+ * Refer to the notes at the top of Checkout.js for more information on the Started Checkout event.
 ***/
 
 server.append('SubmitCustomer', function (req, res, next) {

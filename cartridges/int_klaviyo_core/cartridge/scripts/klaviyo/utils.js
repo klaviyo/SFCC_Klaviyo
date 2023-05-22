@@ -64,7 +64,7 @@ function prepareDebugData(obj) {
 
 
 // KL EVENT TRACKING:
-// helper function used in .getData functions to dedupe values in arrays (particularly product category lists)
+// helper function used in getData() functions to dedupe values in arrays (particularly product category lists)
 function dedupeArray(items) {
     var unique = {};
     items.forEach(function (i) {
@@ -76,9 +76,11 @@ function dedupeArray(items) {
 }
 
 
-// KL EVENT TRACKING:
-// helper function to extract product options and return each selected option into an object with three keys: lineItemText, optionId and selectedValueId.
-// This helper accomodates products that may have been configured with or feature multiple options by returning an array of each selected product option as its own optionObj.
+// KL EVENT TRACKING & KL RECREATE CART CONTROLLER:
+// helper function to extract product options and return each selected option into an object with five keys in readable format: 'Line Item Text', 'Option ID', 'Option Value ID',
+// 'Option Price' and 'Option Price Value'. Each of these five values is available in relevant eventData (ex: within line items in 'Started Checkout', 'Order Confirmation', etc.)
+// Three of these keys are also used for the KlaviyoRecreate-Cart controller:  'Line Item Text', 'Option ID' and 'Option Value ID'.
+// This helper accomodates products that may feature multiple options by returning an array of each selected product option as its own optionObj.
 function captureProductOptions(prodOptions) {
     var options = Array.isArray(prodOptions) ? prodOptions : Array.from(prodOptions);
     var selectedOptions = [];
@@ -86,11 +88,11 @@ function captureProductOptions(prodOptions) {
     options.forEach(optionObj => {
         var formattedOptionPrice = optionObj ? StringUtils.formatMoney(dw.value.Money( optionObj.basePrice.value, session.getCurrency().getCurrencyCode() )) : null;
         selectedOptions.push({
-            'Line Item Text': optionObj.lineItemText,
-            'Option ID': optionObj.optionID,
-            'Option Value ID': optionObj.optionValueID,
-            'Option Price': formattedOptionPrice,
-            'Option Price Value': optionObj.basePrice.value
+            'Line Item Text': optionObj.lineItemText, // KL RECREATE CART CONTROLLER & KL EVENT TRACKING
+            'Option ID': optionObj.optionID, // KL RECREATE CART CONTROLLER & KL EVENT TRACKING
+            'Option Value ID': optionObj.optionValueID, // KL RECREATE CART CONTROLLER & KL EVENT TRACKING
+            'Option Price': formattedOptionPrice, // KL EVENT TRACKING
+            'Option Price Value': optionObj.basePrice.value // KL EVENT TRACKING
         });
     })
 

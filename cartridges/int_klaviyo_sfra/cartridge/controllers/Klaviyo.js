@@ -25,15 +25,15 @@ var KLCheckoutHelpers = require('*/cartridge/scripts/klaviyo/checkoutHelpers');
  * Klaviyo-Event uses a combination of checking for the kx parameter and klaviyoUtils.getKlaviyoExchangeID() to determine if we currently have
  * a Klaviyo Identity ($exchange_id) to use for event tracking.
  *
- * If we do not have an exchange_id, no event data will be tracked.  The code will, however, go on to check to see if we have a logged in
- * customer (SFCC profile) via klaviyoUtils.getProfileInfo(), and if so it sets profile data in the pdict (BASE64 encoded JSON string) so that
- * client-side JS can use it to identify the user to Klaviyo for all subsequent page views.  At time of creation there is no server-side method by
- * which we can identify the user via the KL APIs and get back a usable exchange_id, and thus we are limited to client-side identification approaches.
+ * If we do not have an exchange_id, no event data will be tracked. The code will, however, go on to check to see if we have a logged in
+ * customer (SFCC profile) via klaviyoUtils.getProfileInfo(). When a customer is logged-in, the code sets profile data in the pdict (BASE64 encoded JSON string) so
+ * client-side JS can use profile data to identify the user to Klaviyo for all subsequent page views.  At time of creation, no server-side method is available to
+ * identify the user via the KL APIs and get back a usable exchange_id - whih is why we are limited to client-side identification approaches.
  *
- * Note that this route gets called via remote include for Home-Show, Page-Show and Default-Start only to check for identifying users to Klaviyo off the user's SFCC Profile.
+ * Note: this route gets called via remote include for Home-Show, Page-Show and Default-Start only to check for identifying users to Klaviyo off the user's SFCC Profile.
  *
  * KL CLIENT-SIDE DEBUGGING:
- * If kldebug is passed as true, Klaviyo-Event will write the event data and service call results to viewData properties (pdict variables) so that
+ * If kldebug is passed as true, Klaviyo-Event will write the event data and service call results to viewData properties (pdict variables) so
  * client-side JS in klaviyoDebug.isml can write them out the JS console for debugging.
  *
 ***/

@@ -24,8 +24,16 @@ var CartModel = require('*/cartridge/models/cart');
 
 
 /**
- * KlaviyoRecreate-Cart : The KlaviyoRecreate-Cart route rebuilds a cart page based on a query containing an ENCODED array of objects with product IDs, product quanty, the product's selected options within URL / endpoint.
- * A DECODED query would be structured as:  <baseURL>/Cart-Recreate?items=[ {"productID": ProdID, "quantity": QTY, "options": [ {lineItemText, optionID, optionValueID} ]} ]
+ * KL RECREATE CART CONTROLLER
+ * KlaviyoRecreate-Cart : The KlaviyoRecreate-Cart route rebuilds a cart page based on a query containing an ENCODED array of objects with product IDs, product quanty,
+ * and the product's selected options within URL / endpoint. This controller will decode the encoded array of objects, and process and organize the data of each product to capture expected values.
+ * The controller then creates a new transaction by leveraging core SFCC patterns & functions, so items are added in a similar OOTB flow as when clicking the Add to Cart button on a PDP.
+ *
+ * A query would be structured as:  * <baseURL>/Cart-Recreate?items=[{ "productID": string, "quantity": number, "options": [{optionObj}] }]
+ * Verbose view of the DECODED structure:  <baseURL>/Cart-Recreate?items=[{ "productID": ProdID, "quantity": QTY, "options": [{'Line Item Text': text, 'Option ID': string, 'Option Value ID': string, 'Option Price': formattedString, 'Option Price Value': number}] }]
+ *
+ * Note: Three values in the optionObj are needed for the KL RECREATE CART CONTROLLER ('Line Item Text', 'Option ID' and 'Option Value ID').
+ * The other two values in the optionObj ('Option Price' and 'Option Price Value') are only used for KL EVENT TRACKING when the recreate cart link is constructed in startedCheckout.js.
  * @function
  * @memberof Cart
  * @param {querystringparameter} - items - JSON containing product Ids, qty, childProducts, options
@@ -70,6 +78,9 @@ server.get('Cart', function (req, res, next) {
                     var childProducts = productToAdd.bundledProducts ? collections.map(productToAdd.bundledProducts, function (product) { return { pid: product.ID, quantity: null } }) : [];
                     var options = [];
                     items[i].options.forEach(optionObj => {
+                        // Here we use the three key values needed for the KL RECREATE CART CONTROLLER to properly use and select the same product options when recreating the cart. These options are the
+                        // same as what the customer selected when shopping. This data is then passed to the OOTB cartHelpers.addProductToCart function below to add the selected product option as expected.
+                        // Special Note: 'Option Price' & 'Option Price Value') are not needed for this logic. Those values are only used for KL EVENT TRACKING when the cart rebuilding link is created.
                         options.push({ lineItemText: optionObj['Line Item Text'], optionId: optionObj['Option ID'], selectedValueId: optionObj['Option Value ID']});
                     })
 
