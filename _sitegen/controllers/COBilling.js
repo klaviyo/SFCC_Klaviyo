@@ -189,11 +189,27 @@ function publicStart() {
         app.getForm('billing.giftCertCode').clear();
 
 
-        /* Klaviyo Started Checkout event tracking */
+
+
+        /***
+         * KL EVENT TRACKING: Started Checkout event
+         * This relies on extracting the customer's email address from the current basket.  If it is not yet present,
+         *  the event is not tracked.  Multiple checkout routes have been appended to with this code as it is not possible
+         *  to know when the email address is attached to the current basket due to site-specific customization of
+         *  the checkout flow.
+         *
+         * If a given client / systems integrator is technically capable and knows exactly when their site attaches
+         *  the email address to the basket, it would be safe to eliminate some of the checkout route appends.
+         *  Careful debugging to ensure the correct append remains would certainly be required.
+         *
+         * Refer to the Klaviyo notes in COCustomer.js for more information on the Started Checkout event.
+        ***/
         var KLCheckoutHelpers = require('*/cartridge/scripts/klaviyo/checkoutHelpers');
         var customerEmail = KLCheckoutHelpers.getEmailFromBasket();
         var KLTplVars = KLCheckoutHelpers.startedCheckoutHelper(false, customerEmail);
-        /* END Klaviyo Started Checkout event tracking */
+        /* END KLAVIYO Started Checkout event tracking */
+
+
 
 
         start(cart, {ApplicableCreditCards: creditCardList.ApplicableCreditCards});
@@ -548,7 +564,7 @@ function billing() {
                 handlePaymentSelection(cart).error) {// Performs payment method specific checks, such as credit card verification.
                     returnToForm(cart);
                 } else {
-    
+
                     if (customer.authenticated && app.getForm('billing').object.billingAddress.addToAddressBook.value) {
                         app.getModel('Profile').get(customer.profile).addAddressToAddressBook(cart.getBillingAddress());
                     }
@@ -556,14 +572,23 @@ function billing() {
                     // Mark step as fulfilled
                     app.getForm('billing').object.fulfilled.value = true;
 
-
-                    /* Klaviyo Started Checkout event tracking */
+                    /***
+                     * KL EVENT TRACKING: Started Checkout event
+                     * This relies on extracting the customer's email address from the current basket.  If it is not yet present,
+                     *  the event is not tracked.  Multiple checkout routes have been appended to with this code as it is not possible
+                     *  to know when the email address is attached to the current basket due to site-specific customization of
+                     *  the checkout flow.
+                     *
+                     * If a given client / systems integrator is technically capable and knows exactly when their site attaches
+                     *  the email address to the basket, it would be safe to eliminate some of the checkout route appends.
+                     *  Careful debugging to ensure the correct append remains would certainly be required.
+                     *
+                     * Refer to the Klaviyo notes in COCustomer.js for more information on the Started Checkout event.
+                    ***/
                     var KLCheckoutHelpers = require('*/cartridge/scripts/klaviyo/checkoutHelpers');
                     var customerEmail = KLCheckoutHelpers.getEmailFromBasket();
                     var klid = KLCheckoutHelpers.startedCheckoutHelper(false, customerEmail);
-                    /* END Klaviyo Started Checkout event tracking */
-
-
+                    /* END KLAVIYO Started Checkout event tracking */
 
                     // A successful billing page will jump to the next checkout step.
                     app.getController('COSummary').Start();

@@ -1,41 +1,65 @@
 <isscript>
     var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils');
 </isscript>
-<!--- TEMPLATENAME: klaviyoTag.isml --->
+<iscomment>
+    This template should be included near the end of the html body on all pages.
+    It calls the Klaviyo JS SDK files into the page, and calls the Klaviyo-Event controller via
+    remote include for pages whose controllers are cached OOTB.
+    It also includes sub-templates that contain JS necessary for identifying the user via various methods,
+    as well as logging event data to the JS console for debugging.
+</iscomment>
+<!--- TEMPLATENAME: klaviyoFooter.isml --->
+
 <isif condition="${dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_enabled')}">
+    <iscomment> the client-specific account ID is store in a Site preference in Business Manager (site pref name: Klaviyo Account, ID klaviyo_account) </iscomment>
     <script async src="//static.klaviyo.com/onsite/js/klaviyo.js?company_id=${dw.system.Site.getCurrent().preferences.custom.klaviyo_account}"></script>
     <script>
-        // klaviyo object loader - provided by klaviyo
+        <iscomment>client-side klaviyo object instantiation</iscomment>
         !function(){if(!window.klaviyo){window._klOnsite=window._klOnsite||[];try{window.klaviyo=new Proxy({},{get:function(n,i){return"push"===i?function(){var n;(n=window._klOnsite).push.apply(n,arguments)}:function(){for(var n=arguments.length,o=new Array(n),w=0;w<n;w++)o[w]=arguments[w];var t="function"==typeof o[o.length-1]?o.pop():void 0,e=new Promise((function(n){window._klOnsite.push([i].concat(o,[function(i){t&&t(i),n(i)}]))}));return e}}})}catch(n){window.klaviyo=window.klaviyo||[],window.klaviyo.push=function(){var n;(n=window._klOnsite).push.apply(n,arguments)}}}}();
     </script>
-    <isif condition="${pageContext.type == 'product' || 
+    <isif condition="${pageContext.type == 'product' ||
         pageContext.type == 'search' ||
         pageContext.type == 'storefront'
         }">
         <iscomment>
-            klAction and klParms are used to pass event information to controllers that require events to be tracked. (PDP, PLP and Search)
-            they are passed as false to pages that only need to try to ID the user off the SFCC Profile (Home)
+            KL EVENT TRACKING:
+            klAction and klParms are used to pass event information to controllers that require events to be tracked. (PDP, PLP and Search).
+            They are passed as false to pages that only need to try to ID the user off the SFCC Profile (Home, Page, Default)
+
+            KL IDENTIFY:
+            _kx is a querystring parameter that will be present if the user has clicked through a Klaviyo marketing link (in email, etc).
+            If it is set we pass it to the controller to be used as the user's klaviyo ID
+
+            KL CLIENT-SIDE DEBUGGING:
+            klDebug is passed if "kldebug=true" is present in the querystring.  This can be manually added to URLs (except in Checkout and
+            Order Confirmation pages) in order to output event data to the JS console.
         </iscomment>
         <isset name="klAction" value="false" scope="page" />
         <isset name="klParms" value="false" scope="page" />
         <isset name="klKx" value="${request.httpParameterMap._kx}" scope="page" />
         <isset name="klDebug" value="${request.httpParameterMap.kldebug}" scope="page" />
         <isif condition="${pageContext.type == 'product'}">
+        <iscomment>KL EVENT TRACKING: viewedProduct event</iscomment>
             <isset name="klAction" value="${klaviyoUtils.EVENT_NAMES.viewedProduct}" scope="page" />
             <isset name="klParms" value="${pdict.Product.ID}" scope="page" />
         <iselseif condition="${pageContext.type == 'search'}">
             <isif condition="${request.httpParameterMap.cgid.stringValue}">
+            <iscomment>KL EVENT TRACKING: viewedCategory event</iscomment>
                 <isset name="klAction" value="${klaviyoUtils.EVENT_NAMES.viewedCategory}" scope="page" />
                 <isset name="klParms" value="${request.httpParameterMap.cgid.stringValue}" scope="page" />
             <iselse>
+                <iscomment>KL EVENT TRACKING: searchedSite event</iscomment>
                 <isset name="klAction" value="${klaviyoUtils.EVENT_NAMES.searchedSite}" scope="page" />
                 <isset name="klParms" value="${request.httpParameterMap.q.stringValue + '|' + pdict.ProductSearchResult.count}" scope="page" />
             </isif>
         </isif>
+        <iscomment>KL MULTIPLE: remote include to Klaviyo-Event controller passing all parameteres established above</iscomment>
         <isinclude url="${URLUtils.url('Klaviyo-Event', 'action', klAction, 'parms', klParms, 'kx', klKx, 'kldebug', klDebug)}" />
     </isif>
     <isif condition="${pdict.klid}">
+        <iscomment>KL IDENTIFY: if the controller found an SFCC profile for a user not yet identified to Klaviyo</iscomment>
         <isinclude template="klaviyo/klaviyoID" />
     </isif>
+    <iscomment>KL MULTIPLE: main SFCC-specific Klaviyo javascript file</iscomment>
     <isinclude template="klaviyo/klaviyoListeners" />
 </isif>

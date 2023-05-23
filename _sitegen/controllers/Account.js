@@ -25,7 +25,12 @@ var Transaction = require('dw/system/Transaction');
 function show() {
     var accountHomeAsset, pageMeta, Content;
 
-    // KLAVIYO
+    /***
+     * KL IDENTIFY:
+     * If we don't have a KL exchange ID, check to see if we have a logged in SFCC user/profile and ID off of that.
+     * Note: This is the Account page Show method, only accessible if the user is logged in and unless customized by the client is the
+     *  default landing page post-login... so in most cases it will definitely ID the user if they aren't previously cookied by Klaviyo
+    ***/
     var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils'), klid;
     if(dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_enabled') && !klaviyoUtils.getKlaviyoExchangeID()){
         klid = klaviyoUtils.getProfileInfo();
@@ -38,7 +43,7 @@ function show() {
     pageMeta = require('~/cartridge/scripts/meta');
     pageMeta.update(accountHomeAsset);
 
-    app.getView({downloadAvailable: true, klid: klid}).render('account/accountoverview');
+    app.getView({downloadAvailable: true, klid: klid}).render('account/accountoverview'); // KLAVIYO: 'klid: klid' added
 }
 
 /**

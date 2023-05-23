@@ -43,19 +43,17 @@ function show() {
 
     cartForm.get('shipments').invalidate();
 
-
-    // KLAVIYO
+    // KL IDENTIFY: if we don't have a KL exchange ID, check to see if we have a logged in SFCC user/profile and ID off of that.
     var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils'), klid;
     if(dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_enabled') && !klaviyoUtils.getKlaviyoExchangeID()){
         klid = klaviyoUtils.getProfileInfo();
     }
     // END KLAVIYO
 
-
     app.getView('Cart', {
         cart: app.getModel('Cart').get(),
         RegistrationStatus: false,
-        klid: klid
+        klid: klid // KLAVIYO: 'klid: klid' added
     }).render('checkout/cart/cart');
 
 }
@@ -275,19 +273,28 @@ function addProduct() {
     var cart = app.getModel('Cart').goc();
     var renderInfo = cart.addProductToCart();
 
-    /* Klaviyo Added to Cart event tracking */
-    var BasketMgr = require('dw/order/BasketMgr');
+    /***
+     * KL EVENT TRACKING: Added to Cart event, triggered via appending the OOTB Cart-AddProduct controller
+     * Utilizes addedToCart.js > getData() to assemble event data and
+     *  utils.js > trackEvent(...) to transmit it to the KL API
+     ***/
+    var basketMgr = require('dw/order/BasketMgr');
     var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils');
     var addedToCartData = require('*/cartridge/scripts/klaviyo/eventData/addedToCart');
     if(dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_enabled')){
+        // KL IDENTIFY: try to get the exchangeID from the KL cookie
         var exchangeID = klaviyoUtils.getKlaviyoExchangeID();
         var dataObj, serviceCallResult, currentBasket;
+        // KL CLIENT SIDE DEBUGGING: if kldebug=true is in the querystring output event & service data to the JS console.
         var isKlDebugOn = request.getHttpReferer().includes('kldebug=true') ? true : false;
         if (exchangeID) {
-            currentBasket = BasketMgr.getCurrentBasket();
+            currentBasket = basketMgr.getCurrentBasket()
             if (currentBasket && currentBasket.getProductLineItems().toArray().length) {
+                // KL EVENT TRACKING: assemble event data
                 dataObj = addedToCartData.getData(currentBasket);
+                // KL EVENT TRACKING: send event data to KL API via services.js > trackEvent(...)
                 serviceCallResult = klaviyoUtils.trackEvent(exchangeID, dataObj, klaviyoUtils.EVENT_NAMES.addedToCart, false);
+                // KL CLIENT SIDE DEBUGGING:
                 if (isKlDebugOn) {
                     var klDebugData = klaviyoUtils.prepareDebugData(dataObj);
                     var serviceCallData = klaviyoUtils.prepareDebugData(serviceCallResult);
@@ -299,7 +306,7 @@ function addProduct() {
             }
         }
     }
-    /* END Klaviyo Added to Cart event tracking */
+    /* END KLAVIYO Added to Cart event tracking */
 
     if (renderInfo.source === 'giftregistry') {
         app.getView().render('account/giftregistry/refreshgiftregistry');
@@ -402,6 +409,9 @@ function addBonusProductJson() {
                     childProduct = Product.get(childPids[j]).object;
 
                     if (childProduct) {
+
+                        // TODO: CommonJSify cart/UpdateProductOptionSelections.ds and import here
+
                         var UpdateProductOptionSelections = require('app_storefront_core/cartridge/scripts/cart/UpdateProductOptionSelections');
                         UpdateProductOptionSelections.update({
                             SelectedOptions: new ArrayList(productsJSON[i].options),

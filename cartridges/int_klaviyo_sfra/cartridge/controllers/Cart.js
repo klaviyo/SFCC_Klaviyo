@@ -42,7 +42,7 @@ server.append('AddProduct', function (req, res, next) {
                 dataObj = addedToCartData.getData(currentBasket);
                 // KL EVENT TRACKING: send event data to KL API via services.js > trackEvent(...)
                 serviceCallResult = klaviyoUtils.trackEvent(exchangeID, dataObj, klaviyoUtils.EVENT_NAMES.addedToCart, false);
-                // KL CLIENT SIDE DEBUG:
+                // KL CLIENT SIDE DEBUGGING:
                 if (isKlDebugOn) {
                     res.json({
                         klDebugData : klaviyoUtils.prepareDebugData(dataObj),

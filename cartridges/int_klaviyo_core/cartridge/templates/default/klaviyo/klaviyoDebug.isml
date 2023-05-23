@@ -14,18 +14,16 @@
 
     window.addEventListener("load", (event) => {
 
-        // SFRA SPECIFIC - SiteGen site owners can safelty eliminate this event listener
+        <iscomment>SFRA SPECIFIC - SiteGen site owners can safelty eliminate this event listener</iscomment>
         $('body').on('product:afterAddToCart', function(evt, data){
-            // SFRA Add To Cart Data
             var addToCartDebugData = JSON.parse(atob(data.klDebugData));
             var addToCartServiceData = JSON.parse(atob(data.serviceCallData))
             console.log('Klaviyo Add To Cart Event Data: ', addToCartDebugData);
             console.log('Klaviyo Add To Cart Service Result: ', addToCartServiceData);
         });
 
-        // SITEGEN SPECIFIC - SFRA site owners can safely eliminate this MutationObserver
+        <iscomment>SITEGEN SPECIFIC - SFRA site owners can safely eliminate this MutationObserver</iscomment>
         if ("MutationObserver" in window) {
-            // SiteGen Add To Cart Data
             let miniCart = document.getElementById('mini-cart')
             const observer = new MutationObserver(mutations => {
                 mutations.forEach(mutation => {

@@ -13,8 +13,7 @@ var orderConfirmationData = require('*/cartridge/scripts/klaviyo/eventData/order
 /***
  * KL EVENT TRACKING: Order Confirmation event, triggered via appending the OOTB Order-Confirm controller
  * Utilizes orderConfirmation.js > getData() to assemble event data and utils.js > trackEvent(...) to transmit it to the KL API
- * Note that checkoutHelpers.js > getEmailFromBasket() is used to extract the order email from the order
- *  Order Confirmation events use customer email and not KL exchangeID for identifying the user.
+ * Order Confirmation events use customer email and not KL exchangeID for identifying the user.
  * Also note that no client side debugging is possible for this event as SFCC won't accept additional QS parameters
  *  in the Order-Confirm controller.  Instead rely on server side logs to debug Order Confirmation events.
 ***/

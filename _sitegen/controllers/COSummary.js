@@ -90,22 +90,32 @@ function showConfirmation(order) {
         customerForm.setValue('orderUUID', order.getUUID());
     }
 
-    /* Klaviyo Order Confirmation event tracking */
+    /***
+     * KL EVENT TRACKING: Order Confirmation event, triggered via appending the OOTB Order-Confirm controller
+     * Utilizes orderConfirmation.js > getData() to assemble event data and utils.js > trackEvent(...) to transmit it to the KL API
+     * Order Confirmation events use customer email and not KL exchangeID for identifying the user.
+     * Also note that no client side debugging is possible for this event as SFCC won't accept additional QS parameters
+     *  in the Order-Confirm controller.  Instead rely on server side logs to debug Order Confirmation events.
+    ***/
     var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils');
     var orderConfirmationData = require('*/cartridge/scripts/klaviyo/eventData/orderConfirmation');
     if(dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_enabled')){
         session.privacy.klaviyoCheckoutTracked = false;
+        // KL IDENTIFY: try to get the exchangeID from the KL cookie
         var exchangeID = klaviyoUtils.getKlaviyoExchangeID();
         var dataObj, serviceCallResult;
         if (order && order.customerEmail) {
-            // check to see if the status is new or created
+            // Verify that the order status is "New" or "Created"
             if (order.status == dw.order.Order.ORDER_STATUS_NEW || order.status == dw.order.Order.ORDER_STATUS_OPEN) {
+                // KL EVENT TRACKING: assemble event data
                 dataObj = orderConfirmationData.getData(order, exchangeID);
+                // KL EVENT TRACKING: send event data to KL API via services.js > trackEvent(...)
                 serviceCallResult = klaviyoUtils.trackEvent(exchangeID, dataObj, klaviyoUtils.EVENT_NAMES.orderConfirmation, order.customerEmail);
             }
+
         }
     }
-    /* END Klaviyo Order Confirmation event tracking */
+    /* END KLAVIYO Order Confirmation event tracking */
 
 
     app.getForm('profile.login.passwordconfirm').clear();

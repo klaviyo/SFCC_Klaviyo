@@ -36,7 +36,16 @@ function start() {
     });
 
 
-    /* Klaviyo Started Checkout event tracking */
+
+    /***
+     * KL EVENT TRACKING: Started Checkout event
+     * Utilizes startedCheckout.js > getData() via checkoutHelpers.js > startedCheckoutHelper(...) to
+     *  assemble event data and utils.js > trackEvent(...) to transmit it to the KL API
+     * Note that checkoutHelpers.js > getEmailFromBasket() is used to extract the order email from the current basket
+     *  (if available).  Started Checkout events use customer email and not KL exchangeID for identifying the user.
+     * Also note that no client side debugging is possible for this event as SFCC won't accept additional QS parameters
+     *  in checkout controllers.  Instead rely on server side logs to debug Started Checkout events.
+    ***/
     var KLCheckoutHelpers = require('*/cartridge/scripts/klaviyo/checkoutHelpers');
     var customerEmail = KLCheckoutHelpers.getEmailFromBasket();
     var KLTplVars = KLCheckoutHelpers.startedCheckoutHelper(true, customerEmail);
@@ -47,7 +56,6 @@ function start() {
         }).render('klaviyo/klaviyoDebug');
     }
     /* END Klaviyo Started Checkout event tracking */
-
 
     // Direct to first checkout step if already authenticated.
     if (customer.authenticated) {
@@ -70,7 +78,7 @@ function start() {
 
         app.getView({
             ContinueURL: URLUtils.https('COCustomer-LoginForm').append('scope', 'checkout'),
-            klid: KLTplVars.klid,  // Klaviyo
+            klid: KLTplVars.klid,  // KLAVIYO: added 'klid: KLTplVars.klid'
         }).render('checkout/checkoutlogin');
     }
 
