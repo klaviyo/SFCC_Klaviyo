@@ -207,9 +207,13 @@ function publicStart() {
         var KLCheckoutHelpers = require('*/cartridge/scripts/klaviyo/checkoutHelpers');
         var customerEmail = KLCheckoutHelpers.getEmailFromBasket();
         var KLTplVars = KLCheckoutHelpers.startedCheckoutHelper(false, customerEmail);
-        /* END KLAVIYO Started Checkout event tracking */
-
-
+        if (KLTplVars.klDebugData || KLTplVars.serviceCallData) {
+            app.getView({
+                klDebugData: KLTplVars.klDebugData,
+                serviceCallData: KLTplVars.serviceCallData
+            }).render('klaviyo/klaviyoDebug');
+        }
+        /* END Klaviyo Started Checkout event tracking */
 
 
         start(cart, {ApplicableCreditCards: creditCardList.ApplicableCreditCards});
@@ -587,8 +591,16 @@ function billing() {
                     ***/
                     var KLCheckoutHelpers = require('*/cartridge/scripts/klaviyo/checkoutHelpers');
                     var customerEmail = KLCheckoutHelpers.getEmailFromBasket();
-                    var klid = KLCheckoutHelpers.startedCheckoutHelper(false, customerEmail);
-                    /* END KLAVIYO Started Checkout event tracking */
+                    var KLTplVars = KLCheckoutHelpers.startedCheckoutHelper(false, customerEmail);
+                    if (KLTplVars.klDebugData || KLTplVars.serviceCallData) {
+                        app.getView({
+                            klDebugData: KLTplVars.klDebugData,
+                            serviceCallData: KLTplVars.serviceCallData
+                        }).render('klaviyo/klaviyoDebug');
+                    }
+                    /* END Klaviyo Started Checkout event tracking */
+
+
 
                     // A successful billing page will jump to the next checkout step.
                     app.getController('COSummary').Start();
