@@ -13,6 +13,8 @@
     console.log('Klaviyo Service Result: ', serviceCallData);
 
     window.addEventListener("load", (event) => {
+
+        // SFRA SPECIFIC - SiteGen site owners can safelty eliminate this event listener
         $('body').on('product:afterAddToCart', function(evt, data){
             // SFRA Add To Cart Data
             var addToCartDebugData = JSON.parse(atob(data.klDebugData));
@@ -21,6 +23,7 @@
             console.log('Klaviyo Add To Cart Service Result: ', addToCartServiceData);
         });
 
+        // SITEGEN SPECIFIC - SFRA site owners can safely eliminate this MutationObserver
         if ("MutationObserver" in window) {
             // SiteGen Add To Cart Data
             let miniCart = document.getElementById('mini-cart')

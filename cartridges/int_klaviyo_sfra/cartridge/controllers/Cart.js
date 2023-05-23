@@ -19,7 +19,7 @@ server.append('Show', function (req, res, next) {
     next();
 });
 
-/*** 
+/***
  * KL EVENT TRACKING: Added to Cart event, triggered via appending the OOTB Cart-AddProduct controller
  * Utilizes addedToCart.js > getData() to assemble event data and
  *  utils.js > trackEvent(...) to transmit it to the KL API

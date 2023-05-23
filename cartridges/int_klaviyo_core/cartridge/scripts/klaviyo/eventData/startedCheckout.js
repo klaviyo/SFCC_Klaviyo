@@ -11,7 +11,16 @@ var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils');
 var KLImageSize = klaviyoUtils.KLImageSize;
 
 
-// prepares data for "Started Checkout" event
+/***
+ * KL EVENT TRACKING: prepares data for "Started Checkout" event.
+ * Triggered via checkoutHelpers.js > startedCheckoutHelper
+ * Note there are some descrepancies in property naming conventions compared to other events but
+ *  these have been retained to support backwards compatibility with current client flows.
+ *
+ * @param currentBasket - SFCC Basket object
+ * @returns data object to be passed to the KL API
+ ***/
+
 function getData(currentBasket) {
 
     var data;
@@ -79,6 +88,7 @@ function getData(currentBasket) {
 }
 
 
+// Helper function to build out individual product data
 function prepareProductObj(lineItem, basketProduct, currentProductID) {
     var productObj = {};
     if (lineItem.bonusProductLineItem) {

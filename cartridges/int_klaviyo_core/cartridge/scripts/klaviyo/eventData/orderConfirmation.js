@@ -12,10 +12,20 @@ var KLImageSize = klaviyoUtils.KLImageSize;
 
 
 /**
- * Prepares the order in JSON format for email send.
- * @param order
- * @returns
+ * KL EVENT TRACKING: prepares data for the Order Confirmation event
+ * This function is by necessity complex and is the most likely file that clients
+ *  will want or need to customized based on their specific customizations.  It currently
+ *  does not account for items such as Gift Card, Gift Certificates, and other product types
+ *  that are not OOTB SFCC as individual site implemetations for them will be highly custom or
+ *  handled via third party solutions.
+ * Also note that much of the code that builds specific properties has been retained from the
+ *  original Klaviyo SFCC cartridge and may or may not need to be revisited - we have erred on
+ *  the side of keeping backwards compatibily to support current customer flows and expectations.
+ *
+ * @param order - SFCC Order object
+ * @returns data object to be passed to the KL API
  */
+
 function getData(order) {
 
     var data;

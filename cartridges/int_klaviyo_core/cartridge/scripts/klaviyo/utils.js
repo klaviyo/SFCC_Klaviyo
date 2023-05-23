@@ -199,7 +199,7 @@ function getRootPriceBook(priceBook) {
 
 
 // KL EVENT TRACKING:
-// this is the core method used by all server-side calls to pass event data to the Klaviyo Trace Event API
+// this is the core method used by all server-side calls to pass event data to the Klaviyo Track Event API
 // 'exchangeID' is passed for most events, whereas 'customerEmail' is passed for Started Checkout and Order Confirmation events
 // 'data' is the product of a given event's .getData() function, and 'event' is a string from the EVENT_NAMES constants (above) to indicate the event type.
 function trackEvent(exchangeID, data, event, customerEmail) {

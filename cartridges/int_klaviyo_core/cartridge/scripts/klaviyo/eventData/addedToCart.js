@@ -10,7 +10,17 @@ var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils');
 var KLImageSize = klaviyoUtils.KLImageSize;
 
 
-// prepares data for "Added to Cart" event
+/***
+ * KL EVENT TRACKING: Prepares data for "Added to Cart" event
+ * Property names are somewhat inconsistent with other events (ex: primaryCategories here vs "Primary Categories" elsewhere)
+ *  but this is necessary to preserve backward compatibility with client flows in KL.
+ * The returned event data has lineItems & items arrays of all products in cart, plus a productAddedToCart property
+ *  representing only the product that was just added.
+ *
+ * @param basket - SFCC Basket object
+ * @returns data object to be passed to the KL API
+***/
+
 function getData(basket) {
     var data;
 
@@ -79,6 +89,8 @@ function getData(basket) {
                     currentLineItem.productOptions = selectedOptions;
                 }
 
+                // TODO: pick up here <----------
+
                 if (lineItem.bundledProductLineItem || lineItem.bundledProductLineItems.length) {
                     var prodBundle = klaviyoUtils.captureProductBundles(lineItem.bundledProductLineItems);
                     currentLineItem['Is Product Bundle'] = prodBundle.isProdBundle;
@@ -104,7 +116,8 @@ function getData(basket) {
         }
 
         // Item added to the cart in this event
-        // Bonus products can occasionally appear as final item in the cart. We exclude these from the line items to accurately track the item added to cart in this event.
+        // Bonus products can occasionally appear as final item in the cart. We exclude these from the
+        //  line items to accurately track the item added to cart in this event.
         for (let i = data.lineItems.length - 1; i >= 0; i--) {
             if (!data.lineItems[i]['Is Bonus Product']) {
                 data.productAddedToCart = data.lineItems[i];

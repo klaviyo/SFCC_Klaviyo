@@ -11,7 +11,13 @@ var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils');
 var KLImageSize = klaviyoUtils.KLImageSize;
 
 
-// prepares data for "Viewed Product" event
+/***
+ *  KL EVENT TRACKING: Prepares data for "Viewed Product" event
+ *
+ * @param productID - product ID (string)
+ * @returns data object to be passed to the KL API
+***/
+
 function getData(productID) {
 
     var data;
