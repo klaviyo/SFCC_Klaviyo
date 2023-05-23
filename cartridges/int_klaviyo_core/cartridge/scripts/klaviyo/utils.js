@@ -138,7 +138,7 @@ function priceCheck (lineItemObj, basketProdObj) {
     var priceModel = basketProdObj ? basketProdObj.getPriceModel() : null;
 
     // SFCC handles prices in multiple ways depending on site configureations. We must locate the correct Price Book to see if there is an original 'list price'
-    //  that differs from the price that is initiall seen by Klaviyo. This function, getRootPriceBook(), is modeled after the same core logic in SFRA to get at
+    //  that differs from the price that is initialy seen by Klaviyo. This function, getRootPriceBook(), is modeled after the same core logic in SFRA to get at
     //  the root-price book. Recreating the function in this file makes the logic easily shared across SFRA & SiteGen since this fucntion is not available in
     //  OOTB SiteGen (their price books have the same structure, which makes this logic is sharable).
     // Note: Customers can use multiple price books for a single product (ex: list price, sales price, etc.), which makes it necessary to locate the original

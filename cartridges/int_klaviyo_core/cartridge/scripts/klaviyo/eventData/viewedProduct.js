@@ -31,6 +31,9 @@ function getData(productID) {
             throw new Error('Product with ID [' + productID + '] not found');
         }
 
+        // Here, we 'fork' our repo by directing SFRA sites to point to the viewedProductHelpers.js in int_klaviyo_sfra and SiteGen sites will point to viewedProductHelpers.js int_klaviyo
+        // This is necessary because the SiteGen code is much more involved and requires more logic to get at the correct product prices displayed on the PDP.
+        // See site specific comments about the returned prices object in each of the viewedProductHelpers.js files (Ex: int_klaviyo_sfra & int_klaviyo)
         var prices = require('*/cartridge/scripts/klaviyo/viewedProductHelpers.js').getProductPrices(product);
 
         data['Product ID'] = product.ID;

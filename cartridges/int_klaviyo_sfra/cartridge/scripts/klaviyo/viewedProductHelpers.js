@@ -6,7 +6,7 @@ var productHelper = require('*/cartridge/scripts/helpers/productHelpers');
 
 /***
  *
- * KL EVENT TRACKING: get a product's current and original ("list") price and return them
+ * KL EVENT TRACKING (SFRA): get a product's current and original ("list") price and return them
  *  in an object in multiple formats to be passed along in various event data objects.
  *
  * This file is relatively simple, but due to differences between SFRA and SiteGen it must be
