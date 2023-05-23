@@ -77,7 +77,7 @@ function getProductPrices(product) {
         }
 
         // Similar to utilities used in priceCheck within utils.js, SFCC's formatMoney() method on the StringUtils class object is used to correctly format the price according to
-        // the currency that is currently active on the session. (Ex: $19.99 or €19.99 or £19.99, etc.). The formatted currency values are returned with numerical values to be used in viewedProduct.js
+        // the currency that is currently active on the session. (Ex: $19.99 or €19.99 or £19.99, etc.). The formatted currency values are returned alongside numerical values to be used in viewedProduct.js
         return {
             price : price,
             priceString : StringUtils.formatMoney(dw.value.Money( price, session.getCurrency().getCurrencyCode() )),
