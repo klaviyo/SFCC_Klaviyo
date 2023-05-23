@@ -137,10 +137,12 @@ function captureBonusProduct (lineItemObj, prodObj) {
 function priceCheck (lineItemObj, basketProdObj) {
     var priceModel = basketProdObj ? basketProdObj.getPriceModel() : null;
 
-    // SFCC handles prices in multiple ways depending on site configureations. We must locate the correct Price Book to see if there is an original, 'list price' that differs from the
-    // price that is initiall seen by Klaviyo. This function, getRootPriceBook(), is modeled after the same core logic in SFRA to get at the root-price book. Recreating the function in this file
-    // makes the logic easily shared across SFRA & SiteGen since this fucntion is not available in OOTB SiteGen (their price books have the same structure, which makes this logic is sharable).
-    // Note: Customers can use multiple price books for a single product (ex: list price, sales price, etc.), which makes it necessary to locate the original price book assigned to a product.
+    // SFCC handles prices in multiple ways depending on site configureations. We must locate the correct Price Book to see if there is an original 'list price'
+    //  that differs from the price that is initiall seen by Klaviyo. This function, getRootPriceBook(), is modeled after the same core logic in SFRA to get at
+    //  the root-price book. Recreating the function in this file makes the logic easily shared across SFRA & SiteGen since this fucntion is not available in
+    //  OOTB SiteGen (their price books have the same structure, which makes this logic is sharable).
+    // Note: Customers can use multiple price books for a single product (ex: list price, sales price, etc.), which makes it necessary to locate the original
+    //  price book assigned to a product.
     var priceBook = priceModel ? getRootPriceBook(priceModel.priceInfo.priceBook) : null;
 
     // After the pricebook is found, we use the built-in SFCC method on the priceModel to get the price book price (i.e. the original / 'list price' of the product).
@@ -151,26 +153,30 @@ function priceCheck (lineItemObj, basketProdObj) {
     // If there is a priceBookPrice and if it's greater than than the adjusted price of the lineItem object, then we need to declare an adjustedPrice exists
     var adjustedPromoPrice = lineItemObj && lineItemObj.adjustedPrice < priceBookPrice ? StringUtils.formatMoney(dw.value.Money( lineItemObj.adjustedPrice.value, session.getCurrency().getCurrencyCode() )) : null;
     if (adjustedPromoPrice) {
-        // In cases where an adjustedPromoPrice has been identified (i.e. there's a difference between lineItem price and an original 'list price'), we set the purchase price to be the formatted string of the lineItem price
-        // Important to note the lineItemObj.adjustedPrice.value is the purchase price a customer sees on the site (includes any promos / discounts, etc.). SFCC's formatMoney() method is used to format the item's purchase
-        // price to be the currency that is currently active on the session. (Ex: $19.99 or €19.99 or £19.99, etc.)
+        // In cases where an adjustedPromoPrice has been identified (i.e. there's a difference between lineItem price and an original 'list price'), we set
+        //  the purchase price to be the formatted string of the lineItem price.
+        // Important to note the lineItemObj.adjustedPrice.value is the purchase price a customer sees on the site (includes any promos / discounts, etc.). SFCC's
+        //  formatMoney() method is used to format the item's purchase price to be the currency that is currently active on the session. (Ex: $19.99 or €19.99 or £19.99, etc.)
         priceData.purchasePrice = StringUtils.formatMoney(dw.value.Money( lineItemObj.adjustedPrice.value, session.getCurrency().getCurrencyCode() ));
 
         // The purchasePriceValue is now set to the numerical value of the purchase price (not formatted by currency, just a decimal number)
         priceData.purchasePriceValue = lineItemObj.adjustedPrice.value;
 
-        // The Original price, in cases when an adjustedPromoPrice is located, is set to be the item's original, 'List Price' - which is based on the original price book assigned to the item when the site was established.
-        // Similar to other lines, SFCC's formatMoney() method that's available on the StringUtils class object is used to correctly format the price according to the currency. The price on the basketProdObj is used as a
-        // fail-safe back-up for additional defensive coding purposes in case there was ever an unexpected issue with the priceBookPrice.value.
+        // The Original price, in cases when an adjustedPromoPrice is located, is set to be the item's original, 'List Price' - which is based on the original
+        //  price book assigned to the item when the site was established.
+        // Similar to other lines, SFCC's formatMoney() method that's available on the StringUtils class object is used to correctly format the price according to
+        //  the currency. The price on the basketProdObj is used as a fail-safe back-up for additional defensive coding purposes in case there was ever an unexpected issue with the priceBookPrice.value.
         priceData.originalPrice = priceBookPrice ? StringUtils.formatMoney(dw.value.Money( priceBookPrice.value, session.getCurrency().getCurrencyCode() )) : StringUtils.formatMoney(dw.value.Money( basketProdObj.getPriceModel().getPrice().value, session.getCurrency().getCurrencyCode() ));
 
         // The originalPriceValue is now set to the numerical value of the Original Price (ex: a decimal number, not a formatted currency)
         priceData.originalPriceValue = priceBookPrice.value;
     } else {
 
-        // This block handles cases where there is no discrepancy with an original, 'List Price' and the lineItem price. This follows a similar pattern with the above block, by utilizing SFCC's StringUtils
-        // class Object & its formatMoney() method to format values with the expected currency that is active on the session. (Ex: $19.99 or €19.99 or £19.99, etc.)
-        // In these cases, the lineItemObj is the reliable source of the purchase price, and the Price Model values on the basketProdObj is the reliable source for the item's original purchas eprice
+        // This block handles cases where there is no discrepancy with an original, 'List Price' and the lineItem price. This follows a similar pattern with the
+        //  above block, by utilizing SFCC's StringUtils class Object & its formatMoney() method to format values with the expected currency that is active on the
+        //  session. (Ex: $19.99 or €19.99 or £19.99, etc.)
+        // In these cases, the lineItemObj is the reliable source of the purchase price, and the Price Model values on the basketProdObj is the reliable source for
+        //  the item's original purchase price.
         // Note: this is the expected logical flow when promotions and sales prices are not configured to a particular product. The If conditional above is the route for special pricing edge cases.
         priceData.purchasePrice = lineItemObj ? StringUtils.formatMoney(dw.value.Money( lineItemObj.price.value, session.getCurrency().getCurrencyCode() )) : null;
         priceData.purchasePriceValue = lineItemObj ? lineItemObj.price.value : null;
