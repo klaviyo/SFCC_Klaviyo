@@ -2,7 +2,7 @@
     var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils');
 </isscript>
 <!--- TEMPLATENAME: klaviyoTag.isml --->
-<isif condition="${dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_enabled')}">
+<isif condition="${klaviyoUtils.klaviyoEnabled}">
     <script async src="//static.klaviyo.com/onsite/js/klaviyo.js?company_id=${dw.system.Site.getCurrent().preferences.custom.klaviyo_account}"></script>
     <script>
         // klaviyo object loader - provided by klaviyo
