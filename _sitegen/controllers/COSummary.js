@@ -99,7 +99,7 @@ function showConfirmation(order) {
     ***/
     var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils');
     var orderConfirmationData = require('*/cartridge/scripts/klaviyo/eventData/orderConfirmation');
-    if(dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_enabled')){
+    if (klaviyoUtils.klaviyoEnabled){
         session.privacy.klaviyoCheckoutTracked = false;
         // KL IDENTIFY: try to get the exchangeID from the KL cookie
         var exchangeID = klaviyoUtils.getKlaviyoExchangeID();

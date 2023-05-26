@@ -44,7 +44,7 @@ var r = require("*/cartridge/scripts/util/Response");
 
 var Event = function () {
 
-    if(dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_enabled')){
+    if (klaviyoUtils.klaviyoEnabled){
         var kx = request.httpParameterMap.kx;
         var exchangeID = (!kx.empty) ? kx.stringValue : klaviyoUtils.getKlaviyoExchangeID();
         var isKlDebugOn = request.httpParameterMap.kldebug.booleanValue;

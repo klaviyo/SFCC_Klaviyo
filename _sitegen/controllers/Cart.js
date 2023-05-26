@@ -45,7 +45,7 @@ function show() {
 
     // KL IDENTIFY: if we don't have a KL exchange ID, check to see if we have a logged in SFCC user/profile and ID off of that.
     var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils'), klid;
-    if(dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_enabled') && !klaviyoUtils.getKlaviyoExchangeID()){
+    if (klaviyoUtils.klaviyoEnabled && !klaviyoUtils.getKlaviyoExchangeID()){
         klid = klaviyoUtils.getProfileInfo();
     }
     // END KLAVIYO
@@ -281,7 +281,7 @@ function addProduct() {
     var basketMgr = require('dw/order/BasketMgr');
     var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils');
     var addedToCartData = require('*/cartridge/scripts/klaviyo/eventData/addedToCart');
-    if(dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_enabled')){
+    if (klaviyoUtils.klaviyoEnabled){
         // KL IDENTIFY: try to get the exchangeID from the KL cookie
         var exchangeID = klaviyoUtils.getKlaviyoExchangeID();
         var dataObj, serviceCallResult, currentBasket;

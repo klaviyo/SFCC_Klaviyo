@@ -32,7 +32,7 @@ function show() {
      *  default landing page post-login... so in most cases it will definitely ID the user if they aren't previously cookied by Klaviyo
     ***/
     var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils'), klid;
-    if(dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_enabled') && !klaviyoUtils.getKlaviyoExchangeID()){
+    if (klaviyoUtils.klaviyoEnabled && !klaviyoUtils.getKlaviyoExchangeID()){
         klid = klaviyoUtils.getProfileInfo();
     }
     // END KLAVIYO
