@@ -173,8 +173,18 @@ function trackEvent(exchangeID, data, event, customerEmail) {
         return;
     }
 
-    var metricObj = {
-        "name": event
+    /* IMPORTANT:
+        If the klaviyo_atc_override site preference has been set to No (False) Added To Cart events will show up in the Klaviyo Dashboard with the metric type "Added To Cart"
+        If it is left on it's default setting of "Yes" ATC events will appear with the metric label "Add To Cart."
+        Generally speaking this should only be set to No if this is a brand new Klaviyo integration - if there is a previous integration with Klaviyo for
+        this site that did not label ATC events as "Added To Cart" there will be a break in reporting and functionality between past events that were not
+        labelled with "Add To Cart" and the new events that are labelled "Added To Cart".  If in doubt, leave the site preference set to No and contact Klaviyo technical support.
+    */
+    var metricObj = {}
+    if(event != EVENT_NAMES.addedToCart || (event == EVENT_NAMES.addedToCart && !Site.getCurrent().getCustomPreferenceValue('klaviyo_atc_override'))) {
+        metricObj = { "name": event };
+    } else {
+        metricObj = { "name": 'Add To Cart' }
     }
     /* IMPORTANT:
         If the klaviyo_sendEventsAsSFCC site preference has been set to Yes (true) events will show up in the Klaviyo Dashboard with SFCC as the event provider.
