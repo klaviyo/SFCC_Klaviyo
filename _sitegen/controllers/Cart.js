@@ -46,7 +46,7 @@ function show() {
 
     // KLAVIYO
     var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils'), klid;
-    if(dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_enabled') && !klaviyoUtils.getKlaviyoExchangeID()){
+    if (klaviyoUtils.klaviyoEnabled && !klaviyoUtils.getKlaviyoExchangeID()){
         klid = klaviyoUtils.getProfileInfo();
     }
     // END KLAVIYO
@@ -279,7 +279,7 @@ function addProduct() {
     var BasketMgr = require('dw/order/BasketMgr');
     var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils');
     var addedToCartData = require('*/cartridge/scripts/klaviyo/eventData/addedToCart');
-    if(dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_enabled')){
+    if (klaviyoUtils.klaviyoEnabled){
         var exchangeID = klaviyoUtils.getKlaviyoExchangeID();
         var dataObj, serviceCallResult, currentBasket;
         var isKlDebugOn = request.getHttpReferer().includes('kldebug=true') ? true : false;

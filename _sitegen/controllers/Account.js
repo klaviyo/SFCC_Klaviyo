@@ -27,7 +27,7 @@ function show() {
 
     // KLAVIYO
     var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils'), klid;
-    if(dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_enabled') && !klaviyoUtils.getKlaviyoExchangeID()){
+    if (klaviyoUtils.klaviyoEnabled && !klaviyoUtils.getKlaviyoExchangeID()){
         klid = klaviyoUtils.getProfileInfo();
     }
     // END KLAVIYO
