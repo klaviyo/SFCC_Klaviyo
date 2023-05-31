@@ -291,9 +291,9 @@ function addProduct() {
                 if (isKlDebugOn) {
                     var klDebugData = klaviyoUtils.prepareDebugData(dataObj);
                     var serviceCallData = klaviyoUtils.prepareDebugData(serviceCallResult);
-                    var siteGenKlDebutData = `<input type="hidden" name="siteGenKlDebutData" id="siteGenKlDebutData" value="${klDebugData}"/>`;
+                    var siteGenKlDebugData = `<input type="hidden" name="siteGenKlDebugData" id="siteGenKlDebugData" value="${klDebugData}"/>`;
                     var siteGenServiceCallData = `<input type="hidden" name="siteGenServiceCallData" id="siteGenServiceCallData" value="${serviceCallData}"/>`;
-                    response.writer.print(siteGenKlDebutData);
+                    response.writer.print(siteGenKlDebugData);
                     response.writer.print(siteGenServiceCallData);
                 }
             }
