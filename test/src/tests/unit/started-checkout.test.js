@@ -8,31 +8,13 @@ const URLUtils = require('../mocks/dw.web.URLUtils')
 const ProductMgr = require('../mocks/dw.catalog.ProductMgr')
 const BasketMgr = require('../mocks/BasketMgr')
 const Money = require('../mocks/dw.value.Money')
+const basketStubs = require('../mocks/util/basketObjectStubs')
 
 global.empty = sinon.stub()
-
-require('dw-api-mock/demandware-globals')
 require('app-module-path').addPath(path.join(process.cwd(), '../cartridges'))
 
 const basketManagerMock = new BasketMgr()
 const currentBasket = basketManagerMock.getCurrentBasket()
-const lineItems = currentBasket.getProductLineItems().toArray()
-const basketProduct = ProductMgr.getProduct()
-const currentProductID = basketProduct.ID
-
-let captureProductOptionStub = sinon.stub()
-let prepareProductObjStub = sinon.stub()
-let captureBonusProductStub = sinon.stub()
-let captureBundleProductStub = sinon.stub()
-
-const bundleOpts = lineItems[0].bundledProductLineItems
-const bonusOpts = lineItems[0].bonusProductLineItem
-const productOpts = lineItems[0].optionProductLineItems
-
-const pdctLineItems = captureProductOptionStub.withArgs(productOpts).returns(productOpts)
-const prepProduct = prepareProductObjStub.withArgs(lineItems[0], basketProduct, currentProductID).returns(basketProduct)
-const bonusPdct = captureBonusProductStub.withArgs(bonusOpts, basketProduct).returns(basketProduct)
-const bundlePdct = captureBundleProductStub.withArgs(bundleOpts[0]).returns(bundleOpts[0])
 
 const startedCheckoutEvent = proxyquire('int_klaviyo_core/cartridge/scripts/klaviyo/eventData/startedCheckout.js', {
         'dw/system/Logger': Logger,
@@ -40,13 +22,13 @@ const startedCheckoutEvent = proxyquire('int_klaviyo_core/cartridge/scripts/klav
         'dw/catalog/ProductMgr': ProductMgr,
         '*/cartridge/scripts/klaviyo/utils': {
             KLImageSize: 'large',
-            captureProductOptions: pdctLineItems,
-            captureBonusProduct: bonusPdct,
-            captureProductBundles: bundlePdct
+            captureProductOptions: basketStubs().pdctLineItems,
+            captureBonusProduct: basketStubs().bonusPdct,
+            captureProductBundles: basketStubs().bundlePdct
         },
         'dw/util/StringUtils': StringUtils,
         'dw/value/Money': Money,
-        prepareProductObj: prepProduct
+        prepareProductObj: basketStubs().prepProduct
     },
 )
 
@@ -85,7 +67,7 @@ describe('int_klaviyo_core/cartridge/scripts/klaviyo/eventData => startedCheckou
                     'Product ID': 'NG3614270264405',
                     'Product Name': 'Belle de Teint',
                     'Product Image URL': 'https://sforce.co/43Pig4s',
-                    'Product Options': productOpts,
+                    'Product Options': basketStubs().productOpts,
                     'Product Description': null,
                     'Product Page URL': 'https://production-sitegenesis-dw.demandware.net/s/RefArch/home?lang=en_US',
                     'Product UPC': '555',

@@ -1,10 +1,7 @@
 const ArrayList = require('../mocks/dw.util.Collection')
 const Money = require('../mocks/dw.value.Money')
 const Customer = require('../mocks/dw.customer.Customer')
-const LineItemCtnr = require('../mocks/dw.order.LineItemCtnr')
 const ProductMgr = require('../mocks/dw.catalog.ProductMgr')
-
-const productLineItems = new LineItemCtnr()
 
 class BasketMgr {
     constructor() {
