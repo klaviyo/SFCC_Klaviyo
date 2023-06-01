@@ -105,9 +105,9 @@ describe('int_klaviyo_core/cartridge/scripts/klaviyo/eventData => viewedProduct'
                 "Original Price String": "$12.00",
                 "Price": 10,
                 "Price String": "$10.00",
+                "Primary Category": "Skin Care",
                 "Product UPC": '555',
-                "Categories": [ 'Health' ],
-                "Primary Category": 'Skin Care'
+                "Categories": [ 'Health' ]
             }
         }
 

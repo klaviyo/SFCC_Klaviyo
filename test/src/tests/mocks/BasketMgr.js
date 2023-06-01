@@ -67,6 +67,7 @@ class BasketMgr {
                 }
             },
             productLineItems: this.getCurrentBasket(this.product).getProductLineItems().toArray(),
+            // shippingLineItems: this.getCurrentBasket(this.product).getShippingLineItems(),
             gift: true
         }],
         this.totalGrossPrice = new Money(69.00)
@@ -74,6 +75,7 @@ class BasketMgr {
         this.allProductLineItems = new ArrayList(this.productLineItems)
         this.shippingTotalPrice = new Money(7.99)
         this.totalTax = new Money(0)
+        this.paymentInstruments = this.getCurrentBasket(this.product).getPaymentInstruments()
     }
 
     getCurrentBasket = () => {
@@ -88,10 +90,14 @@ class BasketMgr {
                                 productID: productID,
                                 productName: this.product.name,
                                 quantityValue: 4.99,
-                                quantity: {
-                                    value: 1
-                                },
+                                quantity: { value: 1 },
+                                adjustedPrice: { value: 10 },
+                                purchasePrice: 12,
+                                purchasePriceValue: 10,
+                                originalPrice: 99,
+                                originalPriceValue: 9,
                                 masterProduct: this.product.getAllCategories(),
+                                getAdjustedMerchandizeTotalPrice: this.getAdjustedMerchandizeTotalPrice(),
                                 optionProductLineItems: [
                                     {
                                         optionID: 'optionId1',
@@ -135,6 +141,34 @@ class BasketMgr {
                     },
                 }
             },
+
+            getPaymentInstruments: () => {
+                const paymentInstruments = [{
+                    creditCardNumber: '411111111111',
+                    creditCardType: 'visa',
+                    creditCardExpirationMonth: '03',
+                    creditCardExpirationYear: '30',
+                    creditCardNumberLastDigits: '1111',
+                    maskedCreditCardNumber: '############',
+                }]
+                return paymentInstruments
+            },
+
+            // getShippingLineItems: () => {
+            //     return new ArrayList([
+            //         {
+            //             getShippingPriceAdjustments(){
+            //                 return new ArrayList([
+            //                     {
+            //                         promotionID: 'promotionID'
+            //                     }
+            //                 ])
+            //             },
+            //             removeShippingPriceAdjustment(){}
+            //         }
+            //     ])
+            // },
+
             getTotalGrossPrice: () => {
                 const grossPrice = new Money(7.99)
                 return {
@@ -142,6 +176,21 @@ class BasketMgr {
                 }
             },
             customerEmail: this.customerEmail
+        }
+    }
+
+    getAdjustedMerchandizeTotalPrice = (param) => {
+        if (param === false) {
+            return {
+                subtract: () => {
+                    return {
+                        value: 1
+                    }
+                },
+            }
+        }
+        return {
+            value: 1
         }
     }
 }

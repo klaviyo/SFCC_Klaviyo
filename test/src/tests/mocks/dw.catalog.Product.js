@@ -9,12 +9,6 @@ class Product {
             this.ID = 'NG3614270264405'
             this.masterProduct = {
                 ID: 'NG3614270264405',
-                getAllCategories: function () {
-                    const displayName = 'Skin Care'
-                    return [
-                        displayName
-                    ]
-                }
             }
         }
         this.name = 'Belle de Teint'
@@ -22,9 +16,8 @@ class Product {
         this.brand = 'LORA'
         this.price = 96
         this.availabilityModel = this.getAvailabilityModel()
-        this.minOrderQuantity = {
-            value: 2
-        }
+        this.minOrderQuantity = { value: 1 }
+        this.quantity = { value: 1 }
         this.variationModel = new ProductVariationModel()
         this.priceModel = new ProductPriceModel()
         this.shortDescription = {
@@ -34,6 +27,9 @@ class Product {
             description: 'Because a healthy glow always starts with healthy skin'
         }
         this.categoryAssignments = this.getCategoryAssignments()
+        this.getPrimaryCategory = function () {
+            return this.getCategory()
+        }
         this.image = {
             'small': {
                 URL: 'https://sforce.co/43Pig4s'
@@ -124,7 +120,7 @@ class Product {
         }
     }
 
-    getPrimaryCategory() {
+    getCategory() {
         const displayName = 'Skin Care'
         return {
             displayName: displayName
@@ -133,10 +129,9 @@ class Product {
 
     getAllCategories() {
         const displayName = 'Skin Care'
-        return {
-            length: 1,
-            displayName: [ displayName ]
-        }
+        return [{
+            displayName: displayName
+        }]
     }
 
     getCategoryAssignments() {
