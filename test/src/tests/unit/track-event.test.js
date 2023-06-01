@@ -1,9 +1,12 @@
 const expect = require('chai').expect
 const sinon = require('sinon')
+const path = require('path')
 const proxyquire = require('proxyquire').noCallThru().noPreserveCache()
 const Site = require('../mocks/dw.system.Site')
 const StringUtils = require('../mocks/dw.util.StringUtils')
 const Logger = require('../mocks/dw.system.Logger')
+
+require('app-module-path').addPath(path.join(process.cwd(), '../cartridges'))
 
 global.empty = sinon.stub()
 
@@ -17,7 +20,7 @@ const KlaviyoEventServiceMock = {
     }
 }
 
-const klaviyoUtils = proxyquire('../../../../cartridges/int_klaviyo_core/cartridge/scripts/klaviyo/utils.js', {
+const klaviyoUtils = proxyquire('int_klaviyo_core/cartridge/scripts/klaviyo/utils.js', {
     'dw/util/StringUtils': StringUtils,
     'dw/system/Logger': Logger,
     'dw/system/Site': Site,

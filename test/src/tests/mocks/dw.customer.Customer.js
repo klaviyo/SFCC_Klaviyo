@@ -1,6 +1,6 @@
 class Customer {
     constructor() {
-        this.ID = 'unittest'
+        this.ID = 8575309
         this.authenticated = 'true'
         this.registered = true
         this.profile = {

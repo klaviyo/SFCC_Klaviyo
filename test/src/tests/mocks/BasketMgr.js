@@ -65,14 +65,29 @@ class BasketMgr {
             },
             productLineItems: this.getCurrentBasket(this.product).getProductLineItems().toArray(),
             // shippingLineItems: this.getCurrentBasket(this.product).getShippingLineItems(),
+            trackingNumber: '999-999-999-9999999',
             gift: true
         }],
-        this.totalGrossPrice = new Money(69.00)
+        this.totalGrossPrice = new Money(20.00)
+        this.totalNetPrice = new Money(20.00)
         this.customer = new Customer()
         this.allProductLineItems = new ArrayList(this.productLineItems)
         this.shippingTotalPrice = new Money(7.99)
         this.totalTax = new Money(0)
         this.paymentInstruments = this.getCurrentBasket(this.product).getPaymentInstruments()
+        this.orderNo = '000101899'
+        this.customerNo = this.getCustomer().ID
+        this.customerName = this.getCustomer().name
+    }
+
+    getCustomer = () => {
+        const customerObj = new Customer()
+        const fname = customerObj.profile.firstName
+        const lname = customerObj.profile.lastName
+        return {
+            ID: customerObj.ID,
+            name: `${fname} ${lname}`
+        }
     }
 
     getCurrentBasket = () => {
@@ -167,9 +182,17 @@ class BasketMgr {
             // },
 
             getTotalGrossPrice: () => {
-                const grossPrice = new Money(7.99)
+                const grossPrice = new Money(99.99)
+                const value = grossPrice.value
                 return {
-                    value: grossPrice.value
+                    value: value,
+                    getValue: () => {
+                        return {
+                            valueOf: () => {
+                                return value
+                            }
+                        }
+                    }
                 }
             },
             customerEmail: this.customerEmail
@@ -189,6 +212,10 @@ class BasketMgr {
         return {
             value: 1
         }
+    }
+
+    getAdjustedShippingTotalPrice = () => {
+        return 1.99
     }
 }
 

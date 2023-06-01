@@ -10,8 +10,9 @@ const BasketMgr = require('../mocks/BasketMgr')
 const Money = require('../mocks/dw.value.Money')
 const basketStubs = require('../mocks/util/basketObjectStubs')
 
-global.empty = sinon.stub()
 require('app-module-path').addPath(path.join(process.cwd(), '../cartridges'))
+
+global.empty = sinon.stub()
 
 const basketManagerMock = new BasketMgr()
 const currentBasket = basketManagerMock.getCurrentBasket()
@@ -52,7 +53,7 @@ describe('int_klaviyo_core/cartridge/scripts/klaviyo/eventData => startedCheckou
 
     it('should return the correct basket data for "Started Checkout" event', () => {
         const expectedResult = {
-            'Basket Gross Price': 7.99,
+            'Basket Gross Price': 99.99,
             Categories: [
                 'Health'
             ],

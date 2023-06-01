@@ -27,9 +27,10 @@ class Product {
             description: 'Because a healthy glow always starts with healthy skin'
         }
         this.categoryAssignments = this.getCategoryAssignments()
-        this.getPrimaryCategory = function () {
+        this.getPrimaryCategory = () => {
             return this.getCategory()
         }
+        this.primaryCategory = this.getCategory()
         this.image = {
             'small': {
                 URL: 'https://sforce.co/43Pig4s'

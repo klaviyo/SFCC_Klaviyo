@@ -56,6 +56,8 @@ Unit Tests verify the following
 
 - Track Event
 - Viewed Product
+- Oder Confirmation
+- Added to Cart
 - Started Checkout
 
     - Bonus Products

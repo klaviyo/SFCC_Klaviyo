@@ -4,6 +4,7 @@ class Money {
         this.currencyCode = currencyCode || 'USD'
         this.available = true
         this.valueOrNull = value
+        this.getValue = this.getValue()
     }
 
     add(value) {
