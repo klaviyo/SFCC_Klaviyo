@@ -34,10 +34,13 @@
 </isif>
 </script>
 
-<isif condition="${KLselectors && !empty(KLselectors)}">
+<isif condition="${KLselectors && !empty(KLselectors) || KLCheckoutSelector && !empty(KLCheckoutSelector)}">
     <script>
         var KLselectors = <isprint value="${JSON.stringify(dw.system.Site.current.preferences.custom.klaviyo_email_selectors)}" encoding="off" />;
         klaviyoJS.emailFieldSelectors = Array.isArray(KLselectors) ? KLselectors : Object.values(KLselectors);
+        <isif condition="${KLCheckoutSelector && !empty(KLCheckoutSelector)}">
+            klaviyoJS.emailFieldSelectors.push('${KLCheckoutSelector}');
+        </isif>
         klaviyoJS.getExchangeID = function () {
             var klaviyoCookie = document.cookie.split('; ').filter(function(c) {return /__kla_id=/.test(c)});
             return JSON.parse(atob(klaviyoCookie[0].split("__kla_id=")[1])).$exchange_id;
