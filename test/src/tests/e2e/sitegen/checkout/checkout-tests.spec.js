@@ -51,7 +51,7 @@ test.describe('Test Klaviyo started checkout event not identified', () => {
 
 test.describe('Test Klaviyo add to cart event', () => {
     test('Verify add to cart event data', async ({ page }) => {
-        const resultMsg = 'Klaviyo Add To Cart Service Result:'
+        const resultMsg = 'Klaviyo Service Result:'
         email = await checkoutPage.generateEmail()
         testData.email = email
         await checkoutPage.accountPage.gotoAccountLogin()
