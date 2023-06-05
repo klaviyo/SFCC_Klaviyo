@@ -28,7 +28,7 @@
             const observer = new MutationObserver(mutations => {
                 mutations.forEach(mutation => {
                     if (mutation.addedNodes.length) {
-                        let SGaddToCartDebugData = document.getElementById('siteGenKlDebutData');
+                        let SGaddToCartDebugData = document.getElementById('siteGenKlDebugData');
                         let SGserviceCallData = document.getElementById('siteGenServiceCallData');
                         console.log('Klaviyo Add To Cart Event Data: ', JSON.parse(atob(SGaddToCartDebugData.value)));
                         console.log('Klaviyo Add To Cart Service Result: ', JSON.parse(atob(siteGenServiceCallData.value)));
