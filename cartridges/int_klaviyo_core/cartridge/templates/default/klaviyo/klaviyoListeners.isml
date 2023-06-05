@@ -50,11 +50,15 @@
 </script>
 
 <iscomment>KL IDENTIFY: JS to wire up listeners to all fields targeted via the Klaviyo Email Selectors Site Preference</iscomment>
-<isif condition="${KLselectors && !empty(KLselectors)}">
+<isif condition="${KLselectors && !empty(KLselectors) || KLCheckoutSelector && !empty(KLCheckoutSelector)}">
     <script>
         <iscomment>The KLselectors variable stores all of the configured CSS selectors for the Klaviyo Email Selectors Site Preference to locate matching inputs on any given page</iscomment>
         var KLselectors = <isprint value="${JSON.stringify(dw.system.Site.current.preferences.custom.klaviyo_email_selectors)}" encoding="off" />;
         klaviyoJS.emailFieldSelectors = Array.isArray(KLselectors) ? KLselectors : Object.values(KLselectors);
+        <iscomment>KL IDENTIFY: if we have a selector for the checkout email field set, add it to the array of elements to be wired for identify</iscomment>
+        <isif condition="${KLCheckoutSelector && !empty(KLCheckoutSelector)}">
+            klaviyoJS.emailFieldSelectors.push('${KLCheckoutSelector}');
+        </isif>
         klaviyoJS.getExchangeID = function () {
             var klaviyoCookie = document.cookie.split('; ').filter(function(c) {return /__kla_id=/.test(c)});
             return JSON.parse(atob(klaviyoCookie[0].split("__kla_id=")[1])).$exchange_id;
