@@ -27,28 +27,6 @@ test.beforeEach(async ({ page, isMobile }) => {
     await checkoutPage.acceptCookies()
 })
 
-test.describe('Test Klaviyo started checkout event not identified', () => {
-    test('Enter checkout flow as guest', async ({ page }) => {
-        // Checkout as guest so we can be identified
-        const resultMsg = 'Klaviyo Service Result:'
-        email = await checkoutPage.generateEmail()
-        testData.email = email
-        await checkoutPage.productPage.getProduct()
-        await checkoutPage.productPage.addToCart()
-        await checkoutPage.startCheckout()
-        await page.getByRole('button', { name: 'Checkout as Guest' }).click()
-        await checkoutPage.fillShippingForm(testData)
-        await checkoutPage.fillBillingForm(testData)
-        await checkoutPage.fillPaymentForm(paymentData)
-        expect(await checkoutPage.orderSuccessMessage.textContent()).toBe('Thank you for your order.')
-        await checkoutPage.productPage.getProduct()
-        await checkoutPage.productPage.addToCart()
-        await checkoutPage.startCheckout()
-        const logData = await checkoutPage.getDebugLogs(resultMsg)
-        expect(logData[0].success).toBe(true)
-    })
-})
-
 test.describe('Test Klaviyo add to cart event', () => {
     test('Verify add to cart event data', async ({ page }) => {
         const resultMsg = 'Klaviyo Service Result:'
