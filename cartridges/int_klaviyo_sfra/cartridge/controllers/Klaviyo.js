@@ -16,7 +16,7 @@ var KLCheckoutHelpers = require('*/cartridge/scripts/klaviyo/checkoutHelpers');
 /***
  *
  * NOTE: The Klaviyo-Event route exists to support event tracking on pages whose OOTB SFCC controllers are cached by default.
- * To avoid caching event data, the Klaviyo-Event route is called via remote include in KlaviyoTag.isml.
+ * To avoid caching event data, the Klaviyo-Event route is called via remote include in klaviyoFooter.isml.
  * For event tracking on pages whose controllers are not cached OOTB, server.appends to those OOTB controllers should be utilized.
  * Reference Cart.js, Checkout.js, Order.js in the int_klaviyo_sfra cartridge
  *

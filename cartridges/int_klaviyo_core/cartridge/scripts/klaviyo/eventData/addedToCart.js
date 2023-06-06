@@ -60,7 +60,7 @@ function getData(basket) {
                     productPageURL  : URLUtils.https('Product-Show', 'pid', currentProductID).toString(),
                     productUPC                : basketProduct.UPC,
                     viewedProductAvailability : basketProduct.availabilityModel.availability,
-                    categories                : categories, // was createCategories(basketProduct) in orig, check that my output from categories above matches expected output
+                    categories                : categories,
                     primaryCategory           : primaryCategory
                 };
 
@@ -113,7 +113,6 @@ function getData(basket) {
         }
 
     } catch(e) {
-        var errorTest = e;
         var logger = Logger.getLogger('Klaviyo', 'Klaviyo.core addedToCart.js');
         logger.error('addedToCart.getData() failed to create data object: ' + e.message + ' ' + e.stack);
     }

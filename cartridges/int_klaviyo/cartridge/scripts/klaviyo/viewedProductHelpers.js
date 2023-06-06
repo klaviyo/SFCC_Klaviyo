@@ -11,6 +11,9 @@ var app = require('*/cartridge/scripts/app');
 var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils');
 
 
+// The getProductPrices helper func is necessary to locate the correct 'purchase price' that's visible on the PDP.
+// This leverages SiteGen logic and expected properties to locate the original price book & promos to capture promotional prices that may be set on a given item.
+// It accepts a full product as a parameter and returns a simple object with four properties. Ex: { "price": INT, "priceString": STRING, "originalPrice": INT, "originalPriceString": STRING }
 function getProductPrices(product) {
     var price, originalPrice, promoPrice;
     var orgProduct = product;
