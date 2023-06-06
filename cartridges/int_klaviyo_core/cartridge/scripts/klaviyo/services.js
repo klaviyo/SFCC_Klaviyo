@@ -11,13 +11,13 @@ var KlaviyoEventService = ServiceRegistry.createService('KlaviyoEventService', {
 
     /**
    * Create the service request
-   * - Set request method to be the HTTP GET method
+   * - Set request method to be the HTTP POST method
    * - Construct request URL
    * - Append the request HTTP query string as a URL parameter
    *
    * @param {dw.svc.HTTPService} svc - HTTP Service instance
-   * @param {Object} params - Additional paramaters
-   * @returns {void}
+   * @param {Object} args - Additional paramaters
+   * @returns {String} - A JSON string of the args
    */
     createRequest: function (svc, args) {
 

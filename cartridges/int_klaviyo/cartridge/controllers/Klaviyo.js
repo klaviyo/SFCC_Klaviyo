@@ -19,7 +19,7 @@ var r = require("*/cartridge/scripts/util/Response");
 
 /**
  * Controller that sends the necessary data required for klaviyo to track user events
- * such as checkout, order confirmation, searching etc and renders the renders the klaviyoTag isml file
+ * such as checkout, order confirmation, searching etc and renders the renders the klaviyoFooter.isml file
  *
  * @module controllers/Klaviyo
  */
