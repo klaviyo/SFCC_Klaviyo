@@ -13,7 +13,11 @@ The following frameworks and packages are used for testing
         - [sinon.js](https://sinonjs.org/)
         - [dw-mock-api](https://github.com/SalesforceCommerceCloud/dw-api-mock)
 
-*Playwright will output screenshots and videos to help debugging test failures*
+
+### Notes:
+- Playwright will output screenshots and videos to help debugging test failures*
+
+- Debugging tests is made easy using the Playwright logger. Please refer to the `logger` block within the [Playwright Config](./playwright.config.js) and the [following documentation](https://playwright.dev/docs/api/class-logger) for more details
 
 ## Prerequisites
 
@@ -56,7 +60,7 @@ Unit Tests verify the following
 
 - Track Event
 - Viewed Product
-- Oder Confirmation
+- Order Confirmation
 - Added to Cart
 - Started Checkout
 

@@ -24,6 +24,7 @@ module.exports = defineConfig({
     video: 'retain-on-failure',
     launchOptions: {
       slowMo: 1000,
+      // The code bellow is helpful for debugging: https://playwright.dev/docs/api/class-logger
       // logger: {
       //   isEnabled: (name, severity) => true,
       //   log: (name, severity, message) => console.log(name, message)
