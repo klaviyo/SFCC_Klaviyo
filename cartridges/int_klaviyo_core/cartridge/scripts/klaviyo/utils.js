@@ -15,9 +15,7 @@ var EVENT_NAMES = {
     'searchedSite' : 'Searched Site',
     'addedToCart' : 'Added to Cart',
     'startedCheckout' : 'Started Checkout',
-    'orderConfirmation' : 'Order Confirmation',
-    'placedOrder' : 'Placed Order',
-    'orderedProduct' : 'Ordered Product'
+    'orderConfirmation' : 'Order Confirmation'
 };
 
 var klaviyoEnabled = Site.getCurrent().getCustomPreferenceValue('klaviyo_enabled') || false;
