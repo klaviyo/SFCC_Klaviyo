@@ -12,14 +12,14 @@ var orderConfirmationData = require('*/cartridge/scripts/klaviyo/eventData/order
 
 
 server.append('Confirm', function (req, res, next) {
-
-    if(klaviyoUtils.klaviyoEnabled){
-
+    if (klaviyoUtils.klaviyoEnabled) {
         // resetting to default state after successful checkout
         req.session.privacyCache.set('klaviyoCheckoutTracked', false);
 
         var exchangeID = klaviyoUtils.getKlaviyoExchangeID();
-        var dataObj, serviceCallResult, currentOrder;
+        var dataObj;
+        var serviceCallResult;
+        var currentOrder;
 
         if(req.form.orderID && req.form.orderToken) {
             currentOrder = OrderMgr.getOrder(req.form.orderID, req.form.orderToken);

@@ -25,7 +25,7 @@ function addProductToCart(decodedItems, cartObj) {
         var productToAdd;
         var template = 'checkout/cart/minicart';
 
-        for (let i = 0; i < productList.length; i++) {
+        for (var i = 0; i < productList.length; i++) {
             productToAdd = Product.get(productList[i].productID);
             productOptionModel = productToAdd ? recreateHelpers.updateOptions(productList[i], productToAdd.object) : null;
             cart.addProductItem(productToAdd.object, productList[i].quantity, productOptionModel);

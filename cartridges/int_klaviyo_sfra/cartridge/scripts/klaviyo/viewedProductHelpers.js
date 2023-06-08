@@ -16,14 +16,14 @@ function getProductPrices(product) {
     var fullPriceFormatted = fullProduct.price.sales ? fullProduct.price.sales.formatted : fullProduct.price.min.sales.formatted;
 
     return {
-        price : fullPriceValue,
-        priceString : fullPriceFormatted,
-        originalPrice : fullProduct.price.list ? fullProduct.price.list.value : fullPriceValue,
+        price               : fullPriceValue,
+        priceString         : fullPriceFormatted,
+        originalPrice       : fullProduct.price.list ? fullProduct.price.list.value : fullPriceValue,
         originalPriceString : fullProduct.price.list ? fullProduct.price.list.formatted : fullPriceFormatted
-    }
+    };
 }
 
 
 module.exports = {
-    getProductPrices : getProductPrices
+    getProductPrices: getProductPrices
 };

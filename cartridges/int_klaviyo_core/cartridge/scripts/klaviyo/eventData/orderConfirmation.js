@@ -1,7 +1,6 @@
 'use strict';
 
 /* API Includes */
-var Site = require('dw/system/Site');
 var Logger = require('dw/system/Logger');
 var URLUtils = require('dw/web/URLUtils');
 var ProductMgr = require('dw/catalog/ProductMgr');
@@ -17,10 +16,8 @@ var KLImageSize = klaviyoUtils.KLImageSize;
  * @returns
  */
 function getData(order) {
-
     var data;
     try {
-
         data = {};
 
         // Billing Address
@@ -70,7 +67,7 @@ function getData(order) {
             for (var j in productLineItems) {
                 productLineItem = productLineItems[j];
                 var prdUrl = '';
-                prdUrl = URLUtils.https( 'Product-Show', 'pid', productLineItem.productID ).toString();
+                prdUrl = URLUtils.https('Product-Show', 'pid', productLineItem.productID).toString();
                 var secondaryName = '';
 
                 // Get the product secondary name
@@ -127,14 +124,14 @@ function getData(order) {
                     'Product ID'             : productLineItem.productID,
                     'Product Name'           : productLineItem.productName,
                     'Product Secondary Name' : secondaryName,
-                    'Quantity'                 : productLineItem.quantity.value,
-                    'Discount'                 : productLineItem.adjustedPrice.value,
+                    'Quantity'               : productLineItem.quantity.value,
+                    'Discount'               : productLineItem.adjustedPrice.value,
                     'Product Page URL'       : prdUrl,
                     'Product Variant'        : variationValues,
                     'Product Image URL'      : KLImageSize ? productDetail.getImage(KLImageSize).getAbsURL().toString() : null
                 };
 
-                if(!productDetail.master && 'masterProduct' in productDetail) {
+                if (!productDetail.master && 'masterProduct' in productDetail) {
                     currentLineItem['Master Product ID'] = productDetail.masterProduct.ID;
                 }
 
@@ -209,19 +206,19 @@ function getData(order) {
             var merchTotalInclOrderDiscounts = order.getAdjustedMerchandizeTotalPrice(true);
 
             // discounts
-            var orderDiscount = merchTotalExclOrderDiscounts.subtract( merchTotalInclOrderDiscounts );
-            var orderDiscountString = dw.util.StringUtils.formatMoney( dw.value.Money( orderDiscount.value, session.getCurrency().getCurrencyCode()) );
+            var orderDiscount = merchTotalExclOrderDiscounts.subtract(merchTotalInclOrderDiscounts);
+            var orderDiscountString = dw.util.StringUtils.formatMoney(dw.value.Money(orderDiscount.value, session.getCurrency().getCurrencyCode()));
 
             // Sub Total
             var subTotal = merchTotalInclOrderDiscounts;
-            var subTotalString = dw.util.StringUtils.formatMoney( dw.value.Money(subTotal.value, session.getCurrency().getCurrencyCode()) );
+            var subTotalString = dw.util.StringUtils.formatMoney(dw.value.Money(subTotal.value, session.getCurrency().getCurrencyCode()));
 
             // Shipping
             var shippingExclDiscounts = order.shippingTotalPrice;
             var shippingInclDiscounts = order.getAdjustedShippingTotalPrice();
             var shippingDiscount = shippingExclDiscounts.subtract(shippingInclDiscounts);
             var shippingTotalCost = shippingExclDiscounts.subtract(shippingDiscount);
-            var shippingTotalCostString = dw.util.StringUtils.formatMoney( dw.value.Money( shippingTotalCost.value, session.getCurrency().getCurrencyCode() ) );
+            var shippingTotalCostString = dw.util.StringUtils.formatMoney(dw.value.Money(shippingTotalCost.value, session.getCurrency().getCurrencyCode()));
 
             // Tax
             var totalTax = 0.0;
@@ -253,7 +250,7 @@ function getData(order) {
         }
 
         // Order Details
-        var orderCreationDate = dw.util.StringUtils.formatCalendar( new dw.util.Calendar(new Date(order.creationDate)), 'yyyy-MM-dd' );
+        var orderCreationDate = dw.util.StringUtils.formatCalendar(new dw.util.Calendar(new Date(order.creationDate)), 'yyyy-MM-dd');
         data['Order Number'] = order.orderNo;
         data['Order Date'] = orderCreationDate;
         data['Customer Number'] = order.customerNo ? order.customerNo : '';
@@ -269,13 +266,13 @@ function getData(order) {
         billingaddress.push({
             'First Name'   : orderBillingAddressFirstName,
             'Last Name'    : orderBillingAddressLastName,
-            'Address1'       : orderBillingAddressAddress1,
-            'Address2'       : orderBillingAddressAddress2,
-            'City'           : orderBillingAddressCity,
+            'Address1'     : orderBillingAddressAddress1,
+            'Address2'     : orderBillingAddressAddress2,
+            'City'         : orderBillingAddressCity,
             'Postal Code'  : orderShippingAddressPostalCode,
             'State Code'   : orderBillingAddressStateCode,
             'Country Code' : orderBillingAddressCountryCode,
-            'Phone'          : orderBillingAddressPhone
+            'Phone'        : orderBillingAddressPhone
         });
 
         // Shipping Address
@@ -283,13 +280,13 @@ function getData(order) {
         shippingaddress.push({
             'First Name'   : orderShippingAddressFirstName,
             'Last Name'    : orderShippingAddressLastName,
-            'Address1'       : orderShippingAddressAddress1,
-            'Address2'       : orderShippingAddressAddress2,
-            'City'           : orderShippingAddressCity,
+            'Address1'     : orderShippingAddressAddress1,
+            'Address2'     : orderShippingAddressAddress2,
+            'City'         : orderShippingAddressCity,
             'Postal Code'  : orderShippingAddressPostalCode,
             'State Code'   : orderShippingAddressStateCode,
             'Country Code' : orderShippingAddressCountryCode,
-            'Phone'          : orderShippingAddressPhone
+            'Phone'        : orderShippingAddressPhone
         });
 
         // Add product / billing / shipping
@@ -304,12 +301,10 @@ function getData(order) {
         data['$value'] = orderTotal;
         data['$event_id'] = 'orderConfirmation' + '-' + order.orderNo;
         data['Tracking Number'] = order.shipments[0].trackingNumber ? order.shipments[0].trackingNumber : '';
-
-    } catch(e) {
+    } catch (e) {
         var logger = Logger.getLogger('Klaviyo', 'Klaviyo.core orderConfirmation.js');
-        logger.error('orderConfirmation.getData() failed to create data object: '+e.message+' '+ e.stack );
+        logger.error('orderConfirmation.getData() failed to create data object: ' + e.message + ' ' + e.stack);
     }
-
     return data;
 }
 

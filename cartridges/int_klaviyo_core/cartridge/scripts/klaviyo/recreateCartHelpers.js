@@ -7,7 +7,7 @@ var PromotionMgr = require('dw/campaign/PromotionMgr');
 // The clearCart function is necessary iterate through all items in the cart to clear it and ensure a clean slate
 // (Note: ensures consistency with price, product items and shipping when refreshing the page or loading the page for the first time)
 function clearCart(cartObj) {
-    for (let i = cartObj.allProductLineItems.length - 1; i >= 0; i--) {
+    for (var i = cartObj.allProductLineItems.length - 1; i >= 0; i--) {
         let currItem = cartObj.allProductLineItems[i];
         cartObj.removeProductLineItem(cartObj.allProductLineItems[i]);
     }

@@ -12,7 +12,7 @@ var addedToCartData = require('*/cartridge/scripts/klaviyo/eventData/addedToCart
 
 
 server.append('Show', function (req, res, next) {
-    if(klaviyoUtils.klaviyoEnabled && !klaviyoUtils.getKlaviyoExchangeID()){
+    if (klaviyoUtils.klaviyoEnabled && !klaviyoUtils.getKlaviyoExchangeID()) {
         res.viewData.klid = klaviyoUtils.getProfileInfo();
     }
 
@@ -20,11 +20,11 @@ server.append('Show', function (req, res, next) {
 });
 
 server.append('AddProduct', function (req, res, next) {
-
-    if(klaviyoUtils.klaviyoEnabled){
-
+    if (klaviyoUtils.klaviyoEnabled) {
         var exchangeID = klaviyoUtils.getKlaviyoExchangeID();
-        var dataObj, serviceCallResult, currentBasket;
+        var dataObj;
+        var serviceCallResult;
+        var currentBasket;
         var isKlDebugOn = request.getHttpReferer().includes('kldebug=true') ? true : false;
 
         if (exchangeID) {
@@ -35,7 +35,7 @@ server.append('AddProduct', function (req, res, next) {
                 serviceCallResult = klaviyoUtils.trackEvent(exchangeID, dataObj, klaviyoUtils.EVENT_NAMES.addedToCart, false);
                 if (isKlDebugOn) {
                     res.json({
-                        klDebugData : klaviyoUtils.prepareDebugData(dataObj),
+                        klDebugData     : klaviyoUtils.prepareDebugData(dataObj),
                         serviceCallData : klaviyoUtils.prepareDebugData(serviceCallResult)
                     });
                 }
