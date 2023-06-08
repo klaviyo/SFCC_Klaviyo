@@ -35,7 +35,6 @@ class BasketMgr {
             setPostalCode: (other) => {},
             setStateCode: (other) => {}
         },
-        // this.defaultShipment = {
         this.shipments = [{
             UUID: '1234-1234-1234-1235',
             setShippingMethod: function (shippingMethod) {
@@ -64,7 +63,6 @@ class BasketMgr {
                 }
             },
             productLineItems: this.getCurrentBasket(this.product).getProductLineItems().toArray(),
-            // shippingLineItems: this.getCurrentBasket(this.product).getShippingLineItems(),
             trackingNumber: '999-999-999-9999999',
             gift: true
         }],
@@ -165,21 +163,6 @@ class BasketMgr {
                 }]
                 return paymentInstruments
             },
-
-            // getShippingLineItems: () => {
-            //     return new ArrayList([
-            //         {
-            //             getShippingPriceAdjustments(){
-            //                 return new ArrayList([
-            //                     {
-            //                         promotionID: 'promotionID'
-            //                     }
-            //                 ])
-            //             },
-            //             removeShippingPriceAdjustment(){}
-            //         }
-            //     ])
-            // },
 
             getTotalGrossPrice: () => {
                 const grossPrice = new Money(99.99)
