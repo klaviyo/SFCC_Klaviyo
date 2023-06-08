@@ -10,12 +10,12 @@ var klaviyoServices = require('*/cartridge/scripts/klaviyo/services.js');
 
 // event name constants
 var EVENT_NAMES = {
-    'viewedProduct'     : 'Viewed Product',
-    'viewedCategory'    : 'Viewed Category',
-    'searchedSite'      : 'Searched Site',
-    'addedToCart'       : 'Added to Cart',
-    'startedCheckout'   : 'Started Checkout',
-    'orderConfirmation' : 'Order Confirmation'
+    viewedProduct     : 'Viewed Product',
+    viewedCategory    : 'Viewed Category',
+    searchedSite      : 'Searched Site',
+    addedToCart       : 'Added to Cart',
+    startedCheckout   : 'Started Checkout',
+    orderConfirmation : 'Order Confirmation'
 };
 
 var klaviyoEnabled = Site.getCurrent().getCustomPreferenceValue('klaviyo_enabled') || false;
@@ -37,9 +37,9 @@ function getKlaviyoExchangeID() {
 function getProfileInfo() {
     if (customer.authenticated && customer.profile) {
         var profileInfo = {
-            '$email'      : customer.profile.email,
-            '$first_name' : customer.profile.firstName,
-            '$last_name'  : customer.profile.lastName
+            $email      : customer.profile.email,
+            $first_name : customer.profile.firstName,
+            $last_name  : customer.profile.lastName
         };
         profileInfo = JSON.stringify(profileInfo);
         profileInfo = StringUtils.encodeBase64(profileInfo);
@@ -177,9 +177,9 @@ function trackEvent(exchangeID, data, event, customerEmail) {
     */
     var metricObj = {};
     if (event != EVENT_NAMES.addedToCart || (event == EVENT_NAMES.addedToCart && !Site.getCurrent().getCustomPreferenceValue('klaviyo_atc_override'))) {
-        metricObj = { 'name': event };
+        metricObj = { name: event };
     } else {
-        metricObj = { 'name': 'Add To Cart' };
+        metricObj = { name: 'Add To Cart' };
     }
     /* IMPORTANT:
         If the klaviyo_sendEventsAsSFCC site preference has been set to Yes (true) events will show up in the Klaviyo Dashboard with SFCC as the event provider.
@@ -193,19 +193,19 @@ function trackEvent(exchangeID, data, event, customerEmail) {
 
     var profileObj = {};
     if (!customerEmail) {
-        profileObj = { '$exchange_id': exchangeID };
+        profileObj = { $exchange_id: exchangeID };
     } else {
-        profileObj = { '$email': customerEmail };
+        profileObj = { $email: customerEmail };
     }
 
     var eventData = {
-        'data': {
-            'type'       : 'event',
-            'attributes' : {
-                'profile'    : profileObj,
-                'metric'     : metricObj,
-                'properties' : data,
-                'time'       : (new Date()).toISOString()
+        data: {
+            type       : 'event',
+            attributes : {
+                profile    : profileObj,
+                metric     : metricObj,
+                properties : data,
+                time       : (new Date()).toISOString()
             }
         }
     };

@@ -62,7 +62,7 @@ server.get('Cart', function (req, res, next) {
     try {
         Transaction.wrap(function () {
             if (items && items.length) {
-                for (let i = 0; i < items.length; i++) {
+                for (var i = 0; i < items.length; i++) {
                     var productToAdd = ProductMgr.getProduct(items[i].productID);
                     if (!productToAdd) {
                         throw new Error('Product with ID [' + items[i].productID + '] not found');
@@ -91,8 +91,8 @@ server.get('Cart', function (req, res, next) {
         logger.error('Transaction failed in KlaviyoRecreate-Cart controller. ERROR: {0} {1}', error.message, error.stack)
 
         res.render('error', {
-            error: true,
-            message: Resource.msgf('rebuildcart.message.error.transaction', 'klaviyo_error', null, error.message)
+            error   : true,
+            message : Resource.msgf('rebuildcart.message.error.transaction', 'klaviyo_error', null, error.message)
         });
     }
     next();

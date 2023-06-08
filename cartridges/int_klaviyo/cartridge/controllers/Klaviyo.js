@@ -27,7 +27,10 @@ var Event = function () {
         var kx = request.httpParameterMap.kx;
         var exchangeID = (!kx.empty) ? kx.stringValue : klaviyoUtils.getKlaviyoExchangeID();
         var isKlDebugOn = request.httpParameterMap.kldebug.booleanValue;
-        var dataObj, serviceCallResult, action, parms;
+        var dataObj;
+        var serviceCallResult;
+        var action;
+        var parms;
 
         if (exchangeID) {
             action = request.httpParameterMap.action.stringValue;

@@ -59,10 +59,10 @@ var KlaviyoEventService = ServiceRegistry.createService('KlaviyoEventService', {
     getResponseLogMessage: function (response) {
         try {
             var r = {
-                statusCode: response.statusCode,
-                statusMessage: response.statusMessage,
-                errorText: response.errorText,
-                text: response.text
+                statusCode    : response.statusCode,
+                statusMessage : response.statusMessage,
+                errorText     : response.errorText,
+                text          : response.text
             };
 
             return JSON.stringify(r);
@@ -79,5 +79,5 @@ var KlaviyoEventService = ServiceRegistry.createService('KlaviyoEventService', {
 
 
 module.exports = {
-    KlaviyoEventService : KlaviyoEventService
+    KlaviyoEventService: KlaviyoEventService
 };
