@@ -51,7 +51,7 @@ function addProductToCart(decodedItems, cartObj) {
         };
     } catch (error) {
         var logger = Logger.getLogger('Klaviyo', 'Klaviyo.SiteGen recreateCartHelpers.js');
-        logger.error('addProductToCart() failed. ERROR at: {0} {1}', error.message, error.stack)
+        logger.error('addProductToCart() failed. ERROR at: {0} {1}', error.message, error.stack);
 
         return {
             success      : false,
@@ -59,11 +59,11 @@ function addProductToCart(decodedItems, cartObj) {
             errorMessage : `ERROR - Please check the encoded obj for any unexpected chars or syntax issues. ${error.message}`,
         };
     }
-};
+}
 
 /*
  * Module exports
  */
 module.exports = {
-    addProductToCart: addProductToCart,
-}
+    addProductToCart: addProductToCart
+};
