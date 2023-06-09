@@ -4,25 +4,21 @@
 var Logger = require('dw/system/Logger');
 var ProductMgr = require('dw/catalog/ProductMgr');
 var URLUtils = require('dw/web/URLUtils');
-var StringUtils = require('dw/util/StringUtils');
 
 /* Script Modules */
 var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils');
 var KLImageSize = klaviyoUtils.KLImageSize;
 
 
-/***
- *  KL EVENT TRACKING: Prepares data for "Viewed Product" event
- *
- * @param productID - product ID (string)
- * @returns data object to be passed to the KL API
-***/
-
+/**
+     *  KL EVENT TRACKING: Prepares data for "Viewed Product" event
+     *
+     * @param productID - product ID (string)
+     * @returns data object to be passed to the KL API
+**/
 function getData(productID) {
-
     var data;
     try {
-
         data = {};
 
         // product in viewData is flat and doesn't have all data required (to whit, categories)
@@ -46,23 +42,22 @@ function getData(productID) {
         data['Original Price String'] = prices.originalPriceString ? prices.originalPriceString : prices.priceString;
         data['Product UPC'] = product.UPC;
 
-        if(!product.master && 'masterProduct' in product) {
+        if (!product.master && 'masterProduct' in product) {
             data['Master Product ID'] = product.masterProduct.ID;
         }
 
         var categories = [];
         var catProduct = (product.variant) ? product.masterProduct : product;
-        for(var i = 0, len = catProduct.categoryAssignments.length; i < len; i++) {
+        for (var i = 0, len = catProduct.categoryAssignments.length; i < len; i++) {
             categories.push(catProduct.categoryAssignments[i].category.displayName);
         }
         categories = klaviyoUtils.dedupeArray(categories);
 
         data['Categories'] = categories;
         data['Primary Category'] = !empty(catProduct.getPrimaryCategory()) ? catProduct.getPrimaryCategory().displayName : '';
-
-    } catch(e) {
+    } catch (e) {
         var logger = Logger.getLogger('Klaviyo', 'Klaviyo.core viewedProduct.js');
-        logger.error('viewedProduct.getData() failed to create data object: ' + e.message + ' ' + e.stack );
+        logger.error('viewedProduct.getData() failed to create data object: ' + e.message + ' ' + e.stack);
     }
 
     return data;
@@ -70,5 +65,5 @@ function getData(productID) {
 
 
 module.exports = {
-    getData : getData
+    getData: getData
 };

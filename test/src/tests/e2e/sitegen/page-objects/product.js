@@ -19,7 +19,6 @@ exports.ProductPage = class ProductPage extends BasePage {
 
         this.sizeSwatches = page.locator('.swatches.size')
         this.sizeSelect = page.locator('.swatchanchor')
-        // this.widthSelect = page.locator('#width-1')
         this.addToCartLocator = page.locator('#add-to-cart')
     }
 
@@ -32,13 +31,10 @@ exports.ProductPage = class ProductPage extends BasePage {
         const products = await this.productLocator
         const pdpURL = await products.first().getAttribute('href')
         await this.page.goto(pdpURL)
-        // const productTitle = await this.productTitle.first().innerHTML()
-        // return productTitle
     }
 
     async addToCart() {
         await this.selectSize()
-        // await this.selectWidth()
         await this.addToCartLocator.click()
         await this.page.waitForTimeout(5000)
     }

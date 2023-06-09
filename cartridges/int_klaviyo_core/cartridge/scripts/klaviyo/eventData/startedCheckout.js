@@ -11,18 +11,16 @@ var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils');
 var KLImageSize = klaviyoUtils.KLImageSize;
 
 
-/***
- * KL EVENT TRACKING: prepares data for "Started Checkout" event.
- * Triggered via checkoutHelpers.js > startedCheckoutHelper
- * Note there are some descrepancies in property naming conventions compared to other events but
- *  these have been retained to support backwards compatibility with current client flows.
- *
- * @param currentBasket - SFCC Basket object
- * @returns data object to be passed to the KL API
- ***/
-
+/**
+     * KL EVENT TRACKING: prepares data for "Started Checkout" event.
+     * Triggered via checkoutHelpers.js > startedCheckoutHelper
+     * Note there are some descrepancies in property naming conventions compared to other events but
+     *  these have been retained to support backwards compatibility with current client flows.
+     *
+     * @param currentBasket - SFCC Basket object
+     * @returns data object to be passed to the KL API
+**/
 function getData(currentBasket) {
-
     var data;
     try {
         data = {};
@@ -37,7 +35,7 @@ function getData(currentBasket) {
         data.Categories = [];
         data.Items = [];
         data.$email = currentBasket.customerEmail;
-        data.cartRebuildingLink = URLUtils.abs('KlaviyoRecreate-Cart').toString() + `?items=`; // KL RECREATE CART
+        data.cartRebuildingLink = URLUtils.abs('KlaviyoRecreate-Cart').toString() + '?items='; // KL RECREATE CART
 
         for (var itemIndex = 0; itemIndex < basketItems.length; itemIndex++) {
             var lineItem = basketItems[itemIndex];
@@ -50,9 +48,9 @@ function getData(currentBasket) {
             var options = lineItem && lineItem.optionProductLineItems ? klaviyoUtils.captureProductOptions(lineItem.optionProductLineItems) : null;
 
             if (currentProductID != null && !empty(basketProduct) && basketProduct.getPriceModel().getPrice().value > 0) {
-                var productObj = prepareProductObj( lineItem, basketProduct, currentProductID );
+                var productObj = prepareProductObj(lineItem, basketProduct, currentProductID);
 
-                if(!basketProduct.master && 'masterProduct' in basketProduct) {
+                if (!basketProduct.master && 'masterProduct' in basketProduct) {
                     productObj['Master Product ID'] = basketProduct.masterProduct.ID;
                 }
 
@@ -80,9 +78,9 @@ function getData(currentBasket) {
         }
 
         data.cartRebuildingLink += StringUtils.encodeBase64(JSON.stringify(reconstructCartItems)); // KL RECREATE CART
-    } catch(e) {
+    } catch (e) {
         var logger = Logger.getLogger('Klaviyo', 'Klaviyo.core startedCheckout.js');
-        logger.error('startedCheckout.getData() failed to create data object: '+e.message+' '+ e.stack );
+        logger.error('startedCheckout.getData() failed to create data object: ' + e.message + ' ' + e.stack);
     }
     return data;
 }
@@ -116,7 +114,7 @@ function prepareProductObj(lineItem, basketProduct, currentProductID) {
 
     var categories = [];
     var catProduct = (basketProduct.variant) ? basketProduct.masterProduct : basketProduct;
-    for(var i = 0, len = catProduct.categoryAssignments.length; i < len; i++) {
+    for (var i = 0, len = catProduct.categoryAssignments.length; i < len; i++) {
         categories.push(catProduct.categoryAssignments[i].category.displayName);
     }
 
@@ -126,5 +124,5 @@ function prepareProductObj(lineItem, basketProduct, currentProductID) {
 
 
 module.exports = {
-    getData : getData
+    getData: getData
 };

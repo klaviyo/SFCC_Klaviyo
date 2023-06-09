@@ -9,8 +9,7 @@
     as well as logging event data to the JS console for debugging.
 </iscomment>
 <!--- TEMPLATENAME: klaviyoFooter.isml --->
-
-<isif condition="${dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_enabled')}">
+<isif condition="${klaviyoUtils.klaviyoEnabled}">
     <iscomment> the client-specific account ID is store in a Site preference in Business Manager (site pref name: Klaviyo Account, ID klaviyo_account) </iscomment>
     <script async src="//static.klaviyo.com/onsite/js/klaviyo.js?company_id=${dw.system.Site.getCurrent().preferences.custom.klaviyo_account}"></script>
     <script>

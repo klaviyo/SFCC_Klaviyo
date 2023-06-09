@@ -2,7 +2,7 @@
 
 /* API Includes */
 var Logger = require('dw/system/Logger');
-const Resource = require('dw/web/Resource');
+var Resource = require('dw/web/Resource');
 var StringUtils = require('dw/util/StringUtils');
 var URLUtils = require('dw/web/URLUtils');
 

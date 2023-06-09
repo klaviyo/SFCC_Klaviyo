@@ -29,7 +29,7 @@ function addProductToCart(decodedItems, cartObj) {
         var productToAdd;
         var template = 'checkout/cart/minicart';
 
-        for (let i = 0; i < productList.length; i++) {
+        for (var i = 0; i < productList.length; i++) {
             productToAdd = Product.get(productList[i].productID);
             // Once full product is captured using the Product.get() function, we need to use the updateOptions() function in recreateHelpers.js to handle getting
             //  the available product options and choosing the correct one that was previously selected by the customer when the recreate cart link was built.
@@ -45,18 +45,18 @@ function addProductToCart(decodedItems, cartObj) {
         // Note that bonus discountLineItem is empty, but we retain that to keep the same object footprint as OOTB siteGen. This also allows a path forward / pattern
         //  for Site Integrators to use if they choose to customize their site to allow bonus line items in their recreated carts.
         return {
-            format: format,
-            template: template,
-            BonusDiscountLineItem: newBonusDiscountLineItem
+            format                : format,
+            template              : template,
+            BonusDiscountLineItem : newBonusDiscountLineItem
         };
     } catch (error) {
         var logger = Logger.getLogger('Klaviyo', 'Klaviyo.SiteGen recreateCartHelpers.js');
         logger.error('addProductToCart() failed. ERROR at: {0} {1}', error.message, error.stack)
 
         return {
-            success: false,
-            error: true,
-            errorMessage: `ERROR - Please check the encoded obj for any unexpected chars or syntax issues. ${error.message}`,
+            success      : false,
+            error        : true,
+            errorMessage : `ERROR - Please check the encoded obj for any unexpected chars or syntax issues. ${error.message}`,
         };
     }
 };
@@ -65,5 +65,5 @@ function addProductToCart(decodedItems, cartObj) {
  * Module exports
  */
 module.exports = {
-    addProductToCart : addProductToCart,
+    addProductToCart: addProductToCart,
 }

@@ -7,37 +7,37 @@ var StringUtils = require('dw/util/StringUtils');
 var Logger = require('dw/system/Logger');
 
 /* Script Modules */
-var app = require('*/cartridge/scripts/app');
 var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils');
 
 
-/***
- * KL EVENT TRACKING (SiteGen): get a product's current and original ("list") price and return them
- * in an object in multiple formats to be passed along in various event data objects.
- *
- * Differences between SFRA and SiteGen require us to extract product price data from its own file. This is called in the getData() in viewedProduct.js
- *
- * The goal of this file is to get "price" to reflect the price seen by the user on the PDP and for "original price"
- * to always reflect the full, non-reduced "list" price of the item.
- *
- * Values within the returned object:
- *   price: current price as a number, i.e. 9.99
- *   priceString: current price as a formatted currency string inc. currency symbol, i.e. "$9.99"
- *   originalPrice: list price as a number, i.e. 14.99
- *   originalPriceString: list price as formatted currency string inc currency symbol, i.e. "$14.99"
- *
- * Note 1: certain types of promos, including "Order Level Discounts", will result in different prices being seen in on the PDP vs once the product has been added to cart.
- * Note 2: Due to site-specific customization and product / promotions settings, it is possible that a specific client may need to adjust or augment the code below.
- * Note 3: "price" / "originalPrice" in this event are numerical, whereas in other events they are formatted currency strings. This is neccesary to preserve backward-compatibility with current KL customer flows.
-***/
-
+/**
+     * KL EVENT TRACKING (SiteGen): get a product's current and original ("list") price and return them
+     * in an object in multiple formats to be passed along in various event data objects.
+     *
+     * Differences between SFRA and SiteGen require us to extract product price data from its own file. This is called in the getData() in viewedProduct.js
+     *
+     * The goal of this file is to get "price" to reflect the price seen by the user on the PDP and for "original price"
+     * to always reflect the full, non-reduced "list" price of the item.
+     *
+     * Values within the returned object:
+     *   price: current price as a number, i.e. 9.99
+     *   priceString: current price as a formatted currency string inc. currency symbol, i.e. "$9.99"
+     *   originalPrice: list price as a number, i.e. 14.99
+     *   originalPriceString: list price as formatted currency string inc currency symbol, i.e. "$14.99"
+     *
+     * Note 1: certain types of promos, including "Order Level Discounts", will result in different prices being seen in on the PDP vs once the product has been added to cart.
+     * Note 2: Due to site-specific customization and product / promotions settings, it is possible that a specific client may need to adjust or augment the code below.
+     * Note 3: "price" / "originalPrice" in this event are numerical, whereas in other events they are formatted currency strings. This is neccesary to preserve backward-compatibility with current KL customer flows.
+**/
 function getProductPrices(product) {
-    var price, originalPrice, promoPrice;
+    var price;
+    var originalPrice;
+    var promoPrice;
     var orgProduct = product;
 
     product = (product.variationGroup) ? product.masterProduct : product;
 
-    if(product.master && !product.priceModel.isPriceRange() && product.variationModel.variants.size() > 0) {
+    if (product.master && !product.priceModel.isPriceRange() && product.variationModel.variants.size() > 0) {
         product = orgProduct.variationModel.variants[0];
     }
 
@@ -79,27 +79,26 @@ function getProductPrices(product) {
         // Similar to utilities used in priceCheck within utils.js, SFCC's formatMoney() method on the StringUtils class object is used to correctly format the price according to
         // the currency that is currently active on the session. (Ex: $19.99 or €19.99 or £19.99, etc.). The formatted currency values are returned alongside numerical values to be used in viewedProduct.js
         return {
-            price : price,
-            priceString : StringUtils.formatMoney(dw.value.Money( price, session.getCurrency().getCurrencyCode() )),
-            originalPrice : originalPrice,
-            originalPriceString : originalPrice ? StringUtils.formatMoney(dw.value.Money( originalPrice, session.getCurrency().getCurrencyCode() )) : null
-        }
-
-    } catch(e) {
+            price               : price,
+            priceString         : StringUtils.formatMoney(dw.value.Money(price, session.getCurrency().getCurrencyCode())),
+            originalPrice       : originalPrice,
+            originalPriceString : originalPrice ? StringUtils.formatMoney(dw.value.Money(originalPrice, session.getCurrency().getCurrencyCode())) : null
+        };
+    } catch (e) {
         var logger = Logger.getLogger('Klaviyo', 'Klaviyo.siteGen viewedProductHelper.js');
         logger.error('getProductPrices() failed to generate price data for product ' + product.ID + ': ' + e.message + ' ' + e.stack);
     }
 
     // fallback for failure to generate price data
     return {
-        price : 0,
-        priceString : 0,
-        originalPrice : 0,
+        price               : 0,
+        priceString         : 0,
+        originalPrice       : 0,
         originalPriceString : 0
-    }
+    };
 }
 
 
 module.exports = {
-    getProductPrices : getProductPrices
+    getProductPrices: getProductPrices
 };
