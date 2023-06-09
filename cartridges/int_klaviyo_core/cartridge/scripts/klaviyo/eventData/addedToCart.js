@@ -36,7 +36,8 @@ function getData(basket) {
             }
 
             if (currentProductID != null && !empty(basketProduct) && basketProduct.getPriceModel().getPrice().value > 0) {
-                var primaryCategory, selectedOptions;
+                var primaryCategory;
+                var selectedOptions;
                 if (basketProduct.variant) {
                     primaryCategory = (basketProduct.masterProduct.primaryCategory) ? basketProduct.masterProduct.primaryCategory.displayName : '';
                 } else {
@@ -49,22 +50,22 @@ function getData(basket) {
 
                 var categories = [];
                 var catProduct = (basketProduct.variant) ? basketProduct.masterProduct : basketProduct; // from orig klav code, always use master for finding cats
-                for(var i = 0, len = catProduct.categoryAssignments.length; i < len; i++) {
+                for (var i = 0, len = catProduct.categoryAssignments.length; i < len; i++) {
                     categories.push(catProduct.categoryAssignments[i].category.displayName);
                 }
 
                 var currentLineItem = {
-                    productID       : currentProductID,
-                    productName     : basketProduct.name,
-                    productImageURL : imageSizeOfProduct,
-                    productPageURL  : URLUtils.https('Product-Show', 'pid', currentProductID).toString(),
+                    productID                 : currentProductID,
+                    productName               : basketProduct.name,
+                    productImageURL           : imageSizeOfProduct,
+                    productPageURL            : URLUtils.https('Product-Show', 'pid', currentProductID).toString(),
                     productUPC                : basketProduct.UPC,
                     viewedProductAvailability : basketProduct.availabilityModel.availability,
-                    categories                : categories, // was createCategories(basketProduct) in orig, check that my output from categories above matches expected output
+                    categories                : categories,
                     primaryCategory           : primaryCategory
                 };
 
-                if(!basketProduct.master && 'masterProduct' in basketProduct) {
+                if (!basketProduct.master && 'masterProduct' in basketProduct) {
                     currentLineItem.masterProductID = basketProduct.masterProduct.ID;
                 }
 
@@ -105,15 +106,13 @@ function getData(basket) {
 
         // Item added to the cart in this event
         // Bonus products can occasionally appear as final item in the cart. We exclude these from the line items to accurately track the item added to cart in this event.
-        for (let i = data.lineItems.length - 1; i >= 0; i--) {
-            if (!data.lineItems[i]['Is Bonus Product']) {
-                data.productAddedToCart = data.lineItems[i];
+        for (var idx = data.lineItems.length - 1; idx >= 0; idx--) {
+            if (!data.lineItems[idx]['Is Bonus Product']) {
+                data.productAddedToCart = data.lineItems[idx];
                 break;
             }
         }
-
-    } catch(e) {
-        var errorTest = e;
+    } catch (e) {
         var logger = Logger.getLogger('Klaviyo', 'Klaviyo.core addedToCart.js');
         logger.error('addedToCart.getData() failed to create data object: ' + e.message + ' ' + e.stack);
     }
@@ -123,5 +122,5 @@ function getData(basket) {
 
 
 module.exports = {
-    getData : getData
+    getData: getData
 };

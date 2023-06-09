@@ -8,7 +8,7 @@ var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils');
 
 
 server.append('Show', function (req, res, next) {
-    if(klaviyoUtils.klaviyoEnabled && !klaviyoUtils.getKlaviyoExchangeID()){
+    if (klaviyoUtils.klaviyoEnabled && !klaviyoUtils.getKlaviyoExchangeID()) {
         res.viewData.klid = klaviyoUtils.getProfileInfo();
     }
 

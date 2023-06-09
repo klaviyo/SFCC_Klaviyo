@@ -25,25 +25,25 @@ function addProductToCart(decodedItems, cartObj) {
         var productToAdd;
         var template = 'checkout/cart/minicart';
 
-        for (let i = 0; i < productList.length; i++) {
+        for (var i = 0; i < productList.length; i++) {
             productToAdd = Product.get(productList[i].productID);
             productOptionModel = productToAdd ? recreateHelpers.updateOptions(productList[i], productToAdd.object) : null;
             cart.addProductItem(productToAdd.object, productList[i].quantity, productOptionModel);
         }
 
         return {
-            format: format,
-            template: template,
-            BonusDiscountLineItem: newBonusDiscountLineItem
+            format                : format,
+            template              : template,
+            BonusDiscountLineItem : newBonusDiscountLineItem
         };
     } catch (error) {
         var logger = Logger.getLogger('Klaviyo', 'Klaviyo.SiteGen recreateCartHelpers.js');
         logger.error('addProductToCart() failed. ERROR at: {0} {1}', error.message, error.stack)
 
         return {
-            success: false,
-            error: true,
-            errorMessage: `ERROR - Please check the encoded obj for any unexpected chars or syntax issues. ${error.message}`,
+            success      : false,
+            error        : true,
+            errorMessage : `ERROR - Please check the encoded obj for any unexpected chars or syntax issues. ${error.message}`,
         };
     }
 };
@@ -52,5 +52,5 @@ function addProductToCart(decodedItems, cartObj) {
  * Module exports
  */
 module.exports = {
-    addProductToCart : addProductToCart,
+    addProductToCart: addProductToCart,
 }

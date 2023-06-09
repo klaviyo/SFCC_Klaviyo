@@ -7,8 +7,7 @@ var PromotionMgr = require('dw/campaign/PromotionMgr');
 // The clearCart function is necessary iterate through all items in the cart to clear it and ensure a clean slate
 // (Note: ensures consistency with price, product items and shipping when refreshing the page or loading the page for the first time)
 function clearCart(cartObj) {
-    for (let i = cartObj.allProductLineItems.length - 1; i >= 0; i--) {
-        let currItem = cartObj.allProductLineItems[i];
+    for (var i = cartObj.allProductLineItems.length - 1; i >= 0; i--) {
         cartObj.removeProductLineItem(cartObj.allProductLineItems[i]);
     }
 
@@ -23,7 +22,7 @@ function updateOptions(params, product) {
     var optionModel = product.getOptionModel();
 
     for (var i = 0; i < params.options.length; i++) {
-        var optionID      = params.options[i]['Option ID'];
+        var optionID = params.options[i]['Option ID'];
         var optionValueID = params.options[i]['Option Value ID'];
 
         if (optionValueID) {
@@ -43,6 +42,6 @@ function updateOptions(params, product) {
 
 
 module.exports = {
-    clearCart: clearCart,
-    updateOptions: updateOptions
+    clearCart     : clearCart,
+    updateOptions : updateOptions
 };
