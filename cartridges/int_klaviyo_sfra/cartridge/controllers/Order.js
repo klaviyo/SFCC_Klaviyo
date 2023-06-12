@@ -18,17 +18,16 @@ server.append('Confirm', function (req, res, next) {
 
         var exchangeID = klaviyoUtils.getKlaviyoExchangeID();
         var dataObj;
-        var serviceCallResult;
         var currentOrder;
 
-        if(req.form.orderID && req.form.orderToken) {
+        if (req.form.orderID && req.form.orderToken) {
             currentOrder = OrderMgr.getOrder(req.form.orderID, req.form.orderToken);
 
             if (currentOrder && currentOrder.customerEmail) {
                 // check to see if the status is new or created
                 if (currentOrder.status == dw.order.Order.ORDER_STATUS_NEW || currentOrder.status == dw.order.Order.ORDER_STATUS_OPEN) {
                     dataObj = orderConfirmationData.getData(currentOrder, exchangeID);
-                    serviceCallResult = klaviyoUtils.trackEvent(exchangeID, dataObj, klaviyoUtils.EVENT_NAMES.orderConfirmation, currentOrder.customerEmail);
+                    klaviyoUtils.trackEvent(exchangeID, dataObj, klaviyoUtils.EVENT_NAMES.orderConfirmation, currentOrder.customerEmail);
                 }
             }
         }

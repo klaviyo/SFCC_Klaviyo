@@ -24,7 +24,7 @@ var EVENT_NAMES = {
     this site that did not label ATC events as "Added To Cart" there will be a break in reporting and functionality between past events that were not
     labelled with "Add To Cart" and the new events that are labelled "Added To Cart".  If in doubt, leave the site preference set to No and contact Klaviyo technical support.
 */
-if(Site.getCurrent().getCustomPreferenceValue('klaviyo_atc_override')) {
+if (Site.getCurrent().getCustomPreferenceValue('klaviyo_atc_override')) {
     EVENT_NAMES.addedToCart = 'Add To Cart';
 }
 

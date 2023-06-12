@@ -48,6 +48,7 @@ server.get('Event', function (req, res, next) {
                     parms = parms.split('|');
                     dataObj = searchedSiteData.getData(parms[0], parms[1]); // parms: search phrase, result count
                     break;
+                default:
                 }
                 serviceCallResult = klaviyoUtils.trackEvent(exchangeID, dataObj, action, false);
                 if (isKlDebugOn) {
