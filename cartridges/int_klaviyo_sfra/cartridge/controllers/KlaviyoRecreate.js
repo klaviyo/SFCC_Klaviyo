@@ -43,7 +43,7 @@ server.get('Cart', function (req, res, next) {
 
         res.render('error', {
             error: true,
-            message: Resource.msgf('rebuildcart.message.error.general', 'klaviyo_error', null, error.message, 'Check the encoded obj for unexpected chars or syntax issues.')
+            message: Resource.msg('rebuildcart.message.error.general', 'klaviyo_error', null)
         });
         return next();
     }
@@ -92,7 +92,7 @@ server.get('Cart', function (req, res, next) {
 
         res.render('error', {
             error   : true,
-            message : Resource.msgf('rebuildcart.message.error.transaction', 'klaviyo_error', null, error.message)
+            message : Resource.msg('rebuildcart.message.error.general', 'klaviyo_error', null)
         });
     }
     next();
