@@ -25,7 +25,7 @@ server.append('AddProduct', function (req, res, next) {
         var dataObj;
         var serviceCallResult;
         var currentBasket;
-        var isKlDebugOn = request.getHttpReferer().includes('kldebug=true') ? true : false;
+        var isKlDebugOn = request.getHttpReferer().includes('kldebug=true');
 
         if (exchangeID) {
             currentBasket = BasketMgr.getCurrentBasket();

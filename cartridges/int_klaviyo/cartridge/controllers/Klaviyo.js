@@ -11,7 +11,7 @@ var viewedProductData = require('*/cartridge/scripts/klaviyo/eventData/viewedPro
 var viewedCategoryData = require('*/cartridge/scripts/klaviyo/eventData/viewedCategory');
 var searchedSiteData = require('*/cartridge/scripts/klaviyo/eventData/searchedSite');
 
-var responseUtils = require("*/cartridge/scripts/util/Response");
+var responseUtils = require('*/cartridge/scripts/util/Response');
 
 /**
  * Controller that sends the necessary data required for klaviyo to track user events
@@ -45,6 +45,7 @@ var Event = function () {
                     parms = parms.split('|');
                     dataObj = searchedSiteData.getData(parms[0], parms[1]); // parms: search phrase, result count
                     break;
+                default:
                 }
                 serviceCallResult = klaviyoUtils.trackEvent(exchangeID, dataObj, action, false);
                 if (isKlDebugOn) {

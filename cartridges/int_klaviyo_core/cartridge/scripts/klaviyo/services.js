@@ -20,16 +20,15 @@ var KlaviyoEventService = ServiceRegistry.createService('KlaviyoEventService', {
    * @returns {String} - A JSON string of the args
    */
     createRequest: function (svc, args) {
-
         var key = Site.getCurrent().getCustomPreferenceValue('klaviyo_api_key');
-        if(!key || key == '') {
+        if (!key || key == '') {
             var logger = Logger.getLogger('Klaviyo', 'Klaviyo.core:  services.js  -  createRequest()');
             logger.error(`KlaviyoEventService failed because of a missing Klaviyo Private API key. Review key & configs for inconsistencies. Klaviyo API Key: ${key}`);
             return;
         }
 
         svc.setRequestMethod('POST');
-        svc.addHeader('Authorization', 'Klaviyo-API-Key '+key);
+        svc.addHeader('Authorization', 'Klaviyo-API-Key ' + key);
         svc.addHeader('Content-type', 'application/json');
         svc.addHeader('Accept', 'application/json');
         svc.addHeader('revision', '2023-02-22');
@@ -66,9 +65,9 @@ var KlaviyoEventService = ServiceRegistry.createService('KlaviyoEventService', {
             };
 
             return JSON.stringify(r);
-        } catch(e) {
+        } catch (e) {
             var err = 'failure to generate full response log object in KlaviyoEventService.getResponseLogMessage()';
-            if(response && response.statusCode) {
+            if (response && response.statusCode) {
                 err += ', statusCode: ' + response.statusCode;
             }
 

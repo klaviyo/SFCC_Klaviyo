@@ -299,7 +299,7 @@ function getData(order) {
         data['Item Primary Categories'] = itemPrimaryCategories;
         data['Item Categories'] = klaviyoUtils.dedupeArray(itemCategories);
         data['$value'] = orderTotal;
-        data['$event_id'] = 'orderConfirmation' + '-' + order.orderNo;
+        data['$event_id'] = 'orderConfirmation-' + order.orderNo;
         data['Tracking Number'] = order.shipments[0].trackingNumber ? order.shipments[0].trackingNumber : '';
     } catch (e) {
         var logger = Logger.getLogger('Klaviyo', 'Klaviyo.core orderConfirmation.js');

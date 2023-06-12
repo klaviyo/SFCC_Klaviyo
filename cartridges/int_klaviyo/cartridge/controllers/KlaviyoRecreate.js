@@ -9,9 +9,7 @@ var URLUtils = require('dw/web/URLUtils');
 /* Script Modules */
 var app = require('*/cartridge/scripts/app');
 var guard = require('*/cartridge/scripts/guard');
-var cartModel = require('*/cartridge/scripts/models/CartModel');
 var klaviyoCart = require('*/cartridge/scripts/klaviyo/klaviyoATC');
-var res = require("*/cartridge/scripts/util/Response");
 
 
 /**
@@ -31,7 +29,7 @@ function cart() {
 
         app.getView({
             message: Resource.msg('rebuildcart.message.error.general', 'klaviyo_error', null)
-        }).render('klaviyo/klaviyoError')
+        }).render('klaviyo/klaviyoError');
         return;
     }
 
@@ -59,13 +57,12 @@ function cart() {
         }).render(renderInfo.template);
     } else if (renderInfo.format === 'ajax') {
         app.getView('Cart', {
-            cart: cart,
-            BonusDiscountLineItem: renderInfo.BonusDiscountLineItem
+            cart                  : cart,
+            BonusDiscountLineItem : renderInfo.BonusDiscountLineItem
         }).render(renderInfo.template);
     } else {
         response.redirect(URLUtils.url('Cart-Show'));
     }
-
 }
 
 
