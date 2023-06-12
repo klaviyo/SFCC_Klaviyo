@@ -34,7 +34,7 @@ function cart() {
     }
 
     if (!cart || !items || !items.length) {
-        // logger.error(`KlaviyoRecreate-Cart controller failed to create a cart Obj. The currentBasket is ${cart} and items are ${items}.`);
+        logger.error(`KlaviyoRecreate-Cart controller failed to create a cart Obj. The currentBasket is ${cart} and items are ${items}.`);
 
         app.getView({
             message: Resource.msg('rebuildcart.message.error.general', 'klaviyo_error', null)
