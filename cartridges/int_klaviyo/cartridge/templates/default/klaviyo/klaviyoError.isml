@@ -10,7 +10,6 @@
 
     <div class="error-page-message error-message">
         <h2>${pdict.message}</h2>
-        <p>${pdict.errorMessage}</p>
     </div>
 
     <div class="error-page-footer">

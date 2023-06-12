@@ -29,10 +29,8 @@ function cart() {
     } catch (error) {
         logger.error('KlaviyoRecreate-Cart failed. Please check the encoded obj for unexpected chars or syntax issues. ERROR: {0} {1}', error.message, error.stack);
 
-        var additionalErrorContext = Resource.msgf('rebuildcart.message.error.controller.sitegen', 'klaviyo_error', null, error.message);
         app.getView({
-            message: Resource.msg('rebuildcart.message.error.general.sitegen', 'klaviyo_error', null),
-            errorMessage: Resource.msgf('rebuildcart.message.error.prompt.sitegen', 'klaviyo_error', null, additionalErrorContext),
+            message: Resource.msg('rebuildcart.message.error.general', 'klaviyo_error', null)
         }).render('klaviyo/klaviyoError')
         return;
     }
@@ -41,8 +39,7 @@ function cart() {
         logger.error(`KlaviyoRecreate-Cart controller failed to create a cart Obj. The currentBasket is ${cart} and items are ${items}.`);
 
         app.getView({
-            message: Resource.msg('rebuildcart.message.error.general.sitegen', 'klaviyo_error', null),
-            errorMessage: Resource.msgf('rebuildcart.message.error.prompt.sitegen', 'klaviyo_error', null, `The Cart is: ${cart} and Items are: ${items} - refer to logs.`)
+            message: Resource.msg('rebuildcart.message.error.general', 'klaviyo_error', null)
         }).render('klaviyo/klaviyoError');
         return;
     }
@@ -51,8 +48,7 @@ function cart() {
 
     if (renderInfo.error) {
         app.getView({
-            message: Resource.msg('rebuildcart.message.error.general.sitegen', 'klaviyo_error', null),
-            errorMessage: Resource.msgf('rebuildcart.message.error.prompt.sitegen', 'klaviyo_error', null, renderInfo.errorMessage)
+            message: Resource.msg('rebuildcart.message.error.general', 'klaviyo_error', null)
         }).render('klaviyo/klaviyoError');
         return;
     }
