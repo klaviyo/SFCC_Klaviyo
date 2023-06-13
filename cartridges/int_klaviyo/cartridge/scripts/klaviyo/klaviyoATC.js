@@ -56,7 +56,7 @@ function addProductToCart(decodedItems, cartObj) {
         return {
             success      : false,
             error        : true,
-            errorMessage : `ERROR - Please check the encoded obj for any unexpected chars or syntax issues. ${error.message}`,
+            errorMessage : `ERROR - Please check the encoded obj for any unexpected chars or syntax issues. ${error.message}`
         };
     }
 }

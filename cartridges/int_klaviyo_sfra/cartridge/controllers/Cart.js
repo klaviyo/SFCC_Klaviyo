@@ -32,7 +32,7 @@ server.append('AddProduct', function (req, res, next) {
         var serviceCallResult;
         var currentBasket;
         // KL CLIENT SIDE DEBUGGING: if kldebug=true is in the querystring output event & service data to the JS console.
-        var isKlDebugOn = request.getHttpReferer().includes('kldebug=true') ? true : false;
+        var isKlDebugOn = request.getHttpReferer().includes('kldebug=true');
 
         if (exchangeID) {
             currentBasket = BasketMgr.getCurrentBasket();

@@ -67,6 +67,7 @@ server.get('Event', function (req, res, next) {
                     parms = parms.split('|');
                     dataObj = searchedSiteData.getData(parms[0], parms[1]); // parms: search phrase, result count
                     break;
+                default:
                 }
                 // KL EVENT TRACKING: fire service call to KL Track Event API
                 serviceCallResult = klaviyoUtils.trackEvent(exchangeID, dataObj, action, false);

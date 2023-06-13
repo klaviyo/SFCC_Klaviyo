@@ -17,7 +17,6 @@ As such it is likely more of an example than a template that site owners will us
     <div class="error-page-message error-message">
         <iscomment>These two pdict variables are the only Klaviyo-specific lines in this template</iscomment>
         <h2>${pdict.message}</h2>
-        <p>${pdict.errorMessage}</p>
     </div>
 
     <div class="error-page-footer">

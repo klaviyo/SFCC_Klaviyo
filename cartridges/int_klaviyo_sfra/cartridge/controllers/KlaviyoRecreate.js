@@ -6,11 +6,9 @@ var server = require('server');
 var BasketMgr = require('dw/order/BasketMgr');
 var Logger = require('dw/system/Logger');
 var ProductMgr = require('dw/catalog/ProductMgr');
-var PromotionMgr = require('dw/campaign/PromotionMgr');
 var Resource = require('dw/web/Resource');
 var StringUtils = require('dw/util/StringUtils');
 var Transaction = require('dw/system/Transaction');
-var URLUtils = require('dw/web/URLUtils');
 
 /* Script Modules */
 var shippingHelper = require('*/cartridge/scripts/checkout/shippingHelpers');
@@ -42,25 +40,24 @@ var CartModel = require('*/cartridge/models/cart');
  */
 server.get('Cart', function (req, res, next) {
     var currentBasket = BasketMgr.getCurrentOrNewBasket();
+    var logger = Logger.getLogger('Klaviyo', 'Klaviyo.core KlaviyoRecreate.js');
     try {
         var items = req.querystring.items ? JSON.parse(StringUtils.decodeBase64(req.querystring.items)) : null;
     } catch (error) {
         res.setStatusCode(500);
-        var logger = Logger.getLogger('Klaviyo', 'Klaviyo.core KlaviyoRecreate.js');
-        logger.error('KlaviyoRecreate-Cart failed. Please check the encoded obj for unexpected chars or syntax issues. ERROR: {0} {1}', error.message, error.stack)
+        logger.error('KlaviyoRecreate-Cart failed. Please check the encoded obj for unexpected chars or syntax issues. ERROR: {0} {1}', error.message, error.stack);
 
         res.render('error', {
-            error: true,
-            message: Resource.msgf('rebuildcart.message.error.general', 'klaviyo_error', null, error.message, 'Check the encoded obj for unexpected chars or syntax issues.')
+            error   : true,
+            message : Resource.msg('rebuildcart.message.error.general', 'klaviyo_error', null)
         });
         return next();
     }
 
     if (!currentBasket) {
         res.setStatusCode(500);
-        var logger = Logger.getLogger('Klaviyo', 'Klaviyo.core KlaviyoRecreate.js');
         logger.error(`KlaviyoRecreate-Cart controller failed to create a cart Obj. The currentBasket is ${currentBasket}.`);
-    };
+    }
 
     // Clean the basket to prevent product duplication on page refresh
     if (currentBasket && currentBasket.productQuantityTotal > 0) {
@@ -75,16 +72,17 @@ server.get('Cart', function (req, res, next) {
                     if (!productToAdd) {
                         throw new Error('Product with ID [' + items[i].productID + '] not found');
                     }
-                    var childProducts = productToAdd.bundledProducts ? collections.map(productToAdd.bundledProducts, function (product) { return { pid: product.ID, quantity: null } }) : [];
+                    var childProducts = productToAdd.bundledProducts ? collections.map(productToAdd.bundledProducts, function (product) { return { pid: product.ID, quantity: null }; }) : [];
                     var options = [];
+                    // eslint-disable-next-line
                     items[i].options.forEach(optionObj => {
                         // Here we use the three key values needed for the KL RECREATE CART to properly use and select the same product options when recreating the cart. These options are the
                         // same as what the customer selected when shopping. This data is then passed to the OOTB cartHelpers.addProductToCart function below to add the selected product option as expected.
                         // Special Note: 'Option Price' & 'Option Price Value') are not needed for this logic. Those values are only used for KL EVENT TRACKING when the cart rebuilding link is created.
-                        options.push({ lineItemText: optionObj['Line Item Text'], optionId: optionObj['Option ID'], selectedValueId: optionObj['Option Value ID']});
-                    })
+                        options.push({ lineItemText: optionObj['Line Item Text'], optionId: optionObj['Option ID'], selectedValueId: optionObj['Option Value ID'] });
+                    });
 
-                    for (let key in currentBasket.shipments) {
+                    for (var key in currentBasket.shipments) {
                         shippingHelper.ensureShipmentHasMethod(currentBasket.shipments[key]);
                     }
                     cartHelpers.addProductToCart(currentBasket, items[i].productID, items[i].quantity, childProducts, options);
@@ -94,16 +92,14 @@ server.get('Cart', function (req, res, next) {
 
             var basketModel = new CartModel(currentBasket);
             res.render('cart/cart', basketModel);
-        })
+        });
     } catch (error) {
-        var testError = error;
         res.setStatusCode(500);
-        var logger = Logger.getLogger('Klaviyo', 'Klaviyo.core KlaviyoRecreate.js');
-        logger.error('Transaction failed in KlaviyoRecreate-Cart controller. ERROR: {0} {1}', error.message, error.stack)
+        logger.error('Transaction failed in KlaviyoRecreate-Cart controller. ERROR: {0} {1}', error.message, error.stack);
 
         res.render('error', {
             error   : true,
-            message : Resource.msgf('rebuildcart.message.error.transaction', 'klaviyo_error', null, error.message)
+            message : Resource.msg('rebuildcart.message.error.general', 'klaviyo_error', null)
         });
     }
     next();

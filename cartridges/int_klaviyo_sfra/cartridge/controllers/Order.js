@@ -28,7 +28,6 @@ server.append('Confirm', function (req, res, next) {
         // KL IDENTIFY: try to get the exchangeID from the KL cookie
         var exchangeID = klaviyoUtils.getKlaviyoExchangeID();
         var dataObj;
-        var serviceCallResult;
         var currentOrder;
 
         if (req.form.orderID && req.form.orderToken) {
@@ -40,7 +39,7 @@ server.append('Confirm', function (req, res, next) {
                     // KL EVENT TRACKING: assemble event data
                     dataObj = orderConfirmationData.getData(currentOrder, exchangeID);
                     // KL EVENT TRACKING: send event data to KL API via services.js > trackEvent(...)
-                    serviceCallResult = klaviyoUtils.trackEvent(exchangeID, dataObj, klaviyoUtils.EVENT_NAMES.orderConfirmation, currentOrder.customerEmail);
+                    klaviyoUtils.trackEvent(exchangeID, dataObj, klaviyoUtils.EVENT_NAMES.orderConfirmation, currentOrder.customerEmail);
                 }
             }
         }

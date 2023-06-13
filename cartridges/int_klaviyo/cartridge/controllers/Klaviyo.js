@@ -11,10 +11,7 @@ var viewedProductData = require('*/cartridge/scripts/klaviyo/eventData/viewedPro
 var viewedCategoryData = require('*/cartridge/scripts/klaviyo/eventData/viewedCategory');
 var searchedSiteData = require('*/cartridge/scripts/klaviyo/eventData/searchedSite');
 
-/* eslint-disable */
-var r = require("*/cartridge/scripts/util/Response");
-/* eslint-enable */
-
+var responseUtils = require('*/cartridge/scripts/util/Response');
 
 /**
      * Controller that sends the necessary data required for klaviyo to track user events
@@ -73,6 +70,7 @@ var Event = function () {
                     // KL EVENT TRACKING: Searched Site event
                     dataObj = searchedSiteData.getData(parms[0], parms[1]); // parms: search phrase, result count
                     break;
+                default:
                 }
                 // KL EVENT TRACKING: fire service call to KL Track Event API
                 serviceCallResult = klaviyoUtils.trackEvent(exchangeID, dataObj, action, false);
@@ -108,7 +106,7 @@ var StartedCheckoutEvent = function () {
     var email = StringUtils.decodeBase64(request.httpParameterMap.a);
     KLCheckoutHelpers.startedCheckoutHelper(true, email);
 
-    res.json({ success: true });
+    responseUtils.renderJSON({ success: true });
 };
 
 exports.Event = guard.ensure(['get'], Event);
