@@ -217,9 +217,8 @@ function trackEvent(exchangeID, data, event, customerEmail) {
 
     if (result.ok === true) {
         return { success: true };
-    } else {
-        return JSON.parse(result.errorMessage);
     }
+    return JSON.parse(result.errorMessage);
 }
 
 

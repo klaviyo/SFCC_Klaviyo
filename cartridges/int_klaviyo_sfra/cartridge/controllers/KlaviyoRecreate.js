@@ -66,9 +66,10 @@ server.get('Cart', function (req, res, next) {
                     }
                     var childProducts = productToAdd.bundledProducts ? collections.map(productToAdd.bundledProducts, function (product) { return { pid: product.ID, quantity: null }; }) : [];
                     var options = [];
+                    // eslint-disable-next-line
                     items[i].options.forEach(optionObj => {
-                        options.push({ lineItemText: optionObj['Line Item Text'], optionId: optionObj['Option ID'], selectedValueId: optionObj['Option Value ID']});
-                    })
+                        options.push({ lineItemText: optionObj['Line Item Text'], optionId: optionObj['Option ID'], selectedValueId: optionObj['Option Value ID'] });
+                    });
 
                     for (var key in currentBasket.shipments) {
                         shippingHelper.ensureShipmentHasMethod(currentBasket.shipments[key]);
