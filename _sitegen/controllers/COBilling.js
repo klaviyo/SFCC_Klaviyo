@@ -562,7 +562,7 @@ function billing() {
         save: function () {
             Transaction.wrap(function () {
                 var cart = app.getModel('Cart').get();
-	
+
                 if (!resetPaymentForms() || !validateBilling() || !handleBillingAddress(cart) || // Performs validation steps, based upon the entered billing address
                 // and address options.
                 handlePaymentSelection(cart).error) {// Performs payment method specific checks, such as credit card verification.
