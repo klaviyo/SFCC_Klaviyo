@@ -1,0 +1,28 @@
+
+<iscontent type="text/html" charset="UTF-8" compact="true"/>
+<isset name="DecoratorTemplate" value="error/pt_error" scope="page"/>
+<iscomment>
+KL RECREATE CART (SiteGen):
+This template is utilized by KlaviyoRecreate.js to display user-friend error messaging if the cart recreation cart fails.
+It is based on the OOTB SiteGen error template, which many site owners will have customized.
+As such it is likely more of an example than a template that site owners will use directly.
+</iscomment>
+
+<isdecorate template="${DecoratorTemplate}">
+
+    <isinclude template="util/modules"/>
+    <h1>${Resource.msg('generalerror.erroroccured','error',null)}</h1>
+    <isslot id="error-banner" description="Banner for error pages" context="global"/>
+
+    <div class="error-page-message error-message">
+        <iscomment>These two pdict variables are the only Klaviyo-specific lines in this template</iscomment>
+        <h2>${pdict.message}</h2>
+    </div>
+
+    <div class="error-page-footer">
+        <div class="error-page-footer-asset">
+            <iscontentasset aid="error-service"/>
+        </div>
+    </div>
+
+</isdecorate>

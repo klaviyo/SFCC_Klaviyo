@@ -18,7 +18,7 @@
       }
     ],
     "dot-notation": [
-      "error",
+      "warn",
       {
         "allowKeywords": true
       }
@@ -432,7 +432,7 @@
     "operator-linebreak": "off",
     "padded-blocks": ["error", "never"],
     "quote-props": [
-      "error",
+      "warn",
       "as-needed",
       {
         "keywords": false,
@@ -525,7 +525,7 @@
         "cartridges/modules/**/*.ds"
       ],
       "parserOptions": {
-        "ecmaVersion": 5
+        "ecmaVersion": "latest"
       },
       "env": {
         "es6": true,

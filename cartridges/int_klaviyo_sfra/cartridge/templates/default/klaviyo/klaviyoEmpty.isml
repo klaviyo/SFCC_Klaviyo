@@ -1,0 +1,4 @@
+<iscomment>
+    This template is intentionally blank.  it is rendered via the Klaviyo-Event controller when no output to the page is required.
+    Do not delete this file or you will get 500 errors coming out of Klaviyo-Event
+</iscomment>
