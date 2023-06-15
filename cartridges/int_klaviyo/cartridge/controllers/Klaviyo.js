@@ -1,93 +1,80 @@
 'use strict';
 
-/* Script Modules */
-var guard = require('*/cartridge/scripts/guard');
-
-/* eslint-disable */
-var r = require("*/cartridge/scripts/util/Response");
-/* eslint-enable */
-
-var Logger = require('dw/system/Logger');
 /* API Includes */
-var ISML = require('dw/template/ISML');
+var StringUtils = require('dw/util/StringUtils');
+
+/* Script Modules */
+var app = require('*/cartridge/scripts/app');
+var guard = require('*/cartridge/scripts/guard');
+var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils');
+var viewedProductData = require('*/cartridge/scripts/klaviyo/eventData/viewedProduct');
+var viewedCategoryData = require('*/cartridge/scripts/klaviyo/eventData/viewedCategory');
+var searchedSiteData = require('*/cartridge/scripts/klaviyo/eventData/searchedSite');
+
+var responseUtils = require('*/cartridge/scripts/util/Response');
 
 /**
  * Controller that sends the necessary data required for klaviyo to track user events
- * such as checkout, order confirmation, searching etc and renders the renders the klaviyoTag isml file
+ * such as checkout, order confirmation, searching etc and renders the renders the klaviyoFooter.isml file
  *
  * @module controllers/Klaviyo
  */
+var Event = function () {
+    if (klaviyoUtils.klaviyoEnabled) {
+        var kx = request.httpParameterMap.kx;
+        var exchangeID = (!kx.empty) ? kx.stringValue : klaviyoUtils.getKlaviyoExchangeID();
+        var isKlDebugOn = request.httpParameterMap.kldebug.booleanValue;
+        var dataObj;
+        var serviceCallResult;
+        var action;
+        var parms;
 
-var RenderKlaviyo = function () {
-    if (
-        !dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_enabled')
-    ) {
-        return;
-    }
-    var logger = Logger.getLogger(
-        'Klaviyo',
-        'SG Klaviyo Controller - RenderKlaviyo()'
-    );
-    try {
-        logger.info('RenderKlaviyo() called.');
-        var klaviyoUtils = require('*/cartridge/scripts/utils/klaviyo/klaviyoUtils');
-        var klaviyoTags =
-      require('*/cartridge/scripts/utils/klaviyo/klaviyoOnSiteTags.js').klaviyoOnSiteTags;
+        if (exchangeID) {
+            action = request.httpParameterMap.action.stringValue;
+            parms = request.httpParameterMap.parms.stringValue;
 
-        var klaviyoDataLayer = klaviyoUtils.buildDataLayer();
-        var sendToDom = klaviyoTags(klaviyoDataLayer);
-
-        ISML.renderTemplate('klaviyo/klaviyoTag', {
-            klaviyoData: sendToDom
-        });
-    } catch (e) {
-        logger.debug(
-            'Error encountered with RenderKlaviyo - ' +
-        e.message +
-        ' at ' +
-        e.lineNumber
-        );
-    }
-};
-
-/**
- * Controller that sends the necessary data to klaviyo when an add to cart event happens
- * @module controllers/Klaviyo
- */
-
-var RenderKlaviyoAddToCart = function () {
-    if (
-        !dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_enabled')
-    ) {
-        return;
-    }
-    var logger = Logger.getLogger(
-        'Klaviyo',
-        'SG Klaviyo Controller - RenderKlaviyoAddToCart()'
-    );
-    try {
-        logger.info('RenderKlaviyoAddToCart() called.');
-        var klaviyoUtils = require('*/cartridge/scripts/utils/klaviyo/klaviyoUtils');
-        var klaviyoTags =
-      require('*/cartridge/scripts/utils/klaviyo/klaviyoOnSiteTags.js').klaviyoOnSiteTags;
-
-        var klaviyoDataLayer = klaviyoUtils.buildCartDataLayer();
-        var sendToDom = klaviyoTags(klaviyoDataLayer);
-
-        ISML.renderTemplate('klaviyo/klaviyoTag', {
-            klaviyoData: sendToDom
-        });
-    } catch (e) {
-        logger.debug(
-            'Error encountered with RenderKlaviyoAddToCart - ' +
-        e.message +
-        ' at ' +
-        e.lineNumber
-        );
+            if (action != 'false') { // string test intentional, action passed as 'false' for pages that do not need to trigger events (Home, Page, Default)
+                switch (action) {
+                case klaviyoUtils.EVENT_NAMES.viewedProduct :
+                    dataObj = viewedProductData.getData(parms); // parms: product ID
+                    break;
+                case klaviyoUtils.EVENT_NAMES.viewedCategory :
+                    dataObj = viewedCategoryData.getData(parms); // parms: category ID
+                    break;
+                case klaviyoUtils.EVENT_NAMES.searchedSite :
+                    parms = parms.split('|');
+                    dataObj = searchedSiteData.getData(parms[0], parms[1]); // parms: search phrase, result count
+                    break;
+                default:
+                }
+                serviceCallResult = klaviyoUtils.trackEvent(exchangeID, dataObj, action, false);
+                if (isKlDebugOn) {
+                    app.getView({
+                        klDebugData     : klaviyoUtils.prepareDebugData(dataObj),
+                        serviceCallData : klaviyoUtils.prepareDebugData(serviceCallResult)
+                    }).render('klaviyo/klaviyoDebug');
+                    return;
+                }
+            }
+        } else {
+            // no klaviyo ID, check for SFCC profile and ID off that if extent
+            var klid = klaviyoUtils.getProfileInfo();
+            if (klid) {
+                app.getView({ klid: klid }).render('klaviyo/klaviyoID');
+            }
+        }
     }
 };
 
-/** Handles the form submission for subscription.
- * @see {@link module:controllers/Klaviyo~Subscribe} */
-exports.RenderKlaviyo = guard.ensure(['get'], RenderKlaviyo);
-exports.RenderKlaviyoAddToCart = guard.ensure(['get'], RenderKlaviyoAddToCart);
+
+/* receives AJAX call from email field indicated by custom Site Preference "klaviyo_checkout_email_selector" */
+var StartedCheckoutEvent = function () {
+    var KLCheckoutHelpers = require('*/cartridge/scripts/klaviyo/checkoutHelpers');
+    var email = StringUtils.decodeBase64(request.httpParameterMap.a);
+    KLCheckoutHelpers.startedCheckoutHelper(true, email);
+
+    responseUtils.renderJSON({ success: true });
+};
+
+exports.Event = guard.ensure(['get'], Event);
+exports.StartedCheckoutEvent = guard.ensure(['post'], StartedCheckoutEvent);

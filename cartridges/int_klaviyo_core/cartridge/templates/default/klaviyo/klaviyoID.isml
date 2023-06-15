@@ -1,0 +1,15 @@
+<iscomment>
+    the JS in this template fires if there is no klaviyo ID (cookie) available but there is a SFCC profile available to ID the user to klaviyo with
+    the core pdict.klid that triggers this activity is generally set in klaviyo controller "Show" method appends to the main SFRA controllers (Home, Product, Search, etc)
+</iscomment>
+<!--- TEMPLATENAME: klaviyoID.isml --->
+<isif condition="${'klid' in pdict && !empty(pdict.klid)}">
+    <script>
+    var klid = JSON.parse(atob('${pdict.klid}'));
+    window.addEventListener('DOMContentLoaded', (event) => {
+        klaviyo.isIdentified().then((result) => {
+            if(!result) klaviyo.identify(klid);
+        });
+    });
+    </script>
+</isif>
