@@ -77,6 +77,75 @@ var KlaviyoEventService = ServiceRegistry.createService('KlaviyoEventService', {
 });
 
 
+
+var KlaviyoSubscribeProfilesService = ServiceRegistry.createService('KlaviyoSubscribeProfilesService', {
+
+    /**
+   * Create the service request
+   * - Set request method to be the HTTP POST method
+   * - Construct request URL
+   * - Append the request HTTP query string as a URL parameter
+   *
+   * @param {dw.svc.HTTPService} svc - HTTP Service instance
+   * @param {Object} args - Additional paramaters
+   * @returns {String} - A JSON string of the args
+   */
+    createRequest: function (svc, args) {
+        var key = Site.getCurrent().getCustomPreferenceValue('klaviyo_api_key');
+        if (!key || key == '') {
+            var logger = Logger.getLogger('Klaviyo', 'Klaviyo.core:  services.js  -  createRequest()');
+            logger.error(`KlaviyoSubscribeProfilesService failed because of a missing Klaviyo Private API key. Review key & configs for inconsistencies. Klaviyo API Key: ${key}`);
+            return;
+        }
+
+        svc.setRequestMethod('POST');
+        svc.addHeader('Authorization', 'Klaviyo-API-Key ' + key);
+        svc.addHeader('Content-type', 'application/json');
+        svc.addHeader('Accept', 'application/json');
+        svc.addHeader('revision', '2023-02-22');
+
+        return JSON.stringify(args);
+    },
+
+    /**
+   * JSON parse the response text and return it in configured retData object
+   *
+   * @param {dw.svc.HTTPService} svc - HTTP Service instance
+   * @param {dw.net.HTTPClient} client - HTTPClient class instance of the current service
+   * @returns {Object} retData - Service response object
+   */
+    parseResponse: function (svc, client) {
+        return client.text;
+    },
+
+    getRequestLogMessage: function (request) {
+        return request;
+    },
+
+    getResponseLogMessage: function (response) {
+        try {
+            var r = {
+                statusCode    : response.statusCode,
+                statusMessage : response.statusMessage,
+                errorText     : response.errorText,
+                text          : response.text
+            };
+
+            return JSON.stringify(r);
+        } catch (e) {
+            var err = 'failure to generate full response log object in KlaviyoEventService.getResponseLogMessage()';
+            if (response && response.statusCode) {
+                err += ', statusCode: ' + response.statusCode;
+            }
+
+            return err;
+        }
+    }
+});
+
+
+
 module.exports = {
-    KlaviyoEventService: KlaviyoEventService
+    KlaviyoEventService: KlaviyoEventService,
+    KlaviyoSubscribeProfilesService: KlaviyoSubscribeProfilesService
 };

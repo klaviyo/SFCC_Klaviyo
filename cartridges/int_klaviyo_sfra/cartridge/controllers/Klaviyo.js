@@ -81,5 +81,29 @@ server.post('StartedCheckoutEvent', server.middleware.https, function (req, res,
     return;
 });
 
+/* called via ajax when the email or sms subscribe checkboxes are clicked.  KLSubscribe session vars picked up in Klaviyo-appended Order-Confirm controller */
+server.post('Subscribe', server.middleware.https, function (req, res, next) {
+    var email = req.httpParameterMap.e;
+    var sms = req.httpParameterMap.s;
+
+    if(!('KLEmailSubscribe' in session.custom)) {
+        session.custom.KLEmailSubscribe = false;
+    }
+    if(!('KLSmsSubscribe' in session.custom)) {
+        session.custom.KLSmsSubscribe = false;
+    }
+    if(!email.empty) {
+        session.custom.KLEmailSubscribe = email.booleanValue;
+    }
+    if(!sms.empty) {
+        session.custom.KLSmsSubscribe = sms.booleanValue;
+    }
+
+    res.json({ success: true });
+
+    next();
+    return;
+});
+
 
 module.exports = server.exports();

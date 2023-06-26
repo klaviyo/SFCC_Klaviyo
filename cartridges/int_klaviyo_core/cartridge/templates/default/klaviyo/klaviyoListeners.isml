@@ -7,6 +7,8 @@
 
 <isset name="KLselectors" value="${dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_email_selectors')}" scope="page" />
 <isset name="KLCheckoutSelector" value="${dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_checkout_email_selector')}" scope="page" />
+<isset name="KLEmailListID" value="${dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_email_list_id')}" scope="page" />
+<isset name="KLSmsListID" value="${dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_sms_list_id')}" scope="page" />
 
 <script>
     var klaviyoJS = {};
@@ -106,4 +108,42 @@
 
         klaviyoListeners();
     </script>
+
+<isif condition="${KLEmailListID || KLSmsListID}">
+    <script>
+        klaviyoJS.subscribe = function(data) {
+            $.ajax({
+                url: "${dw.web.URLUtils.https('Klaviyo-Subscribe')}",
+                type: 'post',
+                data: data,
+                error: function (err) {
+                    console.warn('Klaviyo Subscribe failure: ' + err.statusText);
+                }
+            });
+        }
+
+        window.addEventListener('DOMContentLoaded', (event) => {
+            klaviyoJS.emailSubscribe = document.getElementById('KLEmailSubscribe');
+            if(klaviyoJS.emailSubscribe) {
+                if (klaviyoJS.emailSubscribe.checked) {
+                    klaviyoJS.subscribe({ e: true });
+                }
+                klaviyoJS.emailSubscribe.addEventListener('click', function(){
+                    klaviyoJS.subscribe({ e: klaviyoJS.emailSubscribe.checked });
+                });
+            }
+
+            klaviyoJS.smsSubscribe = document.getElementById('KLSmsSubscribe');
+            if(klaviyoJS.smsSubscribe) {
+                if (klaviyoJS.smsSubscribe.checked) {
+                    klaviyoJS.subscribe({ s: true });
+                }
+                klaviyoJS.smsSubscribe.addEventListener('click', function(){
+                    klaviyoJS.subscribe({ s: klaviyoJS.smsSubscribe.checked });
+                });
+            }
+        });
+    </script>
+</isif>
+
 </isif>
