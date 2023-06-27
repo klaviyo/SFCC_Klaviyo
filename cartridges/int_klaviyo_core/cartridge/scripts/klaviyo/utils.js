@@ -222,6 +222,8 @@ function trackEvent(exchangeID, data, event, customerEmail) {
 }
 
 
+// The subscribeUser func takes the user email & phone number to prep a data object w/ a corresponding emailListID or smsListID (both configured in BM w/ values from the Klaviyo Dashboard)
+// Data is sent to the KlaviyoSubscribeProfilesService API to subscribe users to email or SMS lists.
 function subscribeUser(email, phone) {
     var logger = Logger.getLogger('Klaviyo', 'Klaviyo.core utils.js - trackEvent()');
 
