@@ -82,16 +82,16 @@ var Subscribe = function () {
     var email = request.httpParameterMap.e;
     var sms = request.httpParameterMap.s;
 
-    if(!('KLEmailSubscribe' in session.custom)) {
+    if (!('KLEmailSubscribe' in session.custom)) {
         session.custom.KLEmailSubscribe = false;
     }
-    if(!('KLSmsSubscribe' in session.custom)) {
+    if (!('KLSmsSubscribe' in session.custom)) {
         session.custom.KLSmsSubscribe = false;
     }
-    if(!email.empty) {
+    if (!email.empty) {
         session.custom.KLEmailSubscribe = email.booleanValue;
     }
-    if(!sms.empty) {
+    if (!sms.empty) {
         session.custom.KLSmsSubscribe = sms.booleanValue;
     }
 

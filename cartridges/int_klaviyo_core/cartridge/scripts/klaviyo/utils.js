@@ -233,19 +233,20 @@ function subscribeUser(email, phone) {
     var emailListID = Site.getCurrent().getCustomPreferenceValue('klaviyo_email_list_id');
     var smsListID = Site.getCurrent().getCustomPreferenceValue('klaviyo_sms_list_id');
 
-    var data, result, emailResult = true, smsResult = true;
+    var data;
+    var result;
 
-    if(email && emailListID) {
+    if (email && emailListID) {
         data = {
             data: {
-                type: 'profile-subscription-bulk-create-job',
-                attributes: {
-                    list_id: emailListID,
-                    custom_source: 'Marketing Event',
-                    subscriptions: [ {
-                        channels: {email: ['MARKETING'] },
-                        email: email
-                    } ]
+                type       : 'profile-subscription-bulk-create-job',
+                attributes : {
+                    list_id       : emailListID,
+                    custom_source : 'Marketing Event',
+                    subscriptions : [{
+                        channels : { email: ['MARKETING'] },
+                        email    : email
+                    }]
                 }
             }
         };
@@ -259,19 +260,18 @@ function subscribeUser(email, phone) {
         if (!result.ok === true) {
             logger.error('klaviyoServices.KlaviyoSubscribeProfilesService subscribe call for email error: ' + result.errorMessage);
         }
-
     }
 
-    if(phone && smsListID) {
+    if (phone && smsListID) {
         data = { data: {
-            type: 'profile-subscription-bulk-create-job',
-            attributes: {
-                list_id: smsListID,
-                custom_source: 'Marketing Event',
-                subscriptions: [ {
-                    channels: { sms: ['MARKETING'] },
-                    phone_number: phone
-                } ]
+            type       : 'profile-subscription-bulk-create-job',
+            attributes : {
+                list_id       : smsListID,
+                custom_source : 'Marketing Event',
+                subscriptions : [{
+                    channels     : { sms: ['MARKETING'] },
+                    phone_number : phone
+                }]
             }
         } };
 
@@ -284,10 +284,9 @@ function subscribeUser(email, phone) {
         if (!result.ok === true) {
             logger.error('klaviyoServices.KlaviyoSubscribeProfilesService subscribe call for SMS error: ' + result.errorMessage);
         }
-
-
     }
 }
+
 
 module.exports = {
     EVENT_NAMES           : EVENT_NAMES,

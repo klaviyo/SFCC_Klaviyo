@@ -108,6 +108,7 @@
 
         klaviyoListeners();
     </script>
+</isif>
 
 <isif condition="${KLEmailListID || KLSmsListID}">
     <script>
@@ -124,7 +125,7 @@
 
         window.addEventListener('DOMContentLoaded', (event) => {
             klaviyoJS.emailSubscribe = document.getElementById('KLEmailSubscribe');
-            if(klaviyoJS.emailSubscribe) {
+            if (klaviyoJS.emailSubscribe) {
                 if (klaviyoJS.emailSubscribe.checked) {
                     klaviyoJS.subscribe({ e: true });
                 }
@@ -134,7 +135,7 @@
             }
 
             klaviyoJS.smsSubscribe = document.getElementById('KLSmsSubscribe');
-            if(klaviyoJS.smsSubscribe) {
+            if (klaviyoJS.smsSubscribe) {
                 if (klaviyoJS.smsSubscribe.checked) {
                     klaviyoJS.subscribe({ s: true });
                 }
@@ -144,6 +145,4 @@
             }
         });
     </script>
-</isif>
-
 </isif>

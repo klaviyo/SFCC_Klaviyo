@@ -77,7 +77,6 @@ var KlaviyoEventService = ServiceRegistry.createService('KlaviyoEventService', {
 });
 
 
-
 var KlaviyoSubscribeProfilesService = ServiceRegistry.createService('KlaviyoSubscribeProfilesService', {
 
     /**
@@ -144,8 +143,7 @@ var KlaviyoSubscribeProfilesService = ServiceRegistry.createService('KlaviyoSubs
 });
 
 
-
 module.exports = {
-    KlaviyoEventService: KlaviyoEventService,
-    KlaviyoSubscribeProfilesService: KlaviyoSubscribeProfilesService
+    KlaviyoEventService             : KlaviyoEventService,
+    KlaviyoSubscribeProfilesService : KlaviyoSubscribeProfilesService
 };

@@ -86,16 +86,16 @@ server.post('Subscribe', server.middleware.https, function (req, res, next) {
     var email = req.httpParameterMap.e;
     var sms = req.httpParameterMap.s;
 
-    if(!('KLEmailSubscribe' in session.custom)) {
+    if (!('KLEmailSubscribe' in session.custom)) {
         session.custom.KLEmailSubscribe = false;
     }
-    if(!('KLSmsSubscribe' in session.custom)) {
+    if (!('KLSmsSubscribe' in session.custom)) {
         session.custom.KLSmsSubscribe = false;
     }
-    if(!email.empty) {
+    if (!email.empty) {
         session.custom.KLEmailSubscribe = email.booleanValue;
     }
-    if(!sms.empty) {
+    if (!sms.empty) {
         session.custom.KLSmsSubscribe = sms.booleanValue;
     }
 

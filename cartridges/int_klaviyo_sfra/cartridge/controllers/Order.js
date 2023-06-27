@@ -30,19 +30,19 @@ server.append('Confirm', function (req, res, next) {
                     klaviyoUtils.trackEvent(exchangeID, dataObj, klaviyoUtils.EVENT_NAMES.orderConfirmation, currentOrder.customerEmail);
                 }
 
-                if('KLEmailSubscribe' in session.custom || 'KLSmsSubscribe' in session.custom) {
+                if ('KLEmailSubscribe' in session.custom || 'KLSmsSubscribe' in session.custom) {
                     var email = session.custom.KLEmailSubscribe ? currentOrder.customerEmail : false;
                     var phone = session.custom.KLSmsSubscribe ? currentOrder.defaultShipment.shippingAddress.phone : false;
                     var e164PhoneRegex = new RegExp(/^\+[1-9]\d{1,14}$/);
-                    if(phone) {
+                    if (phone) {
                         // NOTE: Klaviyo only accepts phone numbers that include + and the country code at the start (ex for US: +16465551212)
                         // in order to successfully get users subscribed to SMS list you must collect the country code in your order phone number field!
                         phone = '+' + phone.replace(/[^a-z0-9]/gi, '');
-                        if(!e164PhoneRegex.test(phone)) {
+                        if (!e164PhoneRegex.test(phone)) {
                             phone = false;
                         }
                     }
-                    if(email || phone) {
+                    if (email || phone) {
                         klaviyoUtils.subscribeUser(email, phone);
                     }
                 }
