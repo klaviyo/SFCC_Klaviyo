@@ -10,6 +10,11 @@ bumped for multiple releases during one month.
 <!-- BEGIN RELEASE NOTES -->
 ### [Unreleased]
 
+### [22.0.1] - 2023-06-27
+
+#### Changed
+- updated distinclude
+
 ### [22.0.0] - 2023-06-27
 
 #### Added
@@ -62,7 +67,8 @@ bumped for multiple releases during one month.
 <!-- END RELEASE NOTES -->
 
 <!-- BEGIN LINKS -->
-[Unreleased]: https://github.com/ykolln/SFCC_Klaviyo/compare/22.0.0...HEAD
+[Unreleased]: https://github.com/ykolln/SFCC_Klaviyo/compare/22.0.1...HEAD
+[22.0.1]: https://github.com/ykolln/SFCC_Klaviyo/compare/22.0.0...22.0.1
 [22.0.0]: https://github.com/ykolln/SFCC_Klaviyo/compare/21.10.0...22.0.0
 [21.10.0]: https://github.com/klaviyo/SFCC_Klaviyo/compare/21.7.0...21.10.0
 [21.7.0]: https://github.com/klaviyo/SFCC_Klaviyo/compare/20.11.0...21.7.0
