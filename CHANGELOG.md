@@ -10,12 +10,15 @@ bumped for multiple releases during one month.
 <!-- BEGIN RELEASE NOTES -->
 ### [Unreleased]
 
-#### Added
+### [22.0.0] - 2023-06-27
 
-- Added pre-commit to the repository and ran across all files
+#### Added
+- Added pre
+- commit to the repository and ran across all files
+- Updated CD
+- Added so much cool stuff you won't even believe
 
 #### Changed
-
 - Updated the legacy `_learnq` js object to the new `klaviyo` js object.
 
 ### [21.10.0] - 2021-10-14
@@ -59,7 +62,8 @@ bumped for multiple releases during one month.
 <!-- END RELEASE NOTES -->
 
 <!-- BEGIN LINKS -->
-[Unreleased]: https://github.com/klaviyo/SFCC_Klaviyo/compare/21.10.0...HEAD
+[Unreleased]: https://github.com/ykolln/SFCC_Klaviyo/compare/22.0.0...HEAD
+[22.0.0]: https://github.com/ykolln/SFCC_Klaviyo/compare/21.10.0...22.0.0
 [21.10.0]: https://github.com/klaviyo/SFCC_Klaviyo/compare/21.7.0...21.10.0
 [21.7.0]: https://github.com/klaviyo/SFCC_Klaviyo/compare/20.11.0...21.7.0
 [20.11.0]: https://github.com/klaviyo/SFCC_Klaviyo/compare/20.1.0...20.11.0
