@@ -63,7 +63,8 @@ jobs:
     env:
       ZIP_FILE_NAME: ${{ matrix.version }}-${{ needs.determine-if-deploy.outputs.version }}.zip
     steps:
-
+      - uses: actions/checkout@v3
+      
       - name: Create ${{ matrix.version }} Directory
         # Create version specific directory for archive release
         run: |
