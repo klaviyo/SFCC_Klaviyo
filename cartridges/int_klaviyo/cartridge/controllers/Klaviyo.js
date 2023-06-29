@@ -77,7 +77,7 @@ var StartedCheckoutEvent = function () {
 };
 
 
-/* called via ajax when the email or sms subscribe checkboxes are clicked.  KLSubscribe session vars picked up in Klaviyo-appended Order-Confirm controller */
+/* called via ajax when the email or sms subscribe checkboxes are clicked.  KLSubscribe session vars picked up in the Klaviyo Order Confirmation event (i.e. COSummary controller via showConfirmation()) */
 var Subscribe = function () {
     var email = request.httpParameterMap.e;
     var sms = request.httpParameterMap.s;
