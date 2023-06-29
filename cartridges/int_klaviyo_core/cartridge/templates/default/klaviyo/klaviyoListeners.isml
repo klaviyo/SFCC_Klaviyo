@@ -153,6 +153,8 @@
 
 <isif condition="${KLEmailListID || KLSmsListID}">
     <script>
+        <iscomment>Calling the klaviyoJS.subscribe() method triggers an ajax call to the Klaviyo-Subscribe controller when a user checks a box. This updates the session with to maintain state
+        if a user comes through checkout and then leaves / returns later.</iscomment>
         klaviyoJS.subscribe = function(data) {
             $.ajax({
                 url: "${dw.web.URLUtils.https('Klaviyo-Subscribe')}",
@@ -164,6 +166,8 @@
             });
         }
 
+        <iscomment>After the page loads, these queries capture the values of checkboxes if they've been rendered to the screen. If they are present, 'click' event listeners are set to each
+        checkbox to capture user interaction and trigger the above ajax call to the Klaviyo-Subscribe controller.</iscomment>
         window.addEventListener('DOMContentLoaded', (event) => {
             klaviyoJS.emailSubscribe = document.getElementById('KLEmailSubscribe');
             if (klaviyoJS.emailSubscribe) {
