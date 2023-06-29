@@ -222,6 +222,74 @@ function trackEvent(exchangeID, data, event, customerEmail) {
 }
 
 
+// The subscribeUser func takes the user email & phone number to prep a data object w/ a corresponding emailListID or smsListID (both configured in BM w/ values from the Klaviyo Dashboard)
+// Data is sent to the KlaviyoSubscribeProfilesService API to subscribe users to email or SMS lists.
+function subscribeUser(email, phone) {
+    var logger = Logger.getLogger('Klaviyo', 'Klaviyo.core utils.js - trackEvent()');
+
+    if (klaviyoServices.KlaviyoSubscribeProfilesService == null) {
+        logger.error('subscribeUser() failed - KlaviyoSubscribeProfilesService is null.');
+        return;
+    }
+
+    var emailListID = Site.getCurrent().getCustomPreferenceValue('klaviyo_email_list_id');
+    var smsListID = Site.getCurrent().getCustomPreferenceValue('klaviyo_sms_list_id');
+
+    var data;
+    var result;
+
+    if (email && emailListID) {
+        data = {
+            data: {
+                type       : 'profile-subscription-bulk-create-job',
+                attributes : {
+                    list_id       : emailListID,
+                    custom_source : 'Marketing Event',
+                    subscriptions : [{
+                        channels : { email: ['MARKETING'] },
+                        email    : email
+                    }]
+                }
+            }
+        };
+
+        result = klaviyoServices.KlaviyoSubscribeProfilesService.call(data);
+
+        if (result == null) {
+            logger.error('klaviyoServices.KlaviyoSubscribeProfilesService subscribe call for email returned null result');
+        }
+
+        if (!result.ok === true) {
+            logger.error('klaviyoServices.KlaviyoSubscribeProfilesService subscribe call for email error: ' + result.errorMessage);
+        }
+    }
+
+    if (phone && smsListID) {
+        data = { data: {
+            type       : 'profile-subscription-bulk-create-job',
+            attributes : {
+                list_id       : smsListID,
+                custom_source : 'Marketing Event',
+                subscriptions : [{
+                    channels     : { sms: ['MARKETING'] },
+                    phone_number : phone
+                }]
+            }
+        } };
+
+        result = klaviyoServices.KlaviyoSubscribeProfilesService.call(data);
+
+        if (result == null) {
+            logger.error('klaviyoServices.KlaviyoSubscribeProfilesService subscribe call for SMS returned null result');
+        }
+
+        if (!result.ok === true) {
+            logger.error('klaviyoServices.KlaviyoSubscribeProfilesService subscribe call for SMS error: ' + result.errorMessage);
+        }
+    }
+}
+
+
 module.exports = {
     EVENT_NAMES           : EVENT_NAMES,
     klaviyoEnabled        : klaviyoEnabled,
@@ -235,5 +303,6 @@ module.exports = {
     captureBonusProduct   : captureBonusProduct,
     priceCheck            : priceCheck,
     getRootPriceBook      : getRootPriceBook,
-    trackEvent            : trackEvent
+    trackEvent            : trackEvent,
+    subscribeUser         : subscribeUser
 };
