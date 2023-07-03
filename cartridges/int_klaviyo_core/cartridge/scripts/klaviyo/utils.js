@@ -288,41 +288,16 @@ function subscribeUser(email, phone) {
     var data;
     var result;
 
-    if (email && emailListID) {
-        data = {
-            data: {
-                type       : 'profile-subscription-bulk-create-job',
-                attributes : {
-                    list_id       : emailListID,
-                    custom_source : 'Marketing Event',
-                    subscriptions : [{
-                        channels : { email: ['MARKETING'] },
-                        email    : email
-                    }]
-                }
-            }
-        };
-
-        result = klaviyoServices.KlaviyoSubscribeProfilesService.call(data);
-
-        if (result == null) {
-            logger.error('klaviyoServices.KlaviyoSubscribeProfilesService subscribe call for email returned null result');
-        }
-
-        if (!result.ok === true) {
-            logger.error('klaviyoServices.KlaviyoSubscribeProfilesService subscribe call for email error: ' + result.errorMessage);
-        }
-    }
-
-    if (phone && smsListID) {
+    if (smsListID === emailListID && email && phone) {
         data = { data: {
             type       : 'profile-subscription-bulk-create-job',
             attributes : {
                 list_id       : smsListID,
                 custom_source : 'Marketing Event',
                 subscriptions : [{
-                    channels     : { sms: ['MARKETING'] },
-                    phone_number : phone
+                    channels     : { sms: ['MARKETING'], email: ['MARKETING'] },
+                    phone_number : phone,
+                    email        : email
                 }]
             }
         } };
@@ -330,15 +305,64 @@ function subscribeUser(email, phone) {
         result = klaviyoServices.KlaviyoSubscribeProfilesService.call(data);
 
         if (result == null) {
-            logger.error('klaviyoServices.KlaviyoSubscribeProfilesService subscribe call for SMS returned null result');
+            logger.error('klaviyoServices.KlaviyoSubscribeProfilesService subscribe call for email & SMS returned null result');
         }
 
         if (!result.ok === true) {
-            logger.error('klaviyoServices.KlaviyoSubscribeProfilesService subscribe call for SMS error: ' + result.errorMessage);
+            logger.error('klaviyoServices.KlaviyoSubscribeProfilesService subscribe call for email & SMS error: ' + result.errorMessage);
+        }
+    } else if (smsListID !== emailListID) {
+        if (email && emailListID) {
+            data = {
+                data: {
+                    type       : 'profile-subscription-bulk-create-job',
+                    attributes : {
+                        list_id       : emailListID,
+                        custom_source : 'Marketing Event',
+                        subscriptions : [{
+                            channels : { email: ['MARKETING'] },
+                            email    : email
+                        }]
+                    }
+                }
+            };
+
+            result = klaviyoServices.KlaviyoSubscribeProfilesService.call(data);
+
+            if (result == null) {
+                logger.error('klaviyoServices.KlaviyoSubscribeProfilesService subscribe call for email returned null result');
+            }
+
+            if (!result.ok === true) {
+                logger.error('klaviyoServices.KlaviyoSubscribeProfilesService subscribe call for email error: ' + result.errorMessage);
+            }
+        }
+
+        if (phone && smsListID) {
+            data = { data: {
+                type       : 'profile-subscription-bulk-create-job',
+                attributes : {
+                    list_id       : smsListID,
+                    custom_source : 'Marketing Event',
+                    subscriptions : [{
+                        channels     : { sms: ['MARKETING'] },
+                        phone_number : phone
+                    }]
+                }
+            } };
+
+            result = klaviyoServices.KlaviyoSubscribeProfilesService.call(data);
+
+            if (result == null) {
+                logger.error('klaviyoServices.KlaviyoSubscribeProfilesService subscribe call for SMS returned null result');
+            }
+
+            if (!result.ok === true) {
+                logger.error('klaviyoServices.KlaviyoSubscribeProfilesService subscribe call for SMS error: ' + result.errorMessage);
+            }
         }
     }
 }
-
 
 module.exports = {
     EVENT_NAMES           : EVENT_NAMES,
