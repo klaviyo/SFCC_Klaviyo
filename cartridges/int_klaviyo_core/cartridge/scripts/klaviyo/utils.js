@@ -288,6 +288,8 @@ function subscribeUser(email, phone) {
     var data;
     var result;
 
+    // This conditional will check if the same List IDs were used in Business Manager Configs - if they are, the call to Klaviyo's subscription API will include
+    // both phone AND email in a single call. In this case, the email & phone are listed under one profile in the Klaviyo dashboard.
     if (smsListID === emailListID && email && phone) {
         data = { data: {
             type       : 'profile-subscription-bulk-create-job',
