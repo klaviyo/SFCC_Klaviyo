@@ -14,8 +14,6 @@ exports.CheckoutPage = class CheckoutPage extends BasePage {
         this.productPage = new ProductPage(page, isMobile)
         this.accountPage = new AccountPage(page, isMobile)
 
-        this.guestCheckoutBtn = 'dwfrm_login_unregistered'
-
         // Shipping form
         this.shippingFnameLocator = page.locator('#dwfrm_singleshipping_shippingAddress_addressFields_firstName')
         this.shippingLnameLocator = page.locator('#dwfrm_singleshipping_shippingAddress_addressFields_lastName')
@@ -51,6 +49,10 @@ exports.CheckoutPage = class CheckoutPage extends BasePage {
         await this.guestCheckoutSubmit.click()
     }
 
+    async checkoutAsGuest() {
+        await this.page.locator('button[value="Checkout as Guest"]').click()
+    }
+
     async fillShippingForm(data) {
         await this.shippingFnameLocator.fill(data.firstName)
         await this.shippingLnameLocator.fill(data.lastName)
@@ -63,13 +65,12 @@ exports.CheckoutPage = class CheckoutPage extends BasePage {
         await this.stateLocator.selectOption({ value: data.state })
         await this.phoneLocator.fill(data.phone)
         await this.sameAsLocator.click()
-        // await this.submitShippingLocator.click()
         await this.page.getByRole('button', { name: 'Continue to Billing >' }).click()
     }
 
-    async fillBillingForm(data) {
+    async fillBillingForm(email) {
         await this.billingEmailLocator.isVisible()
-        await this.billingEmailLocator.fill(data.email)
+        await this.billingEmailLocator.fill(email)
     }
 
     async fillPaymentForm(data) {
@@ -87,5 +88,17 @@ exports.CheckoutPage = class CheckoutPage extends BasePage {
         await this.page.waitForLoadState('networkidle')
         await this.page.getByRole('button', { name: 'Place Order' }).click()
         await this.page.waitForLoadState('networkidle')
+    }
+
+    async selectSMS() {
+        const boxes = await this.page.locator('#KLSmsSubscribe')
+        await boxes.first().click()
+        expect(boxes.first()).toBeChecked()
+    }
+
+    async selectEmail() {
+        const boxes = await this.page.locator('#KLEmailSubscribe')
+        await boxes.first().click()
+        expect(boxes.first()).toBeChecked()
     }
 }
