@@ -248,7 +248,7 @@ function subscribeUser(subscribeToEmail, subscribeToSMS, email, phone) {
                     subscriptions : [{
                         channels     : { email: ['MARKETING'] },
                         email        : email,
-                        phone_number : (phone) ? phone : null
+                        phone_number : phone
                     }]
                 }
             }
@@ -301,7 +301,6 @@ function subscribeUser(subscribeToEmail, subscribeToSMS, email, phone) {
             logger.error('klaviyoServices.KlaviyoSubscribeProfilesService subscribe call for SMS error: ' + result.errorMessage);
         }
     }
-
 }
 
 module.exports = {
