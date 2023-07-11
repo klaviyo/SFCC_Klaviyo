@@ -45,7 +45,7 @@ server.append('Confirm', function (req, res, next) {
                                 var logger = Logger.getLogger('Klaviyo', 'Klaviyo.core:  Order-Confirm');
                                 logger.error(`SMS Subscription requested by user, but an invalid phone number was provided. Phone number: ${phone}`);
                             }
-                            phone = false;
+                            phone = null;
                         }
                     }
 
