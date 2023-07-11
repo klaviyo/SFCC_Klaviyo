@@ -224,7 +224,7 @@ function trackEvent(exchangeID, data, event, customerEmail) {
 
 // The subscribeUser func takes the user email & phone number to prep a data object w/ a corresponding emailListID or smsListID (both configured in BM w/ values from the Klaviyo Dashboard)
 // Data is sent to the KlaviyoSubscribeProfilesService API to subscribe users to email or SMS lists.
-function subscribeUser(email, phone) {
+function subscribeUser(subscribeToEmail, subscribeToSMS, email, phone) {
     var logger = Logger.getLogger('Klaviyo', 'Klaviyo.core utils.js - subscribeUser()');
 
     if (klaviyoServices.KlaviyoSubscribeProfilesService == null) {
@@ -238,16 +238,55 @@ function subscribeUser(email, phone) {
     var data;
     var result;
 
-    if (smsListID === emailListID && email && phone) {
+    if (subscribeToEmail && emailListID) {
+        data = {
+            data: {
+                type       : 'profile-subscription-bulk-create-job',
+                attributes : {
+                    list_id       : emailListID,
+                    custom_source : 'Marketing Event',
+                    subscriptions : [{
+                        channels     : { email: ['MARKETING'] },
+                        email        : email,
+                        phone_number : (phone) ? phone : null
+                    }]
+                }
+            }
+        };
+
+        result = klaviyoServices.KlaviyoSubscribeProfilesService.call(data);
+
+        if (result == null) {
+            logger.error('klaviyoServices.KlaviyoSubscribeProfilesService subscribe call for email returned null result');
+        }
+
+        if (!result.ok === true) {
+            logger.error('klaviyoServices.KlaviyoSubscribeProfilesService subscribe call for email error: ' + result.errorMessage);
+            // check to see if the reason the call failed was because of Klaviyo's internal phone number validation.  if so, resend without phone number
+            var errObj = JSON.parse(result.errorMessage);
+            if (result.error == 400 && errObj.errors[0].source.pointer == 'phone_number') {
+                data.data.attributes.subscriptions[0].phone_number = null;
+                result = klaviyoServices.KlaviyoSubscribeProfilesService.call(data);
+                if (result == null) {
+                    logger.error('klaviyoServices.KlaviyoSubscribeProfilesService subscribe call for email returned null result on second attempt without phone number');
+                }
+                if (!result.ok === true) {
+                    logger.error('klaviyoServices.KlaviyoSubscribeProfilesService subscribe call for email on second attempt without phone number, error: ' + result.errorMessage);
+                }
+            }
+        }
+    }
+
+    if (subscribeToSMS && smsListID && phone) {
         data = { data: {
             type       : 'profile-subscription-bulk-create-job',
             attributes : {
                 list_id       : smsListID,
                 custom_source : 'Marketing Event',
                 subscriptions : [{
-                    channels     : { sms: ['MARKETING'], email: ['MARKETING'] },
-                    phone_number : phone,
-                    email        : email
+                    channels     : { sms: ['MARKETING'] },
+                    email        : email,
+                    phone_number : phone
                 }]
             }
         } };
@@ -255,63 +294,14 @@ function subscribeUser(email, phone) {
         result = klaviyoServices.KlaviyoSubscribeProfilesService.call(data);
 
         if (result == null) {
-            logger.error('klaviyoServices.KlaviyoSubscribeProfilesService subscribe call for email & SMS returned null result');
+            logger.error('klaviyoServices.KlaviyoSubscribeProfilesService subscribe call for SMS returned null result');
         }
 
         if (!result.ok === true) {
-            logger.error('klaviyoServices.KlaviyoSubscribeProfilesService subscribe call for email & SMS error: ' + result.errorMessage);
-        }
-    } else if (smsListID !== emailListID) {
-        if (email && emailListID) {
-            data = {
-                data: {
-                    type       : 'profile-subscription-bulk-create-job',
-                    attributes : {
-                        list_id       : emailListID,
-                        custom_source : 'Marketing Event',
-                        subscriptions : [{
-                            channels : { email: ['MARKETING'] },
-                            email    : email
-                        }]
-                    }
-                }
-            };
-
-            result = klaviyoServices.KlaviyoSubscribeProfilesService.call(data);
-
-            if (result == null) {
-                logger.error('klaviyoServices.KlaviyoSubscribeProfilesService subscribe call for email returned null result');
-            }
-
-            if (!result.ok === true) {
-                logger.error('klaviyoServices.KlaviyoSubscribeProfilesService subscribe call for email error: ' + result.errorMessage);
-            }
-        }
-
-        if (phone && smsListID) {
-            data = { data: {
-                type       : 'profile-subscription-bulk-create-job',
-                attributes : {
-                    list_id       : smsListID,
-                    custom_source : 'Marketing Event',
-                    subscriptions : [{
-                        channels     : { sms: ['MARKETING'] },
-                        phone_number : phone
-                    }]
-                }
-            } };
-
-            result = klaviyoServices.KlaviyoSubscribeProfilesService.call(data);
-
-            if (result == null) {
-                logger.error('klaviyoServices.KlaviyoSubscribeProfilesService subscribe call for SMS returned null result');
-            }
-
-            if (!result.ok === true) {
-                logger.error('klaviyoServices.KlaviyoSubscribeProfilesService subscribe call for SMS error: ' + result.errorMessage);
-            }
+            logger.error('klaviyoServices.KlaviyoSubscribeProfilesService subscribe call for SMS error: ' + result.errorMessage);
         }
     }
+
 }
 
 module.exports = {
