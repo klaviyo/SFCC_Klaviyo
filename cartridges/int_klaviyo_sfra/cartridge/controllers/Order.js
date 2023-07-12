@@ -50,7 +50,7 @@ server.append('Confirm', function (req, res, next) {
                     }
 
                     if (email || phone) {
-                        klaviyoUtils.subscribeUser(session.custom.KLEmailSubscribe, session.custom.KLSmsSubscribe, email, phone);
+                        klaviyoUtils.subscribeUser(email, phone);
                     }
                 }
             }

@@ -224,7 +224,7 @@ function trackEvent(exchangeID, data, event, customerEmail) {
 
 // The subscribeUser func takes the user email & phone number to prep a data object w/ a corresponding emailListID or smsListID (both configured in BM w/ values from the Klaviyo Dashboard)
 // Data is sent to the KlaviyoSubscribeProfilesService API to subscribe users to email or SMS lists.
-function subscribeUser(subscribeToEmail, subscribeToSMS, email, phone) {
+function subscribeUser(email, phone) {
     var logger = Logger.getLogger('Klaviyo', 'Klaviyo.core utils.js - subscribeUser()');
 
     if (klaviyoServices.KlaviyoSubscribeProfilesService == null) {
@@ -238,13 +238,13 @@ function subscribeUser(subscribeToEmail, subscribeToSMS, email, phone) {
     var data;
     var result;
 
-    if (subscribeToEmail && emailListID) {
+    if (session.custom.KLEmailSubscribe && emailListID) {
         data = {
             data: {
                 type       : 'profile-subscription-bulk-create-job',
                 attributes : {
                     list_id       : emailListID,
-                    custom_source : 'Marketing Event',
+                    custom_source : 'SFCC Checkout',
                     subscriptions : [{
                         channels     : { email: ['MARKETING'] },
                         email        : email,
@@ -277,12 +277,12 @@ function subscribeUser(subscribeToEmail, subscribeToSMS, email, phone) {
         }
     }
 
-    if (subscribeToSMS && smsListID && phone) {
+    if (session.custom.KLSmsSubscribe && smsListID && phone) {
         data = { data: {
             type       : 'profile-subscription-bulk-create-job',
             attributes : {
                 list_id       : smsListID,
-                custom_source : 'Marketing Event',
+                custom_source : 'SFCC Checkout',
                 subscriptions : [{
                     channels     : { sms: ['MARKETING'] },
                     email        : email,
