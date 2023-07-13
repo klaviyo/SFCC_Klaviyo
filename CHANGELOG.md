@@ -14,7 +14,7 @@ bumped for multiple releases during one month.
 
 #### Added
 - Added pre-commit to the repository and ran across all files
-- Code-less, configurable onsite identification: Merchants can add a setting to have Klaviyo listen for email submission on any field on their site simply by providing a CSS selector (e.g. #customer-email.) This allows Klaviyo to identify visitors without requiring the merchant to insert JS throughout the site.
+- Code-less, configurable onsite identification: Merchants can add a setting to have Klaviyo listen for email submission on any field on their site simply by providing a CSS selector. This allows Klaviyo to identify visitors without requiring the merchant to insert JS throughout the site.
 - Branded events: Events from the cartridge can all be branded (since they are all normalized and sent server-side). This is a big unlock for prebuilt flows. This is default-enabled but configurable because merchants that migrate to this version may want to disable to avoid ‘breaking changes’ in preexisting flows.
 - Checkout rebuild link: Started Checkout includes a link to rebuild the checkout.
 - Consent at checkout site preference: Sync subscribers to a specified Klaviyo list ID
