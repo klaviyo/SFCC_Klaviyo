@@ -10,6 +10,11 @@ bumped for multiple releases during one month.
 <!-- BEGIN RELEASE NOTES -->
 ### [Unreleased]
 
+### [23.7.1] - 2023-07-13
+
+#### Added
+- Test2
+
 ### [23.7.0] - 2023-07-13
 
 #### Added
@@ -68,7 +73,8 @@ bumped for multiple releases during one month.
 <!-- END RELEASE NOTES -->
 
 <!-- BEGIN LINKS -->
-[Unreleased]: https://github.com/klaviyo/SFCC_Klaviyo/compare/23.7.0...HEAD
+[Unreleased]: https://github.com/ykolln/SFCC_Klaviyo/compare/23.7.1...HEAD
+[23.7.1]: https://github.com/ykolln/SFCC_Klaviyo/compare/23.7.0...23.7.1
 [23.7.0]: https://github.com/klaviyo/SFCC_Klaviyo/compare/21.10.0...23.7.0
 [21.10.0]: https://github.com/klaviyo/SFCC_Klaviyo/compare/21.7.0...21.10.0
 [21.7.0]: https://github.com/klaviyo/SFCC_Klaviyo/compare/20.11.0...21.7.0
