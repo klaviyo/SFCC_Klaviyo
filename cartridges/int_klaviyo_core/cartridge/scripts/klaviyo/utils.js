@@ -222,6 +222,87 @@ function trackEvent(exchangeID, data, event, customerEmail) {
 }
 
 
+// The subscribeUser func takes the user email & phone number to prep a data object w/ a corresponding emailListID or smsListID (both configured in BM w/ values from the Klaviyo Dashboard)
+// Data is sent to the KlaviyoSubscribeProfilesService API to subscribe users to email or SMS lists.
+function subscribeUser(email, phone) {
+    var logger = Logger.getLogger('Klaviyo', 'Klaviyo.core utils.js - subscribeUser()');
+
+    if (klaviyoServices.KlaviyoSubscribeProfilesService == null) {
+        logger.error('subscribeUser() failed - KlaviyoSubscribeProfilesService is null.');
+        return;
+    }
+
+    var emailListID = Site.getCurrent().getCustomPreferenceValue('klaviyo_email_list_id');
+    var smsListID = Site.getCurrent().getCustomPreferenceValue('klaviyo_sms_list_id');
+
+    var data;
+    var result;
+
+    if (session.custom.KLEmailSubscribe && emailListID) {
+        data = {
+            data: {
+                type       : 'profile-subscription-bulk-create-job',
+                attributes : {
+                    list_id       : emailListID,
+                    custom_source : 'SFCC Checkout',
+                    subscriptions : [{
+                        channels     : { email: ['MARKETING'] },
+                        email        : email,
+                        phone_number : phone
+                    }]
+                }
+            }
+        };
+
+        result = klaviyoServices.KlaviyoSubscribeProfilesService.call(data);
+
+        if (result == null) {
+            logger.error('klaviyoServices.KlaviyoSubscribeProfilesService subscribe call for email returned null result');
+        }
+
+        if (!result.ok === true) {
+            logger.error('klaviyoServices.KlaviyoSubscribeProfilesService subscribe call for email error: ' + result.errorMessage);
+            // check to see if the reason the call failed was because of Klaviyo's internal phone number validation.  if so, resend without phone number
+            var errObj = JSON.parse(result.errorMessage);
+            if (result.error == 400 && errObj.errors[0].source.pointer == 'phone_number') {
+                data.data.attributes.subscriptions[0].phone_number = null;
+                result = klaviyoServices.KlaviyoSubscribeProfilesService.call(data);
+                if (result == null) {
+                    logger.error('klaviyoServices.KlaviyoSubscribeProfilesService subscribe call for email returned null result on second attempt without phone number');
+                }
+                if (!result.ok === true) {
+                    logger.error('klaviyoServices.KlaviyoSubscribeProfilesService subscribe call for email on second attempt without phone number, error: ' + result.errorMessage);
+                }
+            }
+        }
+    }
+
+    if (session.custom.KLSmsSubscribe && smsListID && phone) {
+        data = { data: {
+            type       : 'profile-subscription-bulk-create-job',
+            attributes : {
+                list_id       : smsListID,
+                custom_source : 'SFCC Checkout',
+                subscriptions : [{
+                    channels     : { sms: ['MARKETING'] },
+                    email        : email,
+                    phone_number : phone
+                }]
+            }
+        } };
+
+        result = klaviyoServices.KlaviyoSubscribeProfilesService.call(data);
+
+        if (result == null) {
+            logger.error('klaviyoServices.KlaviyoSubscribeProfilesService subscribe call for SMS returned null result');
+        }
+
+        if (!result.ok === true) {
+            logger.error('klaviyoServices.KlaviyoSubscribeProfilesService subscribe call for SMS error: ' + result.errorMessage);
+        }
+    }
+}
+
 module.exports = {
     EVENT_NAMES           : EVENT_NAMES,
     klaviyoEnabled        : klaviyoEnabled,
@@ -235,5 +316,6 @@ module.exports = {
     captureBonusProduct   : captureBonusProduct,
     priceCheck            : priceCheck,
     getRootPriceBook      : getRootPriceBook,
-    trackEvent            : trackEvent
+    trackEvent            : trackEvent,
+    subscribeUser         : subscribeUser
 };
