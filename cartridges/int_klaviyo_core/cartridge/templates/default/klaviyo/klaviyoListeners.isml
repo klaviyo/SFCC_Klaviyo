@@ -1,0 +1,148 @@
+<!--- TEMPLATENAME: klaviyoListeners.isml --->
+<iscomment>
+    The JS in this template captures the selectors set in Business Manager and applies klaviyo listeners to the corresponding input fields
+    so users can be identified when filling out either phone number or email fields within any part of the site. This template is included in
+    klaviyoFooter.isml within both SFRA & SiteGen.
+</iscomment>
+
+<isset name="KLselectors" value="${dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_email_selectors')}" scope="page" />
+<isset name="KLCheckoutSelector" value="${dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_checkout_email_selector')}" scope="page" />
+<isset name="KLEmailListID" value="${dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_email_list_id')}" scope="page" />
+<isset name="KLSmsListID" value="${dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_sms_list_id')}" scope="page" />
+
+<script>
+    var klaviyoJS = {};
+    klaviyoJS.sfccEmailRegex = new RegExp(/^[\w.%+-]+@[\w.-]+\.[\w]{2,6}$/);
+    klaviyoJS.e164PhoneRegex = new RegExp(/^\+[1-9]\d{1,14}$/);
+
+<isif condition="${KLCheckoutSelector && !empty(KLCheckoutSelector)}">
+    let selectedInput = document.querySelectorAll('${KLCheckoutSelector}');
+    if (selectedInput) {
+        Array.from(selectedInput).forEach(klavInput => {
+            klavInput.addEventListener("change", function() {
+                if( klaviyoJS.sfccEmailRegex.test (klavInput.value) ) {
+                    $.ajax({
+                        url: "${dw.web.URLUtils.https('Klaviyo-StartedCheckoutEvent')}",
+                        type: 'post',
+                        data: { a: btoa(klavInput.value) },
+                        error: function (err) {
+                            console.warn('Klaviyo StartedCheckoutEvent failure: ' + err.statusText);
+                        }
+                    });
+                }
+            });
+        });
+    }
+</isif>
+</script>
+
+<isif condition="${KLselectors && !empty(KLselectors) || KLCheckoutSelector && !empty(KLCheckoutSelector)}">
+    <script>
+        var KLselectors = <isprint value="${JSON.stringify(dw.system.Site.current.preferences.custom.klaviyo_email_selectors)}" encoding="off" />;
+        klaviyoJS.emailFieldSelectors = Array.isArray(KLselectors) ? KLselectors : Object.values(KLselectors);
+        <isif condition="${KLCheckoutSelector && !empty(KLCheckoutSelector)}">
+            klaviyoJS.emailFieldSelectors.push('${KLCheckoutSelector}');
+        </isif>
+        klaviyoJS.getExchangeID = function () {
+            var klaviyoCookie = document.cookie.split('; ').filter(function(c) {return /__kla_id=/.test(c)});
+            return JSON.parse(atob(klaviyoCookie[0].split("__kla_id=")[1])).$exchange_id;
+        };
+        klaviyoJS.identifyPhone = function(inputVal) {
+            let formattedPhone = '+' + inputVal.replace(/[^a-z0-9]/gi, '');
+            if (klaviyoJS.e164PhoneRegex.test(formattedPhone)){
+                klaviyo.identify({ '$phone_number' : formattedPhone }).then(() => { klaviyoJS.identifiedUser = true; klaviyoJS.exchangeID = klaviyoJS.getExchangeID(); klaviyoJS.phone = formattedPhone; });
+            }
+        };
+        klaviyoJS.phoneOrEmail = function(inputVal) {
+            if (klaviyoJS.sfccEmailRegex.test (inputVal.target.value)) {
+                klaviyo.identify({ '$email' : inputVal.target.value }).then(() => { klaviyoJS.identifiedUser = true; klaviyoJS.exchangeID = klaviyoJS.getExchangeID(); });
+            }
+            if (Number(inputVal.target.value.replace(/[^a-z0-9]/gi, ''))) {
+                klaviyoJS.identifyPhone(inputVal.target.value);
+            }
+        };
+        Promise.resolve(klaviyo.isIdentified()).then((result) => { klaviyoJS.identifiedUser = result });
+
+        window.addEventListener('DOMContentLoaded', (event) => {
+            if ("MutationObserver" in window) {
+                let page = document.body;
+                const observer = new MutationObserver(mutations => {
+                    klaviyoListeners();
+                });
+
+                observer.observe(page, {
+                    childList: true,
+                    subtree: true
+                });
+            }
+        });
+
+        function klaviyoListeners() {
+            for (let i = 0; i < klaviyoJS.emailFieldSelectors.length; i++) {
+                let selectedInput = document.querySelectorAll(klaviyoJS.emailFieldSelectors[i]);
+                if (selectedInput) {
+                    Array.from(selectedInput).forEach(klavInput => {
+                        if (klavInput && !klavInput.hasAttribute('data-listener')) {
+                            klavInput.setAttribute('data-listener', 'klaviyo');
+                            klavInput.addEventListener("change", (klavInput) => klaviyoChangeEvent(klavInput));
+                        }
+                    })
+                }
+            }
+        }
+
+        function klaviyoChangeEvent(input){
+            if (!klaviyoJS.identifiedUser) {
+                klaviyoJS.phoneOrEmail(input);
+            }
+            if (input.target.pattern.length && input.target.value.match(input.target.pattern)) {
+                if (klaviyoJS.identifiedUser && klaviyoJS.exchangeID && klaviyoJS.phone) {
+                    klaviyo.identify({ '$email' : input.target.value, '$phone_number' : klaviyoJS.phone }).then(() => { klaviyoJS.identifiedUser = true; klaviyoJS.exchangeID = klaviyoJS.getExchangeID(); });
+                }
+            } else {
+                if (klaviyoJS.identifiedUser && klaviyoJS.exchangeID && klaviyoJS.phone && klaviyoJS.sfccEmailRegex.test (input.target.value)) {
+                    klaviyo.identify({ '$email' : input.target.value, '$phone_number' : klaviyoJS.phone }).then(() => { klaviyoJS.identifiedUser = true; klaviyoJS.exchangeID = klaviyoJS.getExchangeID(); });
+                }
+            }
+        }
+
+        klaviyoListeners();
+    </script>
+</isif>
+
+<isif condition="${KLEmailListID || KLSmsListID}">
+    <script>
+        klaviyoJS.subscribe = function(data) {
+            $.ajax({
+                url: "${dw.web.URLUtils.https('Klaviyo-Subscribe')}",
+                type: 'post',
+                data: data,
+                error: function (err) {
+                    console.warn('Klaviyo Subscribe failure: ' + err.statusText);
+                }
+            });
+        }
+
+        window.addEventListener('DOMContentLoaded', (event) => {
+            klaviyoJS.emailSubscribe = document.getElementById('KLEmailSubscribe');
+            if (klaviyoJS.emailSubscribe) {
+                if (klaviyoJS.emailSubscribe.checked) {
+                    klaviyoJS.subscribe({ e: true });
+                }
+                klaviyoJS.emailSubscribe.addEventListener('click', function(){
+                    klaviyoJS.subscribe({ e: klaviyoJS.emailSubscribe.checked });
+                });
+            }
+
+            klaviyoJS.smsSubscribe = document.getElementById('KLSmsSubscribe');
+            if (klaviyoJS.smsSubscribe) {
+                if (klaviyoJS.smsSubscribe.checked) {
+                    klaviyoJS.subscribe({ s: true });
+                }
+                klaviyoJS.smsSubscribe.addEventListener('click', function(){
+                    klaviyoJS.subscribe({ s: klaviyoJS.smsSubscribe.checked });
+                });
+            }
+        });
+    </script>
+</isif>

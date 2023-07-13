@@ -1,0 +1,46 @@
+<iscomment>
+    The JS in this template outputs debugging data to the console when the debugging mode has been activated by entering kldebug=true as a query in the URL.
+    Add To Cart data is output to the console using inline JS and encoded ATC data can be seen in the JSON response within the Network tab of Cart-AddProduct
+    Other data avaible on page load (ex: 'Viewed Product', 'Viewed Category', 'Searched Site' & 'Started Checkout') is output to the console on page load.
+</iscomment>
+<!--- TEMPLATENAME: klaviyoDebug.isml --->
+<isif condition="${pdict.klDebugData}">
+    <script>
+    var debugData = JSON.parse(atob('${pdict.klDebugData}'));
+    console.log('Klaviyo Event Data: ', debugData);
+    var serviceCallData = JSON.parse(atob('${pdict.serviceCallData}'));
+    console.log('Klaviyo Service Result: ', serviceCallData);
+
+    window.addEventListener("load", (event) => {
+        $('body').on('product:afterAddToCart', function(evt, data){
+            // SFRA Add To Cart Data
+            var addToCartDebugData = JSON.parse(atob(data.klDebugData));
+            var addToCartServiceData = JSON.parse(atob(data.serviceCallData))
+            console.log('Klaviyo Add To Cart Event Data: ', addToCartDebugData);
+            console.log('Klaviyo Add To Cart Service Result: ', addToCartServiceData);
+        });
+
+        if ("MutationObserver" in window) {
+            // SiteGen Add To Cart Data
+            let miniCart = document.getElementById('mini-cart')
+            const observer = new MutationObserver(mutations => {
+                mutations.forEach(mutation => {
+                    if (mutation.addedNodes.length) {
+                        let SGaddToCartDebugData = document.getElementById('siteGenKlDebugData');
+                        let SGserviceCallData = document.getElementById('siteGenServiceCallData');
+                        console.log('Klaviyo Add To Cart Event Data: ', JSON.parse(atob(SGaddToCartDebugData.value)));
+                        console.log('Klaviyo Add To Cart Service Result: ', JSON.parse(atob(siteGenServiceCallData.value)));
+                    }
+                })
+            });
+
+            if (miniCart) {
+                observer.observe(miniCart, {
+                    childList: true,
+                    subtree: true
+                });
+            }
+        }
+    });
+    </script>
+</isif>
