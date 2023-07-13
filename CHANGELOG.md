@@ -10,13 +10,22 @@ bumped for multiple releases during one month.
 <!-- BEGIN RELEASE NOTES -->
 ### [Unreleased]
 
-#### Added
+### [23.7.0] - 2023-07-13
 
+#### Added
 - Added pre-commit to the repository and ran across all files
+- Code-less, configurable onsite identification: Merchants can add a setting to have Klaviyo listen for email submission on any field on their site simply by providing a CSS selector. This allows Klaviyo to identify visitors without requiring the merchant to insert JS throughout the site.
+- Branded events: Events from the cartridge can all be branded (since they are all normalized and sent server-side). This is a big unlock for prebuilt flows. This is default-enabled but configurable because merchants that migrate to this version may want to disable to avoid ‘breaking changes’ in preexisting flows.
+- Checkout rebuild link: Started Checkout includes a link to rebuild the checkout.
+- Consent at checkout site preference: Sync subscribers to a specified Klaviyo list ID
 
 #### Changed
-
 - Updated the legacy `_learnq` js object to the new `klaviyo` js object.
+- Uses V3 APIs
+- Better cross-architecture support and improved developer experience: Event triggering logic is standardized across SFRA and Site Genesis, improved code readability & maintainability by eliminating complex and unused code.
+
+#### Fixed
+- Event tracking reliability & setup time: Added OOTB tracking for “Added to Cart” (never fired unless a user was logged in on SFRA), increased event reliability by standardizing on backend trigger logic (and server-side events). This logic is not susceptible to front-end customizations, which were one of the most common reasons for events not triggering.
 
 ### [21.10.0] - 2021-10-14
 
@@ -59,7 +68,8 @@ bumped for multiple releases during one month.
 <!-- END RELEASE NOTES -->
 
 <!-- BEGIN LINKS -->
-[Unreleased]: https://github.com/klaviyo/SFCC_Klaviyo/compare/21.10.0...HEAD
+[Unreleased]: https://github.com/klaviyo/SFCC_Klaviyo/compare/23.7.0...HEAD
+[23.7.0]: https://github.com/klaviyo/SFCC_Klaviyo/compare/21.10.0...23.7.0
 [21.10.0]: https://github.com/klaviyo/SFCC_Klaviyo/compare/21.7.0...21.10.0
 [21.7.0]: https://github.com/klaviyo/SFCC_Klaviyo/compare/20.11.0...21.7.0
 [20.11.0]: https://github.com/klaviyo/SFCC_Klaviyo/compare/20.1.0...20.11.0
