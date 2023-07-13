@@ -1,0 +1,5 @@
+CHANGELOG.md
+cartridges/
+_sitegen/
+metadata.zip
+package.json

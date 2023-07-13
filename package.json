@@ -1,6 +1,6 @@
 {
   "name": "int_klaviyo",
-  "version": "20.11.0",
+  "version": "23.7.0",
   "description": "Klaviyo integration for Commerce Cloud",
   "main": "index.js",
   "scripts": {
@@ -10,14 +10,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/klaviyo/demandware_cartridge_sg.git"
+    "url": "git+https://github.com/klaviyo/SFCC_Klaviyo.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/klaviyo/demandware_cartridge_sg/issues"
+    "url": "https://github.com/klaviyo/SFCC_Klaviyo/issues"
   },
-  "homepage": "https://github.com/klaviyo/demandware_cartridge_sg#readme",
+  "homepage": "https://github.com/klaviyo/SFCC_Klaviyo#readme",
   "devDependencies": {
     "chai": "^4.2.0",
     "mocha": "^6.2.2",
