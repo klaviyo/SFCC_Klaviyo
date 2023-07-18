@@ -21,6 +21,8 @@
 
 <isset name="KLselectors" value="${dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_email_selectors')}" scope="page" />
 <isset name="KLCheckoutSelector" value="${dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_checkout_email_selector')}" scope="page" />
+<isset name="KLEmailListID" value="${dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_email_list_id')}" scope="page" />
+<isset name="KLSmsListID" value="${dw.system.Site.getCurrent().getCustomPreferenceValue('klaviyo_sms_list_id')}" scope="page" />
 
 <script>
     var klaviyoJS = {};
@@ -146,5 +148,46 @@
         <iscomment>Calling klaviyoListeners() here is our 'init' function that fires off the inline JS that captures the CSS selectors set in two Site Preferences in Business Manager
         and applies klaviyo listeners to the corresponding input fields</iscomment>
         klaviyoListeners();
+    </script>
+</isif>
+
+<isif condition="${KLEmailListID || KLSmsListID}">
+    <script>
+        <iscomment>Calling the klaviyoJS.subscribe() method triggers an ajax call to the Klaviyo-Subscribe controller when a user checks a box. This updates the session with to maintain state
+        if a user comes through checkout and then leaves / returns later.</iscomment>
+        klaviyoJS.subscribe = function(data) {
+            $.ajax({
+                url: "${dw.web.URLUtils.https('Klaviyo-Subscribe')}",
+                type: 'post',
+                data: data,
+                error: function (err) {
+                    console.warn('Klaviyo Subscribe failure: ' + err.statusText);
+                }
+            });
+        }
+
+        <iscomment>After the page loads, these queries capture the values of checkboxes if they've been rendered to the screen. If they are present, 'click' event listeners are set to each
+        checkbox to capture user interaction and trigger the above ajax call to the Klaviyo-Subscribe controller.</iscomment>
+        window.addEventListener('DOMContentLoaded', (event) => {
+            klaviyoJS.emailSubscribe = document.getElementById('KLEmailSubscribe');
+            if (klaviyoJS.emailSubscribe) {
+                if (klaviyoJS.emailSubscribe.checked) {
+                    klaviyoJS.subscribe({ e: true });
+                }
+                klaviyoJS.emailSubscribe.addEventListener('click', function(){
+                    klaviyoJS.subscribe({ e: klaviyoJS.emailSubscribe.checked });
+                });
+            }
+
+            klaviyoJS.smsSubscribe = document.getElementById('KLSmsSubscribe');
+            if (klaviyoJS.smsSubscribe) {
+                if (klaviyoJS.smsSubscribe.checked) {
+                    klaviyoJS.subscribe({ s: true });
+                }
+                klaviyoJS.smsSubscribe.addEventListener('click', function(){
+                    klaviyoJS.subscribe({ s: klaviyoJS.smsSubscribe.checked });
+                });
+            }
+        });
     </script>
 </isif>

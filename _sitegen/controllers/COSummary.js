@@ -99,6 +99,8 @@ function showConfirmation(order) {
     ***/
     var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils');
     var orderConfirmationData = require('*/cartridge/scripts/klaviyo/eventData/orderConfirmation');
+    var Logger = require('dw/system/Logger');
+
     if (klaviyoUtils.klaviyoEnabled){
         session.privacy.klaviyoCheckoutTracked = false;
         // KL IDENTIFY: try to get the exchangeID from the KL cookie
@@ -113,6 +115,26 @@ function showConfirmation(order) {
                 serviceCallResult = klaviyoUtils.trackEvent(exchangeID, dataObj, klaviyoUtils.EVENT_NAMES.orderConfirmation, order.customerEmail);
             }
 
+            if('KLEmailSubscribe' in session.custom || 'KLSmsSubscribe' in session.custom) {
+                var email = order.customerEmail;
+                var phone = order.defaultShipment.shippingAddress.phone;
+                var e164PhoneRegex = new RegExp(/^\+[1-9]\d{1,14}$/);
+                if (phone) {
+                    // NOTE: Klaviyo only accepts phone numbers that include + and the country code at the start (ex for US: +16465551212)
+                    // in order to successfully get users subscribed to SMS list you must collect the country code in your order phone number field!
+                    phone = '+' + phone.replace(/[^a-z0-9]/gi, '');
+                    if(!e164PhoneRegex.test(phone)) {
+                        if (session.custom.KLSmsSubscribe) {
+                            var logger = Logger.getLogger('Klaviyo', 'Klaviyo.core:  Order-Confirm');
+                            logger.error(`SMS Subscription requested by user, but an invalid phone number was provided. Phone number: ${phone}`);
+                        }
+                        phone = null;
+                    }
+                }
+                if (email || phone) {
+                    klaviyoUtils.subscribeUser(email, phone);
+                }
+            }
         }
     }
     /* END KLAVIYO Order Confirmation event tracking */
