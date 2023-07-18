@@ -288,8 +288,8 @@ function subscribeUser(email, phone) {
     var data;
     var result;
 
-    // This conditional will check if the same List IDs were used in Business Manager Configs - if they are, the call to Klaviyo's subscription API will include
-    // both phone AND email in a single call. In this case, the email & phone are listed under one profile in the Klaviyo dashboard.
+    // This conditional checks whether a user clicked the subscribe box (i.e. the session.custom.klEmailSubscribe value) & looks for whether an emailListID is configured in Business Manager.
+    // If so, a data object is constructed with the list ID as well as the entered Phone & Email so profile in the Klaivyo dashboard has the user's full contact information.
     if (session.custom.KLEmailSubscribe && emailListID) {
         data = {
             data: {
