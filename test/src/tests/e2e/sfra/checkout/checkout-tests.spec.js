@@ -54,15 +54,31 @@ test.describe('Test Klaviyo add to cart event', () => {
     })
 })
 
-test.describe('Test Klaviyo order confirmation event', () => {
-    test('Complete purchase and verify event data', async ({ page }) => {
-        const resultMsg = 'Klaviyo Service Result:'
+test.describe('Test Klaviyo sms signup', () => {
+    test('Verify sms checkbox present and selectable', async ({ page }) => {
         email = await checkoutPage.generateEmail()
         testData.email = email
         await checkoutPage.productPage.getProduct()
         await checkoutPage.productPage.addToCart()
         await checkoutPage.startCheckout()
         await checkoutPage.enterGuestEmail(email)
+        await checkoutPage.selectSMS()
+        await checkoutPage.fillShippingForm(testData)
+        await checkoutPage.fillPaymentForm(paymentData)
+        await page.waitForTimeout(3000)
+        expect(await page.innerText('h1.page-title')).toBe('Thank You')
+    })
+})
+
+test.describe('Test Klaviyo email signup', () => {
+    test('Verify email checkbox present and selectable', async ({ page }) => {
+        email = await checkoutPage.generateEmail()
+        testData.email = email
+        await checkoutPage.productPage.getProduct()
+        await checkoutPage.productPage.addToCart()
+        await checkoutPage.startCheckout()
+        await checkoutPage.enterGuestEmail(email)
+        await checkoutPage.selectEmail()
         await checkoutPage.fillShippingForm(testData)
         await checkoutPage.fillPaymentForm(paymentData)
         await page.waitForTimeout(3000)
