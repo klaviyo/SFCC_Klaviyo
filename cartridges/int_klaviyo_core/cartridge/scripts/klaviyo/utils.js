@@ -28,6 +28,7 @@ if (Site.getCurrent().getCustomPreferenceValue('klaviyo_atc_override')) {
     EVENT_NAMES.addedToCart = 'Add To Cart';
 }
 
+var siteId = Site.getCurrent().getID();
 var klaviyoEnabled = Site.getCurrent().getCustomPreferenceValue('klaviyo_enabled') || false;
 var KLImageSize = Site.getCurrent().getCustomPreferenceValue('klaviyo_image_size') || 'large';
 
@@ -317,5 +318,6 @@ module.exports = {
     priceCheck            : priceCheck,
     getRootPriceBook      : getRootPriceBook,
     trackEvent            : trackEvent,
-    subscribeUser         : subscribeUser
+    subscribeUser         : subscribeUser,
+    siteId                : siteId
 };

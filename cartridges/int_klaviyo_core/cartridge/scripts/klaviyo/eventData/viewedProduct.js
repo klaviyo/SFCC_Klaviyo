@@ -23,7 +23,8 @@ function getData(productID) {
         }
 
         var prices = require('*/cartridge/scripts/klaviyo/viewedProductHelpers.js').getProductPrices(product);
-
+        
+        data['SiteID'] = klaviyoUtils.siteId;
         data['Product ID'] = product.ID;
         data['Product Name'] = product.name;
         data['Product Page URL'] = URLUtils.https('Product-Show', 'pid', product.ID).toString();

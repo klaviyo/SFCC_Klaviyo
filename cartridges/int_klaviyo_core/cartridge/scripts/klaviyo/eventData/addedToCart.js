@@ -17,7 +17,7 @@ function getData(basket) {
     try {
         data = {};
         var basketItems = basket.getProductLineItems().toArray();
-
+        data['SiteID'] = klaviyoUtils.siteId;
         data.event = klaviyoUtils.EVENT_NAMES.addedToCart;
         data.basketGross = basket.getTotalGrossPrice().getValue().valueOf();
         data.itemCount = basketItems.length;
