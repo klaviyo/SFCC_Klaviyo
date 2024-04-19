@@ -21,6 +21,7 @@ const addedToCartEvent = proxyquire('int_klaviyo_core/cartridge/scripts/klaviyo/
     'dw/catalog/ProductMgr': ProductMgr,
     '*/cartridge/scripts/klaviyo/utils': {
         KLImageSize: 'large',
+        siteId: 'KlaviyoSFRA',
         EVENT_NAMES: {
             'addedToCart': 'Added to Cart',
         },
@@ -51,6 +52,7 @@ describe('int_klaviyo_core/cartridge/scripts/klaviyo/eventData => addedToCart', 
             event: 'Added to Cart',
             basketGross: 99.99,
             itemCount: 1,
+            SiteID: 'KlaviyoSFRA',
             lineItems: [
               {
                 productID: 'NG3614270264405',
