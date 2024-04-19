@@ -9,6 +9,7 @@ var URLUtils = require('dw/web/URLUtils');
 /* Script Modules */
 var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils');
 var KLImageSize = klaviyoUtils.KLImageSize;
+var siteId = klaviyoUtils.siteId;
 
 
 // prepares data for "Started Checkout" event
@@ -16,7 +17,7 @@ function getData(currentBasket) {
     var data;
     try {
         data = {};
-        data['SiteID'] = klaviyoUtils.siteId;
+        data['SiteID'] = siteId;
         var basketItems = currentBasket.getProductLineItems().toArray();
         var reconstructCartItems = [];
         data['Basket Gross Price'] = currentBasket.getTotalGrossPrice().value;

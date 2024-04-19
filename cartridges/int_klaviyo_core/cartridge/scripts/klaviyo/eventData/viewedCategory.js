@@ -1,10 +1,11 @@
 'use strict';
 
 var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils');
+var siteId = klaviyoUtils.siteId;
 
 // prepares data for "Viewed Category" event
 function getData(categoryID) {
-    return { 'SiteID': klaviyoUtils.siteId, 'Viewed Category': categoryID };
+    return { 'SiteID': siteId, 'Viewed Category': categoryID };
 }
 
 

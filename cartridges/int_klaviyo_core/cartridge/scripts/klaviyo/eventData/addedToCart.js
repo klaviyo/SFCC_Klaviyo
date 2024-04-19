@@ -8,7 +8,7 @@ var ProductMgr = require('dw/catalog/ProductMgr');
 /* Script Modules */
 var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils');
 var KLImageSize = klaviyoUtils.KLImageSize;
-
+var siteId = klaviyoUtils.siteId;
 
 // prepares data for "Added to Cart" event
 function getData(basket) {
@@ -17,7 +17,7 @@ function getData(basket) {
     try {
         data = {};
         var basketItems = basket.getProductLineItems().toArray();
-        data['SiteID'] = klaviyoUtils.siteId;
+        data['SiteID'] = siteId;
         data.event = klaviyoUtils.EVENT_NAMES.addedToCart;
         data.basketGross = basket.getTotalGrossPrice().getValue().valueOf();
         data.itemCount = basketItems.length;

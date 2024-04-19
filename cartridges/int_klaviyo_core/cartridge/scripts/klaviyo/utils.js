@@ -28,9 +28,9 @@ if (Site.getCurrent().getCustomPreferenceValue('klaviyo_atc_override')) {
     EVENT_NAMES.addedToCart = 'Add To Cart';
 }
 
-var siteId = Site.getCurrent().getID();
 var klaviyoEnabled = Site.getCurrent().getCustomPreferenceValue('klaviyo_enabled') || false;
 var KLImageSize = Site.getCurrent().getCustomPreferenceValue('klaviyo_image_size') || 'large';
+var siteId = Site.getCurrent().getID();
 
 
 // looks for klaviyo's cookie and if found extracts the exchangeID from it, returning that value
@@ -308,6 +308,7 @@ module.exports = {
     EVENT_NAMES           : EVENT_NAMES,
     klaviyoEnabled        : klaviyoEnabled,
     KLImageSize           : KLImageSize,
+    siteId                : siteId,
     getKlaviyoExchangeID  : getKlaviyoExchangeID,
     getProfileInfo        : getProfileInfo,
     prepareDebugData      : prepareDebugData,
@@ -318,6 +319,5 @@ module.exports = {
     priceCheck            : priceCheck,
     getRootPriceBook      : getRootPriceBook,
     trackEvent            : trackEvent,
-    subscribeUser         : subscribeUser,
-    siteId                : siteId
+    subscribeUser         : subscribeUser
 };
