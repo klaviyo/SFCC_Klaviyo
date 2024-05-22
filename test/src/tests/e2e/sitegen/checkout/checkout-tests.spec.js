@@ -40,3 +40,37 @@ test.describe('Test Klaviyo add to cart event', () => {
         expect(logData[0].success).toBe(true)
     })
 })
+
+test.describe('Test Klaviyo sms signup', () => {
+    test('Verify sms checkbox present and selectable', async ({ page }) => {
+        email = await checkoutPage.generateEmail()
+        testData.email = email
+        await checkoutPage.productPage.getProduct()
+        await checkoutPage.productPage.addToCart()
+        await checkoutPage.startCheckout()
+        await checkoutPage.checkoutAsGuest()
+        await checkoutPage.fillShippingForm(testData)
+        await checkoutPage.selectSMS()
+        await checkoutPage.fillBillingForm(email)
+        await checkoutPage.fillPaymentForm(paymentData)
+        await page.waitForTimeout(3000)
+        expect(await checkoutPage.orderSuccessMessage.innerText().valueOf()).toBe('Thank you for your order.')
+    })
+})
+
+test.describe('Test Klaviyo email signup', () => {
+    test('Verify email checkbox present and selectable', async ({ page }) => {
+        email = await checkoutPage.generateEmail()
+        testData.email = email
+        await checkoutPage.productPage.getProduct()
+        await checkoutPage.productPage.addToCart()
+        await checkoutPage.startCheckout()
+        await checkoutPage.checkoutAsGuest()
+        await checkoutPage.fillShippingForm(testData)
+        await checkoutPage.selectEmail()
+        await checkoutPage.fillBillingForm(email)
+        await checkoutPage.fillPaymentForm(paymentData)
+        await page.waitForTimeout(3000)
+        expect(await checkoutPage.orderSuccessMessage.innerText().valueOf()).toBe('Thank you for your order.')
+    })
+})
