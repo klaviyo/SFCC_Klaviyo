@@ -54,6 +54,7 @@ const orderConfirmationEvent = proxyquire('int_klaviyo_core/cartridge/scripts/kl
     'dw/catalog/ProductMgr': ProductMgr,
     '*/cartridge/scripts/klaviyo/utils': {
         KLImageSize: 'large',
+        siteId: Site.getCurrent().getID(),
         captureProductOptions: basketStubs().pdctLineItems,
         captureBonusProduct: basketStubs().bonusPdct,
         captureProductBundles: basketStubs().bundlePdct,
@@ -72,6 +73,7 @@ describe('int_klaviyo_core/cartridge/scripts/klaviyo/eventData => orderConfirmat
 
     it('should return event data for "Order Confirmation" event', () => {
         const expectedResult = {
+            SiteID: 'KlaviyoSFRA',
             'Order Total': '$9.99',
             Tax: '$9.99',
             Subtotal: '$9.99',

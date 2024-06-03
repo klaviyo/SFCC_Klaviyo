@@ -72,7 +72,8 @@ const viewedProductEvent = proxyquire('int_klaviyo_core/cartridge/scripts/klaviy
         'dw/catalog/ProductMgr': ProductMgr,
         '*/cartridge/scripts/klaviyo/utils': {
             KLImageSize: 'large',
-            dedupeArray: dedupeArrayStub.withArgs(categories).returns(['Health'])
+            dedupeArray: dedupeArrayStub.withArgs(categories).returns(['Health']),
+            siteId: Site.getCurrent().getID(),
         },
         '*/cartridge/scripts/klaviyo/viewedProductHelpers.js': getProductPrices,
     },
