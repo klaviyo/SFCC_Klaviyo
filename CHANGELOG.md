@@ -10,6 +10,9 @@ bumped for multiple releases during one month.
 <!-- BEGIN RELEASE NOTES -->
 ### [Unreleased]
 
+#### Added
+- Added `siteID` key/value to client-side events
+
 ### [24.1.0] - 2024-01-18
 
 #### Added
