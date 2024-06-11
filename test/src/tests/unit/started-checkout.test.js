@@ -2,6 +2,7 @@ const expect = require('chai').expect
 const path = require('path')
 const sinon = require('sinon')
 const proxyquire = require('proxyquire').noCallThru().noPreserveCache()
+const Site = require('../mocks/dw.system.Site')
 const StringUtils = require('../mocks/dw.util.StringUtils')
 const Logger = require('../mocks/dw.system.Logger')
 const URLUtils = require('../mocks/dw.web.URLUtils')
@@ -18,6 +19,7 @@ const basketManagerMock = new BasketMgr()
 const currentBasket = basketManagerMock.getCurrentBasket()
 
 const startedCheckoutEvent = proxyquire('int_klaviyo_core/cartridge/scripts/klaviyo/eventData/startedCheckout.js', {
+        'dw/system/Site': Site,
         'dw/system/Logger': Logger,
         'dw/web/URLUtils': URLUtils,
         'dw/catalog/ProductMgr': ProductMgr,
@@ -25,7 +27,8 @@ const startedCheckoutEvent = proxyquire('int_klaviyo_core/cartridge/scripts/klav
             KLImageSize: 'large',
             captureProductOptions: basketStubs().pdctLineItems,
             captureBonusProduct: basketStubs().bonusPdct,
-            captureProductBundles: basketStubs().bundlePdct
+            captureProductBundles: basketStubs().bundlePdct,
+            siteId: Site.getCurrent().getID()
         },
         'dw/util/StringUtils': StringUtils,
         'dw/value/Money': Money,
@@ -53,6 +56,7 @@ describe('int_klaviyo_core/cartridge/scripts/klaviyo/eventData => startedCheckou
 
     it('should return the correct basket data for "Started Checkout" event', () => {
         const expectedResult = {
+            SiteID: 'KlaviyoSFRA',
             'Basket Gross Price': 99.99,
             Categories: [
                 'Health'

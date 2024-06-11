@@ -7,6 +7,7 @@ const URLUtils = require('../mocks/dw.web.URLUtils')
 const ProductMgr = require('../mocks/dw.catalog.ProductMgr')
 const BasketMgr = require('../mocks/BasketMgr')
 const basketStubs = require('../mocks/util/basketObjectStubs')
+const Site = require('../mocks/dw.system.Site')
 
 require('app-module-path').addPath(path.join(process.cwd(), '../cartridges'))
 
@@ -18,9 +19,11 @@ const currentBasket = basketManagerMock.getCurrentBasket()
 const addedToCartEvent = proxyquire('int_klaviyo_core/cartridge/scripts/klaviyo/eventData/addedToCart.js', {
     'dw/system/Logger': Logger,
     'dw/web/URLUtils': URLUtils,
+    'dw/system/Site': Site,
     'dw/catalog/ProductMgr': ProductMgr,
     '*/cartridge/scripts/klaviyo/utils': {
         KLImageSize: 'large',
+        siteId: Site.getCurrent().getID(),
         EVENT_NAMES: {
             'addedToCart': 'Added to Cart',
         },
@@ -51,6 +54,7 @@ describe('int_klaviyo_core/cartridge/scripts/klaviyo/eventData => addedToCart', 
             event: 'Added to Cart',
             basketGross: 99.99,
             itemCount: 1,
+            SiteID: 'KlaviyoSFRA',
             lineItems: [
               {
                 productID: 'NG3614270264405',

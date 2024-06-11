@@ -8,7 +8,7 @@ var ProductMgr = require('dw/catalog/ProductMgr');
 /* Script Modules */
 var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils');
 var KLImageSize = klaviyoUtils.KLImageSize;
-
+var siteId = klaviyoUtils.siteId;
 
 /**
  * Prepares the order in JSON format for email send.
@@ -19,7 +19,7 @@ function getData(order) {
     var data;
     try {
         data = {};
-
+        data['SiteID'] = siteId;
         // Billing Address
         var orderBillingAddressFirstName = order.billingAddress.firstName ? order.billingAddress.firstName : '';
         var orderBillingAddressLastName = order.billingAddress.lastName ? order.billingAddress.lastName : '';

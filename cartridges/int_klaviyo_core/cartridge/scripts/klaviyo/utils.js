@@ -30,6 +30,7 @@ if (Site.getCurrent().getCustomPreferenceValue('klaviyo_atc_override')) {
 
 var klaviyoEnabled = Site.getCurrent().getCustomPreferenceValue('klaviyo_enabled') || false;
 var KLImageSize = Site.getCurrent().getCustomPreferenceValue('klaviyo_image_size') || 'large';
+var siteId = Site.getCurrent().getID();
 
 
 // looks for klaviyo's cookie and if found extracts the exchangeID from it, returning that value
@@ -307,6 +308,7 @@ module.exports = {
     EVENT_NAMES           : EVENT_NAMES,
     klaviyoEnabled        : klaviyoEnabled,
     KLImageSize           : KLImageSize,
+    siteId                : siteId,
     getKlaviyoExchangeID  : getKlaviyoExchangeID,
     getProfileInfo        : getProfileInfo,
     prepareDebugData      : prepareDebugData,
