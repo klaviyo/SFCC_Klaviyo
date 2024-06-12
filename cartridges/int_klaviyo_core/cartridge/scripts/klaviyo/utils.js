@@ -27,6 +27,13 @@ var EVENT_NAMES = {
 if (Site.getCurrent().getCustomPreferenceValue('klaviyo_atc_override')) {
     EVENT_NAMES.addedToCart = 'Add To Cart';
 }
+// events that can be branded if the klaviyo_sendEventsAsSFCC site preference is set
+var BRANDED_EVENTS_NAMES = [
+    EVENT_NAMES.viewedCategory,
+    EVENT_NAMES.searchedSite,
+    EVENT_NAMES.startedCheckout,
+    EVENT_NAMES.orderConfirmation
+];
 
 var klaviyoEnabled = Site.getCurrent().getCustomPreferenceValue('klaviyo_enabled') || false;
 var KLImageSize = Site.getCurrent().getCustomPreferenceValue('klaviyo_image_size') || 'large';
@@ -186,7 +193,7 @@ function trackEvent(exchangeID, data, event, customerEmail) {
         this site that did not label events with SFCC as provider there will be a break in reporting and functionality between past events that were not
         labelled with SFCC as provider and the new events that are.  If in doubt, leave the site preference set to No and contact Klaviyo technical support.
     */
-    if (Site.getCurrent().getCustomPreferenceValue('klaviyo_sendEventsAsSFCC')) {
+    if (Site.getCurrent().getCustomPreferenceValue('klaviyo_sendEventsAsSFCC') && BRANDED_EVENTS_NAMES.includes(event)) {
         metricObj.service = 'demandware';
     }
 
