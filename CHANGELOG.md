@@ -12,6 +12,10 @@ bumped for multiple releases during one month.
 
 #### Added
 - Added `siteID` key/value to client-side events
+- New `ProductID` field to Viewed Product events
+
+### Changed
+- Excludes Viewed Product and Add/Added to Cart events from optional event branded available in site configuration. This is to make sure that Klaviyo's internal recommendation engine will pick up these events for Recommendation product feeds.
 
 ### [24.1.0] - 2024-01-18
 
