@@ -263,9 +263,9 @@ function subscribeUser(email, phone) {
 
         if (!result.ok === true) {
             logger.error('klaviyoServices.KlaviyoSubscribeProfilesService subscribe call for email error: ' + result.errorMessage);
-            // check to see if the reason the call failed was because of Klaviyo's internal phone number validation.  if so, resend without phone number
+            // check to see if the reason the call failed was because of Klaviyo's internal phone number validation.  if so, try to resend without phone number
             var errObj = JSON.parse(result.errorMessage);
-            if (result.error == 400 && errObj.errors[0].source.pointer == 'phone_number') {
+            if (result.error == 400 && errObj.errors[0].code == 'invalid' && errObj.errors[0].detail.includes('phone number')) {
                 data.data.attributes.subscriptions[0].phone_number = null;
                 result = klaviyoServices.KlaviyoSubscribeProfilesService.call(data);
                 if (result == null) {
