@@ -13,6 +13,9 @@ bumped for multiple releases during one month.
 #### Added
 - Added `siteID` key/value to client-side events
 
+#### Fixed
+- Updated error handling for consent at checkout when a phone number is invalid
+
 ### [24.1.0] - 2024-01-18
 
 #### Added
