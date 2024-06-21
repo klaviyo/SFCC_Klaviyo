@@ -1,5 +1,6 @@
 import fetch from 'node-fetch'
 import * as dotenv from 'dotenv'
+import { should } from 'chai'
 
 dotenv.config()
 
@@ -7,6 +8,8 @@ const { KLAVIYO_SFRA_PRIVATE_KEY, KLAVIYO_SITEGEN_PRIVATE_KEY, KLAVIYO_V3_URL } 
 
 const apiEndpoint = `https://${KLAVIYO_V3_URL}`
 const metricsEndpoint = '/metrics/'
+const eventsEndpoint = '/events/'
+const sortFilter = '?sort=-datetime'
 
 const sfraOpts = {
   method: 'GET',
@@ -26,37 +29,25 @@ const sgOpts = {
   },
 }
 
-let sfIntegrations
+let integrationData
 
 const getLatestMetricId = async () => {
-  const metricsFilter = '?fields[metric]=integration'
-  const integrationName = 'Salesforce Commerce Cloud'
-  const endpoint = `${apiEndpoint}${metricsEndpoint}${metricsFilter}`
+  let endpoint = `${apiEndpoint}${eventsEndpoint}${sortFilter}`
 
   try {
     const response = await fetch(endpoint, sfraOpts)
     const body = await response.json()
-    const data = body.data
-    sfIntegrations = data.filter(
-      (integration) => integration.attributes.integration.name === integrationName
-    )
+    integrationData = body.data
+
   } catch {
     const response = await fetch(endpoint, sgOpts)
     const body = await response.json()
-    const data = body.data
-    sfIntegrations = data.filter(
-      (integration) => integration.attributes.integration.name === integrationName
-    )
+    integrationData = body.data
   }
+    const firstMetric = integrationData[0]
+    const metricData = firstMetric.relationships.metrics.data[0]
 
-  const mostRecentMetric = await sfIntegrations.reduce((latest, current) => {
-      const latestDate = new Date(latest.attributes.created)
-      const currentDate = new Date(current.attributes.created)
-
-      return latestDate > currentDate ? latest : current
-  })
-
-  return mostRecentMetric.id
+  return metricData.id
 }
 
 const getLatestMetricData = async (id) => {

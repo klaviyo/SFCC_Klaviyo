@@ -26,6 +26,7 @@ function getData(productID) {
 
         data['SiteID'] = siteId;
         data['Product ID'] = product.ID;
+        data['ProductID'] = product.ID; // additive field to allow compatability with Viewed Product Recommendations
         data['Product Name'] = product.name;
         data['Product Page URL'] = URLUtils.https('Product-Show', 'pid', product.ID).toString();
         data['Product Image URL'] = product.getImage(KLImageSize).getAbsURL().toString();

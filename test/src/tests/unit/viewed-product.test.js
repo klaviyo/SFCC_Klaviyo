@@ -99,6 +99,7 @@ describe('int_klaviyo_core/cartridge/scripts/klaviyo/eventData => viewedProduct'
             {
                 "SiteID": "KlaviyoSFRA",
                 "Product ID": 'NG3614270264405',
+                "ProductID": 'NG3614270264405',
                 "Product Name": 'Belle de Teint',
                 "Product Page URL": "https://production-sitegenesis-dw.demandware.net/s/RefArch/home?lang=en_US",
                 "Product Image URL": "https://sforce.co/43Pig4s",
