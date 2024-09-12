@@ -20,6 +20,8 @@ function getData(basket) {
         data['SiteID'] = siteId;
         data.event = klaviyoUtils.EVENT_NAMES.addedToCart;
         data.basketGross = basket.getTotalGrossPrice().getValue().valueOf();
+        data.value = basket.getTotalGrossPrice().getValue().valueOf(); // duplicative but we will attempt to pop this out to the top-level value property
+        data.value_currency = basket.getCurrencyCode();
         data.itemCount = basketItems.length;
         data.lineItems = [];
         data.items = [];
@@ -109,6 +111,12 @@ function getData(basket) {
         for (var idx = data.lineItems.length - 1; idx >= 0; idx--) {
             if (!data.lineItems[idx]['Is Bonus Product']) {
                 data.productAddedToCart = data.lineItems[idx];
+
+                // Duplicating to top-level for segmentation
+                data.productID = data.productAddedToCart.productID;
+                data.masterProductID = data.productAddedToCart.masterProductID;
+                data.price = data.productAddedToCart.priceValue;
+                data.productName = data.productAddedToCart.productName;
                 break;
             }
         }

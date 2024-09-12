@@ -179,7 +179,8 @@ function trackEvent(exchangeID, data, event, customerEmail) {
         return;
     }
 
-    var metricObj = { name: event };
+    // METRIC DATA
+    var metricAttributes = { name: event };
     /* IMPORTANT:
         If the klaviyo_sendEventsAsSFCC site preference has been set to Yes (true) events will show up in the Klaviyo Dashboard with SFCC as the event provider.
         Generally speaking this should only be set to Yes if this is a brand new Klaviyo integration - if there is a previous integration with Klaviyo for
@@ -187,16 +188,42 @@ function trackEvent(exchangeID, data, event, customerEmail) {
         labelled with SFCC as provider and the new events that are.  If in doubt, leave the site preference set to No and contact Klaviyo technical support.
     */
     if (Site.getCurrent().getCustomPreferenceValue('klaviyo_sendEventsAsSFCC')) {
-        metricObj.service = 'demandware';
+        metricAttributes.service = 'demandware';
     }
+    var metricObj = {
+        data: {
+            type: 'metric',
+            attributes: metricAttributes
+        }
+    };
 
-    var profileObj = {};
+    // PROFILE DATA
+    var profileDataAttributes = {};
     if (!customerEmail) {
-        profileObj = { $exchange_id: exchangeID };
+        profileDataAttributes._kx = exchangeID;
     } else {
-        profileObj = { $email: customerEmail };
+        profileDataAttributes.email = customerEmail;
     }
 
+    var profileObj = {
+        data: {
+            type: 'profile',
+            attributes: profileDataAttributes
+        }
+    };
+
+    // Extract value and value_currency as top-level fields
+    var value;
+    var valueCurrency;
+
+    if (data.value && data.value_currency) {
+        value = data.value;
+        valueCurrency = data.value_currency;
+        delete data.value;
+        delete data.value_currency;
+    }
+
+    // EVENT DATA
     var eventData = {
         data: {
             type       : 'event',
@@ -204,10 +231,14 @@ function trackEvent(exchangeID, data, event, customerEmail) {
                 profile    : profileObj,
                 metric     : metricObj,
                 properties : data,
+                value: value,
+                value_currency: valueCurrency,
                 time       : (new Date()).toISOString()
             }
         }
     };
+
+    logger.info(JSON.stringify(eventData));
 
     var result = klaviyoServices.KlaviyoEventService.call(eventData);
 

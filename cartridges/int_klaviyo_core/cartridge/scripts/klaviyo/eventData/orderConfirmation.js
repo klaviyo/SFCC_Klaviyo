@@ -298,7 +298,8 @@ function getData(order) {
         data['Item Count'] = itemCount;
         data['Item Primary Categories'] = itemPrimaryCategories;
         data['Item Categories'] = klaviyoUtils.dedupeArray(itemCategories);
-        data['$value'] = orderTotal;
+        data['value'] = orderTotal;
+        data['value_currency'] = session.getCurrency().getCurrencyCode();
         data['$event_id'] = 'orderConfirmation-' + order.orderNo;
         data['Tracking Number'] = order.shipments[0].trackingNumber ? order.shipments[0].trackingNumber : '';
     } catch (e) {
