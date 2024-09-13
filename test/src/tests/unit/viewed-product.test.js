@@ -97,7 +97,7 @@ describe('int_klaviyo_core/cartridge/scripts/klaviyo/eventData => viewedProduct'
     it('should return specific product data for "Viewed Product" event', () => {
         const expectedResult = { object:
             {
-                "SiteID": "KlaviyoSFRA",
+                "CustomerSiteID": "KlaviyoSFRA",
                 "Product ID": 'NG3614270264405',
                 "Product Name": 'Belle de Teint',
                 "Product Page URL": "https://production-sitegenesis-dw.demandware.net/s/RefArch/home?lang=en_US",

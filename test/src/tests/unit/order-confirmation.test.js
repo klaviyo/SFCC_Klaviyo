@@ -73,7 +73,7 @@ describe('int_klaviyo_core/cartridge/scripts/klaviyo/eventData => orderConfirmat
 
     it('should return event data for "Order Confirmation" event', () => {
         const expectedResult = {
-            SiteID: 'KlaviyoSFRA',
+            CustomerSiteID: 'KlaviyoSFRA',
             'Order Total': '$9.99',
             Tax: '$9.99',
             Subtotal: '$9.99',
