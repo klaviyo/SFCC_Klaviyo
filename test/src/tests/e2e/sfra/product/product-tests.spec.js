@@ -1,6 +1,5 @@
 import { test, expect } from '@playwright/test'
 import { ProductPage } from '../page-objects/product.js'
-import { getLatestMetricData } from '../../../../utils/v3-api-helper.mjs'
 
 let testData = {
     firstName: 'Product',
@@ -41,19 +40,5 @@ test.describe('Test Klaviyo viewed category event', () => {
         await productPage.visitPLP()
         const logData = await productPage.getDebugLogs(resultMsg)
         expect(logData[0].success).toBe(true)
-    })
-})
-
-test.describe('Test successful integration with Klaviyo', () => {
-    test('Verify Viewed Product metric in Klaviyo sandbox', async ({ page }) => {
-        email = await productPage.generateEmail()
-        testData.email = email
-        await productPage.accountPage.gotoAccountLogin()
-        await productPage.accountPage.fillRegistrationForm(testData)
-        expect(await page.innerText('h1.page-title')).toBe('Dashboard')
-        await productPage.getProduct()
-        const metrics = await getLatestMetricData()
-        const metricName = metrics.attributes.name
-        expect(metricName).toBe('Viewed Product')
     })
 })

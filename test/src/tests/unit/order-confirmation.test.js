@@ -44,7 +44,7 @@ global.session = {
     }
 }
 
-const basketManagerMock = new BasketMgr()
+const basketManagerMock = new BasketMgr(true)
 
 const orderConfirmationEvent = proxyquire('int_klaviyo_core/cartridge/scripts/klaviyo/eventData/orderConfirmation.js', {
     'dw/system/Site': Site,
@@ -163,7 +163,8 @@ describe('int_klaviyo_core/cartridge/scripts/klaviyo/eventData => orderConfirmat
             'Item Count': 1,
             'Item Primary Categories': [ 'Skin Care' ],
             'Item Categories': [ 'Skin Care' ],
-            '$value': 20,
+            'value': 20,
+            'value_currency': 'USD',
             '$event_id': 'orderConfirmation-000101899',
             'Tracking Number': '999-999-999-9999999'
         }

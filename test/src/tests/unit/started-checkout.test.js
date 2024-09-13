@@ -15,7 +15,7 @@ require('app-module-path').addPath(path.join(process.cwd(), '../cartridges'))
 
 global.empty = sinon.stub()
 
-const basketManagerMock = new BasketMgr()
+const basketManagerMock = new BasketMgr(true)
 const currentBasket = basketManagerMock.getCurrentBasket()
 
 const startedCheckoutEvent = proxyquire('int_klaviyo_core/cartridge/scripts/klaviyo/eventData/startedCheckout.js', {
@@ -90,6 +90,8 @@ describe('int_klaviyo_core/cartridge/scripts/klaviyo/eventData => startedCheckou
                 }
             ],
             Items: [],
+            'value': 99.99,
+            'value_currency': 'USD',
             '$email': 'qa@unittest.com',
             cartRebuildingLink: 'https://production-sitegenesis-dw.demandware.net/s/RefArch/home?lang=en_US?items='
         }

@@ -13,7 +13,7 @@ require('app-module-path').addPath(path.join(process.cwd(), '../cartridges'))
 
 global.empty = sinon.stub()
 
-const basketManagerMock = new BasketMgr()
+const basketManagerMock = new BasketMgr(false)
 const currentBasket = basketManagerMock.getCurrentBasket()
 
 const addedToCartEvent = proxyquire('int_klaviyo_core/cartridge/scripts/klaviyo/eventData/addedToCart.js', {
@@ -53,8 +53,14 @@ describe('int_klaviyo_core/cartridge/scripts/klaviyo/eventData => addedToCart', 
         const expectedResult = {
             event: 'Added to Cart',
             basketGross: 99.99,
+            value: 99.99,
+            value_currency: 'USD',
             itemCount: 1,
             SiteID: 'KlaviyoSFRA',
+            masterProductID: 'NG3614270264405',
+            productID: 'NG3614270264405',
+            price: 10.00,
+            productName: 'Belle de Teint',
             lineItems: [
               {
                 productID: 'NG3614270264405',
@@ -95,14 +101,53 @@ describe('int_klaviyo_core/cartridge/scripts/klaviyo/eventData => addedToCart', 
                     'easports-monopoly-ps3M',
                     'namco-eternal-sonata-ps3M',
                     'sony-warhawk-ps3M'
-                ],
-                'Is Bonus Product': true
+                ]
               }
             ],
             items: [ 'Belle de Teint' ],
             categories: [ 'Skin Care' ],
             primaryCategories: [ 'Skin Care' ],
-            productAddedToCart: {}
+            productAddedToCart: {
+                productID: 'NG3614270264405',
+                productName: 'Belle de Teint',
+                productImageURL: 'https://sforce.co/43Pig4s',
+                productPageURL: 'https://production-sitegenesis-dw.demandware.net/s/RefArch/home?lang=en_US',
+                productUPC: '555',
+                viewedProductAvailability: 1,
+                categories: ['Health'],
+                primaryCategory: 'Skin Care',
+                masterProductID: 'NG3614270264405',
+                price: 10.00,
+                priceValue: 10.00,
+                originalPrice: 20.00,
+                originalPriceValue: 20.00,
+                'productOptions': [{
+                    'basePrice': {
+                        'value': 0.99
+                    },
+                    'lineItemText': 'lineItemText1',
+                    'optionID': 'optionId1',
+                    'optionValueID': 'selectedValueId1',
+                    'productName': 'productName1',
+                },
+                {
+                    'basePrice': {
+                        'value': 1.99
+                    },
+                    'lineItemText': 'lineItemText2',
+                    'optionID': 'optionId2',
+                    'optionValueID': 'selectedValueId2',
+                    'productName': 'productName2',
+                }],
+                'Is Product Bundle': true,
+                'Bundled Product IDs': [
+                    'sony-ps3-consoleM',
+                    'easports-nascar-09-ps3M',
+                    'easports-monopoly-ps3M',
+                    'namco-eternal-sonata-ps3M',
+                    'sony-warhawk-ps3M'
+                ]
+            }
         }
         const resultsObj = addedToCartEvent.getData(currentBasket)
         expect(resultsObj).to.deep.equal(expectedResult)
