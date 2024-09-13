@@ -273,15 +273,36 @@ function subscribeUser(email, phone) {
     if (session.custom.KLEmailSubscribe && emailListID) {
         data = {
             data: {
-                type       : 'profile-subscription-bulk-create-job',
-                attributes : {
-                    list_id       : emailListID,
+                type: 'profile-subscription-bulk-create-job',
+                attributes: {
                     custom_source : 'SFCC Checkout',
-                    subscriptions : [{
-                        channels     : { email: ['MARKETING'] },
-                        email        : email,
-                        phone_number : phone
-                    }]
+                    profiles: {
+                        data: [
+                            {
+                                type: 'profile',
+                                attributes: {
+                                    subscriptions: {
+                                        email: {
+                                            marketing: {
+                                                consent: 'SUBSCRIBED'
+                                            }
+                                        }
+                                    },
+                                    email        : email,
+                                    phone_number : phone
+                                }
+                            }
+                        ]
+                    },
+                    historical_import: false
+                },
+                relationships: {
+                    list: {
+                        data: {
+                            type: 'list',
+                            id: emailListID
+                        }
+                    }
                 }
             }
         };
@@ -297,7 +318,7 @@ function subscribeUser(email, phone) {
             // check to see if the reason the call failed was because of Klaviyo's internal phone number validation.  if so, try to resend without phone number
             var errObj = JSON.parse(result.errorMessage);
             if (result.error == 400 && errObj.errors[0].code == 'invalid' && errObj.errors[0].detail.includes('phone number')) {
-                data.data.attributes.subscriptions[0].phone_number = null;
+                data.data.attributes.profiles.data[0].attributes.phone_number = null;
                 result = klaviyoServices.KlaviyoSubscribeProfilesService.call(data);
                 if (result == null) {
                     logger.error('klaviyoServices.KlaviyoSubscribeProfilesService subscribe call for email returned null result on second attempt without phone number');
@@ -310,18 +331,41 @@ function subscribeUser(email, phone) {
     }
 
     if (session.custom.KLSmsSubscribe && smsListID && phone) {
-        data = { data: {
-            type       : 'profile-subscription-bulk-create-job',
-            attributes : {
-                list_id       : smsListID,
-                custom_source : 'SFCC Checkout',
-                subscriptions : [{
-                    channels     : { sms: ['MARKETING'] },
-                    email        : email,
-                    phone_number : phone
-                }]
+        data = {
+            data: {
+                type: 'profile-subscription-bulk-create-job',
+                attributes: {
+                    custom_source : 'SFCC Checkout',
+                    profiles: {
+                        data: [
+                            {
+                                type: 'profile',
+                                attributes: {
+                                    subscriptions: {
+                                        sms: {
+                                            marketing: {
+                                                consent: 'SUBSCRIBED'
+                                            }
+                                        }
+                                    },
+                                    email        : email,
+                                    phone_number : phone
+                                }
+                            }
+                        ]
+                    },
+                    historical_import: false
+                },
+                relationships: {
+                    list: {
+                        data: {
+                            type: 'list',
+                            id: smsListID
+                        }
+                    }
+                }
             }
-        } };
+        };
 
         result = klaviyoServices.KlaviyoSubscribeProfilesService.call(data);
 
