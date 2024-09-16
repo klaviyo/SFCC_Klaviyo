@@ -1,6 +1,11 @@
 import { test, expect } from '@playwright/test'
 import { ProductPage } from '../page-objects/product.js'
 import { getLatestMetricData } from '../../../../utils/v3-api-helper.mjs'
+import * as dotenv from 'dotenv'
+
+dotenv.config()
+
+const { KLAVIYO_SFRA_PRIVATE_KEY } = process.env
 
 let testData = {
     firstName: 'Product',
@@ -46,13 +51,17 @@ test.describe('Test Klaviyo viewed category event', () => {
 
 test.describe('Test successful integration with Klaviyo', () => {
     test('Verify Viewed Product metric in Klaviyo sandbox', async ({ page }) => {
+        const apiParams = {
+            method: 'GET',
+            apiKey: KLAVIYO_SFRA_PRIVATE_KEY
+        }
         email = await productPage.generateEmail()
         testData.email = email
         await productPage.accountPage.gotoAccountLogin()
         await productPage.accountPage.fillRegistrationForm(testData)
         expect(await page.innerText('h1.page-title')).toBe('Dashboard')
         await productPage.getProduct()
-        const metrics = await getLatestMetricData()
+        const metrics = await getLatestMetricData(apiParams)
         const metricName = metrics.attributes.name
         expect(metricName).toBe('Viewed Product')
     })

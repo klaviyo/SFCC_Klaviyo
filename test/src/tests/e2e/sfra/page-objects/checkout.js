@@ -78,4 +78,16 @@ exports.CheckoutPage = class CheckoutPage extends BasePage {
         await this.placeOrderLocator.click()
         await this.page.waitForLoadState('networkidle')
     }
+
+    async selectSMS() {
+        const boxes = await this.page.locator('#KLSmsSubscribe')
+        await boxes.first().click()
+        expect(boxes.first()).toBeChecked()
+    }
+
+    async selectEmail() {
+        const boxes = await this.page.locator('#KLEmailSubscribe')
+        await boxes.first().click()
+        expect(boxes.first()).toBeChecked()
+    }
 }

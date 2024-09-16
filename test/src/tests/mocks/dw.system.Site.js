@@ -1,6 +1,8 @@
 let mockPreferences = {
     klaviyo_api_key: 'ababababababababab',
-    klaviyo_sendEventsAsSFCC: 'demandware'
+    klaviyo_sendEventsAsSFCC: 'demandware',
+    klaviyo_email_list_id: 'AbAbs',
+    klaviyo_sms_list_id: 'UuDdLr'
 }
 
 const preferences = {}
@@ -14,7 +16,6 @@ const Site = {
             if (Object.prototype.hasOwnProperty.call(mockPreferences, key)) {
                 return mockPreferences[key];
         }
-
             return preferences[key]
         }
     },
@@ -42,7 +43,3 @@ const restore = () => {
 module.exports = Site
 module.exports.setMockPreferenceValue = setMockPreferenceValue
 module.exports.restore = restore
-
-Object.defineProperty(module.exports, 'preferences', {
-    get: () => Object.assign({}, preferences, mockPreferences)
-})

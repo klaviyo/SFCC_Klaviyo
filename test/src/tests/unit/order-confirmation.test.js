@@ -10,39 +10,10 @@ const ProductMgr = require('../mocks/dw.catalog.ProductMgr')
 const BasketMgr = require('../mocks/BasketMgr')
 const basketStubs = require('../mocks/util/basketObjectStubs')
 
+require('../mocks/util/globalMocks')()
 require('app-module-path').addPath(path.join(process.cwd(), '../cartridges'))
 
 global.empty = sinon.stub()
-global.dw = {
-    util: {
-        StringUtils: {
-            formatMoney: function () {
-                return '$9.99'
-            },
-            formatCalendar: function () {
-                return '2022-22-02'
-            }
-        },
-        Calendar: function() {
-            return '2022-22-02'
-        }
-    },
-    value: {
-        Money: function() {
-            return '$9.00'
-        }
-    },
-}
-
-global.session = {
-    getCurrency: function() {
-        return {
-            getCurrencyCode: function() {
-                return 'USD'
-            }
-        }
-    }
-}
 
 const basketManagerMock = new BasketMgr()
 
@@ -61,7 +32,7 @@ const orderConfirmationEvent = proxyquire('int_klaviyo_core/cartridge/scripts/kl
         priceCheck: basketStubs().priceCheckMock,
         dedupeArray: function() {
             return ['Skin Care']
-        }
+        },
     },
 })
 
