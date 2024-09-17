@@ -5,7 +5,7 @@ var siteId = klaviyoUtils.siteId;
 // prepares data for "Searched Site" event
 function getData(term, count) {
     return {
-        'CustomerSiteID'               : siteId,
+        'SiteID'               : siteId,
         'Search Term'          : term,
         'Search Results Count' : count
     };

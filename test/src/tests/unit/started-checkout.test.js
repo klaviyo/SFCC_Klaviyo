@@ -56,7 +56,7 @@ describe('int_klaviyo_core/cartridge/scripts/klaviyo/eventData => startedCheckou
 
     it('should return the correct basket data for "Started Checkout" event', () => {
         const expectedResult = {
-            CustomerSiteID: 'KlaviyoSFRA',
+            SiteID: 'KlaviyoSFRA',
             'Basket Gross Price': 99.99,
             Categories: [
                 'Health'

@@ -5,7 +5,7 @@ var siteId = klaviyoUtils.siteId;
 
 // prepares data for "Viewed Category" event
 function getData(categoryID) {
-    return { 'CustomerSiteID': siteId, 'Viewed Category': categoryID };
+    return { 'SiteID': siteId, 'Viewed Category': categoryID };
 }
 
 

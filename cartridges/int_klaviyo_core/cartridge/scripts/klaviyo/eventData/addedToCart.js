@@ -17,7 +17,7 @@ function getData(basket) {
     try {
         data = {};
         var basketItems = basket.getProductLineItems().toArray();
-        data['CustomerSiteID'] = siteId;
+        data['SiteID'] = siteId;
         data.event = klaviyoUtils.EVENT_NAMES.addedToCart;
         data.basketGross = basket.getTotalGrossPrice().getValue().valueOf();
         data.value = basket.getTotalGrossPrice().getValue().valueOf(); // duplicative but we will attempt to pop this out to the top-level value property

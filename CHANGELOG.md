@@ -13,8 +13,8 @@ bumped for multiple releases during one month.
 ### [24.9.0] - 24-09-17
 
 #### Added
-- Added `CustomerSiteID` key/value to client-side events
-- Added the following fields to the top level of Added to Cart events: masterProductID, productID, price, productName for use during segmentation.
+- Added `SiteID` key/value to client-side events
+- Added the following fields to the top level of Added to Cart events: `masterProductID`, `productID`, `price`, `productName` for use during segmentation.
 - Added `value` and `value_currency` to the following events to unblock attribution value tracking in Klaviyo: Started Checkout, Order Confirmation, Viewed Product, Added to Cart
 
 #### Changed
