@@ -34,6 +34,8 @@ function getData(productID) {
         data['Original Price'] = prices.originalPrice ? prices.originalPrice : prices.price;
         data['Original Price String'] = prices.originalPriceString ? prices.originalPriceString : prices.priceString;
         data['Product UPC'] = product.UPC;
+        data['value'] = prices.price;
+        data['value_currency'] = session.getCurrency().getCurrencyCode();
 
         if (!product.master && 'masterProduct' in product) {
             data['Master Product ID'] = product.masterProduct.ID;

@@ -179,7 +179,8 @@ function trackEvent(exchangeID, data, event, customerEmail) {
         return;
     }
 
-    var metricObj = { name: event };
+    // METRIC DATA
+    var metricAttributes = { name: event };
     /* IMPORTANT:
         If the klaviyo_sendEventsAsSFCC site preference has been set to Yes (true) events will show up in the Klaviyo Dashboard with SFCC as the event provider.
         Generally speaking this should only be set to Yes if this is a brand new Klaviyo integration - if there is a previous integration with Klaviyo for
@@ -187,16 +188,45 @@ function trackEvent(exchangeID, data, event, customerEmail) {
         labelled with SFCC as provider and the new events that are.  If in doubt, leave the site preference set to No and contact Klaviyo technical support.
     */
     if (Site.getCurrent().getCustomPreferenceValue('klaviyo_sendEventsAsSFCC')) {
-        metricObj.service = 'demandware';
+        metricAttributes.service = 'demandware';
     }
+    var metricObj = {
+        data: {
+            type: 'metric',
+            attributes: metricAttributes
+        }
+    };
 
-    var profileObj = {};
+    // PROFILE DATA
+    var profileDataAttributes = {};
     if (!customerEmail) {
-        profileObj = { $exchange_id: exchangeID };
+        profileDataAttributes._kx = exchangeID;
     } else {
-        profileObj = { $email: customerEmail };
+        profileDataAttributes.email = customerEmail;
     }
 
+    var profileObj = {
+        data: {
+            type: 'profile',
+            attributes: profileDataAttributes
+        }
+    };
+
+    // Extract value and value_currency as top-level fields
+    var value;
+    var valueCurrency;
+
+    if (data.value) {
+        value = data.value;
+        delete data.value;
+
+        if (data.value_currency) {
+            valueCurrency = data.value_currency;
+            delete data.value_currency;
+        }
+    }
+
+    // EVENT DATA
     var eventData = {
         data: {
             type       : 'event',
@@ -204,10 +234,14 @@ function trackEvent(exchangeID, data, event, customerEmail) {
                 profile    : profileObj,
                 metric     : metricObj,
                 properties : data,
+                value: value,
+                value_currency: valueCurrency,
                 time       : (new Date()).toISOString()
             }
         }
     };
+
+    logger.info(JSON.stringify(eventData));
 
     var result = klaviyoServices.KlaviyoEventService.call(eventData);
 
@@ -242,15 +276,36 @@ function subscribeUser(email, phone) {
     if (session.custom.KLEmailSubscribe && emailListID) {
         data = {
             data: {
-                type       : 'profile-subscription-bulk-create-job',
-                attributes : {
-                    list_id       : emailListID,
+                type: 'profile-subscription-bulk-create-job',
+                attributes: {
                     custom_source : 'SFCC Checkout',
-                    subscriptions : [{
-                        channels     : { email: ['MARKETING'] },
-                        email        : email,
-                        phone_number : phone
-                    }]
+                    profiles: {
+                        data: [
+                            {
+                                type: 'profile',
+                                attributes: {
+                                    subscriptions: {
+                                        email: {
+                                            marketing: {
+                                                consent: 'SUBSCRIBED'
+                                            }
+                                        }
+                                    },
+                                    email        : email,
+                                    phone_number : phone
+                                }
+                            }
+                        ]
+                    },
+                    historical_import: false
+                },
+                relationships: {
+                    list: {
+                        data: {
+                            type: 'list',
+                            id: emailListID
+                        }
+                    }
                 }
             }
         };
@@ -266,7 +321,7 @@ function subscribeUser(email, phone) {
             // check to see if the reason the call failed was because of Klaviyo's internal phone number validation.  if so, try to resend without phone number
             var errObj = JSON.parse(result.errorMessage);
             if (result.error == 400 && errObj.errors[0].code == 'invalid' && errObj.errors[0].detail.includes('phone number')) {
-                data.data.attributes.subscriptions[0].phone_number = null;
+                data.data.attributes.profiles.data[0].attributes.phone_number = null;
                 result = klaviyoServices.KlaviyoSubscribeProfilesService.call(data);
                 if (result == null) {
                     logger.error('klaviyoServices.KlaviyoSubscribeProfilesService subscribe call for email returned null result on second attempt without phone number');
@@ -279,18 +334,41 @@ function subscribeUser(email, phone) {
     }
 
     if (session.custom.KLSmsSubscribe && smsListID && phone) {
-        data = { data: {
-            type       : 'profile-subscription-bulk-create-job',
-            attributes : {
-                list_id       : smsListID,
-                custom_source : 'SFCC Checkout',
-                subscriptions : [{
-                    channels     : { sms: ['MARKETING'] },
-                    email        : email,
-                    phone_number : phone
-                }]
+        data = {
+            data: {
+                type: 'profile-subscription-bulk-create-job',
+                attributes: {
+                    custom_source : 'SFCC Checkout',
+                    profiles: {
+                        data: [
+                            {
+                                type: 'profile',
+                                attributes: {
+                                    subscriptions: {
+                                        sms: {
+                                            marketing: {
+                                                consent: 'SUBSCRIBED'
+                                            }
+                                        }
+                                    },
+                                    email        : email,
+                                    phone_number : phone
+                                }
+                            }
+                        ]
+                    },
+                    historical_import: false
+                },
+                relationships: {
+                    list: {
+                        data: {
+                            type: 'list',
+                            id: smsListID
+                        }
+                    }
+                }
             }
-        } };
+        };
 
         result = klaviyoServices.KlaviyoSubscribeProfilesService.call(data);
 

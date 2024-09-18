@@ -4,7 +4,8 @@ const Customer = require('../mocks/dw.customer.Customer')
 const ProductMgr = require('../mocks/dw.catalog.ProductMgr')
 
 class BasketMgr {
-    constructor() {
+    constructor(includeBonusItem) {
+        this.includeBonusItem = includeBonusItem
         this.productLineItems = []
         this.paymentInstruments = []
         this.paymentStatus = { value: 0 }
@@ -133,7 +134,7 @@ class BasketMgr {
                                     price: 50,
                                     originalPriceValue: 100,
                                     priceValue: 50
-                                },
+                                } ? this.includeBonusItem : {},
                                 bundledProductLineItems: [
                                     {
                                         isProdBundle: true,
@@ -178,6 +179,11 @@ class BasketMgr {
                     }
                 }
             },
+
+            getCurrencyCode: () => {
+                return 'USD'
+            },
+
             customerEmail: this.customerEmail
         }
     }

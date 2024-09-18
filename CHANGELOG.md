@@ -10,8 +10,16 @@ bumped for multiple releases during one month.
 <!-- BEGIN RELEASE NOTES -->
 ### [Unreleased]
 
+### [24.9.0] - 24-09-17
+
 #### Added
-- Added `siteID` key/value to client-side events
+- Added `SiteID` key/value to client-side events
+- Added the following fields to the top level of Added to Cart events: `masterProductID`, `productID`, `price`, `productName` for use during segmentation.
+- Added `value` and `value_currency` to the following events to unblock attribution value tracking in Klaviyo: Started Checkout, Order Confirmation, Viewed Product, Added to Cart
+
+#### Changed
+- Updates API revision to latest (2024-07-15)
+- Updates klaviyo.js onsite javascript url to new format
 
 #### Fixed
 - Updated error handling for consent at checkout when a phone number is invalid
@@ -79,7 +87,8 @@ bumped for multiple releases during one month.
 <!-- END RELEASE NOTES -->
 
 <!-- BEGIN LINKS -->
-[Unreleased]: https://github.com/klaviyo/SFCC_Klaviyo/compare/24.1.0...HEAD
+[Unreleased]: https://github.com/klaviyo/SFCC_Klaviyo/compare/24.9.0...HEAD
+[24.9.0]: https://github.com/klaviyo/SFCC_Klaviyo/compare/24.1.0...24.9.0
 [24.1.0]: https://github.com/klaviyo/SFCC_Klaviyo/compare/23.7.0...24.1.0
 [23.7.0]: https://github.com/klaviyo/SFCC_Klaviyo/compare/21.10.0...23.7.0
 [21.10.0]: https://github.com/klaviyo/SFCC_Klaviyo/compare/21.7.0...21.10.0

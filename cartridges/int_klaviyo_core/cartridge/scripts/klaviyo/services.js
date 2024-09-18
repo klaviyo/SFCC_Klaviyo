@@ -31,9 +31,9 @@ var KlaviyoEventService = ServiceRegistry.createService('KlaviyoEventService', {
         svc.addHeader('Authorization', 'Klaviyo-API-Key ' + key);
         svc.addHeader('Content-type', 'application/json');
         svc.addHeader('Accept', 'application/json');
-        svc.addHeader('revision', '2023-02-22');
+        svc.addHeader('revision', '2024-07-15');
         // TODO: dynamically pull extension version
-        svc.addHeader('X-Klaviyo-User-Agent', 'sfcc-klaviyo/24.1.0');
+        svc.addHeader('X-Klaviyo-User-Agent', 'sfcc-klaviyo/24.9.0');
 
         return JSON.stringify(args);
     },
@@ -103,9 +103,9 @@ var KlaviyoSubscribeProfilesService = ServiceRegistry.createService('KlaviyoSubs
         svc.addHeader('Authorization', 'Klaviyo-API-Key ' + key);
         svc.addHeader('Content-type', 'application/json');
         svc.addHeader('Accept', 'application/json');
-        svc.addHeader('revision', '2023-02-22');
+        svc.addHeader('revision', '2024-07-15');
         // TODO: dynamically pull extension version
-        svc.addHeader('X-Klaviyo-User-Agent', 'sfcc-klaviyo/24.1.0');
+        svc.addHeader('X-Klaviyo-User-Agent', 'sfcc-klaviyo/24.9.0');
 
         return JSON.stringify(args);
     },

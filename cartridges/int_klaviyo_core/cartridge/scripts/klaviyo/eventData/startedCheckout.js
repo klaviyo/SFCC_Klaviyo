@@ -21,6 +21,8 @@ function getData(currentBasket) {
         var basketItems = currentBasket.getProductLineItems().toArray();
         var reconstructCartItems = [];
         data['Basket Gross Price'] = currentBasket.getTotalGrossPrice().value;
+        data['value'] = currentBasket.getTotalGrossPrice().value; // duplicative, will be pulled to top-level event field during event creation
+        data['value_currency'] = session.getCurrency().getCurrencyCode(); // will be pulled to top-level event field during event creation
         data['Item Count'] = basketItems.length;
 
         // prepare to add top-level data while iterating through product line items

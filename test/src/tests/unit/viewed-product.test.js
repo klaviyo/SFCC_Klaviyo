@@ -109,7 +109,9 @@ describe('int_klaviyo_core/cartridge/scripts/klaviyo/eventData => viewedProduct'
                 "Price String": "$10.00",
                 "Primary Category": "Skin Care",
                 "Product UPC": '555',
-                "Categories": [ 'Health' ]
+                "Categories": [ 'Health' ],
+                "value": 10,
+                "value_currency": 'USD'
             }
         }
 
