@@ -216,11 +216,14 @@ function trackEvent(exchangeID, data, event, customerEmail) {
     var value;
     var valueCurrency;
 
-    if (data.value && data.value_currency) {
+    if (data.value) {
         value = data.value;
-        valueCurrency = data.value_currency;
         delete data.value;
-        delete data.value_currency;
+
+        if (data.value_currency) {
+            valueCurrency = data.value_currency;
+            delete data.value_currency;
+        }
     }
 
     // EVENT DATA
