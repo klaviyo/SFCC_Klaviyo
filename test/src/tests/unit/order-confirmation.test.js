@@ -9,6 +9,7 @@ const URLUtils = require('../mocks/dw.web.URLUtils')
 const ProductMgr = require('../mocks/dw.catalog.ProductMgr')
 const BasketMgr = require('../mocks/BasketMgr')
 const basketStubs = require('../mocks/util/basketObjectStubs')
+const setSiteIdAndIntegrationInfo = require('../mocks/util/setSiteIdAndIntegrationInfo')
 
 require('app-module-path').addPath(path.join(process.cwd(), '../cartridges'))
 
@@ -61,7 +62,8 @@ const orderConfirmationEvent = proxyquire('int_klaviyo_core/cartridge/scripts/kl
         priceCheck: basketStubs().priceCheckMock,
         dedupeArray: function() {
             return ['Skin Care']
-        }
+        },
+        setSiteIdAndIntegrationInfo: setSiteIdAndIntegrationInfo
     },
 })
 
@@ -74,6 +76,8 @@ describe('int_klaviyo_core/cartridge/scripts/klaviyo/eventData => orderConfirmat
     it('should return event data for "Order Confirmation" event', () => {
         const expectedResult = {
             SiteID: 'KlaviyoSFRA',
+            external_catalog_id: 'KlaviyoSFRA',
+            integration_key: 'demandware',
             'Order Total': '$9.99',
             Tax: '$9.99',
             Subtotal: '$9.99',

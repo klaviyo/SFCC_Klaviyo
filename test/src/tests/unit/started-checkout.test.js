@@ -10,7 +10,7 @@ const ProductMgr = require('../mocks/dw.catalog.ProductMgr')
 const BasketMgr = require('../mocks/BasketMgr')
 const Money = require('../mocks/dw.value.Money')
 const basketStubs = require('../mocks/util/basketObjectStubs')
-
+const setSiteIdAndIntegrationInfo = require('../mocks/util/setSiteIdAndIntegrationInfo')
 require('app-module-path').addPath(path.join(process.cwd(), '../cartridges'))
 
 global.empty = sinon.stub()
@@ -28,7 +28,8 @@ const startedCheckoutEvent = proxyquire('int_klaviyo_core/cartridge/scripts/klav
             captureProductOptions: basketStubs().pdctLineItems,
             captureBonusProduct: basketStubs().bonusPdct,
             captureProductBundles: basketStubs().bundlePdct,
-            siteId: Site.getCurrent().getID()
+            siteId: Site.getCurrent().getID(),
+            setSiteIdAndIntegrationInfo: setSiteIdAndIntegrationInfo
         },
         'dw/util/StringUtils': StringUtils,
         'dw/value/Money': Money,
@@ -57,6 +58,8 @@ describe('int_klaviyo_core/cartridge/scripts/klaviyo/eventData => startedCheckou
     it('should return the correct basket data for "Started Checkout" event', () => {
         const expectedResult = {
             SiteID: 'KlaviyoSFRA',
+            external_catalog_id: 'KlaviyoSFRA',
+            integration_key: 'demandware',
             'Basket Gross Price': 99.99,
             Categories: [
                 'Health'

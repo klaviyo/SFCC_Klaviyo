@@ -2,12 +2,16 @@ const expect = require('chai').expect
 const path = require('path')
 const sinon = require('sinon')
 const proxyquire = require('proxyquire').noCallThru().noPreserveCache()
+
+// Set up SFCC environment first
 const Logger = require('../mocks/dw.system.Logger')
 const URLUtils = require('../mocks/dw.web.URLUtils')
 const ProductMgr = require('../mocks/dw.catalog.ProductMgr')
 const BasketMgr = require('../mocks/BasketMgr')
 const basketStubs = require('../mocks/util/basketObjectStubs')
 const Site = require('../mocks/dw.system.Site')
+const StringUtils = require('../mocks/dw.util.StringUtils')
+const setSiteIdAndIntegrationInfo = require('../mocks/util/setSiteIdAndIntegrationInfo')
 
 require('app-module-path').addPath(path.join(process.cwd(), '../cartridges'))
 
@@ -39,7 +43,8 @@ const addedToCartEvent = proxyquire('int_klaviyo_core/cartridge/scripts/klaviyo/
         },
         dedupeArray: () => {
             return ['Skin Care']
-        }
+        },
+        setSiteIdAndIntegrationInfo: setSiteIdAndIntegrationInfo
     },
 })
 
@@ -57,6 +62,8 @@ describe('int_klaviyo_core/cartridge/scripts/klaviyo/eventData => addedToCart', 
             value_currency: 'USD',
             itemCount: 1,
             SiteID: 'KlaviyoSFRA',
+            external_catalog_id: 'KlaviyoSFRA',
+            integration_key: 'demandware',
             masterProductID: 'NG3614270264405',
             productID: 'NG3614270264405',
             price: 10.00,

@@ -7,7 +7,7 @@ const StringUtils = require('../mocks/dw.util.StringUtils')
 const Logger = require('../mocks/dw.system.Logger')
 const URLUtils = require('../mocks/dw.web.URLUtils')
 const ProductMgr = require('../mocks/dw.catalog.ProductMgr')
-
+const setSiteIdAndIntegrationInfo = require('../mocks/util/setSiteIdAndIntegrationInfo')
 global.empty = sinon.stub()
 
 require('app-module-path').addPath(path.join(process.cwd(), '../cartridges'))
@@ -74,6 +74,7 @@ const viewedProductEvent = proxyquire('int_klaviyo_core/cartridge/scripts/klaviy
             KLImageSize: 'large',
             dedupeArray: dedupeArrayStub.withArgs(categories).returns(['Health']),
             siteId: Site.getCurrent().getID(),
+            setSiteIdAndIntegrationInfo: setSiteIdAndIntegrationInfo
         },
         '*/cartridge/scripts/klaviyo/viewedProductHelpers.js': getProductPrices,
     },
@@ -98,6 +99,8 @@ describe('int_klaviyo_core/cartridge/scripts/klaviyo/eventData => viewedProduct'
         const expectedResult = { object:
             {
                 "SiteID": "KlaviyoSFRA",
+                "external_catalog_id": "KlaviyoSFRA",
+                "integration_key": "demandware",
                 "Product ID": 'NG3614270264405',
                 "Product Name": 'Belle de Teint',
                 "Product Page URL": "https://production-sitegenesis-dw.demandware.net/s/RefArch/home?lang=en_US",
