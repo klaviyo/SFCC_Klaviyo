@@ -58,7 +58,7 @@ class KlaviyoAPI {
                     'additional-fields[profile]': 'subscriptions'
                 }
             });
-            
+
             // Return the first matching profile or null if none found
             return response.data.data[0] || null;
         } catch (error) {
@@ -96,7 +96,7 @@ class KlaviyoAPI {
         const response = await axios.get(`https://${this.v3Url}/profiles/`, {
             headers: this.getHeaders(),
             params: {
-                filter: `equals(email,"${email}")`, 
+                filter: `equals(email,"${email}")`,
                 'additional-fields[profile]': 'subscriptions',
                 'fields[profile]': 'id,email,subscriptions.email.marketing'
             }

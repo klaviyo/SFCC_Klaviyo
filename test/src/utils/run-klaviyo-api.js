@@ -22,9 +22,9 @@ async function main() {
         console.log(`Checking profile for email: ${email}`);
         console.log('Using Klaviyo API URL:', process.env.KLAVIYO_V3_URL);
         console.log('Using Klaviyo Private Key:', process.env.KLAVIYO_SFRA_PRIVATE_KEY ? 'Present' : 'Missing');
-        
+
         const profile = await klaviyo.getProfileByEmail(email);
-        
+
         if (profile) {
             console.log('\nProfile found:');
             console.log('----------------');
@@ -42,4 +42,4 @@ async function main() {
     }
 }
 
-main(); 
+main();

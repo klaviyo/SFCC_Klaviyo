@@ -27,4 +27,4 @@ async function checkEventWithRetry(email, metricId, options = {}) {
 
 module.exports = {
     checkEventWithRetry
-}; 
+};
