@@ -5,7 +5,6 @@ let testData = {
     firstName: 'Product',
     lastName: 'Automation',
     phone: '7777777777',
-    password: 'Abcd1234$$',
 }
 
 let search
@@ -23,6 +22,7 @@ test.describe('Test Klaviyo search event', () => {
         const resultMsg = 'Klaviyo Service Result:'
         email = await search.generateEmail()
         testData.email = email
+        testData.password = await search.generatePassword()
         await search.accountPage.gotoAccountLogin()
         await search.accountPage.fillRegistrationForm(testData)
         await search.enterSearchTerm(searchTerm)

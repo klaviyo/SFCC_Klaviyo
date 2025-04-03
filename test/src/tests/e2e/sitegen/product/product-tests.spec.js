@@ -5,7 +5,6 @@ let testData = {
     firstName: 'Product',
     lastName: 'Automation',
     phone: '7777777777',
-    password: 'Abcd1234$$'
 }
 
 let productPage
@@ -22,6 +21,7 @@ test.describe('Test Klaviyo viewed product event', () => {
         const resultMsg = 'Klaviyo Service Result:'
         email = await productPage.generateEmail()
         testData.email = email
+        testData.password = await productPage.generatePassword()
         await productPage.accountPage.gotoAccountLogin()
         await productPage.accountPage.fillRegistrationForm(testData)
         await productPage.visitPDP()
@@ -35,6 +35,7 @@ test.describe('Test Klaviyo viewed category event', () => {
         const resultMsg = 'Klaviyo Service Result:'
         email = await productPage.generateEmail()
         testData.email = email
+        testData.password = await productPage.generatePassword()
         await productPage.accountPage.gotoAccountLogin()
         await productPage.accountPage.fillRegistrationForm(testData)
         await productPage.visitPLP()
