@@ -10,6 +10,15 @@ bumped for multiple releases during one month.
 <!-- BEGIN RELEASE NOTES -->
 ### [Unreleased]
 
+#### Changed
+- Added `external_catalog_id` and `integration_key` key/value to the following client-side events
+  * Searched Site
+  * Viewed Category
+  * Viewed Product
+  * Started Checkout
+  * Added to Cart
+  * Order Confirmation
+
 ### [24.9.0] - 24-09-17
 
 #### Added

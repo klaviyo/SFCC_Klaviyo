@@ -6,3 +6,5 @@ package-lock.json
 dist
 storefront-reference-architecture
 .vscode
+.prettierrc
+.env

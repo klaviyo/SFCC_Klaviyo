@@ -28,9 +28,17 @@ The following frameworks and packages are used for testing
 ```
 SFRA_BASE_URL=https://<INSTANCE>.commercecloud.salesforce.com/on/demandware.store/Sites-RefArch-Site
 SITEGEN_BASE_URL=https://<INSTANCE>.commercecloud.salesforce.com/on/demandware.store/Sites-SiteGenesis-Site
-KLAVIYO_SFRA_PRIVATE_KEY=aaaaaaaaa...
-KLAVIYO_SITEGEN_PRIVATE_KEY=bbbbbbbbb...
+KLAVIYO_SFRA_PRIVATE_KEY=<klaviyo_private_api_key_for_sfra_store>
+KLAVIYO_SITEGEN_PRIVATE_KEY=<klaviyo_private_api_key_for_sitegen_store>
 KLAVIYO_V3_URL=a.klaviyo.com/api
+
+KLAVIYO_E2E_TEST_SITE_ID=<your_test_store_site_id>
+KLAVIYO_METRIC_ID_VIEWED_CATEGORY=<metric_id_for_viewed_catalog>
+KLAVIYO_METRIC_ID_VIEWED_PRODUCT=<metric_id_for_viewed_product>
+KLAVIYO_METRIC_ID_ADDED_TO_CART=<metric_id_for_added_to_cart>
+KLAVIYO_METRIC_ID_ORDER_CONFIRMATION=<metric_id_for_order_confirmation>
+KLAVIYO_METRIC_ID_STARTED_CHECKOUT=<metric_id_for_started_checkout>
+KLAVIYO_METRIC_ID_SEARCHED_SITE=<metric_id_for_searched_site>
 ```
 
 ## Instructions

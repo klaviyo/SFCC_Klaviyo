@@ -6,7 +6,8 @@
   "scripts": {
     "test": "mocha ./test/unit/*.js",
     "lint": "eslint **/*.js",
-    "watch": "sgmf-scripts --watch"
+    "watch": "sgmf-scripts --watch",
+    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,css,scss,md}\""
   },
   "repository": {
     "type": "git",
@@ -21,6 +22,7 @@
   "devDependencies": {
     "chai": "^4.2.0",
     "mocha": "^6.2.2",
+    "prettier": "^3.5.3",
     "sgmf-scripts": "^2.4.2"
   },
   "dependencies": {
