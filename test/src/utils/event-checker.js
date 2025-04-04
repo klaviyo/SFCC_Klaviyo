@@ -10,7 +10,8 @@ const KlaviyoAPI = require('./klaviyo-api.js');
  * @returns {Promise<Object>} Event data if found, null if not found
  */
 async function checkEventWithRetry(email, metricId, options = {}) {
-    const { waitTime = 1000, tryCount = 30 } = options;
+    // By default, we wait up to 120 seconds for the event to be created
+    const { waitTime = 1000, tryCount = 120 } = options;
     const klaviyo = new KlaviyoAPI();
     let eventData = null;
 

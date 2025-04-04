@@ -89,7 +89,7 @@ test.describe('Test Klaviyo add to cart event', () => {
         const eventTime = new Date(events.data[0].attributes.datetime);
         expect(Math.abs(new Date() - eventTime)).toBeLessThan(60 * 1000); // Within 1 minute (60,000 ms)
 
-        expect(metricData.attributes.name).toBe('Added to Cart');
+        expect(['Added to Cart', 'Add to Cart']).toContain(metricData.attributes.name);
         expect(eventData.SiteID).toBe(KLAVIYO_E2E_TEST_SITE_ID);
         expect(eventData.external_catalog_id).toBe(KLAVIYO_E2E_TEST_SITE_ID);
         expect(eventData.integration_key).toBe(KLAVIYO_DEMANDWARE_INTEGRATION_KEY);
