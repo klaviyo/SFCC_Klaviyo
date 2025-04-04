@@ -7,7 +7,9 @@
   "scripts": {
     "test:unit": "mocha src/tests/unit",
     "test:sfra:e2e": "playwright test src/tests/e2e/sfra --project=\"chrome desktop\"",
-    "test:sg:e2e": "playwright test src/tests/e2e/sitegen --project=\"chrome desktop\""
+    "test:sg:e2e": "playwright test src/tests/e2e/sitegen --project=\"chrome desktop\"",
+    "test:sfra:e2e:ui": "playwright test src/tests/e2e/sfra --project=\"chrome desktop\" --ui",
+    "run-klaviyo-api": "node src/utils/run-klaviyo-api.js"
   },
   "author": "Erik Marty",
   "license": "UNLICENSED",
@@ -15,6 +17,7 @@
     "@playwright/test": "^1.32.1",
     "@types/node-fetch": "^2.6.3",
     "app-module-path": "^2.2.0",
+    "axios": "^1.8.4",
     "chai": "^4.3.7",
     "dotenv": "^16.0.3",
     "dw-api-mock": "git+ssh://github.com/SalesforceCommerceCloud/dw-api-mock.git",

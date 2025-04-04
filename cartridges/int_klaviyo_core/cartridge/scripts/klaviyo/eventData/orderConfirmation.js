@@ -19,7 +19,7 @@ function getData(order) {
     var data;
     try {
         data = {};
-        data['SiteID'] = siteId;
+        klaviyoUtils.setSiteIdAndIntegrationInfo(data, siteId);
         // Billing Address
         var orderBillingAddressFirstName = order.billingAddress.firstName ? order.billingAddress.firstName : '';
         var orderBillingAddressLastName = order.billingAddress.lastName ? order.billingAddress.lastName : '';

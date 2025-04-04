@@ -382,6 +382,20 @@ function subscribeUser(email, phone) {
     }
 }
 
+/**
+ * Sets the siteId, external_catalog_id and integration_key properties on an event data object.
+ * The `external_catalog_id` is information is required by Klaviyo to correctly attribute events to the correct SFCC site.
+ * @param {Object} data - The data object to set the properties on
+ * @param {string} siteId - The siteId to set
+ * @returns {Object} The updated data object with the SiteId, external_catalog_id and integration_key properties set
+ */
+function setSiteIdAndIntegrationInfo(data, siteId) {
+    data.SiteID = siteId;
+    data.external_catalog_id = siteId;
+    data.integration_key = 'demandware';
+    return data;
+}
+
 module.exports = {
     EVENT_NAMES           : EVENT_NAMES,
     klaviyoEnabled        : klaviyoEnabled,
@@ -397,5 +411,6 @@ module.exports = {
     priceCheck            : priceCheck,
     getRootPriceBook      : getRootPriceBook,
     trackEvent            : trackEvent,
-    subscribeUser         : subscribeUser
+    subscribeUser         : subscribeUser,
+    setSiteIdAndIntegrationInfo : setSiteIdAndIntegrationInfo
 };

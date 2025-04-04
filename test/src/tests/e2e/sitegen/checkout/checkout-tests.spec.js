@@ -5,7 +5,6 @@ let testData = {
     firstName: 'Checkout',
     lastName: 'Automation',
     phone: '7777777777',
-    password: 'Abcd1234$$',
     address: '4321 First Last Lane',
     country: 'us',
     state: 'FL',
@@ -32,6 +31,7 @@ test.describe('Test Klaviyo add to cart event', () => {
         const resultMsg = 'Klaviyo Service Result:'
         email = await checkoutPage.generateEmail()
         testData.email = email
+        testData.password = await checkoutPage.generatePassword()
         await checkoutPage.accountPage.gotoAccountLogin()
         await checkoutPage.accountPage.fillRegistrationForm(testData)
         await checkoutPage.productPage.visitPDP()
