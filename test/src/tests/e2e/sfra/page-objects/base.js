@@ -174,4 +174,5 @@ exports.BasePage = class BasePage {
         const debugURL = `https://${hostname}${path}?${KL_DEBUG}&${search}${hash}`;
         return debugURL;
     }
+
 };

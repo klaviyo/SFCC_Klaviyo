@@ -7,7 +7,9 @@ const {
     KLAVIYO_E2E_TEST_SITE_ID,
     KLAVIYO_DEMANDWARE_INTEGRATION_KEY,
 } = require('../../../../constants/klaviyo-test-settings.js');
+const KlaviyoAPI = require('../../../../utils/klaviyo-api');
 const { checkEventWithRetry } = require('../../../../utils/event-checker.js');
+const { backOff } = require('exponential-backoff');
 
 let testData = {
     firstName: 'Product',
@@ -111,6 +113,7 @@ test.describe('Test Klaviyo order confirmation event', () => {
         await checkoutPage.startCheckout();
         await checkoutPage.enterGuestEmail(email);
         await checkoutPage.fillShippingForm(testData);
+        await checkoutPage.submitShippingForm();
         await checkoutPage.fillPaymentForm(paymentData);
         await page.waitForTimeout(3000);
         expect(await page.innerText('h1.page-title')).toBe('Thank You');
@@ -133,5 +136,45 @@ test.describe('Test Klaviyo order confirmation event', () => {
         expect(eventData['Item Count']).toBe(1);
         expect(eventData.product_line_items.length).toBe(1);
         expect(eventData.product_line_items[0]['Product Name']).toBe('Incase');
+    });
+});
+
+test.describe('Test Klaviyo user subscription', () => {
+    test('Complete purchase with subscription and verify user is subscribed', async ({ page }) => {
+        const resultMsg = 'Klaviyo Service Result:';
+        email = await checkoutPage.generateEmail();
+        testData.email = email;
+        testData.password = await checkoutPage.generatePassword();
+
+        await checkoutPage.productPage.getProduct();
+        await checkoutPage.productPage.addToCart();
+        await checkoutPage.startCheckout();
+        await checkoutPage.enterGuestEmail(email);
+        await checkoutPage.fillShippingForm(testData);
+        // enable the subscription
+        await checkoutPage.enableEmailSubscription();
+        await checkoutPage.submitShippingForm();
+        await checkoutPage.fillPaymentForm(paymentData);
+        await page.waitForTimeout(3000);
+        expect(await page.innerText('h1.page-title')).toBe('Thank You');
+
+        const klaviyo = new KlaviyoAPI();
+        const profile = await backOff(
+            async () => {
+                const profile = await klaviyo.getProfileByEmail(email);
+                if (profile === null) {
+                    throw new Error('Profile not found');
+                }
+                return profile
+            },
+            {
+                numOfAttempts: 4,
+                retry: (error, attemptNumber) => {
+                    console.log(`Attempt ${attemptNumber} failed. Error: ${error.message}`);
+                    return true;
+                }
+            }
+        );
+        expect(profile.attributes.subscriptions?.email?.marketing?.consent).toBe('SUBSCRIBED');
     });
 });

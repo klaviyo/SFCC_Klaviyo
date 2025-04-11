@@ -105,6 +105,18 @@ class KlaviyoAPI {
     }
 
     /**
+     * Get all profiles in Klaviyo
+     * @returns {Promise<Array>} Array of profile data
+     */
+    async getProfiles() {
+        const response = await axios.get(`https://${this.v3Url}/profiles/`, {
+            headers: this.getHeaders()
+        });
+        return response.data.data;
+    }
+
+
+    /**
      * Checks a profile's list relationships in Klaviyo
      * @param {string} profileId - Klaviyo profile ID
      * @returns {Promise<Array>} Array of list relationships

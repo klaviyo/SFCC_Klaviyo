@@ -48,6 +48,11 @@ exports.CheckoutPage = class CheckoutPage extends BasePage {
         await this.guestCheckoutSubmit.click()
     }
 
+    async submitShippingForm(){
+        await this.submitShippingLocator.click()
+        await this.page.waitForTimeout(3000)
+    }
+
     async fillShippingForm(data) {
         await this.shippingFnameLocator.fill(data.firstName)
         await this.shippingLnameLocator.fill(data.lastName)
@@ -59,8 +64,6 @@ exports.CheckoutPage = class CheckoutPage extends BasePage {
         await this.stateLocator.selectOption({ value: data.state })
         await this.postCodeLocator.fill(data.postal)
         await this.phoneLocator.fill(data.phone)
-        await this.submitShippingLocator.click()
-        await this.page.waitForTimeout(3000)
     }
 
     async fillPaymentForm(data) {
@@ -77,5 +80,22 @@ exports.CheckoutPage = class CheckoutPage extends BasePage {
         await this.page.waitForLoadState('networkidle')
         await this.placeOrderLocator.click()
         await this.page.waitForLoadState('networkidle')
+    }
+
+    async enableEmailSubscription() {
+        await this.page.locator('.single-shipping').locator('#KLEmailSubscribe').check()
+    }
+
+    async getDebugLogs(resultMsg) {
+        const logs = await this.page.evaluate(() => {
+            return Array.from(document.querySelectorAll('pre')).map(pre => {
+                try {
+                    return JSON.parse(pre.textContent);
+                } catch (e) {
+                    return pre.textContent;
+                }
+            });
+        });
+        return logs.filter(log => log && typeof log === 'object' && log.message && log.message.includes(resultMsg));
     }
 }

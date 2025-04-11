@@ -5,6 +5,21 @@ var Logger = require('dw/system/Logger');
 var ServiceRegistry = require('dw/svc/LocalServiceRegistry');
 var Site = require('dw/system/Site');
 
+/**
+ * Returns the API version string used in the revision header
+ * @returns {string} API version in YYYY-MM-DD format
+ */
+function getApiVersion() {
+    return '2025-04-15';
+}
+
+/**
+ * Returns the User-Agent string used in the X-Klaviyo-User-Agent header
+ * @returns {string} User-Agent string
+ */
+function getUserAgent() {
+    return 'sfcc-klaviyo/25.04.0';
+}
 
 // HTTP Services
 var KlaviyoEventService = ServiceRegistry.createService('KlaviyoEventService', {
@@ -29,11 +44,11 @@ var KlaviyoEventService = ServiceRegistry.createService('KlaviyoEventService', {
 
         svc.setRequestMethod('POST');
         svc.addHeader('Authorization', 'Klaviyo-API-Key ' + key);
-        svc.addHeader('Content-type', 'application/json');
-        svc.addHeader('Accept', 'application/json');
-        svc.addHeader('revision', '2024-07-15');
+        svc.addHeader('Content-type', 'application/vnd.api+json');
+        svc.addHeader('Accept', 'application/vnd.api+json');
+        svc.addHeader('revision', getApiVersion());
         // TODO: dynamically pull extension version
-        svc.addHeader('X-Klaviyo-User-Agent', 'sfcc-klaviyo/24.9.0');
+        svc.addHeader('X-Klaviyo-User-Agent', getUserAgent());
 
         return JSON.stringify(args);
     },
@@ -101,11 +116,11 @@ var KlaviyoSubscribeProfilesService = ServiceRegistry.createService('KlaviyoSubs
 
         svc.setRequestMethod('POST');
         svc.addHeader('Authorization', 'Klaviyo-API-Key ' + key);
-        svc.addHeader('Content-type', 'application/json');
-        svc.addHeader('Accept', 'application/json');
-        svc.addHeader('revision', '2024-07-15');
+        svc.addHeader('Content-type', 'application/vnd.api+json');
+        svc.addHeader('Accept', 'application/vnd.api+json');
+        svc.addHeader('revision', getApiVersion());
         // TODO: dynamically pull extension version
-        svc.addHeader('X-Klaviyo-User-Agent', 'sfcc-klaviyo/24.9.0');
+        svc.addHeader('X-Klaviyo-User-Agent', getUserAgent());
 
         return JSON.stringify(args);
     },
