@@ -85,17 +85,4 @@ exports.CheckoutPage = class CheckoutPage extends BasePage {
     async enableEmailSubscription() {
         await this.page.locator('.single-shipping').locator('#KLEmailSubscribe').check()
     }
-
-    async getDebugLogs(resultMsg) {
-        const logs = await this.page.evaluate(() => {
-            return Array.from(document.querySelectorAll('pre')).map(pre => {
-                try {
-                    return JSON.parse(pre.textContent);
-                } catch (e) {
-                    return pre.textContent;
-                }
-            });
-        });
-        return logs.filter(log => log && typeof log === 'object' && log.message && log.message.includes(resultMsg));
-    }
 }
