@@ -20,6 +20,8 @@
   },
   "homepage": "https://github.com/klaviyo/SFCC_Klaviyo#readme",
   "devDependencies": {
+    "@playwright/test": "^1.51.1",
+    "@types/node": "^22.14.0",
     "chai": "^4.2.0",
     "mocha": "^6.2.2",
     "prettier": "^3.5.3",
