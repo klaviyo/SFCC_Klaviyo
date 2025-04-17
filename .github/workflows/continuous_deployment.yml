@@ -89,7 +89,7 @@ jobs:
           path: '${{ matrix.version }}'
 
       - name: Upload zip for tag-and-release job
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.version }}
           path: ${{ env.ZIP_FILE_NAME }}
@@ -101,7 +101,7 @@ jobs:
     steps:
 
     - name: Download zips for tag and release
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
 
     - name: Create GitHub Tag & Release
       uses: ncipollo/release-action@v1
