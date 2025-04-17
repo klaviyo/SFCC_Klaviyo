@@ -10,6 +10,8 @@ bumped for multiple releases during one month.
 <!-- BEGIN RELEASE NOTES -->
 ### [Unreleased]
 
+### [25.4.0] - 25-04-17
+
 #### Added
 - Updates to Klaviyo API 2025-04-15. See https://developers.klaviyo.com/en/v2025-04-15/reference/api_overview.
 
