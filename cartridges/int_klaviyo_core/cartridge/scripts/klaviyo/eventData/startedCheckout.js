@@ -45,8 +45,9 @@ function getData(currentBasket) {
             if (currentProductID != null && !empty(basketProduct) && basketProduct.getPriceModel().getPrice().value > 0) {
                 var productObj = prepareProductObj(lineItem, basketProduct, currentProductID);
 
-                if (!basketProduct.master && 'masterProduct' in basketProduct) {
-                    productObj['Master Product ID'] = basketProduct.masterProduct.ID;
+                if (basketProduct.variant) {
+                    // If product is a variant, use the variation group ID
+                    productObj['Master Product ID'] = klaviyoUtils.getVariationGroupId(basketProduct);
                 }
 
                 if (options && options.length) {

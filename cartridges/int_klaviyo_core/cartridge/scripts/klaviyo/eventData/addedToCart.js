@@ -33,6 +33,7 @@ function getData(basket) {
             var lineItem = basketItems[itemIndex];
             var currentProductID = lineItem.productID;
             var basketProduct = ProductMgr.getProduct(currentProductID);
+
             if (!basketProduct) {
                 throw new Error('Product with ID [' + currentProductID + '] not found');
             }
@@ -67,9 +68,11 @@ function getData(basket) {
                     primaryCategory           : primaryCategory
                 };
 
-                if (!basketProduct.master && 'masterProduct' in basketProduct) {
-                    currentLineItem.masterProductID = basketProduct.masterProduct.ID;
+                if (basketProduct.variant) {
+                    // If product is a variant, use the variation group ID
+                    currentLineItem.masterProductID = klaviyoUtils.getVariationGroupId(basketProduct);
                 }
+
 
                 var priceData = klaviyoUtils.priceCheck(lineItem, basketProduct);
                 currentLineItem.price = priceData.purchasePrice;

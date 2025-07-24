@@ -37,8 +37,9 @@ function getData(productID) {
         data['value'] = prices.price;
         data['value_currency'] = session.getCurrency().getCurrencyCode();
 
-        if (!product.master && 'masterProduct' in product) {
-            data['Master Product ID'] = product.masterProduct.ID;
+        if (product.variant) {
+            // If product is a variant, use the variation group ID
+            data['Master Product ID'] = klaviyoUtils.getVariationGroupId(product);
         }
 
         var categories = [];

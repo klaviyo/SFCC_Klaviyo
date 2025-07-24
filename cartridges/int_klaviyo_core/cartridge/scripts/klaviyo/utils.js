@@ -82,6 +82,18 @@ function dedupeArray(items) {
 }
 
 
+// helper function to get the variation group ID for a product
+// returns the variation group ID if the product is a variant, otherwise returns null
+function getVariationGroupId(product) {
+    if (product && product.variant) {
+        var productVariationModel = product.getVariationModel();
+        var groups = productVariationModel.getVariationGroups();
+        var group = groups ? groups[0] : null;
+        return group ? group.ID : null;
+    }
+    return null;
+}
+
 // helper function to extract product options and return each selected option into an object with five keys: 'Line Item Text', 'Option ID' and 'Option Value ID', 'Option Price' and 'Option Price Value.
 // This helper accomodates products that may have been configured with or feature multiple options by returning an array of each selected product option as its own optionObj.
 function captureProductOptions(prodOptions) {
@@ -405,6 +417,7 @@ module.exports = {
     getProfileInfo        : getProfileInfo,
     prepareDebugData      : prepareDebugData,
     dedupeArray           : dedupeArray,
+    getVariationGroupId   : getVariationGroupId,
     captureProductOptions : captureProductOptions,
     captureProductBundles : captureProductBundles,
     captureBonusProduct   : captureBonusProduct,

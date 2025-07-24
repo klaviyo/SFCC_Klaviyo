@@ -131,8 +131,9 @@ function getData(order) {
                     'Product Image URL'      : KLImageSize ? productDetail.getImage(KLImageSize).getAbsURL().toString() : null
                 };
 
-                if (!productDetail.master && 'masterProduct' in productDetail) {
-                    currentLineItem['Master Product ID'] = productDetail.masterProduct.ID;
+                if (productDetail.variant) {
+                    // If product is a variant, use the variation group ID
+                    currentLineItem['Master Product ID'] = klaviyoUtils.getVariationGroupId(productDetail);
                 }
 
                 var priceData = klaviyoUtils.priceCheck(productLineItem, productDetail);
