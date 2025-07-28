@@ -22,10 +22,19 @@ function getData(productID) {
             throw new Error('Product with ID [' + productID + '] not found');
         }
 
+        if (product.variationGroups.length > 0) {
+            data['Product ID'] = product.variationGroups[0].ID;
+        } else if (product.variant) {
+            // If product is a variant, use the variation group ID
+            data['Product ID'] = klaviyoUtils.getVariationGroupId(product);
+        } else {
+            // if a product does not fit into either of the above categories, use the base product ID
+            data['Product ID'] = product.ID;
+        }
+
         var prices = require('*/cartridge/scripts/klaviyo/viewedProductHelpers.js').getProductPrices(product);
 
         klaviyoUtils.setSiteIdAndIntegrationInfo(data, siteId);
-        data['Product ID'] = product.ID;
         data['Product Name'] = product.name;
         data['Product Page URL'] = URLUtils.https('Product-Show', 'pid', product.ID).toString();
         data['Product Image URL'] = product.getImage(KLImageSize).getAbsURL().toString();
@@ -37,10 +46,6 @@ function getData(productID) {
         data['value'] = prices.price;
         data['value_currency'] = session.getCurrency().getCurrencyCode();
 
-        if (product.variant) {
-            // If product is a variant, use the variation group ID
-            data['Master Product ID'] = klaviyoUtils.getVariationGroupId(product);
-        }
 
         var categories = [];
         var catProduct = (product.variant) ? product.masterProduct : product;
