@@ -69,7 +69,6 @@ function getData(basket) {
                 };
 
                 if (basketProduct.variant) {
-                    // If product is a variant, use the variation group ID
                     currentLineItem.masterProductID = klaviyoUtils.getParentProductId(basketProduct);
                 }
 
