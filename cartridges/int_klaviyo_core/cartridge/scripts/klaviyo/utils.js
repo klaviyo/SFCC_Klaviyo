@@ -82,14 +82,25 @@ function dedupeArray(items) {
 }
 
 
-// helper function to get the variation group ID for a product
-// returns the variation group ID if the product is a variant, otherwise returns null
-function getVariationGroupId(product) {
-    if (product && product.variant) {
-        var productVariationModel = product.getVariationModel();
-        var groups = productVariationModel.getVariationGroups();
-        var group = groups ? groups[0] : null;
-        return group ? group.ID : null;
+// this uses the use_variation_group_id site preference to determine if the base product ID should be the variation group ID or the master product ID.
+// this site preference is only to be used in collaboration with Klaviyo support, because there is additional configuration required during integration setup in Klaviyo.
+function getParentProductId(product) {
+    if (!product) {
+        return null;
+    }
+
+    var useVariationGroup = Site.getCurrent().getCustomPreferenceValue('use_variation_group_id') || false;
+    if (useVariationGroup) {
+        if (product.variant) {
+            var productVariationModel = product.getVariationModel();
+            var groups = productVariationModel.getVariationGroups();
+            var group = groups ? groups[0] : null;
+            return group ? group.ID : null;
+        } else if (product.variationGroups.length > 0) {
+            return product.variationGroups[0].ID;
+        }
+    } else if (!product.master && 'masterProduct' in product) {
+        return product.masterProduct.ID;
     }
     return null;
 }
@@ -417,7 +428,7 @@ module.exports = {
     getProfileInfo        : getProfileInfo,
     prepareDebugData      : prepareDebugData,
     dedupeArray           : dedupeArray,
-    getVariationGroupId   : getVariationGroupId,
+    getParentProductId   : getParentProductId,
     captureProductOptions : captureProductOptions,
     captureProductBundles : captureProductBundles,
     captureBonusProduct   : captureBonusProduct,

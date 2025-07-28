@@ -132,8 +132,7 @@ function getData(order) {
                 };
 
                 if (productDetail.variant) {
-                    // If product is a variant, use the variation group ID
-                    currentLineItem['Master Product ID'] = klaviyoUtils.getVariationGroupId(productDetail);
+                    currentLineItem['Master Product ID'] = klaviyoUtils.getParentProductId(productDetail);
                 }
 
                 var priceData = klaviyoUtils.priceCheck(productLineItem, productDetail);
