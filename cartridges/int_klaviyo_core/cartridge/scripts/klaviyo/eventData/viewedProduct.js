@@ -22,7 +22,7 @@ function getData(productID) {
             throw new Error('Product with ID [' + productID + '] not found');
         }
 
-        data['Product ID'] = klaviyoUtils.getParentProductId(product);
+        data['Product ID'] = klaviyoUtils.getParentProductId(product) || product.ID;
 
         var prices = require('*/cartridge/scripts/klaviyo/viewedProductHelpers.js').getProductPrices(product);
 

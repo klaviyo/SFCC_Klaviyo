@@ -94,7 +94,7 @@ function getParentProductId(product) {
         if (product.variant) {
             var productVariationModel = product.getVariationModel();
             var groups = productVariationModel.getVariationGroups();
-            var group = groups ? groups[0] : null;
+            var group = groups.length > 0 ? groups[0] : null;
             return group ? group.ID : null;
         } else if (product.variationGroups.length > 0) {
             return product.variationGroups[0].ID;
@@ -428,7 +428,7 @@ module.exports = {
     getProfileInfo        : getProfileInfo,
     prepareDebugData      : prepareDebugData,
     dedupeArray           : dedupeArray,
-    getParentProductId   : getParentProductId,
+    getParentProductId    : getParentProductId,
     captureProductOptions : captureProductOptions,
     captureProductBundles : captureProductBundles,
     captureBonusProduct   : captureBonusProduct,
