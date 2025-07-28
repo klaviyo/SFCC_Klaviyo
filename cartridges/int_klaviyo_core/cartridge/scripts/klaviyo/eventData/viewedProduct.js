@@ -22,7 +22,12 @@ function getData(productID) {
             throw new Error('Product with ID [' + productID + '] not found');
         }
 
-        data['Product ID'] = klaviyoUtils.getParentProductId(product) || product.ID;
+        data['Product ID'] = klaviyoUtils.getParentProductId(product);
+
+        if (!product.master && 'masterProduct' in product) {
+            // this is very unlikely to happen because PDPs are not typically used for variants
+            data['Master Product ID'] = product.masterProduct.ID;
+        }
 
         var prices = require('*/cartridge/scripts/klaviyo/viewedProductHelpers.js').getProductPrices(product);
 

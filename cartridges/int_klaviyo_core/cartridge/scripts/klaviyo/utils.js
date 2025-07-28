@@ -101,8 +101,9 @@ function getParentProductId(product) {
         }
     } else if (!product.master && 'masterProduct' in product) {
         return product.masterProduct.ID;
+    } else {
+        return product.ID;
     }
-    return null;
 }
 
 // helper function to extract product options and return each selected option into an object with five keys: 'Line Item Text', 'Option ID' and 'Option Value ID', 'Option Price' and 'Option Price Value.
