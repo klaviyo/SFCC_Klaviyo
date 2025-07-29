@@ -106,7 +106,7 @@ bumped for multiple releases during one month.
 <!-- END RELEASE NOTES -->
 
 <!-- BEGIN LINKS -->
-[Unreleased]: https://github.com/klaviyo/SFCC_Klaviyo/compare/25.4.0...HEAD
+[Unreleased]: https://github.com/klaviyo/SFCC_Klaviyo/compare/25.7.0...HEAD
 [25.7.0]: https://github.com/klaviyo/SFCC_Klaviyo/compare/25.4.0...25.7.0
 [25.4.0]: https://github.com/klaviyo/SFCC_Klaviyo/compare/24.9.0...25.4.0
 [24.9.0]: https://github.com/klaviyo/SFCC_Klaviyo/compare/24.1.0...24.9.0
