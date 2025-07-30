@@ -131,8 +131,8 @@ function getData(order) {
                     'Product Image URL'      : KLImageSize ? productDetail.getImage(KLImageSize).getAbsURL().toString() : null
                 };
 
-                if (!productDetail.master && 'masterProduct' in productDetail) {
-                    currentLineItem['Master Product ID'] = productDetail.masterProduct.ID;
+                if (productDetail.variant) {
+                    currentLineItem['Master Product ID'] = klaviyoUtils.getParentProductId(productDetail);
                 }
 
                 var priceData = klaviyoUtils.priceCheck(productLineItem, productDetail);

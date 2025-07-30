@@ -82,6 +82,38 @@ function dedupeArray(items) {
 }
 
 
+// this uses the use_variation_group_id site preference to determine if the base product ID should be the variation group ID or the master product ID.
+// this site preference is ONLY to be used in collaboration with Klaviyo support, because there is additional configuration required during integration setup in Klaviyo.
+// this is so that Klaviyo can correctly attribute events to the correct catalog item in Klaviyo, for use in reporting, product feeds, flows, etc.
+function getParentProductId(product) {
+    if (!product) {
+        return null;
+    }
+
+    var useVariationGroup = Site.getCurrent().getCustomPreferenceValue('use_variation_group_id') || false;
+
+    if (useVariationGroup) {
+        // Return variation group ID when preference is enabled
+        if (product.variant) {
+            var productVariationModel = product.getVariationModel();
+            var groups = productVariationModel.getVariationGroups();
+            return groups.length > 0 ? groups[0].ID : null;
+        } else if (product.variationGroups.length > 0) {
+            return product.variationGroups[0].ID;
+        }
+        // Fallback for other product types (bundle, set, etc.) or items w/o variations
+        return product.ID;
+    }
+
+    // Return master product ID for variants when preference is disabled (the default)
+    if (!product.master && 'masterProduct' in product) {
+        return product.masterProduct.ID;
+    }
+
+    // Return product ID for master products or standalone items
+    return product.ID;
+}
+
 // helper function to extract product options and return each selected option into an object with five keys: 'Line Item Text', 'Option ID' and 'Option Value ID', 'Option Price' and 'Option Price Value.
 // This helper accomodates products that may have been configured with or feature multiple options by returning an array of each selected product option as its own optionObj.
 function captureProductOptions(prodOptions) {
@@ -405,6 +437,7 @@ module.exports = {
     getProfileInfo        : getProfileInfo,
     prepareDebugData      : prepareDebugData,
     dedupeArray           : dedupeArray,
+    getParentProductId    : getParentProductId,
     captureProductOptions : captureProductOptions,
     captureProductBundles : captureProductBundles,
     captureBonusProduct   : captureBonusProduct,

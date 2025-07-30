@@ -16,6 +16,7 @@ const setSiteIdAndIntegrationInfo = require('../mocks/util/setSiteIdAndIntegrati
 require('app-module-path').addPath(path.join(process.cwd(), '../cartridges'))
 
 global.empty = sinon.stub()
+const getParentProductIdStub = sinon.stub()
 
 const basketManagerMock = new BasketMgr(false)
 const currentBasket = basketManagerMock.getCurrentBasket()
@@ -42,8 +43,9 @@ const addedToCartEvent = proxyquire('int_klaviyo_core/cartridge/scripts/klaviyo/
             }
         },
         dedupeArray: () => {
-            return ['Skin Care']
+            return ['Health']
         },
+        getParentProductId: getParentProductIdStub.returns('NG3614270264406'),
         setSiteIdAndIntegrationInfo: setSiteIdAndIntegrationInfo
     },
 })
@@ -64,7 +66,7 @@ describe('int_klaviyo_core/cartridge/scripts/klaviyo/eventData => addedToCart', 
             SiteID: 'KlaviyoSFRA',
             external_catalog_id: 'KlaviyoSFRA',
             integration_key: 'demandware',
-            masterProductID: 'NG3614270264405',
+            masterProductID: 'NG3614270264406',
             productID: 'NG3614270264405',
             price: 10.00,
             productName: 'Belle de Teint',
@@ -78,7 +80,7 @@ describe('int_klaviyo_core/cartridge/scripts/klaviyo/eventData => addedToCart', 
                 viewedProductAvailability: 1,
                 categories: ['Health'],
                 primaryCategory: 'Skin Care',
-                masterProductID: 'NG3614270264405',
+                masterProductID: 'NG3614270264406',
                 price: 10.00,
                 priceValue: 10.00,
                 originalPrice: 20.00,
@@ -112,8 +114,8 @@ describe('int_klaviyo_core/cartridge/scripts/klaviyo/eventData => addedToCart', 
               }
             ],
             items: [ 'Belle de Teint' ],
-            categories: [ 'Skin Care' ],
-            primaryCategories: [ 'Skin Care' ],
+            categories: [ 'Health' ],
+            primaryCategories: [ 'Health' ],
             productAddedToCart: {
                 productID: 'NG3614270264405',
                 productName: 'Belle de Teint',
@@ -123,7 +125,7 @@ describe('int_klaviyo_core/cartridge/scripts/klaviyo/eventData => addedToCart', 
                 viewedProductAvailability: 1,
                 categories: ['Health'],
                 primaryCategory: 'Skin Care',
-                masterProductID: 'NG3614270264405',
+                masterProductID: 'NG3614270264406',
                 price: 10.00,
                 priceValue: 10.00,
                 originalPrice: 20.00,

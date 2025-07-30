@@ -14,7 +14,7 @@ const setSiteIdAndIntegrationInfo = require('../mocks/util/setSiteIdAndIntegrati
 require('app-module-path').addPath(path.join(process.cwd(), '../cartridges'))
 
 global.empty = sinon.stub()
-
+const getParentProductIdStub = sinon.stub()
 const basketManagerMock = new BasketMgr(true)
 const currentBasket = basketManagerMock.getCurrentBasket()
 
@@ -29,7 +29,8 @@ const startedCheckoutEvent = proxyquire('int_klaviyo_core/cartridge/scripts/klav
             captureBonusProduct: basketStubs().bonusPdct,
             captureProductBundles: basketStubs().bundlePdct,
             siteId: Site.getCurrent().getID(),
-            setSiteIdAndIntegrationInfo: setSiteIdAndIntegrationInfo
+            setSiteIdAndIntegrationInfo: setSiteIdAndIntegrationInfo,
+            getParentProductId: getParentProductIdStub.returns('NG3614270264406')
         },
         'dw/util/StringUtils': StringUtils,
         'dw/value/Money': Money,
@@ -80,7 +81,7 @@ describe('int_klaviyo_core/cartridge/scripts/klaviyo/eventData => startedCheckou
                     'Product Page URL': 'https://production-sitegenesis-dw.demandware.net/s/RefArch/home?lang=en_US',
                     'Product UPC': '555',
                     'Product Availability Model': 1,
-                    'Master Product ID': 'NG3614270264405',
+                    'Master Product ID': 'NG3614270264406',
                     'Is Product Bundle': true,
                     'Bundled Product IDs': [
                         "sony-ps3-consoleM",

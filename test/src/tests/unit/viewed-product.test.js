@@ -15,6 +15,7 @@ require('app-module-path').addPath(path.join(process.cwd(), '../cartridges'))
 const getConfigStub = sinon.stub()
 const dedupeArrayStub = sinon.stub()
 const fullProductModelStub = sinon.stub()
+const getParentProductIdStub = sinon.stub()
 
 const categories = []
 const product = { ID: 'NG3614270264405' }
@@ -28,10 +29,9 @@ const categoryMock = {
 }
 
 const apiProductMock = {
-    variant: true,
-    masterProduct: {
-        primaryCategory: categoryMock
-    },
+    master: true,
+    ID: 'NG3614270264406',
+    primaryCategory: categoryMock
 }
 
 const fullProduct = {
@@ -69,58 +69,58 @@ const viewedProductEvent = proxyquire('int_klaviyo_core/cartridge/scripts/klaviy
         'dw/util/StringUtils': StringUtils,
         'dw/system/Logger': Logger,
         'dw/web/URLUtils': URLUtils,
-        'dw/catalog/ProductMgr': ProductMgr,
+        'dw/catalog/ProductMgr': {
+            getProduct: function(productID) {
+                const productClass = require('../mocks/dw.catalog.Product')
+                // Create a master product (no masterProduct property)
+                return new productClass({ ID: productID })
+            }
+        },
         '*/cartridge/scripts/klaviyo/utils': {
             KLImageSize: 'large',
-            dedupeArray: dedupeArrayStub.withArgs(categories).returns(['Health']),
+            dedupeArray: dedupeArrayStub.returns(['Health']),
             siteId: Site.getCurrent().getID(),
-            setSiteIdAndIntegrationInfo: setSiteIdAndIntegrationInfo
+            setSiteIdAndIntegrationInfo: setSiteIdAndIntegrationInfo,
+            getParentProductId: getParentProductIdStub.returns('NG3614270264406')
         },
         '*/cartridge/scripts/klaviyo/viewedProductHelpers.js': getProductPrices,
     },
 )
 
 describe('int_klaviyo_core/cartridge/scripts/klaviyo/eventData => viewedProduct', () => {
-    let resultsDataStub
-
     beforeEach(() => {
-        resultsDataStub = sinon.stub()
         global.empty.returns(false)
+        // Mock empty function to return false for category objects
+        global.empty.withArgs({ displayName: 'Skin Care' }).returns(false)
     })
 
     afterEach(() => {
-        resultsDataStub.reset()
         getConfigStub.reset()
         dedupeArrayStub.reset()
         fullProductModelStub.reset()
     })
 
     it('should return specific product data for "Viewed Product" event', () => {
-        const expectedResult = { object:
-            {
-                "SiteID": "KlaviyoSFRA",
-                "external_catalog_id": "KlaviyoSFRA",
-                "integration_key": "demandware",
-                "Product ID": 'NG3614270264405',
-                "Product Name": 'Belle de Teint',
-                "Product Page URL": "https://production-sitegenesis-dw.demandware.net/s/RefArch/home?lang=en_US",
-                "Product Image URL": "https://sforce.co/43Pig4s",
-                "Master Product ID": "NG3614270264405",
-                "Original Price": 12,
-                "Original Price String": "$12.00",
-                "Price": 10,
-                "Price String": "$10.00",
-                "Primary Category": "Skin Care",
-                "Product UPC": '555',
-                "Categories": [ 'Health' ],
-                "value": 10,
-                "value_currency": 'USD'
-            }
+        const expectedResult = {
+            "SiteID": "KlaviyoSFRA",
+            "external_catalog_id": "KlaviyoSFRA",
+            "integration_key": "demandware",
+            "Product ID": 'NG3614270264406',
+            "Product Name": 'Belle de Teint',
+            "Product Page URL": "https://production-sitegenesis-dw.demandware.net/s/RefArch/home?lang=en_US",
+            "Product Image URL": "https://sforce.co/43Pig4s",
+            "Original Price": 12,
+            "Original Price String": "$12.00",
+            "Price": 10,
+            "Price String": "$10.00",
+            "Primary Category": "Skin Care",
+            "Product UPC": '555',
+            "Categories": [ 'Health' ],
+            "value": 10,
+            "value_currency": 'USD'
         }
 
-        const stubResults = resultsDataStub.returns(expectedResult)
-        const resultsObj = viewedProductEvent.getData('NG227105-LAC')
-        expect(resultsObj).to.deep.equal(stubResults().object)
-        expect(resultsDataStub.calledOnce).to.be.true
+        const resultsObj = viewedProductEvent.getData('NG3614270264406')
+        expect(resultsObj).to.deep.equal(expectedResult)
     })
 })

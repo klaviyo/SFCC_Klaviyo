@@ -10,7 +10,7 @@ var Site = require('dw/system/Site');
  * @returns {string} API version in YYYY-MM-DD format
  */
 function getApiVersion() {
-    return '2025-04-15';
+    return '2025-07-15';
 }
 
 /**
@@ -18,7 +18,7 @@ function getApiVersion() {
  * @returns {string} User-Agent string
  */
 function getUserAgent() {
-    return 'sfcc-klaviyo/25.4.0';
+    return 'sfcc-klaviyo/25.7.0';
 }
 
 // HTTP Services

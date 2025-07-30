@@ -22,10 +22,16 @@ function getData(productID) {
             throw new Error('Product with ID [' + productID + '] not found');
         }
 
+        data['Product ID'] = klaviyoUtils.getParentProductId(product);
+
+        if (!product.master && 'masterProduct' in product) {
+            // this is very unlikely to happen because PDPs are not typically used for variants
+            data['Master Product ID'] = product.masterProduct.ID;
+        }
+
         var prices = require('*/cartridge/scripts/klaviyo/viewedProductHelpers.js').getProductPrices(product);
 
         klaviyoUtils.setSiteIdAndIntegrationInfo(data, siteId);
-        data['Product ID'] = product.ID;
         data['Product Name'] = product.name;
         data['Product Page URL'] = URLUtils.https('Product-Show', 'pid', product.ID).toString();
         data['Product Image URL'] = product.getImage(KLImageSize).getAbsURL().toString();
@@ -36,10 +42,6 @@ function getData(productID) {
         data['Product UPC'] = product.UPC;
         data['value'] = prices.price;
         data['value_currency'] = session.getCurrency().getCurrencyCode();
-
-        if (!product.master && 'masterProduct' in product) {
-            data['Master Product ID'] = product.masterProduct.ID;
-        }
 
         var categories = [];
         var catProduct = (product.variant) ? product.masterProduct : product;

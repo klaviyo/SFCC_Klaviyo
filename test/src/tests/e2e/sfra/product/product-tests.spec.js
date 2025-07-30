@@ -52,7 +52,7 @@ test.describe('Test Klaviyo viewed product event', () => {
         expect(metricData.attributes.integration.key).toBe('api');
 
         // Validate event data
-        expect(eventData['Product Name']).toBe('Incase');
+        expect(eventData['Product Name']).toBe('Bootleg Trouser');
         expect(eventData.external_catalog_id).toBe(KLAVIYO_E2E_TEST_SITE_ID);
         expect(eventData.integration_key).toBe(KLAVIYO_DEMANDWARE_INTEGRATION_KEY);
     });

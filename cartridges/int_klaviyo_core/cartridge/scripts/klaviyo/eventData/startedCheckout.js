@@ -45,8 +45,8 @@ function getData(currentBasket) {
             if (currentProductID != null && !empty(basketProduct) && basketProduct.getPriceModel().getPrice().value > 0) {
                 var productObj = prepareProductObj(lineItem, basketProduct, currentProductID);
 
-                if (!basketProduct.master && 'masterProduct' in basketProduct) {
-                    productObj['Master Product ID'] = basketProduct.masterProduct.ID;
+                if (basketProduct.variant) {
+                    productObj['Master Product ID'] = klaviyoUtils.getParentProductId(basketProduct);
                 }
 
                 if (options && options.length) {

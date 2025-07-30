@@ -10,6 +10,12 @@ bumped for multiple releases during one month.
 <!-- BEGIN RELEASE NOTES -->
 ### [Unreleased]
 
+### [25.7.0] - 25-07-29
+
+#### Added
+- Site preference to optionally sync variation group identifiers instead of variation base product ids on events. This feature requires collaboration with the Klaviyo support team, as there are Klaviyo integration configurations that also must be set internally.
+- Updates to Klaviyo API revision 2025-07-15. See https://developers.klaviyo.com/en/docs/changelog_
+
 ### [25.4.0] - 25-04-17
 
 #### Added
@@ -101,7 +107,8 @@ bumped for multiple releases during one month.
 <!-- END RELEASE NOTES -->
 
 <!-- BEGIN LINKS -->
-[Unreleased]: https://github.com/klaviyo/SFCC_Klaviyo/compare/25.4.0...HEAD
+[Unreleased]: https://github.com/klaviyo/SFCC_Klaviyo/compare/25.7.0...HEAD
+[25.7.0]: https://github.com/klaviyo/SFCC_Klaviyo/compare/25.4.0...25.7.0
 [25.4.0]: https://github.com/klaviyo/SFCC_Klaviyo/compare/24.9.0...25.4.0
 [24.9.0]: https://github.com/klaviyo/SFCC_Klaviyo/compare/24.1.0...24.9.0
 [24.1.0]: https://github.com/klaviyo/SFCC_Klaviyo/compare/23.7.0...24.1.0
