@@ -10,7 +10,7 @@ var Site = require('dw/system/Site');
  * @returns {string} API version in YYYY-MM-DD format
  */
 function getApiVersion() {
-    return '2025-04-15';
+    return '2025-07-15';
 }
 
 /**
