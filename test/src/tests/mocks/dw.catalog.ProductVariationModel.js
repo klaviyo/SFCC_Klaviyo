@@ -15,6 +15,10 @@ class ProductVariationModel {
         }
     }
 
+    getProductVariationAttributes() {
+        return []
+    }
+
     getMaster() {
         return this.productMaster
     }

@@ -10,7 +10,6 @@ const ProductMgr = require('../mocks/dw.catalog.ProductMgr')
 const BasketMgr = require('../mocks/BasketMgr')
 const basketStubs = require('../mocks/util/basketObjectStubs')
 const setSiteIdAndIntegrationInfo = require('../mocks/util/setSiteIdAndIntegrationInfo')
-
 require('app-module-path').addPath(path.join(process.cwd(), '../cartridges'))
 
 global.empty = sinon.stub()
@@ -44,7 +43,7 @@ global.session = {
         }
     }
 }
-
+const getParentProductIdStub = sinon.stub()
 const basketManagerMock = new BasketMgr(true)
 
 const orderConfirmationEvent = proxyquire('int_klaviyo_core/cartridge/scripts/klaviyo/eventData/orderConfirmation.js', {
@@ -63,7 +62,8 @@ const orderConfirmationEvent = proxyquire('int_klaviyo_core/cartridge/scripts/kl
         dedupeArray: function() {
             return ['Skin Care']
         },
-        setSiteIdAndIntegrationInfo: setSiteIdAndIntegrationInfo
+        setSiteIdAndIntegrationInfo: setSiteIdAndIntegrationInfo,
+        getParentProductId: getParentProductIdStub.returns('NG3614270264406'),
     },
 })
 
@@ -102,7 +102,7 @@ describe('int_klaviyo_core/cartridge/scripts/klaviyo/eventData => orderConfirmat
                 'Product Page URL': 'https://production-sitegenesis-dw.demandware.net/s/RefArch/home?lang=en_US',
                 'Product Variant': '',
                 'Product Image URL': 'https://sforce.co/43Pig4s',
-                'Master Product ID': 'NG3614270264405',
+                'Master Product ID': 'NG3614270264406',
                 Price: 96,
                 'Price Value': 1,
                 'Original Price': 100,

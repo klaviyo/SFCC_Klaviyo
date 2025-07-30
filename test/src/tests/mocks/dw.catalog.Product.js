@@ -8,11 +8,34 @@ class Product {
         } else {
             this.ID = 'NG3614270264405'
             this.masterProduct = {
-                ID: 'NG3614270264405',
+                ID: 'NG3614270264406',
+                primaryCategory: {
+                    displayName: 'Skin Care'
+                },
+                categoryAssignments: [
+                    {
+                        category: {
+                            displayName: 'Health'
+                        }
+                    }
+                ],
+                getPrimaryCategory: function() {
+                    return {
+                        displayName: 'Skin Care'
+                    }
+                },
+                getAllCategories: function() {
+                    return [
+                        {
+                            displayName: 'Skin Care'
+                        }
+                    ]
+                }
             }
         }
         this.name = 'Belle de Teint'
-        this.variant = !this.masterProduct
+        this.variant = !!this.masterProduct
+        this.master = !this.variant
         this.brand = 'LORA'
         this.price = 96
         this.availabilityModel = this.getAvailabilityModel()
@@ -204,6 +227,8 @@ class Product {
     getBonusProduct() {
         return true
     }
+
+
 }
 
 module.exports = Product
