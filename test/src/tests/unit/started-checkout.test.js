@@ -141,7 +141,6 @@ describe('int_klaviyo_core/cartridge/scripts/klaviyo/eventData => startedCheckou
 
         const stubResults = bundleProductStub.returns(expectedResult)
         const resultsObj = startedCheckoutEvent.getData(currentBasket).line_items[0]['Bundled Product IDs']
-        console.log(resultsObj)
         expect(resultsObj).to.deep.equal(stubResults())
         expect(bundleProductStub.calledOnce).to.be.true
     })
