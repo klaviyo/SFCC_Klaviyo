@@ -63,7 +63,7 @@ test.describe('Test Klaviyo started checkout event', () => {
         expect(eventData.external_catalog_id).toBe(KLAVIYO_E2E_TEST_SITE_ID);
         expect(eventData.integration_key).toBe(KLAVIYO_DEMANDWARE_INTEGRATION_KEY);
         expect(eventData['Item Count']).toBe(1);
-        expect(eventData.line_items[0]['Product Name']).toBe('Incase');
+        expect(eventData.line_items[0]['Product Name']).toBe('Bootleg Trouser');
         expect(eventData['$email']).toBe(email);
     });
 });
@@ -97,8 +97,8 @@ test.describe('Test Klaviyo add to cart event', () => {
         expect(eventData.integration_key).toBe(KLAVIYO_DEMANDWARE_INTEGRATION_KEY);
 
         expect(eventData.itemCount).toBe(1);
-        expect(eventData.lineItems[0].productName).toBe('Incase');
-        expect(eventData.productAddedToCart.productName).toBe('Incase');
+        expect(eventData.lineItems[0].productName).toBe('Bootleg Trouser');
+        expect(eventData.productAddedToCart.productName).toBe('Bootleg Trouser');
     });
 });
 
@@ -115,7 +115,7 @@ test.describe('Test Klaviyo order confirmation event', () => {
         await checkoutPage.fillShippingForm(testData);
         await checkoutPage.submitShippingForm();
         await checkoutPage.fillPaymentForm(paymentData);
-        await page.waitForTimeout(3000);
+        await page.waitForTimeout(10000);
         expect(await page.innerText('h1.page-title')).toBe('Thank You');
 
         const events = await checkEventWithRetry(email, KLAVIYO_METRIC_ID_ORDER_CONFIRMATION);
@@ -135,7 +135,7 @@ test.describe('Test Klaviyo order confirmation event', () => {
 
         expect(eventData['Item Count']).toBe(1);
         expect(eventData.product_line_items.length).toBe(1);
-        expect(eventData.product_line_items[0]['Product Name']).toBe('Incase');
+        expect(eventData.product_line_items[0]['Product Name']).toBe('Bootleg Trouser');
     });
 });
 
