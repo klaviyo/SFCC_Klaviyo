@@ -22,7 +22,9 @@ function getData(productID) {
             throw new Error('Product with ID [' + productID + '] not found');
         }
 
-        data['Product ID'] = klaviyoUtils.getParentProductId(product);
+        // use the configurable setting to see which product id should be used on the event
+        var parentProduct = klaviyoUtils.getParentProduct(product);
+        data['Product ID'] = parentProduct ? parentProduct.ID : null;
 
         if (!product.master && 'masterProduct' in product) {
             // this is very unlikely to happen because PDPs are not typically used for variants

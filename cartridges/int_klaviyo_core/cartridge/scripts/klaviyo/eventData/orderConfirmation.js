@@ -132,7 +132,8 @@ function getData(order) {
                 };
 
                 if (productDetail.variant) {
-                    currentLineItem['Master Product ID'] = klaviyoUtils.getParentProductId(productDetail);
+                    var parentProduct = klaviyoUtils.getParentProduct(productDetail);
+                    currentLineItem['Master Product ID'] = parentProduct ? parentProduct.ID : null;
                 }
 
                 var priceData = klaviyoUtils.priceCheck(productLineItem, productDetail);

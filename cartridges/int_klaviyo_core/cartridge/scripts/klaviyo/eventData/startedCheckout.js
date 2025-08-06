@@ -46,7 +46,8 @@ function getData(currentBasket) {
                 var productObj = prepareProductObj(lineItem, basketProduct, currentProductID);
 
                 if (basketProduct.variant) {
-                    productObj['Master Product ID'] = klaviyoUtils.getParentProductId(basketProduct);
+                    var parentProduct = klaviyoUtils.getParentProduct(basketProduct);
+                    productObj['Master Product ID'] = parentProduct ? parentProduct.ID : null;
                 }
 
                 if (options && options.length) {

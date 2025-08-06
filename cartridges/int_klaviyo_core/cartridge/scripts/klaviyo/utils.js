@@ -85,12 +85,12 @@ function dedupeArray(items) {
 // this uses the use_variation_group_id site preference to determine if the base product ID should be the variation group ID or the master product ID.
 // this site preference is ONLY to be used in collaboration with Klaviyo support, because there is additional configuration required during integration setup in Klaviyo.
 // this is so that Klaviyo can correctly attribute events to the correct catalog item in Klaviyo, for use in reporting, product feeds, flows, etc.
-function getParentProductId(product) {
+function getParentProduct(product) {
     if (!product) {
         return null;
     }
 
-    var useVariationGroup = Site.getCurrent().getCustomPreferenceValue('use_variation_group_id') || false;
+    var useVariationGroup = Site.getCurrent().getCustomPreferenceValue('klaviyo_use_variation_group_id') || false;
 
     if (useVariationGroup) {
         // Return variation group ID when preference is enabled
@@ -102,16 +102,16 @@ function getParentProductId(product) {
             return product.variationGroups[0].ID;
         }
         // Fallback for other product types (bundle, set, etc.) or items w/o variations
-        return product.ID;
+        return product;
     }
 
     // Return master product ID for variants when preference is disabled (the default)
     if (!product.master && 'masterProduct' in product) {
-        return product.masterProduct.ID;
+        return product.masterProduct;
     }
 
     // Return product ID for master products or standalone items
-    return product.ID;
+    return product;
 }
 
 // helper function to extract product options and return each selected option into an object with five keys: 'Line Item Text', 'Option ID' and 'Option Value ID', 'Option Price' and 'Option Price Value.
@@ -437,7 +437,7 @@ module.exports = {
     getProfileInfo        : getProfileInfo,
     prepareDebugData      : prepareDebugData,
     dedupeArray           : dedupeArray,
-    getParentProductId    : getParentProductId,
+    getParentProduct      : getParentProduct,
     captureProductOptions : captureProductOptions,
     captureProductBundles : captureProductBundles,
     captureBonusProduct   : captureBonusProduct,

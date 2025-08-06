@@ -69,7 +69,8 @@ function getData(basket) {
                 };
 
                 if (basketProduct.variant) {
-                    currentLineItem.masterProductID = klaviyoUtils.getParentProductId(basketProduct);
+                    var parentProduct = klaviyoUtils.getParentProduct(basketProduct);
+                    currentLineItem.masterProductID = parentProduct ? parentProduct.ID : null;
                 }
 
 

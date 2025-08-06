@@ -14,7 +14,7 @@ const setSiteIdAndIntegrationInfo = require('../mocks/util/setSiteIdAndIntegrati
 require('app-module-path').addPath(path.join(process.cwd(), '../cartridges'))
 
 global.empty = sinon.stub()
-const getParentProductIdStub = sinon.stub()
+const getParentProductStub = sinon.stub()
 const basketManagerMock = new BasketMgr(true)
 const currentBasket = basketManagerMock.getCurrentBasket()
 
@@ -30,7 +30,7 @@ const startedCheckoutEvent = proxyquire('int_klaviyo_core/cartridge/scripts/klav
             captureProductBundles: basketStubs().bundlePdct,
             siteId: Site.getCurrent().getID(),
             setSiteIdAndIntegrationInfo: setSiteIdAndIntegrationInfo,
-            getParentProductId: getParentProductIdStub.returns('NG3614270264406')
+            getParentProduct: getParentProductStub.returns({ID: 'NG3614270264406'})
         },
         'dw/util/StringUtils': StringUtils,
         'dw/value/Money': Money,
