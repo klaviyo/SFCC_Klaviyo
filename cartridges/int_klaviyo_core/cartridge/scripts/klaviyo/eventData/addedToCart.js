@@ -69,8 +69,8 @@ function getData(basket) {
                     primaryCategory           : primaryCategory
                 };
 
-                if (basketProduct.variant) {
-                    currentLineItem.masterProductID = parentProduct ? parentProduct.ID : null;
+                if (parentProduct) {
+                    currentLineItem.masterProductID = parentProduct.ID;
                 }
 
 

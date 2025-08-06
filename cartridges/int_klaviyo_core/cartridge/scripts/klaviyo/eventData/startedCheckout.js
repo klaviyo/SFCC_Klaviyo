@@ -46,8 +46,8 @@ function getData(currentBasket) {
             if (currentProductID != null && !empty(basketProduct) && basketProduct.getPriceModel().getPrice().value > 0) {
                 var productObj = prepareProductObj(lineItem, basketProduct, currentProductID, parentProduct);
 
-                if (basketProduct.variant) {
-                    productObj['Master Product ID'] = parentProduct ? parentProduct.ID : null;
+                if (parentProduct) {
+                    productObj['Master Product ID'] = parentProduct.ID;
                 }
 
                 if (options && options.length) {
