@@ -10,6 +10,12 @@ bumped for multiple releases during one month.
 <!-- BEGIN RELEASE NOTES -->
 ### [Unreleased]
 
+### [25.8.0] - 25-08-06
+
+#### Fixed
+- Copies the $event_id field up to the top-level `unique_id` field on Order Confirmation events to prevent duplicate events being created on page reload.
+- Updates event data extraction logic to use the parent product returned from `getParentProduct` to hydrate categories on events.
+
 ### [25.7.0] - 25-07-29
 
 #### Added
@@ -107,7 +113,8 @@ bumped for multiple releases during one month.
 <!-- END RELEASE NOTES -->
 
 <!-- BEGIN LINKS -->
-[Unreleased]: https://github.com/klaviyo/SFCC_Klaviyo/compare/25.7.0...HEAD
+[Unreleased]: https://github.com/klaviyo/SFCC_Klaviyo/compare/25.8.0...HEAD
+[25.8.0]: https://github.com/klaviyo/SFCC_Klaviyo/compare/25.7.0...25.8.0
 [25.7.0]: https://github.com/klaviyo/SFCC_Klaviyo/compare/25.4.0...25.7.0
 [25.4.0]: https://github.com/klaviyo/SFCC_Klaviyo/compare/24.9.0...25.4.0
 [24.9.0]: https://github.com/klaviyo/SFCC_Klaviyo/compare/24.1.0...24.9.0
