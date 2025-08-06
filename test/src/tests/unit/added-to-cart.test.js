@@ -45,7 +45,7 @@ const addedToCartEvent = proxyquire('int_klaviyo_core/cartridge/scripts/klaviyo/
         dedupeArray: () => {
             return ['Health']
         },
-        getParentProduct: getParentProductStub.returns({ID: 'NG3614270264406'}),
+        getParentProduct: getParentProductStub.returns({ID: 'NG3614270264406', categoryAssignments: [{category: {displayName: 'Health'}}], primaryCategory: {displayName: 'Skin Care'}}),
         setSiteIdAndIntegrationInfo: setSiteIdAndIntegrationInfo
     },
 })

@@ -30,7 +30,7 @@ const startedCheckoutEvent = proxyquire('int_klaviyo_core/cartridge/scripts/klav
             captureProductBundles: basketStubs().bundlePdct,
             siteId: Site.getCurrent().getID(),
             setSiteIdAndIntegrationInfo: setSiteIdAndIntegrationInfo,
-            getParentProduct: getParentProductStub.returns({ID: 'NG3614270264406'})
+            getParentProduct: getParentProductStub.returns({ID: 'NG3614270264406', categoryAssignments: [{category: {displayName: 'Health'}}], primaryCategory: {displayName: 'Skin Care'}})
         },
         'dw/util/StringUtils': StringUtils,
         'dw/value/Money': Money,

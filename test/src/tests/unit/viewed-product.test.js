@@ -81,7 +81,9 @@ const viewedProductEvent = proxyquire('int_klaviyo_core/cartridge/scripts/klaviy
             dedupeArray: dedupeArrayStub.returns(['Health']),
             siteId: Site.getCurrent().getID(),
             setSiteIdAndIntegrationInfo: setSiteIdAndIntegrationInfo,
-            getParentProduct: getParentProductStub.returns({ID: 'NG3614270264406'})
+            getParentProduct: getParentProductStub.returns({ID: 'NG3614270264406', categoryAssignments: [{category: {displayName: 'Health'}}], primaryCategory: {displayName: 'Skin Care'}, getPrimaryCategory: function() {
+                return {displayName: 'Skin Care'}
+            }})
         },
         '*/cartridge/scripts/klaviyo/viewedProductHelpers.js': getProductPrices,
     },
