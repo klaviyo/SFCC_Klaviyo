@@ -77,6 +77,8 @@ function getData(order) {
                     throw new Error('Product with ID [' + lineItemProduct.ID + '] not found');
                 }
 
+                var parentProduct = klaviyoUtils.getParentProduct(productDetail);
+
                 // Variation values
                 var variationValues = '';
                 if (productDetail.isVariant()) {
@@ -95,21 +97,16 @@ function getData(order) {
 
                 items.push(productLineItem.productID);
                 itemCount += productLineItem.quantity.value;
-                var allCategories;
-                if (productDetail.variant) {
-                    if (productDetail.masterProduct.getPrimaryCategory()) {
-                        itemPrimaryCategories.push(
-                            productDetail.masterProduct.getPrimaryCategory().displayName
-                        );
+
+                var primaryCategory = '';
+                var allCategories = [];
+                if (parentProduct) {
+                    // parentProduct can only be null if the klaviyo_use_variation_group_id site preference is enabled and the product has no variation groups
+                    primaryCategory = parentProduct.getPrimaryCategory() ? parentProduct.getPrimaryCategory().displayName : null;
+                    if (primaryCategory) {
+                        itemPrimaryCategories.push(primaryCategory);
                     }
-                    allCategories = productDetail.masterProduct.getAllCategories();
-                } else {
-                    if (productDetail.getPrimaryCategory()) {
-                        itemPrimaryCategories.push(
-                            productDetail.getPrimaryCategory().displayName
-                        );
-                    }
-                    allCategories = productDetail.getAllCategories();
+                    allCategories = parentProduct.getAllCategories();
                 }
 
                 if (!empty(allCategories) && allCategories.length > 0) {
@@ -131,9 +128,8 @@ function getData(order) {
                     'Product Image URL'      : KLImageSize ? productDetail.getImage(KLImageSize).getAbsURL().toString() : null
                 };
 
-                if (productDetail.variant) {
-                    var parentProduct = klaviyoUtils.getParentProduct(productDetail);
-                    currentLineItem['Master Product ID'] = parentProduct ? parentProduct.ID : null;
+                if (parentProduct) {
+                    currentLineItem['Master Product ID'] = parentProduct.ID;
                 }
 
                 var priceData = klaviyoUtils.priceCheck(productLineItem, productDetail);

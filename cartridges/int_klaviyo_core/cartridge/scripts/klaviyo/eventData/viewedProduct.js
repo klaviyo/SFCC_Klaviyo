@@ -46,14 +46,16 @@ function getData(productID) {
         data['value_currency'] = session.getCurrency().getCurrencyCode();
 
         var categories = [];
-        var catProduct = (product.variant) ? product.masterProduct : product;
-        for (var i = 0, len = catProduct.categoryAssignments.length; i < len; i++) {
-            categories.push(catProduct.categoryAssignments[i].category.displayName);
+        if (parentProduct) {
+            for (var i = 0, len = parentProduct.categoryAssignments.length; i < len; i++) {
+                categories.push(parentProduct.categoryAssignments[i].category.displayName);
+            }
         }
+
         categories = klaviyoUtils.dedupeArray(categories);
 
         data['Categories'] = categories;
-        data['Primary Category'] = !empty(catProduct.getPrimaryCategory()) ? catProduct.getPrimaryCategory().displayName : '';
+        data['Primary Category'] = !empty(parentProduct.getPrimaryCategory()) ? parentProduct.getPrimaryCategory().displayName : '';
     } catch (e) {
         var logger = Logger.getLogger('Klaviyo', 'Klaviyo.core viewedProduct.js');
         logger.error('viewedProduct.getData() failed to create data object: ' + e.message + ' ' + e.stack);
