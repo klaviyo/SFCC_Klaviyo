@@ -44,8 +44,10 @@ function getData(basket) {
                 var categories = [];
                 if (parentProduct) {
                     primaryCategory = parentProduct.primaryCategory ? parentProduct.primaryCategory.displayName : '';
-                    for (var i = 0, len = parentProduct.categoryAssignments.length; i < len; i++) {
-                        categories.push(parentProduct.categoryAssignments[i].category.displayName);
+                    if (parentProduct.categoryAssignments) {
+                        for (var i = 0, len = parentProduct.categoryAssignments.length; i < len; i++) {
+                            categories.push(parentProduct.categoryAssignments[i].category.displayName);
+                        }
                     }
                 }
                 var selectedOptions;

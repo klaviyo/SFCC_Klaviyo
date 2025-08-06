@@ -283,7 +283,6 @@ function trackEvent(exchangeID, data, event, customerEmail) {
 
     if (data.$event_id) {
         uniqueId = data.$event_id;
-        delete data.$event_id;
     }
 
     // EVENT DATA
