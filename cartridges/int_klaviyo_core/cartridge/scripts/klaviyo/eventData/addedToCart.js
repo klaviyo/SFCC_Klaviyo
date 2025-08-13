@@ -33,6 +33,7 @@ function getData(basket) {
             var lineItem = basketItems[itemIndex];
             var currentProductID = lineItem.productID;
             var basketProduct = ProductMgr.getProduct(currentProductID);
+            var parentProduct = klaviyoUtils.getParentProduct(basketProduct);
 
             if (!basketProduct) {
                 throw new Error('Product with ID [' + currentProductID + '] not found');
@@ -40,22 +41,22 @@ function getData(basket) {
 
             if (currentProductID != null && !empty(basketProduct) && basketProduct.getPriceModel().getPrice().value > 0) {
                 var primaryCategory;
-                var selectedOptions;
-                if (basketProduct.variant) {
-                    primaryCategory = (basketProduct.masterProduct.primaryCategory) ? basketProduct.masterProduct.primaryCategory.displayName : '';
-                } else {
-                    primaryCategory = (basketProduct.primaryCategory) ? basketProduct.primaryCategory.displayName : '';
+                var categories = [];
+                if (parentProduct) {
+                    primaryCategory = parentProduct.primaryCategory ? parentProduct.primaryCategory.displayName : '';
+                    if (parentProduct.categoryAssignments) {
+                        for (var i = 0, len = parentProduct.categoryAssignments.length; i < len; i++) {
+                            categories.push(parentProduct.categoryAssignments[i].category.displayName);
+                        }
+                    }
                 }
+                var selectedOptions;
+
                 var imageSizeOfProduct = null;
                 if (KLImageSize && basketProduct.getImage(KLImageSize)) {
                     imageSizeOfProduct = basketProduct.getImage(KLImageSize).getAbsURL().toString();
                 }
 
-                var categories = [];
-                var catProduct = (basketProduct.variant) ? basketProduct.masterProduct : basketProduct; // from orig klav code, always use master for finding cats
-                for (var i = 0, len = catProduct.categoryAssignments.length; i < len; i++) {
-                    categories.push(catProduct.categoryAssignments[i].category.displayName);
-                }
 
                 var currentLineItem = {
                     productID                 : currentProductID,
@@ -68,8 +69,8 @@ function getData(basket) {
                     primaryCategory           : primaryCategory
                 };
 
-                if (basketProduct.variant) {
-                    currentLineItem.masterProductID = klaviyoUtils.getParentProductId(basketProduct);
+                if (parentProduct) {
+                    currentLineItem.masterProductID = parentProduct.ID;
                 }
 
 

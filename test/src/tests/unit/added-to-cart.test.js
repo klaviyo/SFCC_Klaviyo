@@ -16,7 +16,7 @@ const setSiteIdAndIntegrationInfo = require('../mocks/util/setSiteIdAndIntegrati
 require('app-module-path').addPath(path.join(process.cwd(), '../cartridges'))
 
 global.empty = sinon.stub()
-const getParentProductIdStub = sinon.stub()
+const getParentProductStub = sinon.stub()
 
 const basketManagerMock = new BasketMgr(false)
 const currentBasket = basketManagerMock.getCurrentBasket()
@@ -45,7 +45,7 @@ const addedToCartEvent = proxyquire('int_klaviyo_core/cartridge/scripts/klaviyo/
         dedupeArray: () => {
             return ['Health']
         },
-        getParentProductId: getParentProductIdStub.returns('NG3614270264406'),
+        getParentProduct: getParentProductStub.returns({ID: 'NG3614270264406', categoryAssignments: [{category: {displayName: 'Health'}}], primaryCategory: {displayName: 'Skin Care'}}),
         setSiteIdAndIntegrationInfo: setSiteIdAndIntegrationInfo
     },
 })

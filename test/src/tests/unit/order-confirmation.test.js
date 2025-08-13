@@ -43,7 +43,7 @@ global.session = {
         }
     }
 }
-const getParentProductIdStub = sinon.stub()
+const getParentProductStub = sinon.stub()
 const basketManagerMock = new BasketMgr(true)
 
 const orderConfirmationEvent = proxyquire('int_klaviyo_core/cartridge/scripts/klaviyo/eventData/orderConfirmation.js', {
@@ -63,7 +63,11 @@ const orderConfirmationEvent = proxyquire('int_klaviyo_core/cartridge/scripts/kl
             return ['Skin Care']
         },
         setSiteIdAndIntegrationInfo: setSiteIdAndIntegrationInfo,
-        getParentProductId: getParentProductIdStub.returns('NG3614270264406'),
+        getParentProduct: getParentProductStub.returns({ID: 'NG3614270264406', categoryAssignments: [{category: {displayName: 'Health'}}], primaryCategory: {displayName: 'Skin Care'}, getPrimaryCategory: function() {
+            return {displayName: 'Skin Care'}
+        }, getAllCategories: function() {
+            return [{displayName: 'Skin Care'}]
+        }}),
     },
 })
 

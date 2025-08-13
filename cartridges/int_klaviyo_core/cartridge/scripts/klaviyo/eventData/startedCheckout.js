@@ -39,14 +39,15 @@ function getData(currentBasket) {
             if (!basketProduct) {
                 throw new Error('Product with ID [' + currentProductID + '] not found');
             }
+            var parentProduct = klaviyoUtils.getParentProduct(basketProduct);
             var quantity = lineItem.quantityValue;
             var options = lineItem && lineItem.optionProductLineItems ? klaviyoUtils.captureProductOptions(lineItem.optionProductLineItems) : null;
 
             if (currentProductID != null && !empty(basketProduct) && basketProduct.getPriceModel().getPrice().value > 0) {
-                var productObj = prepareProductObj(lineItem, basketProduct, currentProductID);
+                var productObj = prepareProductObj(lineItem, basketProduct, currentProductID, parentProduct);
 
-                if (basketProduct.variant) {
-                    productObj['Master Product ID'] = klaviyoUtils.getParentProductId(basketProduct);
+                if (parentProduct) {
+                    productObj['Master Product ID'] = parentProduct.ID;
                 }
 
                 if (options && options.length) {
@@ -81,7 +82,7 @@ function getData(currentBasket) {
 }
 
 
-function prepareProductObj(lineItem, basketProduct, currentProductID) {
+function prepareProductObj(lineItem, basketProduct, currentProductID, parentProduct) {
     var productObj = {};
     if (lineItem.bonusProductLineItem) {
         var bonusProduct = klaviyoUtils.captureBonusProduct(lineItem, basketProduct);
@@ -107,9 +108,11 @@ function prepareProductObj(lineItem, basketProduct, currentProductID) {
     productObj['Product Availability Model'] = basketProduct.availabilityModel.availability;
 
     var categories = [];
-    var catProduct = (basketProduct.variant) ? basketProduct.masterProduct : basketProduct;
-    for (var i = 0, len = catProduct.categoryAssignments.length; i < len; i++) {
-        categories.push(catProduct.categoryAssignments[i].category.displayName);
+    if (parentProduct) {
+        // parentProduct can only be null if the klaviyo_use_variation_group_id site preference is enabled and the product has no variation groups
+        for (var i = 0, len = parentProduct.categoryAssignments.length; i < len; i++) {
+            categories.push(parentProduct.categoryAssignments[i].category.displayName);
+        }
     }
 
     productObj.Categories = categories;

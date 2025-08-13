@@ -82,36 +82,58 @@ function dedupeArray(items) {
 }
 
 
-// this uses the use_variation_group_id site preference to determine if the base product ID should be the variation group ID or the master product ID.
+// this uses the klaviyo_use_variation_group_id site preference to determine if the base product ID should be the variation group ID or the master product ID.
 // this site preference is ONLY to be used in collaboration with Klaviyo support, because there is additional configuration required during integration setup in Klaviyo.
 // this is so that Klaviyo can correctly attribute events to the correct catalog item in Klaviyo, for use in reporting, product feeds, flows, etc.
-function getParentProductId(product) {
+function getParentProduct(product) {
     if (!product) {
         return null;
     }
 
-    var useVariationGroup = Site.getCurrent().getCustomPreferenceValue('use_variation_group_id') || false;
+    var useVariationGroup = Site.getCurrent().getCustomPreferenceValue('klaviyo_use_variation_group_id') || false;
 
     if (useVariationGroup) {
         // Return variation group ID when preference is enabled
+        var variationGroups;
+        var variants;
+
         if (product.variant) {
-            var productVariationModel = product.getVariationModel();
-            var groups = productVariationModel.getVariationGroups();
-            return groups.length > 0 ? groups[0].ID : null;
-        } else if (product.variationGroups.length > 0) {
-            return product.variationGroups[0].ID;
+            var masterProduct = product.masterProduct;
+            if (masterProduct.variationGroups.length > 0) {
+                variationGroups = masterProduct.variationGroups;
+                for (var i = 0; i < variationGroups.length; i++) {
+                    variants = variationGroups[i].variants;
+                    for (var j = 0; j < variants.length; j++) {
+                        var variant = variants[j];
+                        if (variant.ID === product.ID) {
+                            return variationGroups[i];
+                        }
+                    }
+                }
+            }
+            return null;
+        } else if (product.variationGroups && product.variationGroups.length > 0) {
+            variationGroups = product.variationGroups;
+            // product is not a variant, return first group id that has assigned variants
+            for (var v = 0; v < variationGroups.length; v++) {
+                variants = variationGroups[v].variants;
+                if (variants.length > 0) {
+                    return variationGroups[v];
+                }
+            }
         }
+
         // Fallback for other product types (bundle, set, etc.) or items w/o variations
-        return product.ID;
+        return product;
     }
 
     // Return master product ID for variants when preference is disabled (the default)
     if (!product.master && 'masterProduct' in product) {
-        return product.masterProduct.ID;
+        return product.masterProduct;
     }
 
     // Return product ID for master products or standalone items
-    return product.ID;
+    return product;
 }
 
 // helper function to extract product options and return each selected option into an object with five keys: 'Line Item Text', 'Option ID' and 'Option Value ID', 'Option Price' and 'Option Price Value.
@@ -244,9 +266,10 @@ function trackEvent(exchangeID, data, event, customerEmail) {
         }
     };
 
-    // Extract value and value_currency as top-level fields
+    // Extract value, value_currency and unique_id as top-level fields
     var value;
     var valueCurrency;
+    var uniqueId;
 
     if (data.value) {
         value = data.value;
@@ -256,6 +279,10 @@ function trackEvent(exchangeID, data, event, customerEmail) {
             valueCurrency = data.value_currency;
             delete data.value_currency;
         }
+    }
+
+    if (data.$event_id) {
+        uniqueId = data.$event_id;
     }
 
     // EVENT DATA
@@ -268,6 +295,7 @@ function trackEvent(exchangeID, data, event, customerEmail) {
                 properties : data,
                 value: value,
                 value_currency: valueCurrency,
+                unique_id    : uniqueId,
                 time       : (new Date()).toISOString()
             }
         }
@@ -437,7 +465,7 @@ module.exports = {
     getProfileInfo        : getProfileInfo,
     prepareDebugData      : prepareDebugData,
     dedupeArray           : dedupeArray,
-    getParentProductId    : getParentProductId,
+    getParentProduct      : getParentProduct,
     captureProductOptions : captureProductOptions,
     captureProductBundles : captureProductBundles,
     captureBonusProduct   : captureBonusProduct,

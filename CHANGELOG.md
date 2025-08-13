@@ -10,6 +10,10 @@ bumped for multiple releases during one month.
 <!-- BEGIN RELEASE NOTES -->
 ### [Unreleased]
 
+#### Fixed
+- Copies the $event_id field up to the top-level `unique_id` field on Order Confirmation events to prevent duplicate events being created on page reload.
+- Updates event data extraction logic to use the parent product returned from `getParentProduct` to hydrate categories on events.
+
 ### [25.7.0] - 25-07-29
 
 #### Added

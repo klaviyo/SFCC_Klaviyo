@@ -8,6 +8,7 @@ storefront-reference-architecture
 .vscode
 .prettierrc
 .env
+.python-version
 
 # Playwright
 /test-results/

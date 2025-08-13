@@ -15,7 +15,7 @@ require('app-module-path').addPath(path.join(process.cwd(), '../cartridges'))
 const getConfigStub = sinon.stub()
 const dedupeArrayStub = sinon.stub()
 const fullProductModelStub = sinon.stub()
-const getParentProductIdStub = sinon.stub()
+const getParentProductStub = sinon.stub()
 
 const categories = []
 const product = { ID: 'NG3614270264405' }
@@ -81,7 +81,9 @@ const viewedProductEvent = proxyquire('int_klaviyo_core/cartridge/scripts/klaviy
             dedupeArray: dedupeArrayStub.returns(['Health']),
             siteId: Site.getCurrent().getID(),
             setSiteIdAndIntegrationInfo: setSiteIdAndIntegrationInfo,
-            getParentProductId: getParentProductIdStub.returns('NG3614270264406')
+            getParentProduct: getParentProductStub.returns({ID: 'NG3614270264406', categoryAssignments: [{category: {displayName: 'Health'}}], primaryCategory: {displayName: 'Skin Care'}, getPrimaryCategory: function() {
+                return {displayName: 'Skin Care'}
+            }})
         },
         '*/cartridge/scripts/klaviyo/viewedProductHelpers.js': getProductPrices,
     },
