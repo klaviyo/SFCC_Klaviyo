@@ -2,17 +2,19 @@
 
 /* API Includes */
 var PromotionMgr = require('dw/campaign/PromotionMgr');
-
+var Transaction = require('dw/system/Transaction');
 
 // The clearCart function is necessary iterate through all items in the cart to clear it and ensure a clean slate
 // (Note: ensures consistency with price, product items and shipping when refreshing the page or loading the page for the first time)
 function clearCart(cartObj) {
-    for (var i = cartObj.allProductLineItems.length - 1; i >= 0; i--) {
-        cartObj.removeProductLineItem(cartObj.allProductLineItems[i]);
-    }
+    Transaction.wrap(function () {
+        for (var i = cartObj.allProductLineItems.length - 1; i >= 0; i--) {
+            cartObj.removeProductLineItem(cartObj.allProductLineItems[i]);
+        }
 
-    cartObj.updateTotals();
-    PromotionMgr.applyDiscounts(cartObj);
+        cartObj.updateTotals();
+        PromotionMgr.applyDiscounts(cartObj);
+    });
 }
 
 
