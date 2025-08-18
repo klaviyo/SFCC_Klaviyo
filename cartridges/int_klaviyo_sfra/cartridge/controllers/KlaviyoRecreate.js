@@ -53,7 +53,18 @@ server.get('Cart', function (req, res, next) {
 
     // Clean the basket to prevent product duplication on page refresh
     if (currentBasket && currentBasket.productQuantityTotal > 0) {
-        recreateCartHelpers.clearCart(currentBasket);
+        try {
+            recreateCartHelpers.clearCart(currentBasket);
+        } catch (error) {
+            res.setStatusCode(500);
+            logger.error('clearCart Transaction failed in KlaviyoRecreate-Cart controller. ERROR: {0} {1}', error.message, error.stack);
+
+            res.render('error', {
+                error   : true,
+                message : Resource.msg('rebuildcart.message.error.general', 'klaviyo_error', null)
+            });
+            return next();
+        }
     }
 
     try {
