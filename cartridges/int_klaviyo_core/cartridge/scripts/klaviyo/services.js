@@ -18,7 +18,7 @@ function getApiVersion() {
  * @returns {string} User-Agent string
  */
 function getUserAgent() {
-    return 'sfcc-klaviyo/25.7.0';
+    return 'sfcc-klaviyo/25.8.0';
 }
 
 // HTTP Services
