@@ -20,7 +20,7 @@ class KlaviyoAPI {
         return {
             'Authorization': `Klaviyo-API-Key ${this.privateKey}`,
             'Content-Type': 'application/json',
-            'revision': '2025-01-15'
+            'revision': '2025-10-15'
         }
     }
 

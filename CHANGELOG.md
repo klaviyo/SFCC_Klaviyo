@@ -10,6 +10,11 @@ bumped for multiple releases during one month.
 <!-- BEGIN RELEASE NOTES -->
 ### [Unreleased]
 
+### [25.11.0] - 2025-11-04
+
+#### Changed
+- Updates to Klaviyo API revision 2025-10-15. See https://developers.klaviyo.com/en/docs/changelog_
+
 ### [25.8.0] - 25-08-18
 
 #### Fixed
@@ -114,7 +119,8 @@ bumped for multiple releases during one month.
 <!-- END RELEASE NOTES -->
 
 <!-- BEGIN LINKS -->
-[Unreleased]: https://github.com/klaviyo/SFCC_Klaviyo/compare/25.8.0...HEAD
+[Unreleased]: https://github.com/klaviyo/SFCC_Klaviyo/compare/25.11.0...HEAD
+[25.11.0]: https://github.com/klaviyo/SFCC_Klaviyo/compare/25.8.0...25.11.0
 [25.8.0]: https://github.com/klaviyo/SFCC_Klaviyo/compare/25.7.0...25.8.0
 [25.7.0]: https://github.com/klaviyo/SFCC_Klaviyo/compare/25.4.0...25.7.0
 [25.4.0]: https://github.com/klaviyo/SFCC_Klaviyo/compare/24.9.0...25.4.0
