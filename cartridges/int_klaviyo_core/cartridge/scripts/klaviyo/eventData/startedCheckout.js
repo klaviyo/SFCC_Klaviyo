@@ -106,6 +106,7 @@ function prepareProductObj(lineItem, basketProduct, currentProductID, parentProd
     productObj['Product Page URL'] = URLUtils.https('Product-Show', 'pid', currentProductID).toString();
     productObj['Product UPC'] = basketProduct.UPC;
     productObj['Product Availability Model'] = basketProduct.availabilityModel.availability;
+    productObj['Quantity'] = lineItem.quantityValue;
 
     var categories = [];
     if (parentProduct) {

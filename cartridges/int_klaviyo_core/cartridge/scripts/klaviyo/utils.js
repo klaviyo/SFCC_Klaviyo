@@ -194,15 +194,18 @@ function priceCheck(lineItemObj, basketProdObj) {
     var priceBookPrice = priceBook && priceModel ? priceModel.getPriceBookPrice(priceBook.ID) : null;
     var priceData = {};
 
+    var adjustedPricePerItem = lineItemObj ? lineItemObj.adjustedPrice.value / lineItemObj.quantityValue : null;
+    var pricePerItem = lineItemObj ? lineItemObj.price.value / lineItemObj.quantityValue : null;
+
     var adjustedPromoPrice = lineItemObj && lineItemObj.adjustedPrice < priceBookPrice ? StringUtils.formatMoney(dw.value.Money(lineItemObj.adjustedPrice.value, session.getCurrency().getCurrencyCode())) : null;
     if (adjustedPromoPrice) {
-        priceData.purchasePrice = StringUtils.formatMoney(dw.value.Money(lineItemObj.adjustedPrice.value, session.getCurrency().getCurrencyCode()));
-        priceData.purchasePriceValue = lineItemObj.adjustedPrice.value;
+        priceData.purchasePrice = StringUtils.formatMoney(dw.value.Money(adjustedPricePerItem, session.getCurrency().getCurrencyCode()));
+        priceData.purchasePriceValue = adjustedPricePerItem;
         priceData.originalPrice = priceBookPrice ? StringUtils.formatMoney(dw.value.Money(priceBookPrice.value, session.getCurrency().getCurrencyCode())) : StringUtils.formatMoney(dw.value.Money(basketProdObj.getPriceModel().getPrice().value, session.getCurrency().getCurrencyCode()));
         priceData.originalPriceValue = priceBookPrice.value;
     } else {
-        priceData.purchasePrice = lineItemObj ? StringUtils.formatMoney(dw.value.Money(lineItemObj.price.value, session.getCurrency().getCurrencyCode())) : null;
-        priceData.purchasePriceValue = lineItemObj ? lineItemObj.price.value : null;
+        priceData.purchasePrice = lineItemObj ? StringUtils.formatMoney(dw.value.Money(pricePerItem, session.getCurrency().getCurrencyCode())) : null;
+        priceData.purchasePriceValue = pricePerItem;
         priceData.originalPrice = basketProdObj ? StringUtils.formatMoney(dw.value.Money(basketProdObj.getPriceModel().getPrice().value, session.getCurrency().getCurrencyCode())) : null;
         priceData.originalPriceValue = basketProdObj.getPriceModel().getPrice().value;
     }
