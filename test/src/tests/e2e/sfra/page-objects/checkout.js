@@ -1,4 +1,4 @@
-import { expect } from '@playwright/test'
+import { expect, test } from '@playwright/test'
 import path from 'path'
 import { BasePage } from './base'
 import { ProductPage } from './product'
@@ -39,47 +39,57 @@ exports.CheckoutPage = class CheckoutPage extends BasePage {
     }
 
     async startCheckout() {
-        this.page.goto(`${SFRA_BASE_URL}/en_US/Checkout-Begin`)
-        await this.page.waitForTimeout(3000)
+        await test.step('Navigate to checkout begin page', async () => {
+            this.page.goto(`${SFRA_BASE_URL}/en_US/Checkout-Begin`)
+            await this.page.waitForTimeout(3000)
+        })
     }
 
     async enterGuestEmail(email) {
-        await this.page.locator(this.guestEmailInput).fill(email)
-        await this.guestCheckoutSubmit.click()
+        await test.step('Enter guest checkout email', async () => {
+            await this.page.locator(this.guestEmailInput).fill(email)
+            await this.guestCheckoutSubmit.click()
+        })
     }
 
     async submitShippingForm(){
-        await this.submitShippingLocator.click()
-        await this.page.waitForTimeout(3000)
+        await test.step('Submit shipping form', async () => {
+            await this.submitShippingLocator.click()
+            await this.page.waitForTimeout(3000)
+        })
     }
 
     async fillShippingForm(data) {
-        await this.shippingFnameLocator.fill(data.firstName)
-        await this.shippingLnameLocator.fill(data.lastName)
-        await this.shippingAddressLocator.fill(data.address)
-        await this.cityLocator.fill(data.city)
-        await this.countryLocator.locator('option')
-        await this.countryLocator.selectOption({ value: data.country })
-        await this.stateLocator.locator('option')
-        await this.stateLocator.selectOption({ value: data.state })
-        await this.postCodeLocator.fill(data.postal)
-        await this.phoneLocator.fill(data.phone)
+        await test.step('Fill shipping form', async () => {
+            await this.shippingFnameLocator.fill(data.firstName)
+            await this.shippingLnameLocator.fill(data.lastName)
+            await this.shippingAddressLocator.fill(data.address)
+            await this.cityLocator.fill(data.city)
+            await this.countryLocator.locator('option')
+            await this.countryLocator.selectOption({ value: data.country })
+            await this.stateLocator.locator('option')
+            await this.stateLocator.selectOption({ value: data.state })
+            await this.postCodeLocator.fill(data.postal)
+            await this.phoneLocator.fill(data.phone)
+        })
     }
 
     async fillPaymentForm(data) {
-        await this.cardNumberLocator.fill(data.ccn)
-        await this.page.keyboard.press('Tab')
-        const months = await this.cardExpMonth.locator('option')
-        const monthVal = await months.last().getAttribute('value')
-        await this.cardExpMonth.selectOption({ value: monthVal })
-        const years = await this.cardExpYear.locator('option')
-        const yearVal = await years.last().getAttribute('value')
-        await this.cardExpYear.selectOption({ value: yearVal })
-        await this.securityCode.fill('123')
-        await this.paymentLocator.click()
-        await this.page.waitForLoadState('networkidle')
-        await this.placeOrderLocator.click()
-        await this.page.waitForLoadState('networkidle')
+        await test.step('Fill payment form and place order', async () => {
+            await this.cardNumberLocator.fill(data.ccn)
+            await this.page.keyboard.press('Tab')
+            const months = await this.cardExpMonth.locator('option')
+            const monthVal = await months.last().getAttribute('value')
+            await this.cardExpMonth.selectOption({ value: monthVal })
+            const years = await this.cardExpYear.locator('option')
+            const yearVal = await years.last().getAttribute('value')
+            await this.cardExpYear.selectOption({ value: yearVal })
+            await this.securityCode.fill('123')
+            await this.paymentLocator.click()
+            await this.page.waitForLoadState('networkidle')
+            await this.placeOrderLocator.click()
+            await this.page.waitForLoadState('networkidle')
+        })
     }
 
     async enableEmailSubscription() {
