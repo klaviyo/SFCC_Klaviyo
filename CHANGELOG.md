@@ -10,6 +10,9 @@ bumped for multiple releases during one month.
 <!-- BEGIN RELEASE NOTES -->
 ### [Unreleased]
 
+#### Changed
+- Updated Klaviyo V3 API revision to 2026-04-15. See https://developers.klaviyo.com/en/docs/changelog_
+
 ### [25.11.0] - 2025-11-04
 
 #### Changed
