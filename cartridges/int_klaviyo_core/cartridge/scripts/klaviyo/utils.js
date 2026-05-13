@@ -62,11 +62,27 @@ function getProfileInfo() {
 
 // This takes data passed from the controller and encodes it so it can be used when Klaviyo's Debugger mode has been activated (ex: when including 'kldebug=true' as a URL query)
 // Data from this is available in the following Events: 'Viewed Product', 'Viewed Category', 'Searched Site', 'Added to Cart' and 'Started Checkout'.
+//
+// Defensive: JSON.stringify(undefined) returns the value undefined (not a string),
+// which causes the inline <script> in klaviyoDebug.isml to throw SyntaxError on
+// JSON.parse(atob('')) and abort before the console.log fires -- producing a
+// confusing "Cannot read properties of undefined" failure in e2e tests rather
+// than a clean assertion. Substitute a safe placeholder instead.
 function prepareDebugData(obj) {
-    var stringObj = JSON.stringify(obj);
+    var stringObj = JSON.stringify(obj == null ? { success: false } : obj);
     var encodedDataObj = StringUtils.encodeBase64(stringObj);
 
     return encodedDataObj;
+}
+
+
+// Returns true if the given service result error code is in the 4xx range,
+// which means Klaviyo IS responding -- it's just rejecting our request (e.g.
+// invalid payload). Distinguishes "bad payload" from "Klaviyo is unresponsive"
+// (5xx, connection error, timeout) so we don't skip independent downstream
+// Klaviyo calls just because one of them had a payload problem. See IES-228.
+function isHttp4xx(errorCode) {
+    return typeof errorCode === 'number' && errorCode >= 400 && errorCode < 500;
 }
 
 
@@ -228,9 +244,12 @@ function getRootPriceBook(priceBook) {
 function trackEvent(exchangeID, data, event, customerEmail) {
     var logger = Logger.getLogger('Klaviyo', 'Klaviyo.core utils.js - trackEvent()');
 
+    // Always return an object with a .success boolean so callers (and the
+    // kldebug overlay template) can rely on a uniform contract regardless of
+    // which branch we exit on.
     if (klaviyoServices.KlaviyoEventService == null || empty(exchangeID)) {
         logger.error('trackEvent() failed - KlaviyoEventService or exchange_id is null.  exchange_id: ' + exchangeID + '.');
-        return;
+        return { success: false };
     }
 
     // METRIC DATA
@@ -303,17 +322,27 @@ function trackEvent(exchangeID, data, event, customerEmail) {
 
     logger.info(JSON.stringify(eventData));
 
-    var result = klaviyoServices.KlaviyoEventService.call(eventData);
+    // Klaviyo tracking is non-essential to checkout: any failure here (timeout,
+    // connection error, 5xx with non-JSON body, framework exception) must degrade
+    // gracefully so the storefront request can complete.
+    try {
+        var result = klaviyoServices.KlaviyoEventService.call(eventData);
 
-    if (result == null) {
-        logger.error('klaviyoServices.KlaviyoEventService call for ' + event + ' returned null result');
-        return;
-    }
+        if (result == null) {
+            logger.error('klaviyoServices.KlaviyoEventService call for ' + event + ' returned null result (likely connection error or timeout)');
+            return { success: false };
+        }
 
-    if (result.ok === true) {
-        return { success: true };
+        if (result.ok === true) {
+            return { success: true };
+        }
+
+        logger.error('klaviyoServices.KlaviyoEventService call for ' + event + ' failed. status: ' + result.error + ', errorMessage: ' + result.errorMessage);
+        return { success: false };
+    } catch (e) {
+        logger.error('klaviyoServices.KlaviyoEventService call for ' + event + ' threw an exception: ' + e.message);
+        return { success: false };
     }
-    return JSON.parse(result.errorMessage);
 }
 
 
@@ -333,111 +362,148 @@ function subscribeUser(email, phone) {
     var data;
     var result;
 
+    // Tracks whether a Klaviyo call within this invocation has signalled the
+    // API is unresponsive (timeout, connection error, 5xx, or thrown exception).
+    // If so, downstream subscribe attempts in the same invocation are skipped
+    // rather than burning another full timeout window on a known-down service.
+    // 4xx responses do NOT set this flag -- those mean Klaviyo IS responding,
+    // just rejecting our payload (e.g. invalid phone number).
+    var klaviyoUnresponsive = false;
+
+    // Each subscription branch is wrapped independently so an isolated payload
+    // rejection (4xx) in the email path does not skip the SMS path. All
+    // exceptions are swallowed: subscribe is fire-and-forget from the order
+    // confirmation flow and must never propagate to the controller.
     if (session.custom.KLEmailSubscribe && emailListID) {
-        data = {
-            data: {
-                type: 'profile-subscription-bulk-create-job',
-                attributes: {
-                    custom_source : 'SFCC Checkout',
-                    profiles: {
-                        data: [
-                            {
-                                type: 'profile',
-                                attributes: {
-                                    subscriptions: {
-                                        email: {
-                                            marketing: {
-                                                consent: 'SUBSCRIBED'
+        try {
+            data = {
+                data: {
+                    type: 'profile-subscription-bulk-create-job',
+                    attributes: {
+                        custom_source : 'SFCC Checkout',
+                        profiles: {
+                            data: [
+                                {
+                                    type: 'profile',
+                                    attributes: {
+                                        subscriptions: {
+                                            email: {
+                                                marketing: {
+                                                    consent: 'SUBSCRIBED'
+                                                }
                                             }
-                                        }
-                                    },
-                                    email        : email,
-                                    phone_number : phone
+                                        },
+                                        email        : email,
+                                        phone_number : phone
+                                    }
                                 }
-                            }
-                        ]
+                            ]
+                        },
+                        historical_import: false
                     },
-                    historical_import: false
-                },
-                relationships: {
-                    list: {
-                        data: {
-                            type: 'list',
-                            id: emailListID
+                    relationships: {
+                        list: {
+                            data: {
+                                type: 'list',
+                                id: emailListID
+                            }
+                        }
+                    }
+                }
+            };
+
+            result = klaviyoServices.KlaviyoSubscribeProfilesService.call(data);
+
+            if (result == null) {
+                logger.error('klaviyoServices.KlaviyoSubscribeProfilesService subscribe call for email returned null result (likely connection error or timeout)');
+                klaviyoUnresponsive = true;
+            } else if (result.ok !== true) {
+                logger.error('klaviyoServices.KlaviyoSubscribeProfilesService subscribe call for email error: ' + result.errorMessage);
+                // 5xx (or any non-4xx error) means Klaviyo is unresponsive; mark
+                // so the SMS branch is skipped. 4xx means Klaviyo IS responding
+                // (just rejecting our payload) so we leave the flag alone.
+                if (!isHttp4xx(result.error)) {
+                    klaviyoUnresponsive = true;
+                }
+                // Klaviyo rejects 400s on invalid phone numbers; retry without the phone number.
+                // JSON.parse can throw on non-JSON bodies (e.g. Kong 5xx HTML) -- guard with try/catch.
+                var errObj;
+                try {
+                    errObj = JSON.parse(result.errorMessage);
+                } catch (parseErr) {
+                    errObj = null;
+                }
+                if (errObj && result.error == 400 && errObj.errors && errObj.errors[0] && errObj.errors[0].code == 'invalid' && errObj.errors[0].detail && errObj.errors[0].detail.includes('phone number')) {
+                    data.data.attributes.profiles.data[0].attributes.phone_number = null;
+                    result = klaviyoServices.KlaviyoSubscribeProfilesService.call(data);
+                    if (result == null) {
+                        logger.error('klaviyoServices.KlaviyoSubscribeProfilesService subscribe call for email returned null result on second attempt without phone number');
+                        klaviyoUnresponsive = true;
+                    } else if (result.ok !== true) {
+                        logger.error('klaviyoServices.KlaviyoSubscribeProfilesService subscribe call for email on second attempt without phone number, error: ' + result.errorMessage);
+                        if (!isHttp4xx(result.error)) {
+                            klaviyoUnresponsive = true;
                         }
                     }
                 }
             }
-        };
-
-        result = klaviyoServices.KlaviyoSubscribeProfilesService.call(data);
-
-        if (result == null) {
-            logger.error('klaviyoServices.KlaviyoSubscribeProfilesService subscribe call for email returned null result');
-        }
-
-        if (!result.ok === true) {
-            logger.error('klaviyoServices.KlaviyoSubscribeProfilesService subscribe call for email error: ' + result.errorMessage);
-            // check to see if the reason the call failed was because of Klaviyo's internal phone number validation.  if so, try to resend without phone number
-            var errObj = JSON.parse(result.errorMessage);
-            if (result.error == 400 && errObj.errors[0].code == 'invalid' && errObj.errors[0].detail.includes('phone number')) {
-                data.data.attributes.profiles.data[0].attributes.phone_number = null;
-                result = klaviyoServices.KlaviyoSubscribeProfilesService.call(data);
-                if (result == null) {
-                    logger.error('klaviyoServices.KlaviyoSubscribeProfilesService subscribe call for email returned null result on second attempt without phone number');
-                }
-                if (!result.ok === true) {
-                    logger.error('klaviyoServices.KlaviyoSubscribeProfilesService subscribe call for email on second attempt without phone number, error: ' + result.errorMessage);
-                }
-            }
+        } catch (e) {
+            logger.error('klaviyoServices.KlaviyoSubscribeProfilesService subscribe call for email threw an exception: ' + e.message);
+            klaviyoUnresponsive = true;
         }
     }
 
     if (session.custom.KLSmsSubscribe && smsListID && phone) {
-        data = {
-            data: {
-                type: 'profile-subscription-bulk-create-job',
-                attributes: {
-                    custom_source : 'SFCC Checkout',
-                    profiles: {
-                        data: [
-                            {
-                                type: 'profile',
-                                attributes: {
-                                    subscriptions: {
-                                        sms: {
-                                            marketing: {
-                                                consent: 'SUBSCRIBED'
+        if (klaviyoUnresponsive) {
+            logger.info('Skipping SMS subscribe call: a prior Klaviyo request in this invocation indicated the API is unresponsive.');
+            return;
+        }
+        try {
+            data = {
+                data: {
+                    type: 'profile-subscription-bulk-create-job',
+                    attributes: {
+                        custom_source : 'SFCC Checkout',
+                        profiles: {
+                            data: [
+                                {
+                                    type: 'profile',
+                                    attributes: {
+                                        subscriptions: {
+                                            sms: {
+                                                marketing: {
+                                                    consent: 'SUBSCRIBED'
+                                                }
                                             }
-                                        }
-                                    },
-                                    email        : email,
-                                    phone_number : phone
+                                        },
+                                        email        : email,
+                                        phone_number : phone
+                                    }
                                 }
-                            }
-                        ]
+                            ]
+                        },
+                        historical_import: false
                     },
-                    historical_import: false
-                },
-                relationships: {
-                    list: {
-                        data: {
-                            type: 'list',
-                            id: smsListID
+                    relationships: {
+                        list: {
+                            data: {
+                                type: 'list',
+                                id: smsListID
+                            }
                         }
                     }
                 }
+            };
+
+            result = klaviyoServices.KlaviyoSubscribeProfilesService.call(data);
+
+            if (result == null) {
+                logger.error('klaviyoServices.KlaviyoSubscribeProfilesService subscribe call for SMS returned null result (likely connection error or timeout)');
+            } else if (result.ok !== true) {
+                logger.error('klaviyoServices.KlaviyoSubscribeProfilesService subscribe call for SMS error: ' + result.errorMessage);
             }
-        };
-
-        result = klaviyoServices.KlaviyoSubscribeProfilesService.call(data);
-
-        if (result == null) {
-            logger.error('klaviyoServices.KlaviyoSubscribeProfilesService subscribe call for SMS returned null result');
-        }
-
-        if (!result.ok === true) {
-            logger.error('klaviyoServices.KlaviyoSubscribeProfilesService subscribe call for SMS error: ' + result.errorMessage);
+        } catch (e) {
+            logger.error('klaviyoServices.KlaviyoSubscribeProfilesService subscribe call for SMS threw an exception: ' + e.message);
         }
     }
 }

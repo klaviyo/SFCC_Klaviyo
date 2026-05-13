@@ -2,6 +2,7 @@
 
 /* API Includes */
 var BasketMgr = require('dw/order/BasketMgr');
+var Logger = require('dw/system/Logger');
 
 /* Script Modules */
 var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils');
@@ -34,10 +35,20 @@ function startedCheckoutHelper(beginCheckout, customerEmail) {
             if (customerEmail) {
                 if (currentBasket && currentBasket.getProductLineItems().toArray().length) {
                     dataObj = startedCheckoutData.getData(currentBasket);
-                    serviceCallResult = klaviyoUtils.trackEvent(exchangeID, dataObj, klaviyoUtils.EVENT_NAMES.startedCheckout, customerEmail);
-                    if (isKlDebugOn) {
-                        returnObj.klDebugData = klaviyoUtils.prepareDebugData(dataObj);
-                        returnObj.serviceCallData = klaviyoUtils.prepareDebugData(serviceCallResult);
+                    // Defense-in-depth: trackEvent already swallows exceptions, but the
+                    // checkout request path is critical -- wrap here too so that any
+                    // unexpected failure (including in startedCheckoutData.getData or
+                    // prepareDebugData) cannot break Checkout-Begin or CheckoutServices.
+                    // See IES-228.
+                    try {
+                        serviceCallResult = klaviyoUtils.trackEvent(exchangeID, dataObj, klaviyoUtils.EVENT_NAMES.startedCheckout, customerEmail);
+                        if (isKlDebugOn) {
+                            returnObj.klDebugData = klaviyoUtils.prepareDebugData(dataObj);
+                            returnObj.serviceCallData = klaviyoUtils.prepareDebugData(serviceCallResult);
+                        }
+                    } catch (e) {
+                        Logger.getLogger('Klaviyo', 'Klaviyo.core checkoutHelpers.js - startedCheckoutHelper()')
+                            .error('startedCheckoutHelper trackEvent path threw an exception: ' + e.message);
                     }
                 }
 

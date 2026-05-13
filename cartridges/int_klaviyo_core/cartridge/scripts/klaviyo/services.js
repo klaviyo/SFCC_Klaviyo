@@ -43,6 +43,11 @@ var KlaviyoEventService = ServiceRegistry.createService('KlaviyoEventService', {
         }
 
         svc.setRequestMethod('POST');
+        // Enforce timeout in code so merchants who configured services manually in BM
+        // (without importing services.xml) are still protected against thread-pool
+        // exhaustion during a Klaviyo outage. The timeout lives on the underlying
+        // HTTPClient (dw.net.HTTPClient.setTimeout), not on the HTTPService wrapper.
+        svc.getClient().setTimeout(3000);
         svc.addHeader('Authorization', 'Klaviyo-API-Key ' + key);
         svc.addHeader('Content-type', 'application/vnd.api+json');
         svc.addHeader('Accept', 'application/vnd.api+json');
@@ -115,6 +120,11 @@ var KlaviyoSubscribeProfilesService = ServiceRegistry.createService('KlaviyoSubs
         }
 
         svc.setRequestMethod('POST');
+        // Enforce timeout in code so merchants who configured services manually in BM
+        // (without importing services.xml) are still protected against thread-pool
+        // exhaustion during a Klaviyo outage. The timeout lives on the underlying
+        // HTTPClient (dw.net.HTTPClient.setTimeout), not on the HTTPService wrapper.
+        svc.getClient().setTimeout(3000);
         svc.addHeader('Authorization', 'Klaviyo-API-Key ' + key);
         svc.addHeader('Content-type', 'application/vnd.api+json');
         svc.addHeader('Accept', 'application/vnd.api+json');
