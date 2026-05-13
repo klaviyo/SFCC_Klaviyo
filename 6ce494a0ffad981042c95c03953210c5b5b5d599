@@ -1,0 +1,118 @@
+CHANGELOG.md
+  ca8b513ac7aa06b8 13-14,127-128
+package.json
+  ca8b513ac7aa06b8 3
+cartridges/int_klaviyo_core/cartridge/scripts/klaviyo/services.js
+  ca8b513ac7aa06b8 21
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.1",
+  "base_commit_sha": "6ce494a0ffad981042c95c03953210c5b5b5d599",
+  "prompts": {
+    "21e5d0a1ae1458b5": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b8b34fb5-3f35-49e4-9fcd-1a05f747ad4a",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "scott.moucka",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 6,
+      "overriden_lines": 0
+    },
+    "380ea98a035b0f89": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "639a912b-2126-4d6b-a04a-b3eaec26b463",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "scott.moucka",
+      "messages": [],
+      "total_additions": 13,
+      "total_deletions": 1,
+      "accepted_lines": 12,
+      "overriden_lines": 0
+    },
+    "65e21ad2e4369521": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "89e9ffb6-0716-47c8-8592-99d2cf83e09a",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "scott.moucka",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 125,
+      "overriden_lines": 0
+    },
+    "7f67982e62fb8498": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "db230e5e-1fb0-484f-be39-e43d637a3f15",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "scott.moucka",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 36,
+      "overriden_lines": 0
+    },
+    "95abd8c1e8a2f618": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d618efd5-794b-48c6-a953-b803cef95e79",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "scott.moucka",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 14,
+      "overriden_lines": 0
+    },
+    "ca8b513ac7aa06b8": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ebeeb01a-1835-489c-b75e-947bc043b7e8",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "scott.moucka",
+      "messages": [],
+      "total_additions": 7,
+      "total_deletions": 4,
+      "accepted_lines": 6,
+      "overriden_lines": 0
+    },
+    "ed7695bd018f4d45": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "06cc7e5a-6e49-4dab-978d-682b246a0c39",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "scott.moucka",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 1,
+      "overriden_lines": 0
+    },
+    "fc1a4c22e1cca9b9": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "1197cec7-5283-4330-9d7c-f9108daebcd8",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "scott.moucka",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 1,
+      "overriden_lines": 0
+    }
+  }
+}
