@@ -1,0 +1,34 @@
+cartridges/int_klaviyo_core/cartridge/scripts/klaviyo/checkoutHelpers.js
+  7b995fbb574f919d 5,38-51
+cartridges/int_klaviyo_core/cartridge/scripts/klaviyo/services.js
+  7b995fbb574f919d 46-50,123-127
+CHANGELOG.md
+  7b995fbb574f919d 13-17
+cartridges/int_klaviyo_core/cartridge/scripts/klaviyo/utils.js
+  7b995fbb574f919d 65-70,72,79-88,247-249,252,325-329,331-334,336-344,365-376,378-393,395-398,400-402,404-409,413-434,436-447,450-452,457-476,478-481,483-485,487-492,496,498,500-506
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.1",
+  "base_commit_sha": "d7ab85da7ee09c7a0e9818cb5ce840117170e4c2",
+  "prompts": {
+    "7b995fbb574f919d": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "de222e2f-8f1a-4f72-adb5-326a2c97d40e",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Claire Kolln",
+      "messages": [],
+      "total_additions": 530,
+      "total_deletions": 176,
+      "accepted_lines": 406,
+      "overriden_lines": 0
+    }
+  },
+  "humans": {
+    "h_c534b55f24b04b": {
+      "author": "Claire Kolln"
+    }
+  }
+}
