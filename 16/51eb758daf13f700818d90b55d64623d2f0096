@@ -1,0 +1,23 @@
+cartridges/int_klaviyo_core/cartridge/scripts/klaviyo/checkoutHelpers.js
+  7b995fbb574f919d 38-41,43,51
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.1",
+  "base_commit_sha": "1651eb758daf13f700818d90b55d64623d2f0096",
+  "prompts": {
+    "7b995fbb574f919d": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "de222e2f-8f1a-4f72-adb5-326a2c97d40e",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Claire Kolln",
+      "messages": [],
+      "total_additions": 6,
+      "total_deletions": 6,
+      "accepted_lines": 8,
+      "overriden_lines": 0
+    }
+  }
+}
