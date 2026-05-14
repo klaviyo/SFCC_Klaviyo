@@ -10,6 +10,9 @@ bumped for multiple releases during one month.
 <!-- BEGIN RELEASE NOTES -->
 ### [Unreleased]
 
+#### Changed
+- Wire existing mocha unit suite into the CI workflow so it runs on every pull request. Pins Node 20 via `.nvmrc`, commits `test/package-lock.json` for reproducible `npm ci`, and switches the `dw-api-mock` dependency to an HTTPS tarball so Actions runners can install without an SSH key.
+
 ### [26.5.0] - 2026-05-01
 
 #### Changed
