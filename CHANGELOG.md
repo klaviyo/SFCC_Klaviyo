@@ -10,6 +10,9 @@ bumped for multiple releases during one month.
 <!-- BEGIN RELEASE NOTES -->
 ### [Unreleased]
 
+#### Added
+- Adds window variable to enable Klaviyo Customer Hub
+
 #### Fixed
 - Wraps Klaviyo service calls in `try/catch` with graceful degradation so a Klaviyo API outage cannot break checkout. `trackEvent` now returns `{ success: false }` (instead of throwing or returning bare `undefined`) on connection errors, timeouts, 5xx responses with non-JSON bodies, or any other unexpected exception. `subscribeUser` no longer throws `TypeError` on null service responses.
 - `subscribeUser` now skips the SMS subscribe attempt when the email subscribe call indicates Klaviyo is unresponsive (timeout, connection error, 5xx, or thrown exception), to avoid burning a second 3-second timeout window on a known-down service. 4xx responses (e.g. payload validation errors) are not treated as "unresponsive" — those mean Klaviyo IS responding and the independent SMS subscribe is still attempted.
