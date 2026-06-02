@@ -14,7 +14,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - run: echo "Execute tests here"
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+          cache-dependency-path: test/package-lock.json
+      - name: Install test dependencies
+        run: npm ci
+        working-directory: test
+      - name: Run unit tests
+        run: npm run test:unit
+        working-directory: test
   changelog-validation:
     runs-on: ubuntu-latest
     steps:

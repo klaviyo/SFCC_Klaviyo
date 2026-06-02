@@ -4,10 +4,14 @@
   "description": "Klaviyo integration for Commerce Cloud",
   "main": "index.js",
   "scripts": {
-    "test": "mocha ./test/unit/*.js",
+    "test": "npm --prefix test run test:unit",
+    "test:unit": "npm --prefix test run test:unit",
     "lint": "eslint **/*.js",
     "watch": "sgmf-scripts --watch",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,css,scss,md}\""
+  },
+  "engines": {
+    "node": ">=20.0.0"
   },
   "repository": {
     "type": "git",
