@@ -13,6 +13,11 @@ bumped for multiple releases during one month.
 #### Changed
 - Wire existing mocha unit suite into the CI workflow so it runs on every pull request. Pins Node 20 via `.nvmrc`, commits `test/package-lock.json` for reproducible `npm ci`, and switches the `dw-api-mock` dependency to an HTTPS tarball so Actions runners can install without an SSH key.
 
+#### Fixed
+- Wraps Klaviyo service calls in `try/catch` with graceful degradation so a Klaviyo API outage cannot break checkout. `trackEvent` now returns `{ success: false }` (instead of throwing or returning bare `undefined`) on connection errors, timeouts, 5xx responses with non-JSON bodies, or any other unexpected exception. `subscribeUser` no longer throws `TypeError` on null service responses.
+- `subscribeUser` now skips the SMS subscribe attempt when the email subscribe call indicates Klaviyo is unresponsive (timeout, connection error, 5xx, or thrown exception), to avoid burning a second 3-second timeout window on a known-down service. 4xx responses (e.g. payload validation errors) are not treated as "unresponsive" — those mean Klaviyo IS responding and the independent SMS subscribe is still attempted.
+- Reduces the Klaviyo service timeout from 5000ms to 3000ms in `metadata/services.xml` and additionally enforces `svc.getClient().setTimeout(3000)` in code (`services.js`) so merchants who configured services manually in Business Manager without importing `services.xml` are still protected against thread-pool exhaustion during a Klaviyo outage.
+
 ### [26.5.0] - 2026-05-01
 
 #### Changed
