@@ -54,8 +54,9 @@ describe('int_klaviyo_core/cartridge/scripts/klaviyo/utils => subscribeUser', ()
 
     // Don't-retry-when-down behavior (IES-228): a null result from the email
     // call indicates a connection error or timeout -- Klaviyo is hard-down. We
-    // must not waste another full timeout window on the SMS call.
-    it('should skip the SMS branch when the email service call returns null (Klaviyo unresponsive)', () => {
+    // must not waste another full timeout window on the SMS call. The log must
+    // classify the failure as "unreachable" so support can act on it.
+    it('should skip the SMS branch and log "unreachable" when the email service call returns null', () => {
         global.session.custom.KLEmailSubscribe = true
         global.session.custom.KLSmsSubscribe = true
 
@@ -67,11 +68,13 @@ describe('int_klaviyo_core/cartridge/scripts/klaviyo/utils => subscribeUser', ()
         // Only the email call should have fired; the SMS call must be skipped.
         expect(subscribeCallStub.callCount).to.equal(1)
         expect(loggerErrorSpy.called).to.be.true
+        expect(loggerErrorSpy.firstCall.args[0]).to.match(/unreachable/)
     })
 
     // Same principle as above but for thrown exceptions (e.g. socket-level
-    // timeout surfaced as an exception rather than a null result).
-    it('should skip the SMS branch when the email service call throws (Klaviyo unresponsive)', () => {
+    // timeout surfaced as an exception rather than a null result). The log must
+    // include exception name + stack to be useful for debugging.
+    it('should skip the SMS branch and log exception name + stack when the email service call throws', () => {
         global.session.custom.KLEmailSubscribe = true
         global.session.custom.KLSmsSubscribe = true
 
@@ -82,13 +85,18 @@ describe('int_klaviyo_core/cartridge/scripts/klaviyo/utils => subscribeUser', ()
         expect(fn).to.not.throw()
         expect(subscribeCallStub.callCount).to.equal(1)
         expect(loggerErrorSpy.called).to.be.true
+        const logMsg = loggerErrorSpy.firstCall.args[0]
+        expect(logMsg).to.match(/name=Error/)
+        expect(logMsg).to.match(/message=simulated socket timeout/)
+        expect(logMsg).to.match(/stack=/)
     })
 
     // 5xx === Klaviyo is unresponsive. Same skip behavior as null/throw.
     // This is the Kong-outage scenario for the subscribe service: a 502 with
     // an HTML body. Previously the JSON.parse would also throw on the HTML
-    // body, but even with that fixed we should not attempt the SMS call.
-    it('should skip the SMS branch when the email service returns a 5xx with a non-JSON (HTML) body', () => {
+    // body, but even with that fixed we should not attempt the SMS call. The
+    // log must include the status code so support can confirm the 5xx.
+    it('should skip the SMS branch and log a 5xx classification with status code when the email service returns a 5xx with a non-JSON (HTML) body', () => {
         global.session.custom.KLEmailSubscribe = true
         global.session.custom.KLSmsSubscribe = true
 
@@ -103,12 +111,16 @@ describe('int_klaviyo_core/cartridge/scripts/klaviyo/utils => subscribeUser', ()
         expect(fn).to.not.throw()
         expect(subscribeCallStub.callCount).to.equal(1)
         expect(loggerErrorSpy.called).to.be.true
+        const logMsg = loggerErrorSpy.firstCall.args[0]
+        expect(logMsg).to.match(/status=502/)
+        expect(logMsg).to.match(/unavailable/)
     })
 
     // Critical positive case: a 4xx response means Klaviyo IS responding (just
     // rejecting our payload), so the SMS subscribe -- a fully independent
-    // request with a different payload -- must still be attempted.
-    it('should still attempt the SMS branch when the email call returns a 4xx (Klaviyo is responding)', () => {
+    // request with a different payload -- must still be attempted. The log must
+    // classify it as "4xx rejected" so support knows Klaviyo is up.
+    it('should still attempt the SMS branch and log a 4xx classification with status code when the email call returns a 4xx', () => {
         global.session.custom.KLEmailSubscribe = true
         global.session.custom.KLSmsSubscribe = true
 
@@ -127,6 +139,10 @@ describe('int_klaviyo_core/cartridge/scripts/klaviyo/utils => subscribeUser', ()
         expect(fn).to.not.throw()
         // Email call (1) + SMS call (2) -- both attempted because 400 is not a "down" signal.
         expect(subscribeCallStub.callCount).to.equal(2)
+        expect(loggerErrorSpy.called).to.be.true
+        const logMsg = loggerErrorSpy.firstCall.args[0]
+        expect(logMsg).to.match(/status=400/)
+        expect(logMsg).to.match(/4xx rejected/)
     })
 
     // Happy-path end-to-end regression: both calls should succeed.
