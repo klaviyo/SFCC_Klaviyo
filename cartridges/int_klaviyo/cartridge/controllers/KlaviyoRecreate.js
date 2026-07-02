@@ -20,7 +20,7 @@ var klaviyoCart = require('*/cartridge/scripts/klaviyo/klaviyoATC');
  * @param {serverfunction} - Get
  */
 function cart() {
-    var logger = Logger.getLogger('Klaviyo', 'Klaviyo.SiteGen KlaviyoRecreate.js');
+    var logger = Logger.getLogger('Klaviyo', 'Klaviyo.siteGen KlaviyoRecreate.js - cart()');
     try {
         var cart = app.getModel('Cart').goc();
         var items = request.httpParameterMap.items ? JSON.parse(StringUtils.decodeBase64(request.httpParameterMap.items)) : null;

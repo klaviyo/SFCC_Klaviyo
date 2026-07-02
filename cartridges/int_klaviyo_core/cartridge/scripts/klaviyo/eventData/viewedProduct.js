@@ -57,7 +57,7 @@ function getData(productID) {
         data['Categories'] = categories;
         data['Primary Category'] = !empty(parentProduct.getPrimaryCategory()) ? parentProduct.getPrimaryCategory().displayName : '';
     } catch (e) {
-        var logger = Logger.getLogger('Klaviyo', 'Klaviyo.core viewedProduct.js');
+        var logger = Logger.getLogger('Klaviyo', 'Klaviyo.core viewedProduct.js - getData()');
         logger.error('viewedProduct.getData() failed to create data object: ' + e.message + ' ' + e.stack);
     }
 
