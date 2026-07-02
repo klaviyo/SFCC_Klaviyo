@@ -86,6 +86,23 @@ function isHttp4xx(errorCode) {
 }
 
 
+// Format a caught value for logging in a way that survives non-Error throws
+// (`throw "oops"`, `throw { foo: 1 }`, `throw null`) without rendering literal
+// "undefined" in the log line. Standard Error subclasses -- which is what the
+// SFCC service framework and any deliberate `throw new Error()` produce -- pass
+// through with their native name / message / stack. Everything else falls back
+// to String(e) so the log at least tells support what was thrown.
+function formatException(e) {
+    if (e == null) {
+        return 'name=(none), message=(none), stack=(no stack)';
+    }
+    var name = e.name || typeof e;
+    var message = e.message || String(e);
+    var stack = e.stack || '(no stack)';
+    return 'name=' + name + ', message=' + message + ', stack=' + stack;
+}
+
+
 // helper function used in .getData functions to dedupe values in arrays (particularly product category lists)
 function dedupeArray(items) {
     var unique = {};
@@ -341,7 +358,7 @@ function trackEvent(exchangeID, data, event, customerEmail) {
         logger.error('KlaviyoEventService ' + classification + ' for ' + event + ': status=' + result.error + ', body=' + result.errorMessage);
         return { success: false };
     } catch (e) {
-        logger.error('KlaviyoEventService threw an exception for ' + event + ': name=' + e.name + ', message=' + e.message + ', stack=' + e.stack);
+        logger.error('KlaviyoEventService threw an exception for ' + event + ': ' + formatException(e));
         return { success: false };
     }
 }
@@ -451,7 +468,7 @@ function subscribeUser(email, phone) {
                 }
             }
         } catch (e) {
-            logger.error('KlaviyoSubscribeProfilesService threw an exception for email subscribe: name=' + e.name + ', message=' + e.message + ', stack=' + e.stack);
+            logger.error('KlaviyoSubscribeProfilesService threw an exception for email subscribe: ' + formatException(e));
             klaviyoUnresponsive = true;
         }
     }
@@ -507,7 +524,7 @@ function subscribeUser(email, phone) {
                 logger.error('KlaviyoSubscribeProfilesService ' + smsClassification + ' for SMS subscribe: status=' + result.error + ', body=' + result.errorMessage);
             }
         } catch (e) {
-            logger.error('KlaviyoSubscribeProfilesService threw an exception for SMS subscribe: name=' + e.name + ', message=' + e.message + ', stack=' + e.stack);
+            logger.error('KlaviyoSubscribeProfilesService threw an exception for SMS subscribe: ' + formatException(e));
         }
     }
 }
@@ -543,5 +560,6 @@ module.exports = {
     getRootPriceBook      : getRootPriceBook,
     trackEvent            : trackEvent,
     subscribeUser         : subscribeUser,
-    setSiteIdAndIntegrationInfo : setSiteIdAndIntegrationInfo
+    setSiteIdAndIntegrationInfo : setSiteIdAndIntegrationInfo,
+    formatException       : formatException
 };
