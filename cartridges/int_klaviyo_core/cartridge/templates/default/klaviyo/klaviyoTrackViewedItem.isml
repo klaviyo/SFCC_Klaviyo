@@ -1,0 +1,17 @@
+<iscomment>
+    The JS in this template calls klaviyo.trackViewedItem() to persist the currently-viewed
+    product in the visitor's Klaviyo "recently viewed items" feed. It piggybacks on the
+    existing Klaviyo-Event remote include and is rendered by the SiteGen and SFRA Klaviyo
+    controllers when the action is 'Viewed Product' and an exchangeID is present.
+    The payload is base64-encoded server-side via klaviyoUtils.prepareDebugData() to keep
+    JSON safely embeddable in an inline <script>.
+</iscomment>
+<!--- TEMPLATENAME: klaviyoTrackViewedItem.isml --->
+<isif condition="${pdict.klViewedItemData}">
+    <script>
+        (function () {
+            var data = JSON.parse(atob('${pdict.klViewedItemData}'));
+            klaviyo.trackViewedItem(data);
+        })();
+    </script>
+</isif>
