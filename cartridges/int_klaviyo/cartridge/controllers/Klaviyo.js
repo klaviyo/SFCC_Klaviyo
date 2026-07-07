@@ -50,10 +50,17 @@ var Event = function () {
                 serviceCallResult = klaviyoUtils.trackEvent(exchangeID, dataObj, action, false);
                 if (isKlDebugOn) {
                     app.getView({
-                        klDebugData     : klaviyoUtils.prepareDebugData(dataObj),
-                        serviceCallData : klaviyoUtils.prepareDebugData(serviceCallResult)
+                        klDebugData           : klaviyoUtils.prepareDebugData(dataObj),
+                        serviceCallData       : klaviyoUtils.prepareDebugData(serviceCallResult),
+                        klSkipTrackViewedItem : (action === klaviyoUtils.EVENT_NAMES.viewedProduct)
                     }).render('klaviyo/klaviyoDebug');
                     return;
+                }
+                if (action === klaviyoUtils.EVENT_NAMES.viewedProduct) {
+                    var viewedItemPayload = klaviyoUtils.buildTrackViewedItemPayload(dataObj);
+                    app.getView({
+                        klViewedItemData: klaviyoUtils.prepareDebugData(viewedItemPayload)
+                    }).render('klaviyo/klaviyoTrackViewedItem');
                 }
             }
         } else {
