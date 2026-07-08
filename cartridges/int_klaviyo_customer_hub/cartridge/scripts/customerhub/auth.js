@@ -2,6 +2,7 @@
 
 var Site = require('dw/system/Site');
 var URLUtils = require('dw/web/URLUtils');
+var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils');
 var customerHubOnsiteService = require('*/cartridge/scripts/customerhub/customerHubOnsiteService');
 
 function getStorefrontRoutes() {
@@ -41,7 +42,7 @@ function authenticate(req) {
     var bootstrapRoutes = getBootstrapStorefrontRoutes();
     var routes = getStorefrontRoutes();
 
-    if (site.getCustomPreferenceValue('klaviyo_customer_hub_enabled') !== true) {
+    if (!klaviyoUtils.customerHubEnabled) {
         return buildResponse(bootstrapRoutes, { authenticated: false });
     }
 

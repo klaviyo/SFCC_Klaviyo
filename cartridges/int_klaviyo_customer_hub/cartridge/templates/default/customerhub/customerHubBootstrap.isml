@@ -1,22 +1,22 @@
 <isscript>
-    var Site = require('dw/system/Site');
     var URLUtils = require('dw/web/URLUtils');
+    var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils');
     var activeProductBuilder = require('*/cartridge/scripts/customerhub/activeProduct');
 
     var bootstrapData = null;
 
-    if (Site.getCurrent().getCustomPreferenceValue('klaviyo_customer_hub_enabled') === true) {
+    if (klaviyoUtils.customerHubEnabled) {
         var action = '';
         var productId = '';
 
-        if (typeof pdict !== 'undefined' && pdict.action) {
-            action = pdict.action;
-            if (action === 'Product-Show' && request.httpParameterMap.pid) {
-                productId = request.httpParameterMap.pid.stringValue || '';
-            }
-        } else if (typeof pageContext !== 'undefined' && pageContext.type === 'product') {
+        if (typeof pdict !== 'undefined' && pdict.action === 'Product-Show' && request.httpParameterMap.pid) {
             action = 'Product-Show';
-            if (pdict.Product && pdict.Product.ID) {
+            productId = request.httpParameterMap.pid.stringValue || '';
+        }
+
+        if (!productId && typeof pageContext !== 'undefined' && pageContext.type === 'product') {
+            action = 'Product-Show';
+            if (typeof pdict !== 'undefined' && pdict.Product && pdict.Product.ID) {
                 productId = pdict.Product.ID;
             }
         }
