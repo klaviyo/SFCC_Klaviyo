@@ -300,7 +300,7 @@ function getData(order) {
         data['$event_id'] = 'orderConfirmation-' + order.orderNo;
         data['Tracking Number'] = order.shipments[0].trackingNumber ? order.shipments[0].trackingNumber : '';
     } catch (e) {
-        var logger = Logger.getLogger('Klaviyo', 'Klaviyo.core orderConfirmation.js - getData()');
+        var logger = Logger.getLogger('klaviyo', 'klaviyo.core.eventData.orderConfirmation.getData');
         logger.error('orderConfirmation.getData() failed to create data object: ' + e.message + ' ' + e.stack);
     }
     return data;

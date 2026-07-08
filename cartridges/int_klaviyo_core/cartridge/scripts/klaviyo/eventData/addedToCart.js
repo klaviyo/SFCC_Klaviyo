@@ -124,7 +124,7 @@ function getData(basket) {
             }
         }
     } catch (e) {
-        var logger = Logger.getLogger('Klaviyo', 'Klaviyo.core addedToCart.js - getData()');
+        var logger = Logger.getLogger('klaviyo', 'klaviyo.core.eventData.addedToCart.getData');
         logger.error('addedToCart.getData() failed to create data object: ' + e.message + ' ' + e.stack);
     }
 

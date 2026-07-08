@@ -259,7 +259,7 @@ function getRootPriceBook(priceBook) {
 
 
 function trackEvent(exchangeID, data, event, customerEmail) {
-    var logger = Logger.getLogger('Klaviyo', 'Klaviyo.core utils.js - trackEvent()');
+    var logger = Logger.getLogger('klaviyo', 'klaviyo.core.utils.trackEvent');
 
     // Always return an object with a .success boolean so callers (and the
     // kldebug overlay template) can rely on a uniform contract regardless of
@@ -367,7 +367,7 @@ function trackEvent(exchangeID, data, event, customerEmail) {
 // The subscribeUser func takes the user email & phone number to prep a data object w/ a corresponding emailListID or smsListID (both configured in BM w/ values from the Klaviyo Dashboard)
 // Data is sent to the KlaviyoSubscribeProfilesService API to subscribe users to email or SMS lists.
 function subscribeUser(email, phone) {
-    var logger = Logger.getLogger('Klaviyo', 'Klaviyo.core utils.js - subscribeUser()');
+    var logger = Logger.getLogger('klaviyo', 'klaviyo.core.utils.subscribeUser');
 
     if (klaviyoServices.KlaviyoSubscribeProfilesService == null) {
         logger.error('subscribeUser() failed - KlaviyoSubscribeProfilesService is null.');

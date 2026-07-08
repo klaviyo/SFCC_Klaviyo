@@ -37,7 +37,7 @@ var KlaviyoEventService = ServiceRegistry.createService('KlaviyoEventService', {
     createRequest: function (svc, args) {
         var key = Site.getCurrent().getCustomPreferenceValue('klaviyo_api_key');
         if (!key || key == '') {
-            var logger = Logger.getLogger('Klaviyo', 'Klaviyo.core services.js - createRequest()');
+            var logger = Logger.getLogger('klaviyo', 'klaviyo.core.services.KlaviyoEventService.createRequest');
             logger.error(`KlaviyoEventService failed because of a missing Klaviyo Private API key. Review key & configs for inconsistencies. Klaviyo API Key: ${key}`);
             return;
         }
@@ -109,7 +109,7 @@ var KlaviyoSubscribeProfilesService = ServiceRegistry.createService('KlaviyoSubs
     createRequest: function (svc, args) {
         var key = Site.getCurrent().getCustomPreferenceValue('klaviyo_api_key');
         if (!key || key == '') {
-            var logger = Logger.getLogger('Klaviyo', 'Klaviyo.core services.js - createRequest()');
+            var logger = Logger.getLogger('klaviyo', 'klaviyo.core.services.KlaviyoSubscribeProfilesService.createRequest');
             logger.error(`KlaviyoSubscribeProfilesService failed because of a missing Klaviyo Private API key. Review key & configs for inconsistencies. Klaviyo API Key: ${key}`);
             return;
         }
