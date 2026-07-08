@@ -75,7 +75,7 @@ function getData(currentBasket) {
 
         data.cartRebuildingLink += StringUtils.encodeBase64(JSON.stringify(reconstructCartItems));
     } catch (e) {
-        var logger = Logger.getLogger('klaviyo', 'klaviyo.core.eventData.startedCheckout.getData');
+        var logger = Logger.getLogger('Klaviyo', 'Klaviyo.core.eventData.startedCheckout.getData');
         logger.error('startedCheckout.getData() failed to create data object: ' + e.message + ' ' + e.stack);
     }
     return data;

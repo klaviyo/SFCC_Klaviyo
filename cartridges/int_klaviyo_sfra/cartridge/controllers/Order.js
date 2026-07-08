@@ -42,7 +42,7 @@ server.append('Confirm', function (req, res, next) {
                         phone = '+' + phone.replace(/[^a-z0-9]/gi, '');
                         if (!e164PhoneRegex.test(phone)) {
                             if (session.custom.KLSmsSubscribe) {
-                                var logger = Logger.getLogger('klaviyo', 'klaviyo.sfra.Order.Confirm');
+                                var logger = Logger.getLogger('Klaviyo', 'Klaviyo.sfra.Order.Confirm');
                                 logger.error(`SMS Subscription requested by user, but an invalid phone number was provided. Phone number: ${phone}`);
                             }
                             phone = null;

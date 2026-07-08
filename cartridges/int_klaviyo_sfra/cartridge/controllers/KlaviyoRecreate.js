@@ -32,7 +32,7 @@ var CartModel = require('*/cartridge/models/cart');
  */
 server.get('Cart', function (req, res, next) {
     var currentBasket = BasketMgr.getCurrentOrNewBasket();
-    var logger = Logger.getLogger('klaviyo', 'klaviyo.sfra.KlaviyoRecreate.Cart');
+    var logger = Logger.getLogger('Klaviyo', 'Klaviyo.sfra.KlaviyoRecreate.Cart');
     try {
         var items = req.querystring.items ? JSON.parse(StringUtils.decodeBase64(req.querystring.items)) : null;
     } catch (error) {

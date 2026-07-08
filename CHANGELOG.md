@@ -20,7 +20,7 @@ bumped for multiple releases during one month.
 - Wraps Klaviyo service calls in `try/catch` so a Klaviyo API outage cannot break checkout. `trackEvent` returns `{ success: false }` on connection errors, timeouts, 5xx responses, or any thrown exception; `subscribeUser` no longer throws on null service responses.
 - `subscribeUser` skips the SMS subscribe when the email call indicates Klaviyo is unresponsive (null, 5xx, or thrown exception), to avoid burning a second timeout window on a known-down service. 4xx responses still allow the SMS attempt.
 - Klaviyo service-call error logs now include the HTTP status code, exception name, and stack, and classify failures as `4xx rejected` vs `unavailable (5xx)` so support can tell "Klaviyo is down" from "we sent a bad payload" at a glance.
-- Normalizes `Logger.getLogger` descriptors across the Klaviyo cartridges to `Klaviyo.<core|sfra|siteGen> <fileName> - <functionName>()`; fixes two descriptors that pointed at the wrong cartridge or file.
+- Restructures `Logger.getLogger` categories across the Klaviyo cartridges to a proper Log4j dot hierarchy (`Klaviyo.<core|sfra|siteGen>.<file>.<function>`), so BM Custom Log Settings admins can filter at any granularity (`custom.Klaviyo`, `custom.Klaviyo.core`, `custom.Klaviyo.core.utils`, or `custom.Klaviyo.core.utils.trackEvent`) instead of only "all Klaviyo or nothing". The `Klaviyo` prefix and `custom-Klaviyo-*.log` file name are preserved for backwards compatibility with existing Custom Log Settings.
 
 ### [26.5.0] - 2026-05-01
 
