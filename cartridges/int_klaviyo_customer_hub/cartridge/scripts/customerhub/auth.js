@@ -1,0 +1,102 @@
+'use strict';
+
+var Site = require('dw/system/Site');
+var URLUtils = require('dw/web/URLUtils');
+var customerHubOnsiteService = require('*/cartridge/scripts/customerhub/customerHubOnsiteService');
+
+function getStorefrontRoutes() {
+    return {
+        login: URLUtils.url('Login-Show').toString(),
+        register: URLUtils.url('Login-Show').toString(),
+        logout: URLUtils.url('Login-Logout').toString(),
+        profile: URLUtils.url('Account-Show').toString(),
+        addresses: URLUtils.url('Address-List').toString()
+    };
+}
+
+function getBootstrapStorefrontRoutes() {
+    var routes = getStorefrontRoutes();
+
+    return {
+        login: routes.login,
+        register: routes.register,
+        profile: routes.profile,
+        addresses: routes.addresses
+    };
+}
+
+function buildResponse(storefrontRoutes, fields) {
+    var response = { storefront_routes: storefrontRoutes };
+    Object.keys(fields).forEach(function (key) {
+        response[key] = fields[key];
+    });
+    return response;
+}
+
+/**
+ * Authenticates the current storefront session for the customer hub.
+ */
+function authenticate(req) {
+    var site = Site.getCurrent();
+    var bootstrapRoutes = getBootstrapStorefrontRoutes();
+    var routes = getStorefrontRoutes();
+
+    if (site.getCustomPreferenceValue('klaviyo_customer_hub_enabled') !== true) {
+        return buildResponse(bootstrapRoutes, { authenticated: false });
+    }
+
+    if (!customer.authenticated || !customer.profile || !customer.profile.email) {
+        return buildResponse(bootstrapRoutes, {
+            authenticated: false,
+            error: 'sfcc_session_not_authenticated'
+        });
+    }
+
+    var companyId = String(site.getCustomPreferenceValue('klaviyo_account') || '').trim();
+    if (!companyId) {
+        return buildResponse(bootstrapRoutes, {
+            authenticated: false,
+            error: 'missing_company_id'
+        });
+    }
+
+    var customerNo = String(customer.profile.customerNo || '').trim();
+    if (!customerNo) {
+        return buildResponse(bootstrapRoutes, {
+            authenticated: false,
+            error: 'missing_customer_no'
+        });
+    }
+
+    var payload = {
+        company_id: companyId,
+        email: String(customer.profile.email || '').trim().toLowerCase(),
+        customer_id: customerNo,
+        site_id: String(site.getID() || '').trim()
+    };
+
+    if (req.querystring.onsite_client_id) {
+        payload.onsite_client_id = String(req.querystring.onsite_client_id);
+    }
+
+    var loginResult = customerHubOnsiteService.exchangeSessionForCustomerHubOnsiteToken(payload);
+
+    if (!loginResult.ok || !loginResult.data || !loginResult.data.auth_token) {
+        return buildResponse(bootstrapRoutes, {
+            authenticated: false,
+            error: 'customer_hub_onsite_login_failed'
+        });
+    }
+
+    return buildResponse(routes, {
+        authenticated: true,
+        customer_id: customerNo,
+        email: customer.profile.email,
+        auth_token: loginResult.data.auth_token,
+        is_new_user: loginResult.data.is_new_user || false
+    });
+}
+
+module.exports = {
+    authenticate: authenticate
+};

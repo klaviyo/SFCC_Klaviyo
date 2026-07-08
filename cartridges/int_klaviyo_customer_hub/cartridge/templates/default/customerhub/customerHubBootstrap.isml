@@ -1,0 +1,55 @@
+<isscript>
+    var Site = require('dw/system/Site');
+    var URLUtils = require('dw/web/URLUtils');
+    var activeProductBuilder = require('*/cartridge/scripts/customerhub/activeProduct');
+
+    var bootstrapData = null;
+
+    if (Site.getCurrent().getCustomPreferenceValue('klaviyo_customer_hub_enabled') === true) {
+        var action = '';
+        var productId = '';
+
+        if (typeof pdict !== 'undefined' && pdict.action) {
+            action = pdict.action;
+            if (action === 'Product-Show' && request.httpParameterMap.pid) {
+                productId = request.httpParameterMap.pid.stringValue || '';
+            }
+        } else if (typeof pageContext !== 'undefined' && pageContext.type === 'product') {
+            action = 'Product-Show';
+            if (pdict.Product && pdict.Product.ID) {
+                productId = pdict.Product.ID;
+            }
+        }
+
+        bootstrapData = {
+            storefrontRoutes: {
+                login: URLUtils.url('Login-Show').toString(),
+                register: URLUtils.url('Login-Show').toString(),
+                profile: URLUtils.url('Account-Show').toString(),
+                addresses: URLUtils.url('Address-List').toString()
+            }
+        };
+
+        if (action === 'Product-Show' && productId) {
+            var activeProduct = activeProductBuilder.buildActiveProduct(String(productId).trim());
+            if (activeProduct) {
+                bootstrapData.activeProduct = activeProduct;
+            }
+        }
+    }
+
+    var bootstrapJson = bootstrapData ? JSON.stringify(bootstrapData) : null;
+</isscript>
+<isif condition="${bootstrapJson}">
+    <script>
+        if (!window.customerHub) {
+            window.customerHub = {};
+        }
+        (function (bootstrapData) {
+            window.customerHub.storefrontRoutes = bootstrapData.storefrontRoutes;
+            if (bootstrapData.activeProduct) {
+                window.customerHub.activeProduct = bootstrapData.activeProduct;
+            }
+        })(<isprint value="${bootstrapJson}" encoding="off" />);
+    </script>
+</isif>
