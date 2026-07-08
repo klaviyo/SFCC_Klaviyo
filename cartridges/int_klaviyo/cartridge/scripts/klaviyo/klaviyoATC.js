@@ -37,7 +37,7 @@ function addProductToCart(decodedItems, cartObj) {
             BonusDiscountLineItem : newBonusDiscountLineItem
         };
     } catch (error) {
-        var logger = Logger.getLogger('Klaviyo', 'Klaviyo.SiteGen recreateCartHelpers.js');
+        var logger = Logger.getLogger('Klaviyo', 'Klaviyo.siteGen.klaviyoATC.addProductToCart');
         logger.error('addProductToCart() failed. ERROR at: {0} {1}', error.message, error.stack);
 
         return {

@@ -47,8 +47,8 @@ function startedCheckoutHelper(beginCheckout, customerEmail) {
                             returnObj.serviceCallData = klaviyoUtils.prepareDebugData(serviceCallResult);
                         }
                     } catch (e) {
-                        Logger.getLogger('Klaviyo', 'Klaviyo.core checkoutHelpers.js - startedCheckoutHelper()')
-                            .error('startedCheckoutHelper Klaviyo path threw an exception: ' + e.message);
+                        Logger.getLogger('Klaviyo', 'Klaviyo.core.checkoutHelpers.startedCheckoutHelper')
+                            .error('startedCheckoutHelper Klaviyo path threw an exception: ' + klaviyoUtils.formatException(e));
                     }
                 }
 

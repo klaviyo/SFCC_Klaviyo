@@ -54,7 +54,7 @@ function getProductPrices(product) {
             originalPriceString : originalPrice ? StringUtils.formatMoney(dw.value.Money(originalPrice, session.getCurrency().getCurrencyCode())) : null
         };
     } catch (e) {
-        var logger = Logger.getLogger('Klaviyo', 'Klaviyo.siteGen viewedProductHelper.js');
+        var logger = Logger.getLogger('Klaviyo', 'Klaviyo.siteGen.viewedProductHelpers.getProductPrices');
         logger.error('getProductPrices() failed to generate price data for product ' + product.ID + ': ' + e.message + ' ' + e.stack);
     }
 

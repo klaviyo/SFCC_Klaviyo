@@ -86,6 +86,23 @@ function isHttp4xx(errorCode) {
 }
 
 
+// Format a caught value for logging in a way that survives non-Error throws
+// (`throw "oops"`, `throw { foo: 1 }`, `throw null`) without rendering literal
+// "undefined" in the log line. Standard Error subclasses -- which is what the
+// SFCC service framework and any deliberate `throw new Error()` produce -- pass
+// through with their native name / message / stack. Everything else falls back
+// to String(e) so the log at least tells support what was thrown.
+function formatException(e) {
+    if (e == null) {
+        return 'name=(none), message=(none), stack=(no stack)';
+    }
+    var name = e.name || typeof e;
+    var message = e.message || String(e);
+    var stack = e.stack || '(no stack)';
+    return 'name=' + name + ', message=' + message + ', stack=' + stack;
+}
+
+
 // helper function used in .getData functions to dedupe values in arrays (particularly product category lists)
 function dedupeArray(items) {
     var unique = {};
@@ -242,7 +259,7 @@ function getRootPriceBook(priceBook) {
 
 
 function trackEvent(exchangeID, data, event, customerEmail) {
-    var logger = Logger.getLogger('Klaviyo', 'Klaviyo.core utils.js - trackEvent()');
+    var logger = Logger.getLogger('Klaviyo', 'Klaviyo.core.utils.trackEvent');
 
     // Always return an object with a .success boolean so callers (and the
     // kldebug overlay template) can rely on a uniform contract regardless of
@@ -329,7 +346,7 @@ function trackEvent(exchangeID, data, event, customerEmail) {
         var result = klaviyoServices.KlaviyoEventService.call(eventData);
 
         if (result == null) {
-            logger.error('klaviyoServices.KlaviyoEventService call for ' + event + ' returned null result (likely connection error or timeout)');
+            logger.error('KlaviyoEventService unreachable for ' + event + ' (null result - likely connection error or framework timeout)');
             return { success: false };
         }
 
@@ -337,10 +354,11 @@ function trackEvent(exchangeID, data, event, customerEmail) {
             return { success: true };
         }
 
-        logger.error('klaviyoServices.KlaviyoEventService call for ' + event + ' failed. status: ' + result.error + ', errorMessage: ' + result.errorMessage);
+        var classification = isHttp4xx(result.error) ? '4xx rejected (Klaviyo responding, request invalid)' : 'unavailable (5xx or other non-2xx upstream error)';
+        logger.error('KlaviyoEventService ' + classification + ' for ' + event + ': status=' + result.error + ', body=' + result.errorMessage);
         return { success: false };
     } catch (e) {
-        logger.error('klaviyoServices.KlaviyoEventService call for ' + event + ' threw an exception: ' + e.message);
+        logger.error('KlaviyoEventService threw an exception for ' + event + ': ' + formatException(e));
         return { success: false };
     }
 }
@@ -349,7 +367,7 @@ function trackEvent(exchangeID, data, event, customerEmail) {
 // The subscribeUser func takes the user email & phone number to prep a data object w/ a corresponding emailListID or smsListID (both configured in BM w/ values from the Klaviyo Dashboard)
 // Data is sent to the KlaviyoSubscribeProfilesService API to subscribe users to email or SMS lists.
 function subscribeUser(email, phone) {
-    var logger = Logger.getLogger('Klaviyo', 'Klaviyo.core utils.js - subscribeUser()');
+    var logger = Logger.getLogger('Klaviyo', 'Klaviyo.core.utils.subscribeUser');
 
     if (klaviyoServices.KlaviyoSubscribeProfilesService == null) {
         logger.error('subscribeUser() failed - KlaviyoSubscribeProfilesService is null.');
@@ -415,10 +433,11 @@ function subscribeUser(email, phone) {
             result = klaviyoServices.KlaviyoSubscribeProfilesService.call(data);
 
             if (result == null) {
-                logger.error('klaviyoServices.KlaviyoSubscribeProfilesService subscribe call for email returned null result (likely connection error or timeout)');
+                logger.error('KlaviyoSubscribeProfilesService unreachable for email subscribe (null result - likely connection error or framework timeout)');
                 klaviyoUnresponsive = true;
             } else if (result.ok !== true) {
-                logger.error('klaviyoServices.KlaviyoSubscribeProfilesService subscribe call for email error: ' + result.errorMessage);
+                var emailClassification = isHttp4xx(result.error) ? '4xx rejected (Klaviyo responding, request invalid)' : 'unavailable (5xx or other non-2xx upstream error)';
+                logger.error('KlaviyoSubscribeProfilesService ' + emailClassification + ' for email subscribe: status=' + result.error + ', body=' + result.errorMessage);
                 // 5xx (or any non-4xx error) means Klaviyo is unresponsive; mark
                 // so the SMS branch is skipped. 4xx means Klaviyo IS responding
                 // (just rejecting our payload) so we leave the flag alone.
@@ -437,10 +456,11 @@ function subscribeUser(email, phone) {
                     data.data.attributes.profiles.data[0].attributes.phone_number = null;
                     result = klaviyoServices.KlaviyoSubscribeProfilesService.call(data);
                     if (result == null) {
-                        logger.error('klaviyoServices.KlaviyoSubscribeProfilesService subscribe call for email returned null result on second attempt without phone number');
+                        logger.error('KlaviyoSubscribeProfilesService unreachable for email subscribe retry without phone (null result - likely connection error or framework timeout)');
                         klaviyoUnresponsive = true;
                     } else if (result.ok !== true) {
-                        logger.error('klaviyoServices.KlaviyoSubscribeProfilesService subscribe call for email on second attempt without phone number, error: ' + result.errorMessage);
+                        var retryClassification = isHttp4xx(result.error) ? '4xx rejected (Klaviyo responding, request invalid)' : 'unavailable (5xx or other non-2xx upstream error)';
+                        logger.error('KlaviyoSubscribeProfilesService ' + retryClassification + ' for email subscribe retry without phone: status=' + result.error + ', body=' + result.errorMessage);
                         if (!isHttp4xx(result.error)) {
                             klaviyoUnresponsive = true;
                         }
@@ -448,7 +468,7 @@ function subscribeUser(email, phone) {
                 }
             }
         } catch (e) {
-            logger.error('klaviyoServices.KlaviyoSubscribeProfilesService subscribe call for email threw an exception: ' + e.message);
+            logger.error('KlaviyoSubscribeProfilesService threw an exception for email subscribe: ' + formatException(e));
             klaviyoUnresponsive = true;
         }
     }
@@ -498,12 +518,13 @@ function subscribeUser(email, phone) {
             result = klaviyoServices.KlaviyoSubscribeProfilesService.call(data);
 
             if (result == null) {
-                logger.error('klaviyoServices.KlaviyoSubscribeProfilesService subscribe call for SMS returned null result (likely connection error or timeout)');
+                logger.error('KlaviyoSubscribeProfilesService unreachable for SMS subscribe (null result - likely connection error or framework timeout)');
             } else if (result.ok !== true) {
-                logger.error('klaviyoServices.KlaviyoSubscribeProfilesService subscribe call for SMS error: ' + result.errorMessage);
+                var smsClassification = isHttp4xx(result.error) ? '4xx rejected (Klaviyo responding, request invalid)' : 'unavailable (5xx or other non-2xx upstream error)';
+                logger.error('KlaviyoSubscribeProfilesService ' + smsClassification + ' for SMS subscribe: status=' + result.error + ', body=' + result.errorMessage);
             }
         } catch (e) {
-            logger.error('klaviyoServices.KlaviyoSubscribeProfilesService subscribe call for SMS threw an exception: ' + e.message);
+            logger.error('KlaviyoSubscribeProfilesService threw an exception for SMS subscribe: ' + formatException(e));
         }
     }
 }
@@ -539,5 +560,6 @@ module.exports = {
     getRootPriceBook      : getRootPriceBook,
     trackEvent            : trackEvent,
     subscribeUser         : subscribeUser,
-    setSiteIdAndIntegrationInfo : setSiteIdAndIntegrationInfo
+    setSiteIdAndIntegrationInfo : setSiteIdAndIntegrationInfo,
+    formatException       : formatException
 };
