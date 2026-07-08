@@ -60,10 +60,13 @@ server.get('Event', function (req, res, next) {
                     return;
                 }
                 if (action === klaviyoUtils.EVENT_NAMES.viewedProduct) {
-                    res.viewData.klViewedItemData = klaviyoUtils.prepareDebugData(klaviyoUtils.buildTrackViewedItemPayload(dataObj));
-                    res.render('klaviyo/klaviyoTrackViewedItem');
-                    next();
-                    return;
+                    var viewedItemPayload = klaviyoUtils.buildTrackViewedItemPayload(dataObj);
+                    if (viewedItemPayload) {
+                        res.viewData.klViewedItemData = klaviyoUtils.prepareDebugData(viewedItemPayload);
+                        res.render('klaviyo/klaviyoTrackViewedItem');
+                        next();
+                        return;
+                    }
                 }
             }
         } else {

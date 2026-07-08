@@ -84,7 +84,7 @@ function prepareDebugData(obj) {
 // klaviyo_image_size preference via getImage). Called only when action is
 // 'Viewed Product' and an exchangeID is present.
 function buildTrackViewedItemPayload(dataObj) {
-    if (!dataObj) {
+    if (!dataObj || !dataObj['Product ID']) {
         return null;
     }
     return {

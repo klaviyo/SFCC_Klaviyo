@@ -58,9 +58,11 @@ var Event = function () {
                 }
                 if (action === klaviyoUtils.EVENT_NAMES.viewedProduct) {
                     var viewedItemPayload = klaviyoUtils.buildTrackViewedItemPayload(dataObj);
-                    app.getView({
-                        klViewedItemData: klaviyoUtils.prepareDebugData(viewedItemPayload)
-                    }).render('klaviyo/klaviyoTrackViewedItem');
+                    if (viewedItemPayload) {
+                        app.getView({
+                            klViewedItemData: klaviyoUtils.prepareDebugData(viewedItemPayload)
+                        }).render('klaviyo/klaviyoTrackViewedItem');
+                    }
                 }
             }
         } else {
