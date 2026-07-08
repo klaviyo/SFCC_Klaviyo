@@ -154,7 +154,7 @@ function buildActiveProduct(productId) {
             category: category,
             imageUrl: imageUrl,
             id: catalogProduct.ID,
-            link: URLUtils.https('Product-Show', 'pid', catalogProduct.ID).toString(),
+            link: URLUtils.https('Product-Show', 'pid', viewedProduct.ID).toString(),
             variants: variants
         };
     } catch (e) {
