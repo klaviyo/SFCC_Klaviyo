@@ -15,17 +15,6 @@ function getStorefrontRoutes() {
     };
 }
 
-function getBootstrapStorefrontRoutes() {
-    var routes = getStorefrontRoutes();
-
-    return {
-        login: routes.login,
-        register: routes.register,
-        profile: routes.profile,
-        addresses: routes.addresses
-    };
-}
-
 function buildResponse(storefrontRoutes, fields) {
     var response = { storefront_routes: storefrontRoutes };
     Object.keys(fields).forEach(function (key) {
@@ -39,8 +28,13 @@ function buildResponse(storefrontRoutes, fields) {
  */
 function authenticate(req) {
     var site = Site.getCurrent();
-    var bootstrapRoutes = getBootstrapStorefrontRoutes();
     var routes = getStorefrontRoutes();
+    var bootstrapRoutes = {
+        login: routes.login,
+        register: routes.register,
+        profile: routes.profile,
+        addresses: routes.addresses
+    };
 
     if (!klaviyoUtils.customerHubEnabled) {
         return buildResponse(bootstrapRoutes, { authenticated: false });
