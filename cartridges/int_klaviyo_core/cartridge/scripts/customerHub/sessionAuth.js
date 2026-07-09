@@ -2,7 +2,7 @@
 
 var Site = require('dw/system/Site');
 var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils');
-var customerHubOnsiteService = require('*/cartridge/scripts/customerHub/customerHubOnsiteService');
+var klaviyoServices = require('*/cartridge/scripts/klaviyo/services.js');
 
 function buildResponse(storefrontRoutes, fields) {
     var response = { storefront_routes: storefrontRoutes };
@@ -68,7 +68,7 @@ function authenticate(options) {
         payload.onsite_client_id = String(onsiteClientId);
     }
 
-    var loginResult = customerHubOnsiteService.exchangeSessionForCustomerHubOnsiteToken(payload);
+    var loginResult = klaviyoServices.exchangeSessionForCustomerHubOnsiteToken(payload);
 
     if (!loginResult.ok || !loginResult.data || !loginResult.data.auth_token) {
         return buildResponse(bootstrapRoutes, {

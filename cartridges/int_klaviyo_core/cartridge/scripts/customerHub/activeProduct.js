@@ -86,17 +86,20 @@ function getVariantTitle(variant) {
     return variant.name || '';
 }
 
+function getProductImageUrl(product) {
+    try {
+        var productImage = product.getImage(klaviyoUtils.KLImageSize);
+        if (productImage) {
+            return productImage.getAbsURL().toString();
+        }
+    } catch (imageError) {}
+
+    return null;
+}
+
 function buildVariant(variant, currencyCode) {
     var viewedProductHelpers = require('*/cartridge/scripts/klaviyo/viewedProductHelpers');
     var prices = viewedProductHelpers.getProductPrices(variant);
-    var variantImageUrl = null;
-
-    try {
-        var variantImage = variant.getImage(klaviyoUtils.KLImageSize);
-        if (variantImage) {
-            variantImageUrl = variantImage.getAbsURL().toString();
-        }
-    } catch (imageError) {}
 
     return {
         id: variant.ID,
@@ -105,7 +108,7 @@ function buildVariant(variant, currencyCode) {
         priceString: prices.priceString,
         currency: currencyCode,
         availableForSale: variant.availabilityModel ? variant.availabilityModel.isInStock() : true,
-        imageUrl: variantImageUrl
+        imageUrl: getProductImageUrl(variant)
     };
 }
 
@@ -131,14 +134,6 @@ function buildActiveProduct(productId) {
             category = catalogProduct.primaryCategory.displayName;
         }
 
-        var imageUrl = '';
-        try {
-            var productImage = catalogProduct.getImage(klaviyoUtils.KLImageSize);
-            if (productImage) {
-                imageUrl = productImage.getAbsURL().toString();
-            }
-        } catch (productImageError) {}
-
         var variantProducts = getVariantProducts(catalogProduct);
         var variants = [];
         var variantLimit = Math.min(variantProducts.length, MAX_VARIANTS);
@@ -152,7 +147,7 @@ function buildActiveProduct(productId) {
         return {
             name: catalogProduct.name,
             category: category,
-            imageUrl: imageUrl,
+            imageUrl: getProductImageUrl(catalogProduct) || '',
             id: catalogProduct.ID,
             link: URLUtils.https('Product-Show', 'pid', viewedProduct.ID).toString(),
             variants: variants
