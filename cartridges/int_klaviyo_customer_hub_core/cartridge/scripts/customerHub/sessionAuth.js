@@ -1,19 +1,8 @@
 'use strict';
 
 var Site = require('dw/system/Site');
-var URLUtils = require('dw/web/URLUtils');
 var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils');
-var customerHubOnsiteService = require('*/cartridge/scripts/customerhub/customerHubOnsiteService');
-
-function getStorefrontRoutes() {
-    return {
-        login: URLUtils.url('Login-Show').toString(),
-        register: URLUtils.url('Login-Show').toString(),
-        logout: URLUtils.url('Login-Logout').toString(),
-        profile: URLUtils.url('Account-Show').toString(),
-        addresses: URLUtils.url('Address-List').toString()
-    };
-}
+var customerHubOnsiteService = require('*/cartridge/scripts/customerHub/customerHubOnsiteService');
 
 function buildResponse(storefrontRoutes, fields) {
     var response = { storefront_routes: storefrontRoutes };
@@ -23,18 +12,22 @@ function buildResponse(storefrontRoutes, fields) {
     return response;
 }
 
-/**
- * Authenticates the current storefront session for the customer hub.
- */
-function authenticate(req) {
-    var site = Site.getCurrent();
-    var routes = getStorefrontRoutes();
-    var bootstrapRoutes = {
+function getBootstrapRoutes(routes) {
+    return {
         login: routes.login,
         register: routes.register,
         profile: routes.profile,
         addresses: routes.addresses
     };
+}
+
+/**
+ * Authenticates the current storefront session for the customer hub.
+ */
+function authenticate(options) {
+    var site = Site.getCurrent();
+    var routes = options.getStorefrontRoutes();
+    var bootstrapRoutes = getBootstrapRoutes(routes);
 
     if (!klaviyoUtils.customerHubEnabled) {
         return buildResponse(bootstrapRoutes, { authenticated: false });
@@ -70,8 +63,9 @@ function authenticate(req) {
         site_id: String(site.getID() || '').trim()
     };
 
-    if (req.querystring.onsite_client_id) {
-        payload.onsite_client_id = String(req.querystring.onsite_client_id);
+    var onsiteClientId = options.getOnsiteClientId ? options.getOnsiteClientId() : null;
+    if (onsiteClientId) {
+        payload.onsite_client_id = String(onsiteClientId);
     }
 
     var loginResult = customerHubOnsiteService.exchangeSessionForCustomerHubOnsiteToken(payload);

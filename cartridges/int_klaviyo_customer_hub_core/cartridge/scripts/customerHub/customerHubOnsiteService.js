@@ -2,17 +2,13 @@
 
 var ServiceRegistry = require('dw/svc/LocalServiceRegistry');
 
-var CUSTOMER_HUB_ONSITE_LOGIN_URL = 'https://atlas-app.services.klaviyo.com/api/onsite/sfcc-login';
-
 /**
  * HTTP service for exchanging an authenticated storefront session for an onsite auth token.
  */
 var KlaviyoCustomerHubOnsiteService = ServiceRegistry.createService('KlaviyoCustomerHubOnsiteService', {
     createRequest: function (svc, payload) {
         svc.setRequestMethod('POST');
-        svc.setURL(CUSTOMER_HUB_ONSITE_LOGIN_URL);
         svc.addHeader('Content-Type', 'application/json');
-        svc.getClient().setTimeout(15000);
         return JSON.stringify(payload);
     },
 

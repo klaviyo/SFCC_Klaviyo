@@ -21,7 +21,7 @@
         window.klaviyoSFCCArchitecture = 'sfra';
     </script>
     <isif condition="${klaviyoUtils.customerHubEnabled}">
-        <isinclude template="customerhub/customerHubBootstrap" />
+        <isinclude template="customerHub/customerHubBootstrap" />
     </isif>
     <isif condition="${pdict.action == 'Product-Show' ||
         pdict.action == 'Search-Show' ||

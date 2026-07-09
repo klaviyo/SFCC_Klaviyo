@@ -1,15 +1,15 @@
 'use strict';
 
-var server = require('server');
-var customerHubAuth = require('*/cartridge/scripts/customerhub/auth');
+var guard = require('*/cartridge/scripts/guard');
+var responseUtils = require('*/cartridge/scripts/util/Response');
+var customerHubAuth = require('*/cartridge/scripts/customerHub/auth');
 
 /**
  * Customer hub storefront auth endpoint.
  */
-server.get('Auth', server.middleware.https, function (req, res, next) {
-    var result = customerHubAuth.authenticate(req);
-    res.json(result);
-    next();
-});
+function Auth() {
+    var result = customerHubAuth.authenticate();
+    responseUtils.renderJSON(result);
+}
 
-module.exports = server.exports();
+exports.Auth = guard.ensure(['get'], Auth);

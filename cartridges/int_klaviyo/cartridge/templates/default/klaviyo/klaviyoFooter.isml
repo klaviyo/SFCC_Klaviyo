@@ -16,7 +16,7 @@
         window.klaviyoSFCCArchitecture = 'site-genesis';
     </script>
     <isif condition="${klaviyoUtils.customerHubEnabled}">
-        <isinclude template="customerhub/customerHubBootstrap" />
+        <isinclude template="customerHub/customerHubBootstrap" />
     </isif>
     <isif condition="${pageContext.type == 'product' ||
         pageContext.type == 'search' ||

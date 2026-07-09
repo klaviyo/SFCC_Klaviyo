@@ -1,7 +1,7 @@
 <isscript>
     var URLUtils = require('dw/web/URLUtils');
     var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils');
-    var activeProductBuilder = require('*/cartridge/scripts/customerhub/activeProduct');
+    var activeProductBuilder = require('*/cartridge/scripts/customerHub/activeProduct');
 
     var bootstrapData = null;
 
@@ -12,13 +12,6 @@
         if (typeof pdict !== 'undefined' && pdict.action === 'Product-Show' && request.httpParameterMap.pid) {
             action = 'Product-Show';
             productId = request.httpParameterMap.pid.stringValue || '';
-        }
-
-        if (!productId && typeof pageContext !== 'undefined' && pageContext.type === 'product') {
-            action = 'Product-Show';
-            if (typeof pdict !== 'undefined' && pdict.Product && pdict.Product.ID) {
-                productId = pdict.Product.ID;
-            }
         }
 
         bootstrapData = {
@@ -38,7 +31,14 @@
         }
     }
 
-    var bootstrapJson = bootstrapData ? JSON.stringify(bootstrapData) : null;
+    var bootstrapJson = null;
+
+    if (bootstrapData) {
+        bootstrapJson = JSON.stringify(bootstrapData)
+            .replace(/</g, '\\u003c')
+            .replace(/\u2028/g, '\\u2028')
+            .replace(/\u2029/g, '\\u2029');
+    }
 </isscript>
 <isif condition="${bootstrapJson}">
     <script>
