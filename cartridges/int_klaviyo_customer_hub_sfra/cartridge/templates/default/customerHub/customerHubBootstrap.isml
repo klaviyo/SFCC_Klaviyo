@@ -1,46 +1,46 @@
 <isscript>
+    var Site = require('dw/system/Site');
     var URLUtils = require('dw/web/URLUtils');
-    var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils');
-    var activeProductBuilder = require('*/cartridge/scripts/customerHub/activeProduct');
 
-    var bootstrapData = null;
+    var customerHubBootstrapJson = null;
 
-    if (klaviyoUtils.customerHubEnabled) {
-        var action = '';
-        var productId = '';
+    try {
+        if (Site.getCurrent().getCustomPreferenceValue('klaviyo_customer_hub_storefront_context')) {
+            var bootstrapData = {
+                storefrontRoutes: {
+                    login: URLUtils.url('Login-Show').toString(),
+                    register: URLUtils.url('Login-Show').toString(),
+                    profile: URLUtils.url('Account-Show').toString(),
+                    addresses: URLUtils.url('Address-List').toString()
+                }
+            };
 
-        if (typeof pdict !== 'undefined' && pdict.action === 'Product-Show' && request.httpParameterMap.pid) {
-            action = 'Product-Show';
-            productId = request.httpParameterMap.pid.stringValue || '';
-        }
-
-        bootstrapData = {
-            storefrontRoutes: {
-                login: URLUtils.url('Login-Show').toString(),
-                register: URLUtils.url('Login-Show').toString(),
-                profile: URLUtils.url('Account-Show').toString(),
-                addresses: URLUtils.url('Address-List').toString()
+            var action = (typeof pdict !== 'undefined' && pdict.action) ? pdict.action : '';
+            if (action === 'Product-Show' && request.httpParameterMap.pid) {
+                var productId = request.httpParameterMap.pid.stringValue || '';
+                if (productId) {
+                    try {
+                        var activeProductBuilder = require('*/cartridge/scripts/customerHub/activeProduct');
+                        var activeProduct = activeProductBuilder.buildActiveProduct(String(productId).trim());
+                        if (activeProduct) {
+                            bootstrapData.activeProduct = activeProduct;
+                        }
+                    } catch (activeProductError) {
+                        // Routes still bootstrap if activeProduct fails.
+                    }
+                }
             }
-        };
 
-        if (action === 'Product-Show' && productId) {
-            var activeProduct = activeProductBuilder.buildActiveProduct(String(productId).trim());
-            if (activeProduct) {
-                bootstrapData.activeProduct = activeProduct;
-            }
+            customerHubBootstrapJson = JSON.stringify(bootstrapData)
+                .split('<').join('\\u003c')
+                .split('\u2028').join('\\u2028')
+                .split('\u2029').join('\\u2029');
         }
-    }
-
-    var bootstrapJson = null;
-
-    if (bootstrapData) {
-        bootstrapJson = JSON.stringify(bootstrapData)
-            .replace(/</g, '\\u003c')
-            .replace(/\u2028/g, '\\u2028')
-            .replace(/\u2029/g, '\\u2029');
+    } catch (e) {
+        customerHubBootstrapJson = null;
     }
 </isscript>
-<isif condition="${bootstrapJson}">
+<isif condition="${customerHubBootstrapJson}">
     <script>
         if (!window.customerHub) {
             window.customerHub = {};
@@ -50,6 +50,6 @@
             if (bootstrapData.activeProduct) {
                 window.customerHub.activeProduct = bootstrapData.activeProduct;
             }
-        })(<isprint value="${bootstrapJson}" encoding="off" />);
+        })(<isprint value="${customerHubBootstrapJson}" encoding="off" />);
     </script>
 </isif>

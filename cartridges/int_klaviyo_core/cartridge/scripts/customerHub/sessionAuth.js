@@ -29,7 +29,7 @@ function authenticate(options) {
     var routes = options.getStorefrontRoutes();
     var bootstrapRoutes = getBootstrapRoutes(routes);
 
-    if (!klaviyoUtils.customerHubEnabled) {
+    if (!klaviyoUtils.customerHubStorefrontContextEnabled) {
         return buildResponse(bootstrapRoutes, { authenticated: false });
     }
 
