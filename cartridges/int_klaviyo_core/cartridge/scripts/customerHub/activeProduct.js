@@ -6,31 +6,6 @@ var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils');
 
 var MAX_VARIANTS = 100;
 
-function moveVariantToFront(variants, selectedProductId) {
-    if (!selectedProductId || variants.length <= 1) {
-        return variants;
-    }
-
-    var selectedIndex = -1;
-
-    for (var i = 0; i < variants.length; i++) {
-        if (variants[i].id === selectedProductId) {
-            selectedIndex = i;
-            break;
-        }
-    }
-
-    if (selectedIndex <= 0) {
-        return variants;
-    }
-
-    var reorderedVariants = variants.slice();
-    var selectedVariant = reorderedVariants.splice(selectedIndex, 1)[0];
-    reorderedVariants.unshift(selectedVariant);
-
-    return reorderedVariants;
-}
-
 function getVariantProducts(catalogProduct) {
     if (catalogProduct.master) {
         if (catalogProduct.variationModel && catalogProduct.variationModel.variants.length > 0) {
@@ -141,8 +116,6 @@ function buildActiveProduct(productId) {
         for (var i = 0; i < variantLimit; i++) {
             variants.push(buildVariant(variantProducts[i], currencyCode));
         }
-
-        variants = moveVariantToFront(variants, viewedProduct.ID);
 
         return {
             name: catalogProduct.name,
