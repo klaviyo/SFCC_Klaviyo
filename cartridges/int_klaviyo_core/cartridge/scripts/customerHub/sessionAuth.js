@@ -12,29 +12,19 @@ function buildResponse(storefrontRoutes, fields) {
     return response;
 }
 
-function getBootstrapRoutes(routes) {
-    return {
-        login: routes.login,
-        register: routes.register,
-        profile: routes.profile,
-        addresses: routes.addresses
-    };
-}
-
 /**
  * Authenticates the current storefront session for the customer hub.
  */
 function authenticate(options) {
     var site = Site.getCurrent();
     var routes = options.getStorefrontRoutes();
-    var bootstrapRoutes = getBootstrapRoutes(routes);
 
     if (!klaviyoUtils.customerHubStorefrontContextEnabled) {
-        return buildResponse(bootstrapRoutes, { authenticated: false });
+        return buildResponse(routes, { authenticated: false });
     }
 
     if (!customer.authenticated || !customer.profile || !customer.profile.email) {
-        return buildResponse(bootstrapRoutes, {
+        return buildResponse(routes, {
             authenticated: false,
             error: 'sfcc_session_not_authenticated'
         });
@@ -42,7 +32,7 @@ function authenticate(options) {
 
     var companyId = String(site.getCustomPreferenceValue('klaviyo_account') || '').trim();
     if (!companyId) {
-        return buildResponse(bootstrapRoutes, {
+        return buildResponse(routes, {
             authenticated: false,
             error: 'missing_company_id'
         });
@@ -50,7 +40,7 @@ function authenticate(options) {
 
     var customerNo = String(customer.profile.customerNo || '').trim();
     if (!customerNo) {
-        return buildResponse(bootstrapRoutes, {
+        return buildResponse(routes, {
             authenticated: false,
             error: 'missing_customer_no'
         });
@@ -71,7 +61,7 @@ function authenticate(options) {
     var loginResult = klaviyoServices.exchangeSessionForCustomerHubOnsiteToken(payload);
 
     if (!loginResult.ok || !loginResult.data || !loginResult.data.auth_token) {
-        return buildResponse(bootstrapRoutes, {
+        return buildResponse(routes, {
             authenticated: false,
             error: 'customer_hub_onsite_login_failed'
         });

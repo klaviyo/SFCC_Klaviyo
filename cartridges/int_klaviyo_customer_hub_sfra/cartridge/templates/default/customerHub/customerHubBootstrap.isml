@@ -10,6 +10,7 @@
                 storefrontRoutes: {
                     login: URLUtils.url('Login-Show').toString(),
                     register: URLUtils.url('Login-Show').toString(),
+                    logout: URLUtils.url('Login-Logout').toString(),
                     profile: URLUtils.url('Account-Show').toString(),
                     addresses: URLUtils.url('Address-List').toString()
                 }
