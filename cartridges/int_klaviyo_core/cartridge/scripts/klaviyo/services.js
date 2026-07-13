@@ -173,9 +173,6 @@ var KlaviyoCustomerHubOnsiteService = ServiceRegistry.createService('KlaviyoCust
     },
 
     parseResponse: function (svc, client) {
-        if (client.statusCode >= 400) {
-            throw new Error(client.text || client.statusMessage || ('HTTP ' + client.statusCode));
-        }
         return client.text;
     },
 
@@ -220,7 +217,7 @@ function exchangeSessionForCustomerHubOnsiteToken(payload) {
             ok: false,
             sendFailed: isUnavailable,
             statusCode: result.error || null,
-            errorText: result.errorMessage || String(result.error)
+            errorText: result.errorMessage || result.msg || String(result.error)
         };
     }
 
