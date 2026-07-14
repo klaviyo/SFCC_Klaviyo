@@ -77,6 +77,30 @@ function prepareDebugData(obj) {
 }
 
 
+// Builds the trimmed payload for the client-side klaviyo.trackViewedItem() SDK call
+// from the same dataObj already produced by eventData/viewedProduct.js for the
+// server-side Viewed Product event. Piggybacking on the existing dataObj means no
+// extra product fetch and guarantees the two events stay in sync (e.g. both honor
+// the klaviyo_use_variation_group_id preference via getParentProduct and the
+// klaviyo_image_size preference via getImage). Called only when action is
+// 'Viewed Product' and an exchangeID is present.
+function buildTrackViewedItemPayload(dataObj) {
+    if (!dataObj || !dataObj['Product ID']) {
+        return null;
+    }
+    return {
+        Title      : dataObj['Product Name'],
+        ItemId     : dataObj['Product ID'],
+        Categories : dataObj['Categories'],
+        ImageUrl   : dataObj['Product Image URL'],
+        Url        : dataObj['Product Page URL'],
+        Metadata   : {
+            Price: dataObj['Price']
+        }
+    };
+}
+
+
 // Returns true if the given service result error code is in the 4xx range,
 // which means Klaviyo IS responding -- it's just rejecting our request (e.g.
 // invalid payload). Distinguishes "bad payload" from "Klaviyo is unresponsive"
@@ -553,6 +577,7 @@ module.exports = {
     getKlaviyoExchangeID  : getKlaviyoExchangeID,
     getProfileInfo        : getProfileInfo,
     prepareDebugData      : prepareDebugData,
+    buildTrackViewedItemPayload : buildTrackViewedItemPayload,
     dedupeArray           : dedupeArray,
     getParentProduct      : getParentProduct,
     captureProductOptions : captureProductOptions,

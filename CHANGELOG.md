@@ -12,8 +12,9 @@ bumped for multiple releases during one month.
 
 #### Added
 - Adds window variable to enable Klaviyo Customer Hub
-- Adds `int_klaviyo_customer_hub_sfra` cartridge for Customer Hub session auth and storefront routes
+- Adds `int_klaviyo_customer_hub_sfra` cartridge for Customer Hub session auth and storefront routes (only needed for Customer Hub product)
 - Adds `klaviyo_customer_hub_storefront_context` site preference and `KlaviyoCustomerHubOnsiteService`
+- Recently-viewed product tracking on PDPs via `klaviyo.trackViewedItem`, piggybacking on the existing `Klaviyo-Event` remote include. Honors the `klaviyo_use_variation_group_id` site preference. Only fires for identified visitors.
 
 #### Changed
 - Wire existing mocha unit suite into the CI workflow so it runs on every pull request. Pins Node 20 via `.nvmrc`, commits `test/package-lock.json` for reproducible `npm ci`, and switches the `dw-api-mock` dependency to an HTTPS tarball so Actions runners can install without an SSH key.

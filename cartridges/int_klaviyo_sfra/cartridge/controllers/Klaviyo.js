@@ -54,9 +54,19 @@ server.get('Event', function (req, res, next) {
                 if (isKlDebugOn) {
                     res.viewData.klDebugData = klaviyoUtils.prepareDebugData(dataObj);
                     res.viewData.serviceCallData = klaviyoUtils.prepareDebugData(serviceCallResult);
+                    res.viewData.klSkipTrackViewedItem = (action === klaviyoUtils.EVENT_NAMES.viewedProduct);
                     res.render('klaviyo/klaviyoDebug');
                     next();
                     return;
+                }
+                if (action === klaviyoUtils.EVENT_NAMES.viewedProduct) {
+                    var viewedItemPayload = klaviyoUtils.buildTrackViewedItemPayload(dataObj);
+                    if (viewedItemPayload) {
+                        res.viewData.klViewedItemData = klaviyoUtils.prepareDebugData(viewedItemPayload);
+                        res.render('klaviyo/klaviyoTrackViewedItem');
+                        next();
+                        return;
+                    }
                 }
             }
         } else {

@@ -10,6 +10,9 @@
     console.log('Klaviyo Event Data: ', debugData);
     var serviceCallData = JSON.parse(atob('${pdict.serviceCallData}'));
     console.log('Klaviyo Service Result: ', serviceCallData);
+    <isif condition="${pdict.klSkipTrackViewedItem}">
+    console.log('Klaviyo Debug: trackViewedItem skipped (kldebug=true on Viewed Product).');
+    </isif>
 
     window.addEventListener("load", (event) => {
         $('body').on('product:afterAddToCart', function(evt, data){
