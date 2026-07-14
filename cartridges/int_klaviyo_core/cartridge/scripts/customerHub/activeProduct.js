@@ -101,9 +101,8 @@ function buildActiveProduct(productId) {
             return null;
         }
 
-        // Variation-group PDPs must keep the group as catalog identity.
-        // getParentProduct walks to the master when klaviyo_use_variation_group_id
-        // is off, which would set the wrong id and include every master variant.
+        // Prefer the storefront product over getParentProduct so variation-group
+        // PDPs keep the group's id and variants instead of resolving to the master.
         var catalogProduct = viewedProduct.variationGroup
             ? viewedProduct
             : (klaviyoUtils.getParentProduct(viewedProduct) || viewedProduct);
