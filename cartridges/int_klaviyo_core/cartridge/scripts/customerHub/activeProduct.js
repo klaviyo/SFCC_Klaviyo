@@ -101,7 +101,12 @@ function buildActiveProduct(productId) {
             return null;
         }
 
-        var catalogProduct = klaviyoUtils.getParentProduct(viewedProduct) || viewedProduct;
+        // Variation-group PDPs must keep the group as catalog identity.
+        // getParentProduct walks to the master when klaviyo_use_variation_group_id
+        // is off, which would set the wrong id and include every master variant.
+        var catalogProduct = viewedProduct.variationGroup
+            ? viewedProduct
+            : (klaviyoUtils.getParentProduct(viewedProduct) || viewedProduct);
         var currencyCode = session.getCurrency().getCurrencyCode();
         var category = '';
 
