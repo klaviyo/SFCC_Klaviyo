@@ -1,11 +1,11 @@
 <isscript>
-    var Site = require('dw/system/Site');
     var URLUtils = require('dw/web/URLUtils');
+    var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils');
 
     var customerHubBootstrapJson = null;
 
     try {
-        if (Site.getCurrent().getCustomPreferenceValue('klaviyo_customer_hub_storefront_context')) {
+        if (klaviyoUtils.customerHubStorefrontContextEnabled) {
             var bootstrapData = {
                 storefrontRoutes: {
                     login: URLUtils.url('Login-Show').toString(),
