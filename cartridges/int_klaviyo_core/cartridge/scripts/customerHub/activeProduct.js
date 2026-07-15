@@ -61,6 +61,18 @@ function getVariantTitle(variant) {
     return variant.name || '';
 }
 
+function compareVariantTitles(a, b) {
+    var titleA = getVariantTitle(a);
+    var titleB = getVariantTitle(b);
+    if (titleA < titleB) {
+        return -1;
+    }
+    if (titleA > titleB) {
+        return 1;
+    }
+    return 0;
+}
+
 function getProductImageUrl(product) {
     try {
         var productImage = product.getImage(klaviyoUtils.KLImageSize);
@@ -92,6 +104,7 @@ function buildVariant(variant, currencyCode) {
  * Identity comes from getParentProduct (master by default; variation group when
  * klaviyo_use_variation_group_id is on). Variants always come from the master when
  * one exists, so the list matches SFRA PDPs that expose the full color/size matrix.
+ * Variants are sorted by title for a stable selector order.
  */
 function buildActiveProduct(productId) {
     if (!productId) {
@@ -119,6 +132,7 @@ function buildActiveProduct(productId) {
         }
 
         var variantProducts = getVariantProducts(variantSourceProduct);
+        variantProducts.sort(compareVariantTitles);
         var variants = [];
         var variantLimit = Math.min(variantProducts.length, MAX_VARIANTS);
 
