@@ -84,24 +84,53 @@ function getProductImageUrl(product) {
     return null;
 }
 
+function isAvailableForSale(product) {
+    if (!product.availabilityModel) {
+        return false;
+    }
+
+    // SFRA Cart-AddProduct does: inventoryRecord.perpetual with no null check.
+    // Site default-in-stock can make isOrderable true even when inventoryRecord
+    // is null — that still 500s on ATC, so treat as unavailable.
+    if (!product.bundle && !product.availabilityModel.inventoryRecord) {
+        return false;
+    }
+
+    return product.availabilityModel.isOrderable(1);
+}
+
 function buildVariant(variant, currencyCode) {
     var viewedProductHelpers = require('*/cartridge/scripts/klaviyo/viewedProductHelpers');
-    var prices = viewedProductHelpers.getProductPrices(variant);
+    var price = '';
+    var priceString = '';
+
+    try {
+        var prices = viewedProductHelpers.getProductPrices(variant);
+        if (prices && prices.price != null && prices.price !== '') {
+            price = String(prices.price);
+        }
+        if (prices && prices.priceString) {
+            priceString = prices.priceString;
+        }
+    } catch (priceError) {
+        // Leave blank — do not invent a $0 display value when SFRA price helpers fail.
+    }
 
     return {
         id: variant.ID,
         title: getVariantTitle(variant),
-        price: String(prices.price),
-        priceString: prices.priceString,
+        price: price,
+        priceString: priceString,
         currency: currencyCode,
-        availableForSale: variant.availabilityModel ? variant.availabilityModel.isInStock() : true,
+        availableForSale: isAvailableForSale(variant),
         imageUrl: getProductImageUrl(variant)
     };
 }
 
 /**
  * Product payload for the current product detail page (window.customerHub.activeProduct).
- * Identity comes from getParentProduct (master by default; variation group when klaviyo_use_variation_group_id is on).
+ * Identity via getParentProduct (same as Viewed Product events). Variants from the
+ * viewed product's variation master so the selector matches the SFRA PDP matrix.
  */
 function buildActiveProduct(productId) {
     if (!productId) {
@@ -114,10 +143,24 @@ function buildActiveProduct(productId) {
             return null;
         }
 
-        var catalogProduct = klaviyoUtils.getParentProduct(viewedProduct) || viewedProduct;
-        var variantSourceProduct = viewedProduct.master
-            ? viewedProduct
-            : (viewedProduct.masterProduct || catalogProduct);
+        var catalogProduct;
+        var variantSourceProduct;
+
+        // Only variation products need getParentProduct / masterProduct. Bundles, sets,
+        // and standalones use the viewed product as-is (masterProduct access can throw).
+        if (
+            viewedProduct.variant ||
+            viewedProduct.master ||
+            viewedProduct.variationGroup
+        ) {
+            catalogProduct = klaviyoUtils.getParentProduct(viewedProduct) || viewedProduct;
+            variantSourceProduct = viewedProduct.master
+                ? viewedProduct
+                : (viewedProduct.masterProduct || catalogProduct);
+        } else {
+            catalogProduct = viewedProduct;
+            variantSourceProduct = viewedProduct;
+        }
 
         var currencyCode = session.getCurrency().getCurrencyCode();
         var category = '';
