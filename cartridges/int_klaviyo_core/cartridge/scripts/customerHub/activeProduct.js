@@ -101,10 +101,7 @@ function buildVariant(variant, currencyCode) {
 
 /**
  * Product payload for the current product detail page (window.customerHub.activeProduct).
- * Identity comes from getParentProduct (master by default; variation group when
- * klaviyo_use_variation_group_id is on). Variants always come from the master when
- * one exists, so the list matches SFRA PDPs that expose the full color/size matrix.
- * Variants are sorted by title for a stable selector order.
+ * Identity comes from getParentProduct (master by default; variation group when klaviyo_use_variation_group_id is on).
  */
 function buildActiveProduct(productId) {
     if (!productId) {
@@ -118,10 +115,10 @@ function buildActiveProduct(productId) {
         }
 
         var catalogProduct = klaviyoUtils.getParentProduct(viewedProduct) || viewedProduct;
-        // Prefer the master for variant options when the parent is a variation group.
-        var variantSourceProduct = (catalogProduct.variationGroup && catalogProduct.masterProduct)
-            ? catalogProduct.masterProduct
-            : catalogProduct;
+        var variantSourceProduct = viewedProduct.master
+            ? viewedProduct
+            : (viewedProduct.masterProduct || catalogProduct);
+
         var currencyCode = session.getCurrency().getCurrencyCode();
         var category = '';
 
