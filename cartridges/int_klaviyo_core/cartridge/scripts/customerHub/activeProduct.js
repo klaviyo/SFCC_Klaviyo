@@ -143,11 +143,16 @@ function buildActiveProduct(productId) {
             return null;
         }
 
+        // Bundles/sets are not single ATC SKUs — omit activeProduct (bootstrap stays up).
+        if (viewedProduct.bundle || viewedProduct.productSet) {
+            return null;
+        }
+
         var catalogProduct;
         var variantSourceProduct;
 
-        // Only variation products need getParentProduct / masterProduct. Bundles, sets,
-        // and standalones use the viewed product as-is (masterProduct access can throw).
+        // Only variation products need getParentProduct / masterProduct.
+        // Standalones use the viewed product as-is (masterProduct access can throw).
         if (
             viewedProduct.variant ||
             viewedProduct.master ||
