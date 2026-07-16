@@ -162,7 +162,75 @@ var KlaviyoSubscribeProfilesService = ServiceRegistry.createService('KlaviyoSubs
 });
 
 
+/**
+ * HTTP service for exchanging an authenticated storefront session for a Customer Hub onsite auth token.
+ */
+var KlaviyoCustomerHubOnsiteService = ServiceRegistry.createService('KlaviyoCustomerHubOnsiteService', {
+    createRequest: function (svc, payload) {
+        svc.setRequestMethod('POST');
+        svc.addHeader('Content-Type', 'application/json');
+        return JSON.stringify(payload);
+    },
+
+    parseResponse: function (svc, client) {
+        return client.text;
+    },
+
+    getRequestLogMessage: function (request) {
+        return request;
+    },
+
+    getResponseLogMessage: function (response) {
+        try {
+            return JSON.stringify({
+                statusCode    : response.statusCode,
+                statusMessage : response.statusMessage,
+                errorText     : response.errorText,
+                text          : response.text
+            });
+        } catch (e) {
+            var err = 'failure to generate full response log object in KlaviyoCustomerHubOnsiteService.getResponseLogMessage()';
+            if (response && response.statusCode) {
+                err += ', statusCode: ' + response.statusCode;
+            }
+
+            return err;
+        }
+    }
+});
+
+/**
+ * Exchange an authenticated SFCC session for a Customer Hub onsite auth token.
+ * @param {Object} payload - Request body for the onsite login endpoint
+ * @returns {Object} Normalized result with ok/data or error fields
+ */
+function exchangeSessionForCustomerHubOnsiteToken(payload) {
+    var result = KlaviyoCustomerHubOnsiteService.call(payload);
+
+    if (!result) {
+        return { ok: false, sendFailed: true, errorText: 'service_call_returned_null' };
+    }
+
+    if (!result.ok) {
+        var isUnavailable = result.status === 'SERVICE_UNAVAILABLE';
+        return {
+            ok: false,
+            sendFailed: isUnavailable,
+            statusCode: result.error || null,
+            errorText: result.errorMessage || result.msg || String(result.error)
+        };
+    }
+
+    try {
+        return { ok: true, data: JSON.parse(result.object) };
+    } catch (error) {
+        return { ok: false, errorText: 'invalid_json' };
+    }
+}
+
 module.exports = {
-    KlaviyoEventService             : KlaviyoEventService,
-    KlaviyoSubscribeProfilesService : KlaviyoSubscribeProfilesService
+    KlaviyoEventService                      : KlaviyoEventService,
+    KlaviyoSubscribeProfilesService          : KlaviyoSubscribeProfilesService,
+    KlaviyoCustomerHubOnsiteService          : KlaviyoCustomerHubOnsiteService,
+    exchangeSessionForCustomerHubOnsiteToken : exchangeSessionForCustomerHubOnsiteToken
 };

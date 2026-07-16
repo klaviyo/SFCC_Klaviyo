@@ -20,6 +20,9 @@
         window.klaviyoSFCCSiteID = "${klaviyoUtils.siteId}";
         window.klaviyoSFCCArchitecture = 'sfra';
     </script>
+    <isif condition="${klaviyoUtils.customerHubStorefrontContextEnabled}">
+        <isinclude template="customerHub/customerHubBootstrap" />
+    </isif>
     <isif condition="${pdict.action == 'Product-Show' ||
         pdict.action == 'Search-Show' ||
         pdict.action == 'Home-Show' ||

@@ -1,0 +1,56 @@
+<isscript>
+    var URLUtils = require('dw/web/URLUtils');
+    var klaviyoUtils = require('*/cartridge/scripts/klaviyo/utils');
+
+    var customerHubBootstrapJson = null;
+
+    try {
+        if (klaviyoUtils.customerHubStorefrontContextEnabled) {
+            var bootstrapData = {
+                storefrontRoutes: {
+                    login: URLUtils.url('Login-Show').toString(),
+                    register: URLUtils.url('Login-Show').toString(),
+                    logout: URLUtils.url('Login-Logout').toString(),
+                    profile: URLUtils.url('Account-Show').toString(),
+                    addresses: URLUtils.url('Address-List').toString()
+                }
+            };
+
+            var action = (typeof pdict !== 'undefined' && pdict.action) ? pdict.action : '';
+            if (action === 'Product-Show' && request.httpParameterMap.pid) {
+                var productId = request.httpParameterMap.pid.stringValue || '';
+                if (productId) {
+                    try {
+                        var activeProductBuilder = require('*/cartridge/scripts/customerHub/activeProduct');
+                        var activeProduct = activeProductBuilder.buildActiveProduct(String(productId).trim());
+                        if (activeProduct) {
+                            bootstrapData.activeProduct = activeProduct;
+                        }
+                    } catch (activeProductError) {
+                        // Routes still bootstrap if activeProduct fails.
+                    }
+                }
+            }
+
+            customerHubBootstrapJson = JSON.stringify(bootstrapData)
+                .split('<').join('\\u003c')
+                .split('\u2028').join('\\u2028')
+                .split('\u2029').join('\\u2029');
+        }
+    } catch (e) {
+        customerHubBootstrapJson = null;
+    }
+</isscript>
+<isif condition="${customerHubBootstrapJson}">
+    <script>
+        if (!window.customerHub) {
+            window.customerHub = {};
+        }
+        (function (bootstrapData) {
+            window.customerHub.storefrontRoutes = bootstrapData.storefrontRoutes;
+            if (bootstrapData.activeProduct) {
+                window.customerHub.activeProduct = bootstrapData.activeProduct;
+            }
+        })(<isprint value="${customerHubBootstrapJson}" encoding="off" />);
+    </script>
+</isif>

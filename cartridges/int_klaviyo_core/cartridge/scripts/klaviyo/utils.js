@@ -29,6 +29,7 @@ if (Site.getCurrent().getCustomPreferenceValue('klaviyo_atc_override')) {
 }
 
 var klaviyoEnabled = Site.getCurrent().getCustomPreferenceValue('klaviyo_enabled') || false;
+var customerHubStorefrontContextEnabled = Site.getCurrent().getCustomPreferenceValue('klaviyo_customer_hub_storefront_context') || false;
 var KLImageSize = Site.getCurrent().getCustomPreferenceValue('klaviyo_image_size') || 'large';
 var siteId = Site.getCurrent().getID();
 
@@ -570,6 +571,7 @@ function setSiteIdAndIntegrationInfo(data, siteId) {
 module.exports = {
     EVENT_NAMES           : EVENT_NAMES,
     klaviyoEnabled        : klaviyoEnabled,
+    customerHubStorefrontContextEnabled : customerHubStorefrontContextEnabled,
     KLImageSize           : KLImageSize,
     siteId                : siteId,
     getKlaviyoExchangeID  : getKlaviyoExchangeID,
