@@ -196,12 +196,14 @@ function getParentProduct(product) {
 
 // helper function to extract product options and return each selected option into an object with five keys: 'Line Item Text', 'Option ID' and 'Option Value ID', 'Option Price' and 'Option Price Value.
 // This helper accomodates products that may have been configured with or feature multiple options by returning an array of each selected product option as its own optionObj.
-function captureProductOptions(prodOptions) {
+// Optional currencyCode overrides session currency (needed when Order Confirmation runs outside the shopper session).
+function captureProductOptions(prodOptions, currencyCode) {
     var options = Array.isArray(prodOptions) ? prodOptions : Array.from(prodOptions);
     var selectedOptions = [];
+    var code = currencyCode || session.getCurrency().getCurrencyCode();
 
     options.forEach(function (optionObj) {
-        var formattedOptionPrice = optionObj ? StringUtils.formatMoney(dw.value.Money(optionObj.basePrice.value, session.getCurrency().getCurrencyCode())) : null;
+        var formattedOptionPrice = optionObj ? StringUtils.formatMoney(dw.value.Money(optionObj.basePrice.value, code)) : null;
         selectedOptions.push({
             'Line Item Text'     : optionObj.lineItemText,
             'Option ID'          : optionObj.optionID,
@@ -232,12 +234,14 @@ function captureProductBundles(bundledProducts) {
 
 // helper function to handle bonus products & set appropriate properties on a returned object.
 // Used in two key tracked events: 'Started Checkout' and 'Order Confirmation'.
-function captureBonusProduct(lineItemObj, prodObj) {
+// Optional currencyCode overrides session currency (needed when Order Confirmation runs outside the shopper session).
+function captureBonusProduct(lineItemObj, prodObj, currencyCode) {
+    var code = currencyCode || session.getCurrency().getCurrencyCode();
     var bonusProductData = {};
     bonusProductData.isbonusProduct = true;
-    bonusProductData.originalPrice = StringUtils.formatMoney(dw.value.Money(prodObj.getPriceModel().getPrice().value, session.getCurrency().getCurrencyCode()));
+    bonusProductData.originalPrice = StringUtils.formatMoney(dw.value.Money(prodObj.getPriceModel().getPrice().value, code));
     bonusProductData.originalPriceValue = prodObj.getPriceModel().getPrice().value;
-    bonusProductData.price = StringUtils.formatMoney(dw.value.Money(lineItemObj.adjustedPrice.value, session.getCurrency().getCurrencyCode()));
+    bonusProductData.price = StringUtils.formatMoney(dw.value.Money(lineItemObj.adjustedPrice.value, code));
     bonusProductData.priceValue = lineItemObj.adjustedPrice.value;
 
     return bonusProductData;
@@ -246,22 +250,24 @@ function captureBonusProduct(lineItemObj, prodObj) {
 
 // helper function to consider promos & set Price and Original Pride properties on a returned object.
 // Used in order level events: 'Started Checkout' and 'Order Confirmation'.
-function priceCheck(lineItemObj, basketProdObj) {
+// Optional currencyCode overrides session currency (needed when Order Confirmation runs outside the shopper session).
+function priceCheck(lineItemObj, basketProdObj, currencyCode) {
+    var code = currencyCode || session.getCurrency().getCurrencyCode();
     var priceModel = basketProdObj ? basketProdObj.getPriceModel() : null;
     var priceBook = priceModel ? getRootPriceBook(priceModel.priceInfo.priceBook) : null;
     var priceBookPrice = priceBook && priceModel ? priceModel.getPriceBookPrice(priceBook.ID) : null;
     var priceData = {};
 
-    var adjustedPromoPrice = lineItemObj && lineItemObj.adjustedPrice < priceBookPrice ? StringUtils.formatMoney(dw.value.Money(lineItemObj.adjustedPrice.value, session.getCurrency().getCurrencyCode())) : null;
+    var adjustedPromoPrice = lineItemObj && lineItemObj.adjustedPrice < priceBookPrice ? StringUtils.formatMoney(dw.value.Money(lineItemObj.adjustedPrice.value, code)) : null;
     if (adjustedPromoPrice) {
-        priceData.purchasePrice = StringUtils.formatMoney(dw.value.Money(lineItemObj.adjustedPrice.value, session.getCurrency().getCurrencyCode()));
+        priceData.purchasePrice = StringUtils.formatMoney(dw.value.Money(lineItemObj.adjustedPrice.value, code));
         priceData.purchasePriceValue = lineItemObj.adjustedPrice.value;
-        priceData.originalPrice = priceBookPrice ? StringUtils.formatMoney(dw.value.Money(priceBookPrice.value, session.getCurrency().getCurrencyCode())) : StringUtils.formatMoney(dw.value.Money(basketProdObj.getPriceModel().getPrice().value, session.getCurrency().getCurrencyCode()));
+        priceData.originalPrice = priceBookPrice ? StringUtils.formatMoney(dw.value.Money(priceBookPrice.value, code)) : StringUtils.formatMoney(dw.value.Money(basketProdObj.getPriceModel().getPrice().value, code));
         priceData.originalPriceValue = priceBookPrice.value;
     } else {
-        priceData.purchasePrice = lineItemObj ? StringUtils.formatMoney(dw.value.Money(lineItemObj.price.value, session.getCurrency().getCurrencyCode())) : null;
+        priceData.purchasePrice = lineItemObj ? StringUtils.formatMoney(dw.value.Money(lineItemObj.price.value, code)) : null;
         priceData.purchasePriceValue = lineItemObj ? lineItemObj.price.value : null;
-        priceData.originalPrice = basketProdObj ? StringUtils.formatMoney(dw.value.Money(basketProdObj.getPriceModel().getPrice().value, session.getCurrency().getCurrencyCode())) : null;
+        priceData.originalPrice = basketProdObj ? StringUtils.formatMoney(dw.value.Money(basketProdObj.getPriceModel().getPrice().value, code)) : null;
         priceData.originalPriceValue = basketProdObj.getPriceModel().getPrice().value;
     }
 
