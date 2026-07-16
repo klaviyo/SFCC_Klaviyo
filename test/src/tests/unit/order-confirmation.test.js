@@ -34,17 +34,36 @@ global.dw = {
     },
 }
 
-global.session = {
-    getCurrency: function() {
-        return {
-            getCurrencyCode: function() {
-                return 'USD'
-            }
+// Preserve session.custom for other suites (e.g. subscribeUser) that share global.session.
+global.session = global.session || {}
+global.session.custom = global.session.custom || {}
+global.session.getCurrency = function() {
+    return {
+        getCurrencyCode: function() {
+            return 'USD'
         }
     }
 }
+
 const getParentProductStub = sinon.stub()
 const basketManagerMock = new BasketMgr(true)
+const stubs = basketStubs()
+const productOpts = stubs.productOpts
+
+const priceCheckStub = sinon.stub().returns({
+    purchasePrice: 96,
+    purchasePriceValue: 1,
+    originalPrice: 100,
+    originalPriceValue: 99
+})
+const captureProductOptionsStub = sinon.stub().returns(productOpts)
+const captureBonusProductStub = sinon.stub().returns({
+    isbonusProduct: true,
+    originalPrice: 100,
+    originalPriceValue: 99,
+    price: 96,
+    priceValue: 1
+})
 
 const orderConfirmationEvent = proxyquire('int_klaviyo_core/cartridge/scripts/klaviyo/eventData/orderConfirmation.js', {
     'dw/system/Site': Site,
@@ -55,10 +74,10 @@ const orderConfirmationEvent = proxyquire('int_klaviyo_core/cartridge/scripts/kl
     '*/cartridge/scripts/klaviyo/utils': {
         KLImageSize: 'large',
         siteId: Site.getCurrent().getID(),
-        captureProductOptions: basketStubs().pdctLineItems,
-        captureBonusProduct: basketStubs().bonusPdct,
-        captureProductBundles: basketStubs().bundlePdct,
-        priceCheck: basketStubs().priceCheckMock,
+        captureProductOptions: captureProductOptionsStub,
+        captureBonusProduct: captureBonusProductStub,
+        captureProductBundles: stubs.bundlePdct,
+        priceCheck: priceCheckStub,
         dedupeArray: function() {
             return ['Skin Care']
         },
@@ -75,6 +94,17 @@ describe('int_klaviyo_core/cartridge/scripts/klaviyo/eventData => orderConfirmat
 
     beforeEach(() => {
         global.empty.returns(false)
+        basketManagerMock.currencyCode = 'USD'
+        global.session.getCurrency = function() {
+            return {
+                getCurrencyCode: function() {
+                    return 'USD'
+                }
+            }
+        }
+        priceCheckStub.resetHistory()
+        captureProductOptionsStub.resetHistory()
+        captureBonusProductStub.resetHistory()
     })
 
     it('should return event data for "Order Confirmation" event', () => {
@@ -179,5 +209,28 @@ describe('int_klaviyo_core/cartridge/scripts/klaviyo/eventData => orderConfirmat
 
         const resultsObj = orderConfirmationEvent.getData(basketManagerMock)
         expect(resultsObj).to.deep.equal(expectedResult)
+    })
+
+    // IES-235: payment integrations may fire Order Confirmation from a Job where
+    // session currency is the site default, not the order currency.
+    it('should use order.currencyCode for value_currency and line-item helpers when session currency differs', () => {
+        basketManagerMock.currencyCode = 'EUR'
+        global.session.getCurrency = function() {
+            return {
+                getCurrencyCode: function() {
+                    return 'USD'
+                }
+            }
+        }
+
+        const resultsObj = orderConfirmationEvent.getData(basketManagerMock)
+
+        expect(resultsObj.value_currency).to.equal('EUR')
+        expect(priceCheckStub.calledOnce).to.be.true
+        expect(priceCheckStub.firstCall.args[2]).to.equal('EUR')
+        expect(captureProductOptionsStub.calledOnce).to.be.true
+        expect(captureProductOptionsStub.firstCall.args[1]).to.equal('EUR')
+        expect(captureBonusProductStub.calledOnce).to.be.true
+        expect(captureBonusProductStub.firstCall.args[2]).to.equal('EUR')
     })
 })
