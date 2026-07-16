@@ -20,6 +20,7 @@ bumped for multiple releases during one month.
 - Wire existing mocha unit suite into the CI workflow so it runs on every pull request. Pins Node 20 via `.nvmrc`, commits `test/package-lock.json` for reproducible `npm ci`, and switches the `dw-api-mock` dependency to an HTTPS tarball so Actions runners can install without an SSH key.
 
 #### Fixed
+- Order Confirmation events now use `order.currencyCode` instead of session currency (including line-item price formatting via `priceCheck` / `captureBonusProduct` / `captureProductOptions`), so `value_currency` and formatted money fields stay correct when the event is sent from a Job outside the shopper session.
 - Wraps Klaviyo service calls in `try/catch` so a Klaviyo API outage cannot break checkout. `trackEvent` returns `{ success: false }` on connection errors, timeouts, 5xx responses, or any thrown exception; `subscribeUser` no longer throws on null service responses.
 - `subscribeUser` skips the SMS subscribe when the email call indicates Klaviyo is unresponsive (null, 5xx, or thrown exception), to avoid burning a second timeout window on a known-down service. 4xx responses still allow the SMS attempt.
 - Klaviyo service-call error logs now include the HTTP status code, exception name, and stack, and classify failures as `4xx rejected` vs `unavailable (5xx)` so support can tell "Klaviyo is down" from "we sent a bad payload" at a glance.
