@@ -76,10 +76,10 @@ jobs:
         run: |
           rm -r ${{ matrix.version }}/_sitegen ${{ matrix.version }}/cartridges/int_klaviyo
 
-      - name: Remove SFRA cartridge for SiteGenesis version
+      - name: Remove SFRA cartridges for SiteGenesis version
         if: matrix.version == 'klaviyoSG'
         run: |
-          rm -r ${{ matrix.version }}/cartridges/int_klaviyo_sfra
+          rm -r ${{ matrix.version }}/cartridges/int_klaviyo_sfra ${{ matrix.version }}/cartridges/int_klaviyo_customer_hub_sfra
 
       - name: Archive Release
         uses: thedoctor0/zip-release@0.7.1
