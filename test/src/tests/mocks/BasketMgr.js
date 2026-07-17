@@ -77,6 +77,7 @@ class BasketMgr {
         this.orderNo = '000101899'
         this.customerNo = this.getCustomer().ID
         this.customerName = this.getCustomer().name
+        this.currencyCode = 'USD'
     }
 
     getCustomer = () => {

@@ -20,6 +20,9 @@ function getData(order) {
     try {
         data = {};
         klaviyoUtils.setSiteIdAndIntegrationInfo(data, siteId);
+        // Use order.currencyCode (not session) so currency is correct when this
+        // event is sent from a Job after payment, outside the shopper session.
+        var currencyCode = order.currencyCode;
         // Billing Address
         var orderBillingAddressFirstName = order.billingAddress.firstName ? order.billingAddress.firstName : '';
         var orderBillingAddressLastName = order.billingAddress.lastName ? order.billingAddress.lastName : '';
@@ -132,19 +135,19 @@ function getData(order) {
                     currentLineItem['Master Product ID'] = parentProduct.ID;
                 }
 
-                var priceData = klaviyoUtils.priceCheck(productLineItem, productDetail);
+                var priceData = klaviyoUtils.priceCheck(productLineItem, productDetail, currencyCode);
                 currentLineItem['Price'] = priceData.purchasePrice;
                 currentLineItem['Price Value'] = priceData.purchasePriceValue;
                 currentLineItem['Original Price'] = priceData.originalPrice;
                 currentLineItem['Original Price Value'] = priceData.originalPriceValue;
 
-                var selectedOptions = productLineItem && productLineItem.optionProductLineItems ? klaviyoUtils.captureProductOptions(productLineItem.optionProductLineItems) : null;
+                var selectedOptions = productLineItem && productLineItem.optionProductLineItems ? klaviyoUtils.captureProductOptions(productLineItem.optionProductLineItems, currencyCode) : null;
                 if (selectedOptions && selectedOptions.length) {
                     currentLineItem['Product Options'] = selectedOptions;
                 }
 
                 if (productLineItem.bonusProductLineItem) {
-                    var bonusProduct = klaviyoUtils.captureBonusProduct(productLineItem, productDetail);
+                    var bonusProduct = klaviyoUtils.captureBonusProduct(productLineItem, productDetail, currencyCode);
                     currentLineItem['Is Bonus Product'] = bonusProduct.isbonusProduct;
                     currentLineItem['Original Price'] = bonusProduct.originalPrice;
                     currentLineItem['Original Price Value'] = bonusProduct.originalPriceValue;
@@ -204,18 +207,18 @@ function getData(order) {
 
             // discounts
             var orderDiscount = merchTotalExclOrderDiscounts.subtract(merchTotalInclOrderDiscounts);
-            var orderDiscountString = dw.util.StringUtils.formatMoney(dw.value.Money(orderDiscount.value, session.getCurrency().getCurrencyCode()));
+            var orderDiscountString = dw.util.StringUtils.formatMoney(dw.value.Money(orderDiscount.value, currencyCode));
 
             // Sub Total
             var subTotal = merchTotalInclOrderDiscounts;
-            var subTotalString = dw.util.StringUtils.formatMoney(dw.value.Money(subTotal.value, session.getCurrency().getCurrencyCode()));
+            var subTotalString = dw.util.StringUtils.formatMoney(dw.value.Money(subTotal.value, currencyCode));
 
             // Shipping
             var shippingExclDiscounts = order.shippingTotalPrice;
             var shippingInclDiscounts = order.getAdjustedShippingTotalPrice();
             var shippingDiscount = shippingExclDiscounts.subtract(shippingInclDiscounts);
             var shippingTotalCost = shippingExclDiscounts.subtract(shippingDiscount);
-            var shippingTotalCostString = dw.util.StringUtils.formatMoney(dw.value.Money(shippingTotalCost.value, session.getCurrency().getCurrencyCode()));
+            var shippingTotalCostString = dw.util.StringUtils.formatMoney(dw.value.Money(shippingTotalCost.value, currencyCode));
 
             // Tax
             var totalTax = 0.0;
@@ -223,7 +226,7 @@ function getData(order) {
                 totalTax = order.totalTax.value;
             }
             var totalTaxString = dw.util.StringUtils.formatMoney(
-                dw.value.Money(totalTax, session.getCurrency().getCurrencyCode())
+                dw.value.Money(totalTax, currencyCode)
             );
 
             // Order Total
@@ -232,7 +235,7 @@ function getData(order) {
                 orderTotal = order.totalNetPrice.value + totalTax;
             }
             var orderTotalString = dw.util.StringUtils.formatMoney(
-                dw.value.Money(orderTotal, session.getCurrency().getCurrencyCode())
+                dw.value.Money(orderTotal, currencyCode)
             );
 
             data['Order Total'] = orderTotalString;
@@ -296,7 +299,7 @@ function getData(order) {
         data['Item Primary Categories'] = itemPrimaryCategories;
         data['Item Categories'] = klaviyoUtils.dedupeArray(itemCategories);
         data['value'] = orderTotal;
-        data['value_currency'] = session.getCurrency().getCurrencyCode();
+        data['value_currency'] = currencyCode;
         data['$event_id'] = 'orderConfirmation-' + order.orderNo;
         data['Tracking Number'] = order.shipments[0].trackingNumber ? order.shipments[0].trackingNumber : '';
     } catch (e) {
