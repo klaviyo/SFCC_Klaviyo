@@ -10,8 +10,10 @@ bumped for multiple releases during one month.
 <!-- BEGIN RELEASE NOTES -->
 ### [Unreleased]
 
+### [26.7.0] - 2026-07-17
+
 #### Added
-- Adds window variable to enable Klaviyo Customer Hub
+- Adds `klaviyoSFCCSiteID` window variable to enable Klaviyo Customer Hub
 - Adds `int_klaviyo_customer_hub_sfra` cartridge for Customer Hub session auth and storefront routes (only needed for Customer Hub product)
 - Adds `klaviyo_customer_hub_storefront_context` site preference and `KlaviyoCustomerHubOnsiteService`
 - Recently-viewed product tracking on PDPs via `klaviyo.trackViewedItem`, piggybacking on the existing `Klaviyo-Event` remote include. Honors the `klaviyo_use_variation_group_id` site preference. Only fires for identified visitors.
@@ -140,7 +142,8 @@ bumped for multiple releases during one month.
 <!-- END RELEASE NOTES -->
 
 <!-- BEGIN LINKS -->
-[Unreleased]: https://github.com/klaviyo/SFCC_Klaviyo/compare/26.5.0...HEAD
+[Unreleased]: https://github.com/klaviyo/SFCC_Klaviyo/compare/26.7.0...HEAD
+[26.7.0]: https://github.com/klaviyo/SFCC_Klaviyo/compare/26.5.0...26.7.0
 [26.5.0]: https://github.com/klaviyo/SFCC_Klaviyo/compare/25.11.0...26.5.0
 [25.11.0]: https://github.com/klaviyo/SFCC_Klaviyo/compare/25.8.0...25.11.0
 [25.8.0]: https://github.com/klaviyo/SFCC_Klaviyo/compare/25.7.0...25.8.0
