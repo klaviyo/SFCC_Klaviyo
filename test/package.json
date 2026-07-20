@@ -20,7 +20,7 @@
     "@playwright/test": "^1.32.1",
     "@types/node-fetch": "^2.6.3",
     "app-module-path": "^2.2.0",
-    "axios": "^1.8.4",
+    "axios": "^1.18.0",
     "chai": "^4.3.7",
     "dotenv": "^16.0.3",
     "dw-api-mock": "https://github.com/SalesforceCommerceCloud/dw-api-mock/archive/efdc4b415cfdc4a05e0249b4a1e9c0f101fd985c.tar.gz",
