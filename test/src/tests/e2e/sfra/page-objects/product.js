@@ -1,4 +1,4 @@
-import { expect } from '@playwright/test'
+import { expect, test } from '@playwright/test'
 import path from 'path'
 import { BasePage } from './base'
 import { AccountPage } from './account'
@@ -23,22 +23,26 @@ exports.ProductPage = class ProductPage extends BasePage {
     }
 
     async getProduct() {
-        await this.newArrivals.click()
-        await this.page.waitForTimeout(5000)
-        const categories = await this.categoryLocator
-        await categories.first().click()
-        await this.page.waitForLoadState('networkidle')
-        const products = await this.productLocator
-        await products.first().click()
-        await this.page.waitForLoadState('networkidle')
-        const productTitle = await this.productTitle.first().innerHTML()
-        return productTitle
+        return await test.step('Navigate from homepage to first product PDP and read title', async () => {
+            await this.newArrivals.click()
+            await this.page.waitForTimeout(5000)
+            const categories = await this.categoryLocator
+            await categories.first().click()
+            await this.page.waitForLoadState('networkidle')
+            const products = await this.productLocator
+            await products.first().click()
+            await this.page.waitForLoadState('networkidle')
+            const productTitle = await this.productTitle.first().innerHTML()
+            return productTitle
+        })
     }
 
     async addToCart() {
-        await this.selectSize()
-        await this.selectWidth()
-        await this.addToCartLocator.click()
+        await test.step('Select product options and add to cart', async () => {
+            await this.selectSize()
+            await this.selectWidth()
+            await this.addToCartLocator.click()
+        })
     }
 
     async selectSize() {
@@ -60,21 +64,25 @@ exports.ProductPage = class ProductPage extends BasePage {
     }
 
     async visitPDP() {
-        await this.newArrivals.click()
-        await this.page.waitForTimeout(5000)
-        const categories = await this.categoryLocator
-        await categories.first().click()
-        await this.page.waitForLoadState('networkidle')
-        const products = await this.productLocator
-        await products.first().click()
-        await this.page.waitForLoadState('networkidle')
+        await test.step('Navigate from homepage to a product PDP', async () => {
+            await this.newArrivals.click()
+            await this.page.waitForTimeout(5000)
+            const categories = await this.categoryLocator
+            await categories.first().click()
+            await this.page.waitForLoadState('networkidle')
+            const products = await this.productLocator
+            await products.first().click()
+            await this.page.waitForLoadState('networkidle')
+        })
     }
 
     async visitPLP() {
-        await this.newArrivals.click()
-        await this.page.waitForTimeout(5000)
-        const categories = await this.categoryLocator
-        await categories.first().click()
-        await this.page.waitForLoadState('networkidle')
+        await test.step('Navigate from homepage to a product listing page', async () => {
+            await this.newArrivals.click()
+            await this.page.waitForTimeout(5000)
+            const categories = await this.categoryLocator
+            await categories.first().click()
+            await this.page.waitForLoadState('networkidle')
+        })
     }
 }
